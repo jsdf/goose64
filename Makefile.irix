@@ -1,0 +1,51 @@
+#!smake -k
+# 	NuSYSTEM samples nu1 Makefile
+#       Copyright (C) 1997-1999, NINTENDO Co,Ltd.
+
+include $(ROOT)/usr/include/make/PRdefs
+
+# The directory which has the include file and library of NuSYSTEM
+#
+N64KITDIR    = /usr/local/n64kit
+NUSYSINCDIR  = $(N64KITDIR)/nusys/include
+NUSYSLIBDIR  = $(N64KITDIR)/nusys/lib
+
+APP =		nu1
+
+OPTIMIZER =	-g
+
+TARGETS =	all 
+
+HFILES =	main.h graphic.h
+
+CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c
+
+CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
+
+DATAFILES   =	
+
+DATAOBJECTS =	$(DATAFILES:.c=.o)
+
+CODESEGMENT =	codesegment.o
+
+OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS)
+
+LCDEFS = -DF3DEX_GBI_2
+LCINCS =	-I$(NUSYSINCDIR)  -I$(ROOT)/usr/include/PR
+LCOPTS =	-Xcpluscomm -fullwarn -wlint,-f -woff 813,819,826,827,852 -non_shared -G 0
+LDFLAGS =	$(MKDEPOPT) -nostdlib -L$(ROOT)/usr/lib -L$(NUSYSLIBDIR) -lnusys_d -lultra_d
+
+LDIRT  =	$(APP)
+
+default:	$(TARGETS)
+
+
+include $(COMMONRULES)
+
+all: rom
+
+$(CODESEGMENT):	$(CODEOBJECTS) Makefile
+		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)
+
+rom $(APP):	spec $(OBJECTS) $(MAKEROM)
+		$(MAKEROM)  -r rom -I$(NUSYSINCDIR) spec
