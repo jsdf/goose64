@@ -1,0 +1,25 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "ClangFormat": {
+            "style": "Chromium",
+            "format_on_save": true
+        }
+    },
+
+    "build_systems": [
+        {
+            "name": "GL Build",
+            "cmd": ["./glbuild.sh"]
+        },
+
+        {
+            "name": "Emu Build",
+            "cmd": ["./build_and_run.sh"]
+        }
+    ]
+}

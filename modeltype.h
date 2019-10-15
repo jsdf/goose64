@@ -1,11 +1,13 @@
 
-#ifndef _MODELTYPE_H_
-#define _MODELTYPE_H_
+#ifndef MODELTYPE_H
+#define MODELTYPE_H
 
 typedef enum ModelType {
-  Goose,
-  Book,
-  Cake
+  NoneModel,
+  GooseModel,
+  BookModel,
+  CakeModel,
+  MAX_MODEL_TYPE
 } ModelType;
 
-#endif /* !_MODELTYPE_H_ */
+#endif /* !MODELTYPE_H */

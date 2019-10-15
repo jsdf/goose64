@@ -10,7 +10,7 @@
 		734E1B08234D85AA00FBF3CC /* vec3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 734E1B02234D85AA00FBF3CC /* vec3d.c */; };
 		734E1B09234D85AA00FBF3CC /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 734E1B04234D85AA00FBF3CC /* game.c */; };
 		734E1B0A234D85AA00FBF3CC /* gameobject.c in Sources */ = {isa = PBXBuildFile; fileRef = 734E1B07234D85AA00FBF3CC /* gameobject.c */; };
-		73881968234D854C0057630E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 73881967234D854C0057630E /* main.c */; };
+		734E1B0C235546D000FBF3CC /* glgoose.c in Sources */ = {isa = PBXBuildFile; fileRef = 734E1B0B235546D000FBF3CC /* glgoose.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,8 +32,8 @@
 		734E1B05234D85AA00FBF3CC /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = game.h; path = ../../game.h; sourceTree = "<group>"; };
 		734E1B06234D85AA00FBF3CC /* vec3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec3d.h; path = ../../vec3d.h; sourceTree = "<group>"; };
 		734E1B07234D85AA00FBF3CC /* gameobject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gameobject.c; path = ../../gameobject.c; sourceTree = "<group>"; };
+		734E1B0B235546D000FBF3CC /* glgoose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glgoose.c; path = ../../glgoose.c; sourceTree = "<group>"; };
 		73881964234D854C0057630E /* goose64glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = goose64glut; sourceTree = BUILT_PRODUCTS_DIR; };
-		73881967234D854C0057630E /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,10 +69,10 @@
 				734E1B04234D85AA00FBF3CC /* game.c */,
 				734E1B05234D85AA00FBF3CC /* game.h */,
 				734E1B07234D85AA00FBF3CC /* gameobject.c */,
+				734E1B0B235546D000FBF3CC /* glgoose.c */,
 				734E1B03234D85AA00FBF3CC /* gameobject.h */,
 				734E1B02234D85AA00FBF3CC /* vec3d.c */,
 				734E1B06234D85AA00FBF3CC /* vec3d.h */,
-				73881967234D854C0057630E /* main.c */,
 			);
 			path = goose64glut;
 			sourceTree = "<group>";
@@ -135,8 +135,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				734E1B09234D85AA00FBF3CC /* game.c in Sources */,
-				73881968234D854C0057630E /* main.c in Sources */,
 				734E1B0A234D85AA00FBF3CC /* gameobject.c in Sources */,
+				734E1B0C235546D000FBF3CC /* glgoose.c in Sources */,
 				734E1B08234D85AA00FBF3CC /* vec3d.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

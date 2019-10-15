@@ -1,9 +1,9 @@
 
-#ifndef _GAMEOBJECT_H_
-#define _GAMEOBJECT_H_
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
 
-#include "vec3d.h"
 #include "modeltype.h"
+#include "vec3d.h"
 
 typedef struct GameObject {
   Vec3d position;
@@ -14,4 +14,4 @@ typedef struct GameObject {
 GameObject* GameObject_alloc();
 GameObject* GameObject_init(GameObject* self, Vec3d* initPos);
 
-#endif /* !_GAMEOBJECT_H_ */
+#endif /* !GAMEOBJECT_H */

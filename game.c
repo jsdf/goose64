@@ -14,8 +14,7 @@ Game game;
 void Game_init() {
   int i;
   for (i = 0; i < MAX_WORLD_OBJECTS; ++i)
-  {
-    GameObject_init(&worldObjects[i], NULL);
+  {    GameObject_init(&worldObjects[i], NULL);
   }
   game.worldObjects = worldObjects;
   game.worldObjectsCount  = MAX_WORLD_OBJECTS;
