@@ -33,3 +33,8 @@ Vec3d* Vec3d_copyFrom(Vec3d* self, Vec3d* other) {
   self->z = other->z;
   return self;
 }
+
+char* Vec3d_toString(Vec3d* self, char* buffer) {
+  sprintf(buffer, "{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
+  return buffer;
+}

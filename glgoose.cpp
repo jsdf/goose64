@@ -1,14 +1,24 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cstring>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
+
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
 #endif
 
+#include <OpenGL/gl.h>
+#include <glm/glm.hpp>
 #include "game.h"
 #include "gameobject.h"
+#include "gl/objloader.hpp"
+#include "gl/texture.hpp"
 #include "vec3d.h"
 
 #define RAND(x) (rand() % x) /* random number between 0 to x */
@@ -18,10 +28,22 @@ float cameraLX = 0.0f, cameraLZ = -1.0f;
 // XZ position of the camera
 Vec3d cameraPos = {0.0f, 1.0f, 0.0f};
 
-#define NUM_WORLD_OBJECTS 36
-static GameObject worldObjects[NUM_WORLD_OBJECTS];
-
 float cameraAngle = 0.0f;
+
+typedef struct Model {
+  std::vector<glm::vec3> vertices;
+  std::vector<glm::vec2> uvs;
+  GLuint texture;
+} Model;
+
+Model models[MAX_MODEL_TYPE];
+
+void loadModel(char* modelfile, char* texfile) {
+  std::vector<glm::vec3> normals;  // Won't be used at the moment.
+  loadOBJ(modelfile, models[GooseModel].vertices, models[GooseModel].uvs,
+          normals);
+  models[GooseModel].texture = loadBMP_custom(texfile);
+}
 
 // int dummy = 5;
 
@@ -51,7 +73,24 @@ void drawSnowMan() {
   glutSolidCone(0.08f, 0.5f, 10, 2);
 }
 
-void drawString(char* string) {
+void drawModel(ModelType modelType) {
+  glColor3f(0.9f, 0.9f, 0.9f);  // whitish
+  Model model = models[modelType];
+
+  glTranslatef(0, 2, 0);  // raise the goose a bit
+
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, model.texture);
+  glBegin(GL_TRIANGLES);
+  for (int ivert = 0; ivert < model.vertices.size(); ++ivert) {
+    glTexCoord2d(model.uvs[ivert].x, model.uvs[ivert].y);
+    glVertex3f(model.vertices[ivert].x, model.vertices[ivert].y,
+               model.vertices[ivert].z);
+  }
+  glEnd();
+}
+
+void drawString(char* string, int x, int y) {
   int w, h;
   char* c;
   glMatrixMode(GL_PROJECTION);
@@ -67,7 +106,7 @@ void drawString(char* string) {
 
   glColor3f(1, 0, 0);
 
-  glRasterPos2i(20, 20);
+  glRasterPos2i(x, y);
   for (c = string; *c != '\0'; c++) {
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
   }
@@ -105,17 +144,51 @@ void drawGameObject(GameObject* obj) {
   glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(obj->rotationZ, 0, 1, 0);
-  drawSnowMan();
+
+  if (obj->modelType != NoneModel) {
+    drawModel(obj->modelType);
+  }
   glPopMatrix();
+}
+
+// this is a stupid function
+float fwrap(float x, float lower, float upper) {
+  if (x > upper) {
+    return lower;
+  } else if (x < lower) {
+    return upper;
+  }
+  return x;
+}
+
+void updateWorld() {
+  int i;
+  Game* game;
+  GameObject* obj;
+
+  game = Game_get();
+  obj = game->worldObjects;
+  for (i = 0; i < game->worldObjectsCount; i++) {
+    obj->rotationZ = fwrap(obj->rotationZ + 2.0F, 0.0F, 360.0F);
+
+    obj++;
+  }
 }
 
 void renderScene(void) {
   int i;
   Game* game;
   GameObject* worldObjectPtr;
-  // Clear Color and Depth Buffers
 
+  updateWorld();
+
+  // Clear Color and Depth Buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  // Use the Projection Matrix
+  glMatrixMode(GL_PROJECTION);
+  int w = glutGet(GLUT_WINDOW_WIDTH);
+  int h = glutGet(GLUT_WINDOW_HEIGHT);
+  resizeWindow(w, h);
 
   // Reset transformations
   glLoadIdentity();
@@ -127,18 +200,13 @@ void renderScene(void) {
   );
 
   // Draw ground
-  glColor3f(0.9f, 0.9f, 0.9f);
+  glColor3f(0.7f, 1.0f, 0.75f);
   glBegin(GL_QUADS);
   glVertex3f(-100.0f, 0.0f, -100.0f);
   glVertex3f(-100.0f, 0.0f, 100.0f);
   glVertex3f(100.0f, 0.0f, 100.0f);
   glVertex3f(100.0f, 0.0f, -100.0f);
   glEnd();
-
-  // Draw 36 SnowMen
-  // for (i = 0; i < NUM_WORLD_OBJECTS; ++i) {
-  //   drawGameObject(&worldObjects[i]);
-  // }
 
   game = Game_get();
   worldObjectPtr = game->worldObjects;
@@ -147,9 +215,9 @@ void renderScene(void) {
     worldObjectPtr++;
   }
 
-  // char debugtext[80];
-  // sprintf(debugtext, "x=%f y=%f z=%f ", cameraPos.x, cameraPos.y,
-  // cameraPos.z); drawString(debugtext);
+  char debugtext[80];
+  Vec3d_toString(&cameraPos, debugtext);
+  drawString(debugtext, 20, 20);
 
   glutSwapBuffers();
 }
@@ -216,10 +284,10 @@ void processNormalKeys(unsigned char key, int _x, int _y) {
     case 101:  // e
       turnRight();
       break;
-    case 102:  // f
+    case 114:  // r
       moveUp();
       break;
-    case 99:  // c
+    case 102:  // f
       moveDown();
       break;
   }
@@ -256,28 +324,18 @@ int main(int argc, char** argv) {
   game = Game_get();
   obj = game->worldObjects;
   for (i = 0; i < game->worldObjectsCount; i++) {
-    Vec3d_set(&obj->position, RAND(100 - 100 / 2), 0.0F, RAND(100 - 100 / 2));
+    Vec3d_set(&obj->position, RAND(100 - 100 / 2), 0, RAND(100 - 100 / 2));
     obj->rotationZ = RAND(360);
+    obj->modelType = GooseModel;
 
     obj++;
   }
-
-  // create snowmans
-
-  // objIdx = 0;
-  // for (i = -3; i < 3; i++) {
-  //   for (j = -3; j < 3; j++) {
-  //     GameObject_init(obj, NULL);
-  //     Vec3d_set(&obj->position, i * 10.0, 0, j * 10.0);
-  //     obj++;
-  //   }
-  // }
 
   // init GLUT and create window
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(300, 100);
-  glutInitWindowSize(800, 600);
+  glutInitWindowSize(1920, 1080);
   glutCreateWindow("Goose");
 
   // register callbacks
@@ -290,6 +348,9 @@ int main(int argc, char** argv) {
   // OpenGL init
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
+
+  // load goose
+  loadModel("goose1baked.obj", "goosetex.bmp");
 
   // enter GLUT event processing cycle
   glutMainLoop();
