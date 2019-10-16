@@ -29,6 +29,8 @@ static u32 far_plane;  /* Far Plane */
 
 void drawStuff(Dynamic* dynamicp);
 
+#define OBJ_START_VAL 1000
+
 /* The initialization of stage 0 */
 void initStage00() {
   Game* game;
@@ -40,7 +42,7 @@ void initStage00() {
   triPos_y = 0.0;
   theta = 0.0;
   near_plane = 10;
-  far_plane = 2000;
+  far_plane = 10000;
   Vec3d_init(&viewPos, 0.0F, 0.0F, -400.0F);
 
   Game_init();
@@ -49,9 +51,13 @@ void initStage00() {
   worldObjectPtr = game->worldObjects;
   for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
     obj = worldObjectPtr;
-    obj->position.x = 0.0F;
-    obj->position.y = 0.0F;
+    obj->position.x = RAND(OBJ_START_VAL) - OBJ_START_VAL / 2;
+    obj->position.y = RAND(OBJ_START_VAL) - OBJ_START_VAL / 2;
     obj->position.z = -50.0F;
+    if (i == 0) {
+      obj->modelType = NoneModel;
+    }
+    obj->modelType = GooseModel;
 
     worldObjectPtr++;
   }
@@ -203,34 +209,6 @@ void drawStuff(Dynamic* dynamicp) {
   int i;
   game = Game_get();
 
-  // render goose
-  // setup view
-  gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
-            G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
-  gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->translate)),
-            G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
-
-  guRotateRPY(&dynamicp->modeling, triPos_x, -triPos_y, 0.0F);
-
-  // guScale(&dynamicp->modeling, 0.1f, 0.1f, 0.1f);  // goose is too big
-
-  gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->modeling)),
-            G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
-
-  gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-  gDPSetCycleType(glistp++, G_CYC_2CYCLE);
-  gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
-  gSPSetGeometryMode(glistp++, G_ZBUFFER);
-
-  // render textured models
-  gSPTexture(glistp++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
-  gDPSetTextureFilter(glistp++, G_TF_BILERP);
-  gDPSetTexturePersp(glistp++, G_TP_PERSP);
-  gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
-
-  gSPDisplayList(glistp++, Wtx_goose1baked);
-  gDPPipeSync(glistp++);
-
   // render world objects
   worldObjectPtr = game->worldObjects;
   for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
@@ -241,8 +219,8 @@ void drawStuff(Dynamic* dynamicp) {
               G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
 
     gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-    gDPSetCycleType(glistp++, G_CYC_2CYCLE);
-    gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+    gDPSetCycleType(glistp++, G_CYC_1CYCLE);
+    gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
     gSPSetGeometryMode(glistp++, G_ZBUFFER);
 
     // render textured models
@@ -254,7 +232,7 @@ void drawStuff(Dynamic* dynamicp) {
     obj = worldObjectPtr;
     guPosition(&dynamicp->obj_trans[i],
                0.0F,            // roll
-               0.0F,            // pitch
+               theta,           // pitch
                obj->rotationZ,  // yaw
                1.0F,            // scale
                obj->position.x, obj->position.y, obj->position.z);
