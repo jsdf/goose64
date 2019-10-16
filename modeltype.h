@@ -7,6 +7,8 @@ typedef enum ModelType {
   GooseModel,
   BookModel,
   CakeModel,
+  UniBldgModel,
+  UniFloorModel,
   MAX_MODEL_TYPE
 } ModelType;
 

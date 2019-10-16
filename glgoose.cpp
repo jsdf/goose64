@@ -38,11 +38,11 @@ typedef struct Model {
 
 Model models[MAX_MODEL_TYPE];
 
-void loadModel(char* modelfile, char* texfile) {
+void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   std::vector<glm::vec3> normals;  // Won't be used at the moment.
-  loadOBJ(modelfile, models[GooseModel].vertices, models[GooseModel].uvs,
+  loadOBJ(modelfile, models[modelType].vertices, models[modelType].uvs,
           normals);
-  models[GooseModel].texture = loadBMP_custom(texfile);
+  models[modelType].texture = loadBMP_custom(texfile);
 }
 
 // int dummy = 5;
@@ -74,10 +74,8 @@ void drawSnowMan() {
 }
 
 void drawModel(ModelType modelType) {
-  glColor3f(0.9f, 0.9f, 0.9f);  // whitish
+  glColor3f(1.0f, 1.0f, 1.0f);  // whitish
   Model model = models[modelType];
-
-  glTranslatef(0, 2, 0);  // raise the goose a bit
 
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, model.texture);
@@ -169,7 +167,9 @@ void updateWorld() {
   game = Game_get();
   obj = game->worldObjects;
   for (i = 0; i < game->worldObjectsCount; i++) {
-    obj->rotationZ = fwrap(obj->rotationZ + 2.0F, 0.0F, 360.0F);
+    if (obj->modelType == GooseModel) {
+      obj->rotationZ = fwrap(obj->rotationZ + 2.0F, 0.0F, 360.0F);
+    }
 
     obj++;
   }
@@ -200,13 +200,13 @@ void renderScene(void) {
   );
 
   // Draw ground
-  glColor3f(0.7f, 1.0f, 0.75f);
-  glBegin(GL_QUADS);
-  glVertex3f(-100.0f, 0.0f, -100.0f);
-  glVertex3f(-100.0f, 0.0f, 100.0f);
-  glVertex3f(100.0f, 0.0f, 100.0f);
-  glVertex3f(100.0f, 0.0f, -100.0f);
-  glEnd();
+  // glColor3f(0.7f, 1.0f, 0.75f);
+  // glBegin(GL_QUADS);
+  // glVertex3f(-100.0f, 0.0f, -100.0f);
+  // glVertex3f(-100.0f, 0.0f, 100.0f);
+  // glVertex3f(100.0f, 0.0f, 100.0f);
+  // glVertex3f(100.0f, 0.0f, -100.0f);
+  // glEnd();
 
   game = Game_get();
   worldObjectPtr = game->worldObjects;
@@ -324,9 +324,23 @@ int main(int argc, char** argv) {
   game = Game_get();
   obj = game->worldObjects;
   for (i = 0; i < game->worldObjectsCount; i++) {
-    Vec3d_set(&obj->position, RAND(100 - 100 / 2), 0, RAND(100 - 100 / 2));
-    obj->rotationZ = RAND(360);
-    obj->modelType = GooseModel;
+    switch (i) {
+      case 0:
+        Vec3d_set(&obj->position, -62.172928, 0.000000, 6.272056);
+        obj->rotationZ = 0.000000;
+        obj->modelType = UniBldgModel;
+        break;
+      case 1:
+        Vec3d_set(&obj->position, 11.133299, -1.075561, 0.000000);
+        obj->rotationZ = 0.000000;
+        obj->modelType = UniFloorModel;
+        break;
+      default:
+
+        Vec3d_set(&obj->position, RAND(100 - 100 / 2), 2, RAND(100 - 100 / 2));
+        obj->rotationZ = RAND(360);
+        obj->modelType = GooseModel;
+    }
 
     obj++;
   }
@@ -350,7 +364,9 @@ int main(int argc, char** argv) {
   glEnable(GL_CULL_FACE);
 
   // load goose
-  loadModel("goose1baked.obj", "goosetex.bmp");
+  loadModel(GooseModel, "goose1baked.obj", "goosetex.bmp");
+  loadModel(UniFloorModel, "university_floor.obj", "green.bmp");
+  loadModel(UniBldgModel, "university_bldg.obj", "redbldg.bmp");
 
   // enter GLUT event processing cycle
   glutMainLoop();
