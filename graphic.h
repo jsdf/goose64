@@ -24,9 +24,13 @@ typedef struct {
   Mtx modeling;
   Mtx translate;
 
+  // Mtx obj_trans;
+  // Mtx obj_rotate;
+  // Mtx obj_scale;
+
   Mtx obj_trans[MAX_WORLD_OBJECTS];
-  Mtx obj_rotate[MAX_WORLD_OBJECTS];
-  Mtx obj_scale[MAX_WORLD_OBJECTS];
+  // Mtx obj_rotate[MAX_WORLD_OBJECTS];
+  // Mtx obj_scale[MAX_WORLD_OBJECTS];
 } Dynamic;
 
 /*-------------------------------- parameter---------------------------------*/

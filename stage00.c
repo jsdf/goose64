@@ -13,6 +13,7 @@
 #include "goose1baked.h"
 #include "graphic.h"
 #include "main.h"
+#include "modeltype.h"
 #include "testingCube.h"
 #include "vec3d.h"
 
@@ -48,9 +49,9 @@ void initStage00() {
   worldObjectPtr = game->worldObjects;
   for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
     obj = worldObjectPtr;
-    obj->position.x = RAND(100 - 100 / 2) * 1.0F;
+    obj->position.x = 0.0F;
     obj->position.y = 0.0F;
-    obj->position.z = RAND(100 - 100 / 2) * 1.0F;
+    obj->position.z = -50.0F;
 
     worldObjectPtr++;
   }
@@ -75,11 +76,6 @@ void makeDL00() {
   guPerspective(&dynamicp->projection, &perspNorm, 30,
                 (f32)SCREEN_WD / (f32)SCREEN_HT, near_plane, far_plane, 1.0);
 
-  // guRotate(&dynamicp->modeling, theta, 0.0F, 0.0F, 1.0F);
-  // guTranslate(&dynamicp->translate, triPos_x, triPos_y, 0.0F);
-
-  guRotate(&dynamicp->modeling, 0.0F, 0.0F, 0.0F, 1.0F);
-  guTranslate(&dynamicp->translate, 0.0F, 0.0F, 1.4F);
   guTranslate(&dynamicp->translate, viewPos.x, viewPos.y, viewPos.z);
 
   drawStuff(dynamicp);
@@ -127,6 +123,22 @@ void makeDL00() {
 
   /* Switch display list buffers */
   gfx_gtask_no ^= 1;
+}
+
+void moveWorldObjects() {
+  Game* game;
+  GameObject* obj;
+  int i;
+
+  game = Game_get();
+  obj = game->worldObjects;
+  for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
+    obj->position.x += 0.01F;
+    obj->position.y += 0.01F;
+    obj->position.z -= 0.1F;
+
+    obj++;
+  }
 }
 
 /* The game progressing process for stage 0 */
@@ -179,6 +191,8 @@ void updateGame00(void) {
 
   if (contdata[0].button & R_JPAD)
     viewPos.x += 1.0;
+
+  moveWorldObjects();
 }
 
 /* Draw a square */
@@ -187,58 +201,76 @@ void drawStuff(Dynamic* dynamicp) {
   GameObject* worldObjectPtr;
   GameObject* obj;
   int i;
+  game = Game_get();
 
+  // render goose
   // setup view
   gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
             G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
   gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->translate)),
             G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
+
+  guRotateRPY(&dynamicp->modeling, triPos_x, -triPos_y, 0.0F);
+
+  // guScale(&dynamicp->modeling, 0.1f, 0.1f, 0.1f);  // goose is too big
+
   gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->modeling)),
             G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
-  gDPPipeSync(glistp++);
-  gDPSetCycleType(glistp++, G_CYC_1CYCLE);
-  gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
   gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-  gSPSetGeometryMode(glistp++, G_SHADE | G_SHADING_SMOOTH);
-
-  gDPPipeSync(glistp++);
+  gDPSetCycleType(glistp++, G_CYC_2CYCLE);
+  gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+  gSPSetGeometryMode(glistp++, G_ZBUFFER);
 
   // render textured models
-  gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-  // gSPSetGeometryMode(glistp++,G_CULL_BACK);
   gSPTexture(glistp++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
   gDPSetTextureFilter(glistp++, G_TF_BILERP);
   gDPSetTexturePersp(glistp++, G_TP_PERSP);
   gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
 
-  // render cube
-  // gSPDisplayList(glistp++, Wtx_testingCube);
+  gSPDisplayList(glistp++, Wtx_goose1baked);
+  gDPPipeSync(glistp++);
 
-  game = Game_get();
+  // render world objects
   worldObjectPtr = game->worldObjects;
   for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
+    // setup view
+    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
+              G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
+    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->translate)),
+              G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
+
+    gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
+    gDPSetCycleType(glistp++, G_CYC_2CYCLE);
+    gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+    gSPSetGeometryMode(glistp++, G_ZBUFFER);
+
+    // render textured models
+    gSPTexture(glistp++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
+    gDPSetTextureFilter(glistp++, G_TF_BILERP);
+    gDPSetTexturePersp(glistp++, G_TP_PERSP);
+    gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
+
     obj = worldObjectPtr;
     guPosition(&dynamicp->obj_trans[i],
                0.0F,            // roll
                0.0F,            // pitch
                obj->rotationZ,  // yaw
-               0.0F,            // scale
-               obj->position.x + 1000.0F, obj->position.y + 1000.0F,
-               obj->position.z + 1000.0F);
+               1.0F,            // scale
+               obj->position.x, obj->position.y, obj->position.z);
+    // guTranslate(&dynamicp->obj_trans[i], obj->position.x, obj->position.y,
+    //             obj->position.z);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->obj_trans[i])),
-              G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
-    gSPDisplayList(glistp++, Wtx_testingCube);
+              G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
+
+    if (obj->modelType == GooseModel) {
+      gSPDisplayList(glistp++, Wtx_goose1baked);
+    } else {
+      gSPDisplayList(glistp++, Wtx_testingCube);  // use cube for now
+    }
     gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
+
+    gDPPipeSync(glistp++);
     worldObjectPtr++;
   }
-
-  // render goose
-  guRotateRPY(&dynamicp->modeling, triPos_x, -triPos_y, 0.0F);
-
-  gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->modeling)),
-            G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
-
-  gSPDisplayList(glistp++, Wtx_goose1baked);
-  gDPPipeSync(glistp++);
 }
