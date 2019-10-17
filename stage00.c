@@ -27,6 +27,8 @@ static u16 perspNorm;
 static u32 near_plane; /* Near Plane */
 static u32 far_plane;  /* Far Plane */
 
+static float vel;
+
 void drawStuff(Dynamic* dynamicp);
 
 #define OBJ_START_VAL 1000
@@ -41,6 +43,7 @@ void initStage00() {
   triPos_x = 0.0;
   triPos_y = 0.0;
   theta = 0.0;
+  vel = 1.0;
   near_plane = 10;
   far_plane = 10000;
   Vec3d_init(&viewPos, 0.0F, 0.0F, -400.0F);
@@ -149,8 +152,6 @@ void moveWorldObjects() {
 
 /* The game progressing process for stage 0 */
 void updateGame00(void) {
-  static float vel = 1.0;
-
   /* Data reading of controller 1 */
   nuContDataGetEx(contdata, 0);
 
@@ -219,7 +220,7 @@ void drawStuff(Dynamic* dynamicp) {
               G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
 
     gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-    gDPSetCycleType(glistp++, G_CYC_1CYCLE);
+    gDPSetCycleType(glistp++, vel > 0.0F ? G_CYC_1CYCLE : G_CYC_2CYCLE);
     gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
     gSPSetGeometryMode(glistp++, G_ZBUFFER);
 
