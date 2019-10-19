@@ -2,6 +2,7 @@ bitmap = require("wavefront64deps.bitmap")
 obj_loader = require("wavefront64deps.obj_loader")
 require("wavefront64deps.BinDecHex")
 require("wavefront64deps.util")
+inspect = require("wavefront64deps.inspect")
 
 interactive_input = false
 
@@ -26,6 +27,20 @@ Please note that this currently only works with objects that:
 * have one bitmap texture with a max size of 32x32 (sprites can be any size!)
 And also vertex colours don't work yet. I'll work on that!
 ]]
+
+
+
+function Vec3d_normalise(x,y,z)
+  if (x == 0 and y == 0) then
+    return x, y, z
+  end
+
+  magnitude = math.sqrt(x * x + y * y + z * z)
+  x = x / magnitude
+  y = y / magnitude
+  z = z / magnitude
+  return x, y, z
+end
 
 function w64_main()
 	print("WAVEFRONT64")
@@ -108,7 +123,7 @@ function w64_initTexturedObject(argument)
 	-- asks user what tf they want
 	print("Vertex scale? [int. default:30]" )
 	io.write(">")
-	local object_scale = interactive_input and tonumber(io.read()) or 30
+	local object_scale = interactive_input and tonumber(io.read()) or 30  -- TODO figure out what this should be
 	print("Object Scale set to "..object_scale)
 
 	print("Use gsSP1Triangle? (for Fast3D) [y/n. default:n]" )
@@ -203,8 +218,15 @@ function w64_VFFormat(obj_Table, object_scale)
 					make vert STRING for THIS unique combination
 					TODO: change 130 to the actual vert colors (if any)
 				--]] 
+
+				normX,normY,normZ = Vec3d_normalise(
+					obj_Table.vn[obj_Table.f[i][j].vn].x ,
+					obj_Table.vn[obj_Table.f[i][j].vn].y ,
+					obj_Table.vn[obj_Table.f[i][j].vn].z
+				)
+
 				local vertString = string.format(
-					"\t{%s, %s, %s, 0, %s, %s, 130, 130, 130, 0},", 
+					"\t{%s, %s, %s, 0, %s, %s, %s, %s, %s, 0},", 
 					-- was "\t{%s, %s, %s, 0, %s, %s, 130, 130, 130, 0}, //id: %i", for debugging
 					-- the id being vertsCreated
 
@@ -214,8 +236,13 @@ function w64_VFFormat(obj_Table, object_scale)
 					formatVert( obj_Table.v[obj_Table.f[i][j].v].z , object_scale),
 					-- output texture coordinates
 					padStringLeft(math.floor(2*object_scale*(bmp.height+1)*obj_Table.vt[obj_Table.f[i][j].vt].v),6),
-					padStringLeft(math.floor(2*object_scale*(bmp.width+1)*obj_Table.vt[obj_Table.f[i][j].vt].u),6)
+					padStringLeft(math.floor(2*object_scale*(bmp.width+1)*obj_Table.vt[obj_Table.f[i][j].vt].u),6),
+					-- output normals
+					formatVert( normX, 128 ),
+					formatVert( normY, 128 ),
+					formatVert( normZ , 128 )
 				)
+				-- print(inspect(obj_Table.vn[obj_Table.f[i][j].v]))
 
 				-- put vertex in vertexTable
 				-- At the index, eg. "3/6" (vertex 3, tex vertex 6) create a unique vert
