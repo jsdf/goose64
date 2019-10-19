@@ -21,12 +21,12 @@ static Vp vp = {
 Lights1 sun_light = gdSPDefLights1(80,
                                    80,
                                    80, /* no ambient light */
-                                   200,
-                                   200,
-                                   200, /* white light */
-                                   0,
-                                   -1,
-                                   1);
+                                   255,
+                                   255,
+                                   255, /* white light */
+                                   80,
+                                   80,
+                                   0);
 /*
   The initialization of RDP
 */

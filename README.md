@@ -36,3 +36,16 @@ then build the rom with
 ```
 
 which produces the rom file nu1.n64
+
+
+## generate n64 header files from the OBJ models
+```
+./rebuild_models.sh # edit to reference models to rebuild
+```
+
+## export map object data
+
+- open blender (or use `./blender.sh` to see console output)
+- in the blender text editor editor, open export_positions.py
+- run script
+- see header file is created

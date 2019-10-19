@@ -15,10 +15,12 @@
 
 #include <OpenGL/gl.h>
 #include <glm/glm.hpp>
+#include "constants.h"
 #include "game.h"
 #include "gameobject.h"
 #include "gl/objloader.hpp"
 #include "gl/texture.hpp"
+#include "university_map.h"
 #include "vec3d.h"
 
 #define RAND(x) (rand() % x) /* random number between 0 to x */
@@ -313,36 +315,41 @@ void processSpecialKeys(int key, int xx, int yy) {
   }
 }
 
+char* ModelTypeStrings[] = {
+    "NoneModel",    "GooseModel",    "BookModel", "CakeModel",
+    "UniBldgModel", "UniFloorModel", "BushModel", "MAX_MODEL_TYPE",
+};
+
 int main(int argc, char** argv) {
   int i;
 
   Game* game;
   GameObject* obj;
+  GameObject* loadObj;
 
   Game_init();
 
   game = Game_get();
-  obj = game->worldObjects;
-  for (i = 0; i < game->worldObjectsCount; i++) {
-    switch (i) {
-      case 0:
-        Vec3d_set(&obj->position, -62.172928, 0.000000, 6.272056);
-        obj->rotationZ = 0.000000;
-        obj->modelType = UniBldgModel;
-        break;
-      case 1:
-        Vec3d_set(&obj->position, 11.133299, -1.075561, 0.000000);
-        obj->rotationZ = 0.000000;
-        obj->modelType = UniFloorModel;
-        break;
-      default:
+  loadObj = university_map_data;
+  for (i = 0, obj = game->worldObjects; i < MAX_WORLD_OBJECTS; i++, obj++) {
+    if (i < UNIVERSITY_MAP_COUNT) {
+      memcpy(obj, loadObj, sizeof(GameObject));
+      // the map exporter scales the world up by this much, so we reverse it
+      // in for the opengl version
+      obj->position.x = obj->position.x / (N64_SCALE_FACTOR * 1.0F);
+      obj->position.y = obj->position.y / (N64_SCALE_FACTOR * 1.0F);
+      obj->position.z = obj->position.z / (N64_SCALE_FACTOR * 1.0F);
 
-        Vec3d_set(&obj->position, RAND(100 - 100 / 2), 2, RAND(100 - 100 / 2));
-        obj->rotationZ = RAND(360);
-        obj->modelType = GooseModel;
+      printf("loaded obj %s  {x:%.3f, y:%.3f, z:%.3f}\n",
+             ModelTypeStrings[obj->modelType], obj->position.x, obj->position.y,
+             obj->position.z);
+      loadObj++;
+    } else {
+      // default object
+      Vec3d_set(&obj->position, RAND(100 - 100 / 2), 2, RAND(100 - 100 / 2));
+      obj->rotationZ = RAND(360);
+      obj->modelType = NoneModel;
     }
-
-    obj++;
   }
 
   // init GLUT and create window
@@ -364,9 +371,10 @@ int main(int argc, char** argv) {
   glEnable(GL_CULL_FACE);
 
   // load goose
-  loadModel(GooseModel, "goose1baked.obj", "goosetex.bmp");
+  loadModel(GooseModel, "goose.obj", "goosetex.bmp");
   loadModel(UniFloorModel, "university_floor.obj", "green.bmp");
   loadModel(UniBldgModel, "university_bldg.obj", "redbldg.bmp");
+  loadModel(BushModel, "bush.obj", "bush.bmp");
 
   // enter GLUT event processing cycle
   glutMainLoop();

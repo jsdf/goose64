@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef __N64__
+#include <gu.h>
+#endif
+
 Vec3d* Vec3d_alloc(float x, float y, float z) {
   Vec3d* created = (Vec3d*)malloc(sizeof(Vec3d));
   created->x = x;
@@ -32,6 +36,14 @@ Vec3d* Vec3d_copyFrom(Vec3d* self, Vec3d* other) {
   self->y = other->y;
   self->z = other->z;
   return self;
+}
+
+float Vec3d_distanceTo(Vec3d* self, Vec3d* other) {
+  float xDist, yDist, zDist;
+  xDist = self->x - other->x;
+  yDist = self->y - other->y;
+  zDist = self->z - other->z;
+  return sqrtf((xDist * xDist) + (yDist * yDist) + (zDist * zDist));
 }
 
 char* Vec3d_toString(Vec3d* self, char* buffer) {

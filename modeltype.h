@@ -9,6 +9,7 @@ typedef enum ModelType {
   CakeModel,
   UniBldgModel,
   UniFloorModel,
+  BushModel,
   MAX_MODEL_TYPE
 } ModelType;
 

@@ -7,27 +7,32 @@
 #include <assert.h>
 #include <nusys.h>
 #include <stdlib.h>
+#include "bush.h"
 #include "constants.h"
 #include "game.h"
 #include "gameobject.h"
-#include "goose1baked.h"
+#include "goose.h"
 #include "graphic.h"
 #include "main.h"
 #include "modeltype.h"
 #include "testingCube.h"
+#include "university_bldg.h"
+#include "university_floor.h"
+#include "university_map.h"
 #include "vec3d.h"
 
-static float theta;    /* The rotational angle of the square */
-static float triPos_x; /* The display position-X */
-static float triPos_y; /* The display position-Y */
+static float modelRot; /* The rotational angle of the model */
 
 static Vec3d viewPos;
+static Vec3d viewRot;
 
 static u16 perspNorm;
 static u32 near_plane; /* Near Plane */
 static u32 far_plane;  /* Far Plane */
 
 static float vel;
+static int modeSetting;
+static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 
 void drawStuff(Dynamic* dynamicp);
 
@@ -36,33 +41,42 @@ void drawStuff(Dynamic* dynamicp);
 /* The initialization of stage 0 */
 void initStage00() {
   Game* game;
-  GameObject* worldObjectPtr;
   GameObject* obj;
+  GameObject* loadObj;
   int i;
 
-  triPos_x = 0.0;
-  triPos_y = 0.0;
-  theta = 0.0;
+  modelRot = 0.0;
   vel = 1.0;
+  modeSetting = 1;
   near_plane = 10;
   far_plane = 10000;
   Vec3d_init(&viewPos, 0.0F, 0.0F, -400.0F);
+  Vec3d_init(&viewRot, 0.0F, 0.0F, 0.0F);
 
   Game_init();
 
   game = Game_get();
-  worldObjectPtr = game->worldObjects;
+  obj = game->worldObjects;
+  loadObj = university_map_data;
+
+  assert(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
   for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
-    obj = worldObjectPtr;
-    obj->position.x = RAND(OBJ_START_VAL) - OBJ_START_VAL / 2;
-    obj->position.y = RAND(OBJ_START_VAL) - OBJ_START_VAL / 2;
-    obj->position.z = -50.0F;
-    if (i == 0) {
+    if (i < UNIVERSITY_MAP_COUNT) {
+      memcpy(obj, loadObj, sizeof(GameObject));
+      loadObj++;
+    } else {
+      obj->position.x = RAND(OBJ_START_VAL) - OBJ_START_VAL / 2;
+      obj->position.y = RAND(OBJ_START_VAL) - OBJ_START_VAL / 2;
+      obj->position.z = -50.0F + RAND(100);
+      if (i % 2 == 0) {
+        obj->modelType = BushModel;
+      } else {
+        obj->modelType = GooseModel;
+      }
       obj->modelType = NoneModel;
     }
-    obj->modelType = GooseModel;
 
-    worldObjectPtr++;
+    obj++;
   }
 }
 
@@ -85,7 +99,12 @@ void makeDL00() {
   guPerspective(&dynamicp->projection, &perspNorm, 30,
                 (f32)SCREEN_WD / (f32)SCREEN_HT, near_plane, far_plane, 1.0);
 
-  guTranslate(&dynamicp->translate, viewPos.x, viewPos.y, viewPos.z);
+  guPosition(&dynamicp->camera,
+             viewRot.x,  // roll
+             viewRot.y,  // pitch
+             viewRot.z,  // yaw
+             1.0F,       // scale
+             viewPos.x, viewPos.y, viewPos.z);
 
   drawStuff(dynamicp);
 
@@ -116,7 +135,7 @@ void makeDL00() {
     nuDebConCPuts(0, conbuf);
 
     nuDebConTextPos(0, 12, 26);
-    sprintf(conbuf, "theta=%5.1f", theta);
+    sprintf(conbuf, "modelRot=%5.1f", modelRot);
     nuDebConCPuts(0, conbuf);
 
     nuDebConTextPos(0, 12, 27);
@@ -142,6 +161,7 @@ void moveWorldObjects() {
   game = Game_get();
   obj = game->worldObjects;
   for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
+    continue;  // no
     obj->position.x += 0.01F;
     obj->position.y += 0.01F;
     obj->position.z -= 0.1F;
@@ -156,8 +176,8 @@ void updateGame00(void) {
   nuContDataGetEx(contdata, 0);
 
   /* Change the display position by stick data */
-  viewPos.x = contdata->stick_x;
-  triPos_y = contdata->stick_y;
+  viewRot.x = contdata->stick_y;  // rot around x
+  viewRot.y = contdata->stick_x;  // rot around y
 
   /* The reverse rotation by the A button */
   if (contdata[0].trigger & A_BUTTON) {
@@ -165,30 +185,40 @@ void updateGame00(void) {
   }
 
   /* Rotate fast while pushing the B button */
-  if (contdata[0].button & B_BUTTON)
-    theta += vel * 3.0;
-  else
-    theta += vel;
+  // if (contdata[0].button & B_BUTTON) {
+  //   modelRot += vel * 3.0;
+  // } else {
+  //   modelRot += vel;
+  // }
 
-  if (theta > 360.0)
-    theta -= 360.0;
-  else if (theta < 0.0)
-    theta += 360.0;
+  if (contdata[0].button & B_BUTTON) {
+    modeSetting = -modeSetting;
+  }
+
+  if (modelRot > 360.0) {
+    modelRot -= 360.0;
+  } else if (modelRot < 0.0) {
+    modelRot += 360.0;
+  }
 
   /* Change the moving speed with up/down buttons of controller */
-  if (contdata[0].button & U_JPAD)
+  if (contdata[0].button & U_JPAD) {
     viewPos.z += 10.0;
+  }
 
-  if (contdata[0].button & D_JPAD)
+  if (contdata[0].button & D_JPAD) {
     viewPos.z -= 10.0;
+  }
 
   /* It comes back near if it goes too far */
-  if (viewPos.z < (600.0 - far_plane))
+  if (viewPos.z < (600.0 - far_plane)) {
     viewPos.z = 600.0 - near_plane;
+  }
 
   /* It goes back far if it comes too near */
-  else if (viewPos.z > (600.0 - near_plane))
+  else if (viewPos.z > (600.0 - near_plane)) {
     viewPos.z = 600.0 - far_plane;
+  }
 
   /* << XY axis shift process >> */
 
@@ -199,57 +229,103 @@ void updateGame00(void) {
   if (contdata[0].button & R_JPAD)
     viewPos.x += 1.0;
 
+  if (contdata[0].button & U_CBUTTONS)
+    viewPos.y -= 30.0;
+
+  if (contdata[0].button & D_CBUTTONS) {
+    viewPos.y += 30.0;
+  }
+
+  if (contdata[0].button & L_CBUTTONS) {
+    viewPos.x -= 30.0;
+  }
+
+  if (contdata[0].button & R_CBUTTONS) {
+    viewPos.x += 30.0;
+  }
+
   moveWorldObjects();
+}
+
+int gameobjectDistComparatorFn(GameObject* a, GameObject* b) {
+  float distA, distB;
+  distA = Vec3d_distanceTo(&(a->position), &viewPos);
+  distB = Vec3d_distanceTo(&(b->position), &viewPos);
+  return distA - distB;
 }
 
 /* Draw a square */
 void drawStuff(Dynamic* dynamicp) {
   Game* game;
-  GameObject* worldObjectPtr;
   GameObject* obj;
   int i;
+
   game = Game_get();
 
+  for (i = 0, obj = game->worldObjects; i < MAX_WORLD_OBJECTS; i++, obj++) {
+    sortedObjects[i] = obj;
+  }
+
+  // qsort(sortedObjects, MAX_WORLD_OBJECTS, sizeof(GameObject*),
+  //       gameobjectDistComparatorFn);
+
   // render world objects
-  worldObjectPtr = game->worldObjects;
   for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
+    obj = sortedObjects[i];
+    if (obj->modelType == NoneModel) {
+      continue;
+    }
     // setup view
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
               G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
-    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->translate)),
+    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->camera)),
               G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
 
     gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
     gDPSetCycleType(glistp++, vel > 0.0F ? G_CYC_1CYCLE : G_CYC_2CYCLE);
     gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
-    gSPSetGeometryMode(glistp++, G_ZBUFFER);
+    gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH |
+                                     G_LIGHTING | G_CULL_BACK);
 
     // render textured models
     gSPTexture(glistp++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
     gDPSetTextureFilter(glistp++, G_TF_BILERP);
     gDPSetTexturePersp(glistp++, G_TP_PERSP);
-    gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
 
-    obj = worldObjectPtr;
-    guPosition(&dynamicp->obj_trans[i],
+    if (modeSetting > 0) {
+      gDPSetCombineMode(glistp++, G_CC_MODULATERGB, G_CC_MODULATERGB);
+    } else {
+      gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
+    }
+    guPosition(&dynamicp->objTransform[i],
                0.0F,            // roll
-               theta,           // pitch
-               obj->rotationZ,  // yaw
+               obj->rotationZ,  // pitch. but actually rot around z ???
+               0.0F,            // yaw
                1.0F,            // scale
                obj->position.x, obj->position.y, obj->position.z);
-    // guTranslate(&dynamicp->obj_trans[i], obj->position.x, obj->position.y,
-    //             obj->position.z);
-    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->obj_trans[i])),
+    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->objTransform[i])),
               G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
-    if (obj->modelType == GooseModel) {
-      gSPDisplayList(glistp++, Wtx_goose1baked);
-    } else {
-      gSPDisplayList(glistp++, Wtx_testingCube);  // use cube for now
+    switch (obj->modelType) {
+      case GooseModel:
+        gSPDisplayList(glistp++, Wtx_goose);
+        break;
+      case BushModel:
+        gSPDisplayList(glistp++, Wtx_bush);
+        break;
+      case UniBldgModel:
+        gSPDisplayList(glistp++, Wtx_university_bldg);
+        break;
+      case UniFloorModel:
+        gSPDisplayList(glistp++, Wtx_university_floor);
+        break;
+      default:
+        gSPDisplayList(glistp++, Wtx_testingCube);
+        break;
     }
+
     gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
 
     gDPPipeSync(glistp++);
-    worldObjectPtr++;
   }
 }

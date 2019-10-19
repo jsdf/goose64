@@ -20,16 +20,16 @@ CC  = gcc
 LD  = ld
 MAKEROM = mild
 
-LCDEFS =	-DNU_DEBUG -DF3DEX_GBI_2
+LCDEFS =	-DNU_DEBUG -DF3DEX_GBI_2 -D__N64__
 LCINCS =	-I. -nostdinc -I- -I$(NUSTDINCDIR) -I$(NUSYSINCDIR) -I$(ROOT)/usr/include/PR
 LCOPTS =	-G 0
 LDFLAGS = $(MKDEPOPT) -L$(LIB)  -L$(NUSYSLIBDIR) -L$(NUSTDLIBDIR)  -lnusys_d -lnustd -lgultra_d -L$(GCCDIR)/mipse/lib -lkmc
 
 OPTIMIZER =	-g
 
-APP =		nu1.out
+APP =		goose64.out
 
-TARGETS =	nu1.n64
+TARGETS =	goose64.n64
 
 HFILES =	main.h graphic.h goose1baked.h testingCube.h vec3d.h gameobject.h game.h modeltype.h
 

@@ -18,13 +18,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		73881962234D854C0057630E /* CopyFiles */ = {
+		73881962234D854C0057630E /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -45,7 +46,7 @@
 		734E1B252355700100FBF3CC /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = game.cpp; path = ../game.cpp; sourceTree = "<group>"; };
 		734E1B262355700100FBF3CC /* gameobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gameobject.cpp; path = ../gameobject.cpp; sourceTree = "<group>"; };
 		734E1B2A2355748100FBF3CC /* texture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = texture.cpp; path = ../gl/texture.cpp; sourceTree = "<group>"; };
-		73881964234D854C0057630E /* glgoose */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = glgoose; path = ../../../../../../../../.wine/drive_c/nintendo/n64kit/nusys/sample/nu1goose64/glgoose; sourceTree = BUILT_PRODUCTS_DIR; };
+		73881964234D854C0057630E /* glgoose */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = glgoose; path = goose64glut; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +117,7 @@
 			buildPhases = (
 				73881960234D854C0057630E /* Sources */,
 				73881961234D854C0057630E /* Frameworks */,
-				73881962234D854C0057630E /* CopyFiles */,
+				73881962234D854C0057630E /* Copy Files */,
 			);
 			buildRules = (
 			);

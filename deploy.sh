@@ -15,6 +15,8 @@ fi
 diskutil mount /dev/$EVERDRIVE64DEVICE
 
 ./build.sh
-cp *.n64 /Volumes/EVERDRIVE64/homebrew/
+for f in *.n64; do
+  cp -- "$f" "/Volumes/EVERDRIVE64/homebrew/aaa_$f";
+done
 echo "unmounting $EVERDRIVE64DEVICE"
 diskutil unmount /dev/$EVERDRIVE64DEVICE
