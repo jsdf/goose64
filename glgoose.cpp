@@ -40,6 +40,8 @@ typedef struct Model {
 
 Model models[MAX_MODEL_TYPE];
 
+static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
+
 void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   std::vector<glm::vec3> normals;  // Won't be used at the moment.
   loadOBJ(modelfile, models[modelType].vertices, models[modelType].uvs,
@@ -47,33 +49,10 @@ void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   models[modelType].texture = loadBMP_custom(texfile);
 }
 
-// int dummy = 5;
-
-void drawSnowMan() {
-  glColor3f(1.0f, 1.0f, 1.0f);
-
-  // Draw Body
-  glTranslatef(0.0f, 0.75f, 0.0f);
-  glutSolidSphere(0.75f, 20, 20);
-
-  // Draw Head
-  glTranslatef(0.0f, 1.0f, 0.0f);
-  glutSolidSphere(0.25f, 20, 20);
-
-  // Draw Eyes
-  glPushMatrix();
-  glColor3f(0.0f, 0.0f, 0.0f);
-  glTranslatef(0.05f, 0.10f, 0.18f);
-  glutSolidSphere(0.05f, 10, 10);
-  glTranslatef(-0.1f, 0.0f, 0.0f);
-  glutSolidSphere(0.05f, 10, 10);
-  glPopMatrix();
-
-  // Draw Nose
-  glColor3f(1.0f, 0.5f, 0.5f);
-  glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
-  glutSolidCone(0.08f, 0.5f, 10, 2);
-}
+char* ModelTypeStrings[] = {
+    "NoneModel",    "GooseModel",    "BookModel", "CakeModel",
+    "UniBldgModel", "UniFloorModel", "BushModel", "MAX_MODEL_TYPE",
+};
 
 void drawModel(ModelType modelType) {
   glColor3f(1.0f, 1.0f, 1.0f);  // whitish
@@ -161,6 +140,29 @@ float fwrap(float x, float lower, float upper) {
   return x;
 }
 
+void Vec3d_print(Vec3d* self) {
+  printf("{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
+}
+
+float gameobjectSortDist(GameObject* obj) {
+  // always render this at the back
+  if (obj->modelType == UniFloorModel) {
+    return 10000.0F;
+  } else {
+    return Vec3d_distanceTo(&obj->position, &cameraPos);
+  }
+}
+
+int gameobjectDistComparatorFn(const void* a, const void* b) {
+  float distA, distB;
+  GameObject *objA, *objB;
+  objA = *((GameObject**)a);
+  objB = *((GameObject**)b);
+  distA = gameobjectSortDist(objA);
+  distB = gameobjectSortDist(objB);
+  return distA - distB;
+}
+
 void updateWorld() {
   int i;
   Game* game;
@@ -180,7 +182,6 @@ void updateWorld() {
 void renderScene(void) {
   int i;
   Game* game;
-  GameObject* worldObjectPtr;
 
   updateWorld();
 
@@ -201,20 +202,22 @@ void renderScene(void) {
       0.0f, 1.0f, 0.0f                                              // up
   );
 
-  // Draw ground
-  // glColor3f(0.7f, 1.0f, 0.75f);
-  // glBegin(GL_QUADS);
-  // glVertex3f(-100.0f, 0.0f, -100.0f);
-  // glVertex3f(-100.0f, 0.0f, 100.0f);
-  // glVertex3f(100.0f, 0.0f, 100.0f);
-  // glVertex3f(100.0f, 0.0f, -100.0f);
-  // glEnd();
-
   game = Game_get();
-  worldObjectPtr = game->worldObjects;
-  for (i = 0; i < game->worldObjectsCount; i++) {
-    drawGameObject(worldObjectPtr);
-    worldObjectPtr++;
+
+  qsort(sortedObjects, MAX_WORLD_OBJECTS, sizeof(char*),
+        gameobjectDistComparatorFn);
+
+  printf("draw start\n");
+  // render world objects
+  for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
+    GameObject* obj = sortedObjects[i];
+    if (obj->modelType != NoneModel) {
+      printf("draw obj %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n",
+             ModelTypeStrings[obj->modelType],
+             Vec3d_distanceTo(&(obj->position), &cameraPos), obj->position.x,
+             obj->position.y, obj->position.z);
+      drawGameObject(sortedObjects[i]);
+    }
   }
 
   char debugtext[80];
@@ -315,11 +318,6 @@ void processSpecialKeys(int key, int xx, int yy) {
   }
 }
 
-char* ModelTypeStrings[] = {
-    "NoneModel",    "GooseModel",    "BookModel", "CakeModel",
-    "UniBldgModel", "UniFloorModel", "BushModel", "MAX_MODEL_TYPE",
-};
-
 int main(int argc, char** argv) {
   int i;
 
@@ -350,6 +348,11 @@ int main(int argc, char** argv) {
       obj->rotationZ = RAND(360);
       obj->modelType = NoneModel;
     }
+  }
+
+  // init sortedObjects pointers array
+  for (i = 0, obj = game->worldObjects; i < MAX_WORLD_OBJECTS; i++, obj++) {
+    sortedObjects[i] = obj;
   }
 
   // init GLUT and create window

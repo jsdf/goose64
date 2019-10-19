@@ -247,10 +247,23 @@ void updateGame00(void) {
   moveWorldObjects();
 }
 
-int gameobjectDistComparatorFn(GameObject* a, GameObject* b) {
+float gameobjectSortDist(GameObject* obj) {
+  switch (obj->modelType) {
+    case UniFloorModel:
+      // always render this at the back
+      return 10000.0F;
+  }
+
+  return Vec3d_distanceTo(&obj->position, &viewPos);
+}
+
+int gameobjectDistComparatorFn(const void* a, const void* b) {
   float distA, distB;
-  distA = Vec3d_distanceTo(&(a->position), &viewPos);
-  distB = Vec3d_distanceTo(&(b->position), &viewPos);
+  GameObject *objA, *objB;
+  objA = *((GameObject**)a);
+  objB = *((GameObject**)b);
+  distA = gameobjectSortDist(objA);
+  distB = gameobjectSortDist(objB);
   return distA - distB;
 }
 
@@ -266,8 +279,8 @@ void drawStuff(Dynamic* dynamicp) {
     sortedObjects[i] = obj;
   }
 
-  // qsort(sortedObjects, MAX_WORLD_OBJECTS, sizeof(GameObject*),
-  //       gameobjectDistComparatorFn);
+  qsort(sortedObjects, MAX_WORLD_OBJECTS, sizeof(GameObject*),
+        gameobjectDistComparatorFn);
 
   // render world objects
   for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
