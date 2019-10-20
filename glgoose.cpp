@@ -137,32 +137,6 @@ void drawGameObject(GameObject* obj) {
   glPopMatrix();
 }
 
-// this is a stupid function
-float fwrap(float x, float lower, float upper) {
-  if (x > upper) {
-    return lower;
-  } else if (x < lower) {
-    return upper;
-  }
-  return x;
-}
-
-void updateWorld() {
-  int i;
-  Game* game;
-  GameObject* obj;
-
-  game = Game_get();
-  obj = game->worldObjects;
-  for (i = 0; i < game->worldObjectsCount; i++) {
-    if (obj->modelType == GooseModel) {
-      obj->rotationZ = fwrap(obj->rotationZ + 2.0F, 0.0F, 360.0F);
-    }
-
-    obj++;
-  }
-}
-
 void renderScene(void) {
   int i;
   Game* game;
@@ -171,7 +145,7 @@ void renderScene(void) {
 
   game->viewPos = viewPos;
 
-  updateWorld();
+  Game_update();
 
   // Clear Color and Depth Buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

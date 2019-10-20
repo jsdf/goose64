@@ -43,7 +43,7 @@ static float vel;
 static RenderMode renderModeSetting;
 static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 
-void drawStuff(Dynamic* dynamicp);
+void drawWorldObjects(Dynamic* dynamicp);
 
 #define OBJ_START_VAL 1000
 
@@ -121,7 +121,7 @@ void makeDL00() {
              1.0F,       // scale
              viewPos.x, viewPos.y, viewPos.z);
 
-  drawStuff(dynamicp);
+  drawWorldObjects(dynamicp);
 
   gDPFullSync(glistp++);
   gSPEndDisplayList(glistp++);
@@ -238,10 +238,11 @@ void updateGame00(void) {
   if (contdata[0].button & R_CBUTTONS) {
     viewPos.x += 30.0;
   }
+
+  Game_update();
 }
 
-/* Draw a square */
-void drawStuff(Dynamic* dynamicp) {
+void drawWorldObjects(Dynamic* dynamicp) {
   Game* game;
   GameObject* obj;
   int i, useZBuffering;
