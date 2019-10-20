@@ -50,3 +50,7 @@ char* Vec3d_toString(Vec3d* self, char* buffer) {
   sprintf(buffer, "{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
   return buffer;
 }
+
+void Vec3d_print(Vec3d* self) {
+  printf("{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
+}

@@ -15,11 +15,20 @@
 #include "graphic.h"
 #include "main.h"
 #include "modeltype.h"
+#include "renderer.h"
 #include "testingCube.h"
 #include "university_bldg.h"
 #include "university_floor.h"
 #include "university_map.h"
 #include "vec3d.h"
+
+typedef enum RenderMode {
+  TextureAndLightingRenderMode,
+  TextureNoLightingRenderMode,
+  NoTextureNoLightingRenderMode,
+  LightingNoTextureRenderMode,
+  MAX_RENDER_MODE
+} RenderMode;
 
 static float modelRot; /* The rotational angle of the model */
 
@@ -31,7 +40,7 @@ static u32 near_plane; /* Near Plane */
 static u32 far_plane;  /* Far Plane */
 
 static float vel;
-static int modeSetting;
+static RenderMode renderModeSetting;
 static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 
 void drawStuff(Dynamic* dynamicp);
@@ -47,7 +56,7 @@ void initStage00() {
 
   modelRot = 0.0;
   vel = 1.0;
-  modeSetting = 1;
+  renderModeSetting = TextureAndLightingRenderMode;
   near_plane = 10;
   far_plane = 10000;
   Vec3d_init(&viewPos, 0.0F, 0.0F, -400.0F);
@@ -77,6 +86,12 @@ void initStage00() {
     }
 
     obj++;
+  }
+
+  // init sortedObjects pointer array, used for painter's algorithm rendering
+  for (i = 0, obj = game->worldObjects; i < game->worldObjectsCount;
+       i++, obj++) {
+    sortedObjects[i] = obj;
   }
 }
 
@@ -139,7 +154,7 @@ void makeDL00() {
     nuDebConCPuts(0, conbuf);
 
     nuDebConTextPos(0, 12, 27);
-    sprintf(conbuf, "viewPos=%p", viewPos);
+    sprintf(conbuf, "renderMode=%p", renderModeSetting);
     nuDebConCPuts(0, conbuf);
   } else {
     nuDebConTextPos(0, 9, 24);
@@ -151,23 +166,6 @@ void makeDL00() {
 
   /* Switch display list buffers */
   gfx_gtask_no ^= 1;
-}
-
-void moveWorldObjects() {
-  Game* game;
-  GameObject* obj;
-  int i;
-
-  game = Game_get();
-  obj = game->worldObjects;
-  for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
-    continue;  // no
-    obj->position.x += 0.01F;
-    obj->position.y += 0.01F;
-    obj->position.z -= 0.1F;
-
-    obj++;
-  }
 }
 
 /* The game progressing process for stage 0 */
@@ -184,15 +182,12 @@ void updateGame00(void) {
     vel = -vel;
   }
 
-  /* Rotate fast while pushing the B button */
-  // if (contdata[0].button & B_BUTTON) {
-  //   modelRot += vel * 3.0;
-  // } else {
-  //   modelRot += vel;
-  // }
-
+  // text render modes
   if (contdata[0].button & B_BUTTON) {
-    modeSetting = -modeSetting;
+    renderModeSetting++;
+    if (renderModeSetting >= MAX_RENDER_MODE) {
+      renderModeSetting = 0;
+    }
   }
 
   if (modelRot > 360.0) {
@@ -243,47 +238,20 @@ void updateGame00(void) {
   if (contdata[0].button & R_CBUTTONS) {
     viewPos.x += 30.0;
   }
-
-  moveWorldObjects();
-}
-
-float gameobjectSortDist(GameObject* obj) {
-  switch (obj->modelType) {
-    case UniFloorModel:
-      // always render this at the back
-      return 10000.0F;
-  }
-
-  return Vec3d_distanceTo(&obj->position, &viewPos);
-}
-
-int gameobjectDistComparatorFn(const void* a, const void* b) {
-  float distA, distB;
-  GameObject *objA, *objB;
-  objA = *((GameObject**)a);
-  objB = *((GameObject**)b);
-  distA = gameobjectSortDist(objA);
-  distB = gameobjectSortDist(objB);
-  return distA - distB;
 }
 
 /* Draw a square */
 void drawStuff(Dynamic* dynamicp) {
   Game* game;
   GameObject* obj;
-  int i;
+  int i, useZBuffering;
 
   game = Game_get();
 
-  for (i = 0, obj = game->worldObjects; i < MAX_WORLD_OBJECTS; i++, obj++) {
-    sortedObjects[i] = obj;
-  }
-
-  qsort(sortedObjects, MAX_WORLD_OBJECTS, sizeof(GameObject*),
-        gameobjectDistComparatorFn);
+  Renderer_sortWorldObjects(sortedObjects, game->worldObjectsCount);
 
   // render world objects
-  for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
+  for (i = 0; i < game->worldObjectsCount; i++) {
     obj = sortedObjects[i];
     if (obj->modelType == NoneModel) {
       continue;
@@ -296,20 +264,38 @@ void drawStuff(Dynamic* dynamicp) {
 
     gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
     gDPSetCycleType(glistp++, vel > 0.0F ? G_CYC_1CYCLE : G_CYC_2CYCLE);
-    gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
-    gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH |
-                                     G_LIGHTING | G_CULL_BACK);
+    useZBuffering = gameobjectHasZBuffering(obj);
+    if (useZBuffering) {
+      gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+      gSPSetGeometryMode(glistp++, G_ZBUFFER);
+    } else {
+      gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
+      gSPClearGeometryMode(glistp++, G_ZBUFFER);
+    }
 
     // render textured models
     gSPTexture(glistp++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
     gDPSetTextureFilter(glistp++, G_TF_BILERP);
     gDPSetTexturePersp(glistp++, G_TP_PERSP);
 
-    if (modeSetting > 0) {
-      gDPSetCombineMode(glistp++, G_CC_MODULATERGB, G_CC_MODULATERGB);
-    } else {
+    if (renderModeSetting == TextureNoLightingRenderMode) {
+      gSPSetGeometryMode(glistp++, G_SHADE | G_SHADING_SMOOTH | G_CULL_BACK);
       gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
+    } else if (renderModeSetting == TextureAndLightingRenderMode) {
+      gSPSetGeometryMode(glistp++,
+                         G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_CULL_BACK);
+      gDPSetCombineMode(glistp++, G_CC_MODULATERGB, G_CC_MODULATERGB);
+    } else if (renderModeSetting == LightingNoTextureRenderMode) {
+      gSPSetGeometryMode(glistp++,
+                         G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_CULL_BACK);
+      gDPSetCombineMode(glistp++, G_CC_SHADE, G_CC_SHADE);
+    } else {  // NoTextureNoLightingRenderMode
+      gDPSetPrimColor(glistp++, 0, 0, /*r*/ 180, /*g*/ 180, /*b*/ 180,
+                      /*a*/ 255);
+      gSPSetGeometryMode(glistp++, G_CULL_BACK);
+      gDPSetCombineMode(glistp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
     }
+
     guPosition(&dynamicp->objTransform[i],
                0.0F,            // roll
                obj->rotationZ,  // pitch. but actually rot around z ???

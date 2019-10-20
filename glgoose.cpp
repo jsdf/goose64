@@ -20,6 +20,7 @@
 #include "gameobject.h"
 #include "gl/objloader.hpp"
 #include "gl/texture.hpp"
+#include "renderer.h"
 #include "university_map.h"
 #include "vec3d.h"
 
@@ -28,7 +29,7 @@
 // actual vector representing the camera's direction
 float cameraLX = 0.0f, cameraLZ = -1.0f;
 // XZ position of the camera
-Vec3d cameraPos = {0.0f, 1.0f, 0.0f};
+Vec3d viewPos = {0.0f, 1.0f, 0.0f};
 
 float cameraAngle = 0.0f;
 
@@ -40,6 +41,7 @@ typedef struct Model {
 
 Model models[MAX_MODEL_TYPE];
 
+// TODO: allocate this in map header file with correct size
 static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 
 void loadModel(ModelType modelType, char* modelfile, char* texfile) {
@@ -125,6 +127,11 @@ void drawGameObject(GameObject* obj) {
   glRotatef(obj->rotationZ, 0, 1, 0);
 
   if (obj->modelType != NoneModel) {
+    if (Renderer_isZBufferedGameObject(obj)) {
+      glEnable(GL_DEPTH_TEST);
+    } else {
+      glDisable(GL_DEPTH_TEST);
+    }
     drawModel(obj->modelType);
   }
   glPopMatrix();
@@ -138,29 +145,6 @@ float fwrap(float x, float lower, float upper) {
     return upper;
   }
   return x;
-}
-
-void Vec3d_print(Vec3d* self) {
-  printf("{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
-}
-
-float gameobjectSortDist(GameObject* obj) {
-  // always render this at the back
-  if (obj->modelType == UniFloorModel) {
-    return 10000.0F;
-  } else {
-    return Vec3d_distanceTo(&obj->position, &cameraPos);
-  }
-}
-
-int gameobjectDistComparatorFn(const void* a, const void* b) {
-  float distA, distB;
-  GameObject *objA, *objB;
-  objA = *((GameObject**)a);
-  objB = *((GameObject**)b);
-  distA = gameobjectSortDist(objA);
-  distB = gameobjectSortDist(objB);
-  return distA - distB;
 }
 
 void updateWorld() {
@@ -183,6 +167,10 @@ void renderScene(void) {
   int i;
   Game* game;
 
+  game = Game_get();
+
+  game->viewPos = viewPos;
+
   updateWorld();
 
   // Clear Color and Depth Buffers
@@ -196,32 +184,29 @@ void renderScene(void) {
   // Reset transformations
   glLoadIdentity();
   // Set the camera
-  gluLookAt(                                                        //
-      cameraPos.x, cameraPos.y, cameraPos.z,                        // eye
-      cameraPos.x + cameraLX, cameraPos.y, cameraPos.z + cameraLZ,  // center
-      0.0f, 1.0f, 0.0f                                              // up
+  gluLookAt(                                                  //
+      viewPos.x, viewPos.y, viewPos.z,                        // eye
+      viewPos.x + cameraLX, viewPos.y, viewPos.z + cameraLZ,  // center
+      0.0f, 1.0f, 0.0f                                        // up
   );
 
-  game = Game_get();
-
-  qsort(sortedObjects, MAX_WORLD_OBJECTS, sizeof(char*),
-        gameobjectDistComparatorFn);
+  Renderer_sortWorldObjects(sortedObjects, game->worldObjectsCount);
 
   printf("draw start\n");
   // render world objects
-  for (i = 0; i < MAX_WORLD_OBJECTS; i++) {
+  for (i = 0; i < game->worldObjectsCount; i++) {
     GameObject* obj = sortedObjects[i];
     if (obj->modelType != NoneModel) {
       printf("draw obj %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n",
              ModelTypeStrings[obj->modelType],
-             Vec3d_distanceTo(&(obj->position), &cameraPos), obj->position.x,
+             Vec3d_distanceTo(&(obj->position), &viewPos), obj->position.x,
              obj->position.y, obj->position.z);
       drawGameObject(sortedObjects[i]);
     }
   }
 
   char debugtext[80];
-  Vec3d_toString(&cameraPos, debugtext);
+  Vec3d_toString(&viewPos, debugtext);
   drawString(debugtext, 20, 20);
 
   glutSwapBuffers();
@@ -242,31 +227,31 @@ void turnRight() {
 }
 
 void moveForward() {
-  cameraPos.x += cameraLX * 1.0f;
-  cameraPos.z += cameraLZ * 1.0f;
+  viewPos.x += cameraLX * 1.0f;
+  viewPos.z += cameraLZ * 1.0f;
 }
 
 void moveBack() {
-  cameraPos.x -= cameraLX * 1.0f;
-  cameraPos.z -= cameraLZ * 1.0f;
+  viewPos.x -= cameraLX * 1.0f;
+  viewPos.z -= cameraLZ * 1.0f;
 }
 
 void moveLeft() {
-  cameraPos.x -= cameraLZ * -1.0f;
-  cameraPos.z -= cameraLX * 1.0f;
+  viewPos.x -= cameraLZ * -1.0f;
+  viewPos.z -= cameraLX * 1.0f;
 }
 
 void moveRight() {
-  cameraPos.x += cameraLZ * -1.0f;
-  cameraPos.z += cameraLX * 1.0f;
+  viewPos.x += cameraLZ * -1.0f;
+  viewPos.z += cameraLX * 1.0f;
 }
 
 void moveUp() {
-  cameraPos.y += 1.0f;
+  viewPos.y += 1.0f;
 }
 
 void moveDown() {
-  cameraPos.y -= 1.0f;
+  viewPos.y -= 1.0f;
 }
 
 void processNormalKeys(unsigned char key, int _x, int _y) {
@@ -323,37 +308,32 @@ int main(int argc, char** argv) {
 
   Game* game;
   GameObject* obj;
-  GameObject* loadObj;
 
-  Game_init();
-
+  Game_init(university_map_data, UNIVERSITY_MAP_COUNT);
   game = Game_get();
-  loadObj = university_map_data;
-  for (i = 0, obj = game->worldObjects; i < MAX_WORLD_OBJECTS; i++, obj++) {
-    if (i < UNIVERSITY_MAP_COUNT) {
-      memcpy(obj, loadObj, sizeof(GameObject));
-      // the map exporter scales the world up by this much, so we reverse it
-      // in for the opengl version
-      obj->position.x = obj->position.x / (N64_SCALE_FACTOR * 1.0F);
-      obj->position.y = obj->position.y / (N64_SCALE_FACTOR * 1.0F);
-      obj->position.z = obj->position.z / (N64_SCALE_FACTOR * 1.0F);
 
-      printf("loaded obj %s  {x:%.3f, y:%.3f, z:%.3f}\n",
-             ModelTypeStrings[obj->modelType], obj->position.x, obj->position.y,
-             obj->position.z);
-      loadObj++;
-    } else {
-      // default object
-      Vec3d_set(&obj->position, RAND(100 - 100 / 2), 2, RAND(100 - 100 / 2));
-      obj->rotationZ = RAND(360);
-      obj->modelType = NoneModel;
-    }
+  game->viewPos = viewPos;
+
+  for (i = 0, obj = game->worldObjects; i < game->worldObjectsCount;
+       i++, obj++) {
+    // the map exporter scales the world up by this much, so we reverse it
+    // in for the opengl version
+    obj->position.x = obj->position.x / (N64_SCALE_FACTOR * 1.0F);
+    obj->position.y = obj->position.y / (N64_SCALE_FACTOR * 1.0F);
+    obj->position.z = obj->position.z / (N64_SCALE_FACTOR * 1.0F);
+
+    printf("loaded obj %s  {x:%.3f, y:%.3f, z:%.3f}\n",
+           ModelTypeStrings[obj->modelType], obj->position.x, obj->position.y,
+           obj->position.z);
   }
 
   // init sortedObjects pointers array
-  for (i = 0, obj = game->worldObjects; i < MAX_WORLD_OBJECTS; i++, obj++) {
+  for (i = 0, obj = game->worldObjects; i < game->worldObjectsCount;
+       i++, obj++) {
     sortedObjects[i] = obj;
   }
+
+  assert(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
 
   // init GLUT and create window
   glutInit(&argc, argv);
