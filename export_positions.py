@@ -14,8 +14,13 @@ out = """
 #ifndef %s
 #define %s 1
 #include "gameobject.h"
+
+""" % (include_guard,include_guard)
+
+out += """
 GameObject %s_data[] = {
-""" % (include_guard,include_guard, filename)
+""" % ( filename)
+
 for obj in world_objects:
   pos = obj.location
   rot = obj.rotation_euler
