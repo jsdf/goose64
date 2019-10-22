@@ -133,6 +133,7 @@ void makeDL00() {
   /* projection, viewing, modeling matrix set */
   guPerspective(&dynamicp->projection, &perspNorm, 45,
                 (f32)SCREEN_WD / (f32)SCREEN_HT, nearPlane, farPlane, 1.0);
+  gSPPerspNormalize(glistp++, perspNorm);
 
   if (game->freeView) {
     guPosition(&dynamicp->camera,
