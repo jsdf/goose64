@@ -70,31 +70,10 @@ unsigned short Text_testingCube_testCubeTex_diff[] = {
 	0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0x07c1,0x07c1,0x07c1,0x07c1,0x07c1,0x07c1,0x07c1,0x07c1,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
 };
 
-Vtx_tn Vtx_testingCube_mesh01_0[14] = {
-	{   30,   -30,    30, 0,      0,    990,     0,  -128,     0, 0},
-	{  -30,   -30,    30, 0,    495,    990,     0,  -128,     0, 0},
-	{  -30,   -30,   -30, 0,    495,    495,     0,  -128,     0, 0},
-	{   30,    30,   -30, 0,   1484,    495,     0,   128,     0, 0},
-	{  -30,    30,   -30, 0,    990,    495,     0,   128,     0, 0},
-	{  -30,    30,    30, 0,    990,    990,     0,   128,     0, 0},
-	{   30,    30,   -30, 0,    990,   1979,   128,     0,     0, 0},
-	{   29,    30,    30, 0,    990,   1484,   128,     0,     0, 0},
-	{   30,   -30,    30, 0,    495,   1484,   128,     0,     0, 0},
-	{   30,   -30,   -30, 0,    495,      0,     0,     0,  -128, 0},
-	{   30,   -30,   -30, 0,      0,    495,     0,  -128,     0, 0},
-	{   29,    30,    30, 0,   1484,    990,     0,   128,     0, 0},
-	{   30,   -30,   -30, 0,    495,   1979,   128,     0,     0, 0},
-	{   30,    30,   -30, 0,    990,      0,     0,     0,  -128, 0},
-};
+
 
 Gfx Vtx_testingCube_mesh01_dl[] = {
-	gsSPVertex(&Vtx_testingCube_mesh01_0[0], 14, 0),
-	gsSP2Triangles(0,1,2,0,3,4,5,0),
-	gsSP2Triangles(6,7,8,0,7,5,1,0),
-	gsSP2Triangles(5,4,2,0,9,2,4,0),
-	gsSP2Triangles(10,0,2,0,11,3,5,0),
-	gsSP2Triangles(12,6,8,0,8,7,1,0),
-	gsSP2Triangles(1,5,2,0,13,9,4,0),
+	,
 	gsSPEndDisplayList(),
 };
 

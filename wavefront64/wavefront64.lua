@@ -63,7 +63,7 @@ function w64_main()
 		local faceString 					= w64_outputTriangles(facesinpacks, facesinpacksrefs, fast3d, objname)
 		local displayListString 			= w64_outputDisplayList(objname,texturename)
 		final_file_output = {metaString,textureString,vertexString,faceString,displayListString}
-		filename = objname
+		filename = arg[2]
 	elseif(arg[1]:lower()=="spr") then
 		-- SPRITE ONLY PARSING
 		-- functional pipeline
@@ -71,18 +71,21 @@ function w64_main()
 		local bmptable, previewtable 	= w64_bmpFileToC(bmp)
 		local metastring, datastring 	= w64_outputTexture(0,objname,previewtable,bmptable)
 		final_file_output = {metastring, datastring}
-		filename = objname
+		filename = arg[2]
 	else
 		err("Improper operation type: "..arg[1].."!")
 	end
 
+
+	local output_filename = string.gsub(filename, "%.%w+$", ".h")
+
 	-- write file
-	file = io.open(filename..".h","w")
+	file = io.open(output_filename,"w")
 	io.output(file)
 	io.write(table.concat(final_file_output,"\n\n"))
 	io.close(file)
 	print("=================================")
-	print(string.format("DONE! Output file: %s.h",filename))
+	print(string.format("DONE! Output file: %s",output_filename))
 	print("=================================")
 end
 
@@ -104,22 +107,33 @@ end
 
 function w64_initTexturedObject(argument)
 	-- object init stuff
-	local obj_Name = string.match(argument, "([^.\\]+).obj$")
+	local obj_Path = argument;
+	local obj_Name = string.match(obj_Path, "([^.\\/]+).obj$")
+	local mtl_Path = string.gsub(obj_Path, ".obj$", ".mtl")
+	local base_Path = string.gsub(obj_Path, obj_Name..".obj$", "")
 
-	local mtl_file = readFile(obj_Name..".mtl")
-	if(mtl_file == nil) then err("ERROR: No MTL file found for "..obj_Name..".mtl") else print("MTL file "..obj_Name..".mtl found.") end
+	local mtl_file = readFile(mtl_Path)
+	if(mtl_file == nil) then err("ERROR: No MTL file found for "..mtl_Path) else print("MTL file "..mtl_Path.." found.") end
 
 	-- init object
-	local obj_Table = obj_loader.load(obj_Name..".obj")
+	local obj_Table = obj_loader.load(obj_Path)
 	if(obj_Table==nil) then
-		err(obj_Name..".obj not found")
+		err(obj_Path.." not found")
 	else
-		print("OBJ File "..obj_Name..".obj found.")
+		print("OBJ File "..obj_Path.." found.")
 	end
 
 	-- load bitmap
 	local image_file_name, name_of_texture = string.match(mtl_file, "map_Kd (([A-Za-z_-]+).[A-Za-z_-]+)")
-	local bmp = w64_loadBitmap(image_file_name)
+	local image_file_path
+	if string.match(image_file_name, "[\\/]") then
+		print("abs path")
+		image_file_path = image_file_name
+	else
+		print("rel path")
+		image_file_path = base_Path..image_file_name
+	end
+	local bmp = w64_loadBitmap(image_file_path)
 
 	-- asks user what tf they want
 	print("Vertex scale? [int. default:30]" )
