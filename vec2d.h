@@ -30,7 +30,12 @@ float Vec2d_distanceTo(Vec2d* self, Vec2d* other);
 Vec2d* Vec2d_directionTo(Vec2d* self, Vec2d* other, Vec2d* result);
 Vec2d* Vec2d_lerp(Vec2d* self, Vec2d* v0, Vec2d* v1, float t);
 float Vec2d_angle(Vec2d* self);
-char* Vec2d_toString(Vec2d* self, char* buffer);
 int Vec2d_equals(Vec2d* self, Vec2d* other);
+float Vec2d_lengthSquared(Vec2d* self);
+
+#ifndef __N64__
+char* Vec2d_toString(Vec2d* self, char* buffer);
+void Vec2d_print(Vec2d* self);
+#endif
 
 #endif /* !VEC2D_H */

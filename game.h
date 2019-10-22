@@ -3,6 +3,13 @@
 #define _GAME_H_
 
 #include "gameobject.h"
+#include "input.h"
+
+#ifdef __N64__
+#define GOOSE_SPEED 5.0F
+#else
+#define GOOSE_SPEED 20.0F
+#endif
 
 typedef struct Player {
   GameObject* goose;
@@ -11,6 +18,8 @@ typedef struct Player {
 typedef struct Game {
   Vec3d viewPos;
   Vec3d viewRot;
+  Vec3d viewTarget;
+  int freeView;
   GameObject* worldObjects;
   int worldObjectsCount;
 
@@ -22,6 +31,6 @@ Game* Game_get();
 
 GameObject* Game_findObjectByType(ModelType modelType);
 
-void Game_update();
+void Game_update(Input* input);
 
 #endif /* !_GAME_H_ */

@@ -21,12 +21,13 @@ out += """
 GameObject %s_data[] = {
 """ % ( filename)
 
-for obj in world_objects:
+for index,obj in enumerate(world_objects):
   pos = obj.location
   rot = obj.rotation_euler
 
   out += "{"
-  out += "{%f, %f, %f}, " % (pos.x*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR, pos.y*N64_SCALE_FACTOR)
+  out += "%d, " % (index)
+  out += "{%f, %f, %f}, " % (pos.x*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR, -(pos.y*N64_SCALE_FACTOR)) # y axis is inverted
   out += "%f, " % (math.degrees(rot.z))
   out += "%sModel" % (re.sub(r'[.].*?$', '', obj.name))
   out += "},\n"

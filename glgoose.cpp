@@ -20,11 +20,13 @@
 #include "gameobject.h"
 #include "gl/objloader.hpp"
 #include "gl/texture.hpp"
+#include "input.h"
 #include "renderer.h"
 #include "university_map.h"
 #include "vec3d.h"
 
 #define RAND(x) (rand() % x) /* random number between 0 to x */
+#define DEBUG_LOG_RENDER 0
 
 // actual vector representing the camera's direction
 float cameraLX = 0.0f, cameraLZ = -1.0f;
@@ -32,6 +34,7 @@ float cameraLX = 0.0f, cameraLZ = -1.0f;
 Vec3d viewPos = {0.0f, 1.0f, 0.0f};
 
 float cameraAngle = 0.0f;
+Input input;
 
 typedef struct Model {
   std::vector<glm::vec3> vertices;
@@ -46,8 +49,11 @@ static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 
 void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   std::vector<glm::vec3> normals;  // Won't be used at the moment.
-  loadOBJ(modelfile, models[modelType].vertices, models[modelType].uvs,
-          normals);
+
+  // the map exporter scales the world up by this much, so we scale up the
+  // meshes to match
+  loadOBJ(modelfile, models[modelType].vertices, models[modelType].uvs, normals,
+          N64_SCALE_FACTOR);
   models[modelType].texture = loadBMP_custom(texfile);
 }
 
@@ -143,9 +149,11 @@ void renderScene(void) {
 
   game = Game_get();
 
-  game->viewPos = viewPos;
+  Game_update(&input);
 
-  Game_update();
+  if (game->freeView) {
+    game->viewPos = viewPos;
+  }
 
   // Clear Color and Depth Buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -158,23 +166,35 @@ void renderScene(void) {
   // Reset transformations
   glLoadIdentity();
   // Set the camera
-  gluLookAt(                                                  //
-      viewPos.x, viewPos.y, viewPos.z,                        // eye
-      viewPos.x + cameraLX, viewPos.y, viewPos.z + cameraLZ,  // center
-      0.0f, 1.0f, 0.0f                                        // up
-  );
+  if (game->freeView) {
+    gluLookAt(                                                  //
+        viewPos.x, viewPos.y, viewPos.z,                        // eye
+        viewPos.x + cameraLX, viewPos.y, viewPos.z + cameraLZ,  // center
+        0.0f, 1.0f, 0.0f                                        // up
+    );
+  } else {
+    gluLookAt(                                                       //
+        game->viewPos.x, game->viewPos.y, game->viewPos.z,           // eye
+        game->viewTarget.x, game->viewTarget.y, game->viewTarget.z,  // center
+        0.0f, 1.0f, 0.0f                                             // up
+    );
+  }
 
   Renderer_sortWorldObjects(sortedObjects, game->worldObjectsCount);
 
+#if DEBUG_LOG_RENDER
   printf("draw start\n");
+#endif
   // render world objects
   for (i = 0; i < game->worldObjectsCount; i++) {
     GameObject* obj = sortedObjects[i];
     if (obj->modelType != NoneModel) {
-      printf("draw obj %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n",
+#if DEBUG_LOG_RENDER
+      printf("draw obj %d %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n", obj->id,
              ModelTypeStrings[obj->modelType],
              Vec3d_distanceTo(&(obj->position), &viewPos), obj->position.x,
              obj->position.y, obj->position.z);
+#endif
       drawGameObject(sortedObjects[i]);
     }
   }
@@ -229,18 +249,37 @@ void moveDown() {
 }
 
 void processNormalKeys(unsigned char key, int _x, int _y) {
+  Game* game;
+  game = Game_get();
+
   switch (key) {
     case 97:  // a
-      moveLeft();
+      if (game->freeView) {
+        moveLeft();
+      } else {
+        input.direction.x += 1.0;
+      }
       break;
     case 100:  // d
-      moveRight();
+      if (game->freeView) {
+        moveRight();
+      } else {
+        input.direction.x -= 1.0;
+      }
       break;
     case 119:  // w
-      moveForward();
+      if (game->freeView) {
+        moveForward();
+      } else {
+        input.direction.y += 1.0;
+      }
       break;
     case 115:  // s
-      moveBack();
+      if (game->freeView) {
+        moveBack();
+      } else {
+        input.direction.y -= 1.0;
+      }
       break;
     case 113:  // q
       turnLeft();
@@ -254,7 +293,11 @@ void processNormalKeys(unsigned char key, int _x, int _y) {
     case 102:  // f
       moveDown();
       break;
+    case 99:  // c
+      game->freeView = !game->freeView;
+      break;
   }
+
   if (key == 27) {  // esc
     exit(0);
   }
@@ -286,17 +329,12 @@ int main(int argc, char** argv) {
   Game_init(university_map_data, UNIVERSITY_MAP_COUNT);
   game = Game_get();
 
+  Input_init(&input);
   game->viewPos = viewPos;
 
   for (i = 0, obj = game->worldObjects; i < game->worldObjectsCount;
        i++, obj++) {
-    // the map exporter scales the world up by this much, so we reverse it
-    // in for the opengl version
-    obj->position.x = obj->position.x / (N64_SCALE_FACTOR * 1.0F);
-    obj->position.y = obj->position.y / (N64_SCALE_FACTOR * 1.0F);
-    obj->position.z = obj->position.z / (N64_SCALE_FACTOR * 1.0F);
-
-    printf("loaded obj %s  {x:%.3f, y:%.3f, z:%.3f}\n",
+    printf("loaded obj %d %s  {x:%.3f, y:%.3f, z:%.3f}\n", obj->id,
            ModelTypeStrings[obj->modelType], obj->position.x, obj->position.y,
            obj->position.z);
   }
@@ -313,7 +351,7 @@ int main(int argc, char** argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(300, 100);
-  glutInitWindowSize(1920, 1080);
+  glutInitWindowSize(1440, 1080);
   glutCreateWindow("Goose");
 
   // register callbacks

@@ -5,11 +5,14 @@
 typedef enum ModelType {
   NoneModel,
   GooseModel,
-  BookModel,
-  CakeModel,
+  BookItemModel,
+  HomeworkItemModel,
+  CakeItemModel,
   UniBldgModel,
   UniFloorModel,
   BushModel,
+  FlagpoleModel,
+  GroundskeeperCharacterModel,
   MAX_MODEL_TYPE
 } ModelType;
 

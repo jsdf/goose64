@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		733266BF235CFB2C00907B30 /* renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266BD235CFB2C00907B30 /* renderer.cpp */; };
+		733266C5235D0C2B00907B30 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266C1235D0C2A00907B30 /* input.cpp */; };
+		733266C6235D0C2B00907B30 /* vec2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266C2235D0C2B00907B30 /* vec2d.cpp */; };
 		734E1B0F23556A5100FBF3CC /* glgoose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 734E1B0E23556A5100FBF3CC /* glgoose.cpp */; };
 		734E1B1223556A8300FBF3CC /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 734E1B1123556A8300FBF3CC /* OpenGL.framework */; };
 		734E1B1423556A8800FBF3CC /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 734E1B1323556A8800FBF3CC /* GLUT.framework */; };
@@ -34,6 +36,10 @@
 /* Begin PBXFileReference section */
 		733266BD235CFB2C00907B30 /* renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = renderer.cpp; path = ../renderer.cpp; sourceTree = "<group>"; };
 		733266BE235CFB2C00907B30 /* renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = renderer.h; path = ../renderer.h; sourceTree = "<group>"; };
+		733266C1235D0C2A00907B30 /* input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = input.cpp; path = ../input.cpp; sourceTree = "<group>"; };
+		733266C2235D0C2B00907B30 /* vec2d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vec2d.cpp; path = ../vec2d.cpp; sourceTree = "<group>"; };
+		733266C3235D0C2B00907B30 /* vec2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec2d.h; path = ../vec2d.h; sourceTree = "<group>"; };
+		733266C4235D0C2B00907B30 /* input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = input.h; path = ../input.h; sourceTree = "<group>"; };
 		734E1B03234D85AA00FBF3CC /* gameobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gameobject.h; path = ../../gameobject.h; sourceTree = "<group>"; };
 		734E1B05234D85AA00FBF3CC /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = game.h; path = ../../game.h; sourceTree = "<group>"; };
 		734E1B06234D85AA00FBF3CC /* vec3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec3d.h; path = ../../vec3d.h; sourceTree = "<group>"; };
@@ -49,7 +55,7 @@
 		734E1B252355700100FBF3CC /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = game.cpp; path = ../game.cpp; sourceTree = "<group>"; };
 		734E1B262355700100FBF3CC /* gameobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gameobject.cpp; path = ../gameobject.cpp; sourceTree = "<group>"; };
 		734E1B2A2355748100FBF3CC /* texture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = texture.cpp; path = ../gl/texture.cpp; sourceTree = "<group>"; };
-		73881964234D854C0057630E /* glgoose */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = glgoose; path = goose64glut; sourceTree = BUILT_PRODUCTS_DIR; };
+		73881964234D854C0057630E /* goose64glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = goose64glut; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +90,10 @@
 				734E1B252355700100FBF3CC /* game.cpp */,
 				734E1B262355700100FBF3CC /* gameobject.cpp */,
 				734E1B242355700100FBF3CC /* vec3d.cpp */,
+				733266C1235D0C2A00907B30 /* input.cpp */,
+				733266C4235D0C2B00907B30 /* input.h */,
+				733266C2235D0C2B00907B30 /* vec2d.cpp */,
+				733266C3235D0C2B00907B30 /* vec2d.h */,
 				733266BD235CFB2C00907B30 /* renderer.cpp */,
 				733266BE235CFB2C00907B30 /* renderer.h */,
 				734E1B1523556BFF00FBF3CC /* objloader.cpp */,
@@ -96,7 +106,7 @@
 		73881965234D854C0057630E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				73881964234D854C0057630E /* glgoose */,
+				73881964234D854C0057630E /* goose64glut */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -130,7 +140,7 @@
 			);
 			name = goose64glut;
 			productName = goose64glut;
-			productReference = 73881964234D854C0057630E /* glgoose */;
+			productReference = 73881964234D854C0057630E /* goose64glut */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -172,7 +182,9 @@
 			files = (
 				734E1B292355700200FBF3CC /* gameobject.cpp in Sources */,
 				734E1B0F23556A5100FBF3CC /* glgoose.cpp in Sources */,
+				733266C5235D0C2B00907B30 /* input.cpp in Sources */,
 				734E1B1623556BFF00FBF3CC /* objloader.cpp in Sources */,
+				733266C6235D0C2B00907B30 /* vec2d.cpp in Sources */,
 				734E1B282355700200FBF3CC /* game.cpp in Sources */,
 				734E1B2B2355748100FBF3CC /* texture.cpp in Sources */,
 				733266BF235CFB2C00907B30 /* renderer.cpp in Sources */,

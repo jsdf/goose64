@@ -46,6 +46,21 @@ float Vec3d_distanceTo(Vec3d* self, Vec3d* other) {
   return sqrtf((xDist * xDist) + (yDist * yDist) + (zDist * zDist));
 }
 
+Vec3d* Vec3d_add(Vec3d* self, Vec3d* other) {
+  self->x += other->x;
+  self->y += other->y;
+  self->z += other->z;
+  return self;
+}
+
+Vec3d* Vec3d_sub(Vec3d* self, Vec3d* other) {
+  self->x -= other->x;
+  self->y -= other->y;
+  self->z -= other->z;
+  return self;
+}
+
+#ifndef __N64__
 char* Vec3d_toString(Vec3d* self, char* buffer) {
   sprintf(buffer, "{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
   return buffer;
@@ -54,3 +69,5 @@ char* Vec3d_toString(Vec3d* self, char* buffer) {
 void Vec3d_print(Vec3d* self) {
   printf("{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
 }
+
+#endif

@@ -20,7 +20,7 @@ int Renderer_isZBufferedGameObject(GameObject* obj) {
 float Renderer_gameobjectSortDist(GameObject* obj) {
   if (!Renderer_isZBufferedGameObject(obj)) {
     // always consider this far away
-    return 10000.0F;
+    return 10000.0F + obj->id;  // add object id to achieve stable sorting
   }
 
   return Vec3d_distanceTo(&obj->position, &Game_get()->viewPos);

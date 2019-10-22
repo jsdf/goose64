@@ -5,6 +5,10 @@
 
 #include "vec2d.h"
 
+#ifdef __N64__
+#include <gu.h>
+#endif
+
 #define VEC2D_M_PI 3.14159265358979323846
 
 float _Vec2dutil_lerp(float v0, float v1, float t) {
@@ -12,7 +16,8 @@ float _Vec2dutil_lerp(float v0, float v1, float t) {
 }
 
 Vec2d* Vec2d_alloc() {
-  Vec2d* created = (Vec2d*)malloc(sizeof(Vec2d));
+  Vec2d* created;
+  created = (Vec2d*)malloc(sizeof(Vec2d));
   return created;
 }
 
@@ -27,7 +32,8 @@ Vec2d* Vec2d_identity(Vec2d* self) {
 }
 
 Vec2d* Vec2d_clone(Vec2d* v) {
-  Vec2d* copy = Vec2d_alloc();
+  Vec2d* copy;
+  copy = Vec2d_alloc();
   copy->x = v->x;
   copy->y = v->y;
   return copy;
@@ -53,8 +59,9 @@ Vec2d* Vec2d_sub(Vec2d* self, Vec2d* other) {
 
 Vec2d* Vec2d_normalise(Vec2d* self) {
   float magnitude;
-  if (self->x == 0.0F && self->y == 0.0F)
+  if (self->x == 0.0F && self->y == 0.0F) {
     return self;
+  }
 
   magnitude = sqrtf(self->x * self->x + self->y * self->y);
   self->x /= magnitude;
@@ -87,7 +94,10 @@ Vec2d* Vec2d_divideScalar(Vec2d* self, float scalar) {
 }
 
 float Vec2d_distanceTo(Vec2d* self, Vec2d* other) {
-  return sqrtf(powf(self->x - other->x, 2.0F) + powf(self->y - other->y, 2.0F));
+  float xDist, yDist;
+  xDist = self->x - other->x;
+  yDist = self->y - other->y;
+  return sqrtf((xDist * xDist) + (yDist * yDist));
 }
 
 Vec2d* Vec2d_directionTo(Vec2d* self, Vec2d* other, Vec2d* result) {
@@ -104,7 +114,8 @@ Vec2d* Vec2d_lerp(Vec2d* self, Vec2d* v0, Vec2d* v1, float t) {
 }
 
 float Vec2d_angle(Vec2d* self) {
-  float angle = atan2f(self->y, self->x);
+  float angle;
+  angle = atan2f(self->y, self->x);
 
   if (angle < 0.0F) {
     angle += 2.0F * VEC2D_M_PI;
@@ -113,11 +124,21 @@ float Vec2d_angle(Vec2d* self) {
   return angle;
 }
 
+int Vec2d_equals(Vec2d* self, Vec2d* other) {
+  return self->x == other->x && self->y == other->y;
+}
+
+float Vec2d_lengthSquared(Vec2d* self) {
+  return self->x * self->x + self->y * self->y;
+}
+
+#ifndef __N64__
 char* Vec2d_toString(Vec2d* self, char* buffer) {
   sprintf(buffer, "{x:%f, y:%f}", self->x, self->y);
   return buffer;
 }
 
-int Vec2d_equals(Vec2d* self, Vec2d* other) {
-  return self->x == other->x && self->y == other->y;
+void Vec2d_print(Vec2d* self) {
+  printf("{x:%f, y:%f}", self->x, self->y);
 }
+#endif

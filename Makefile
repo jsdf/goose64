@@ -31,9 +31,9 @@ APP =		goose64.out
 
 TARGETS =	goose64.n64
 
-HFILES =	main.h graphic.h goose1baked.h testingCube.h vec3d.h gameobject.h game.h modeltype.h renderer.h
+HFILES =	main.h graphic.h testingCube.h vec3d.h vec2d.h gameobject.h game.h modeltype.h renderer.h input.h
 
-CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c om_mem_heap.c vec3d.c gameobject.c game.c renderer.c
+CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c om_mem_heap.c vec3d.c vec2d.c gameobject.c game.c renderer.c input.c
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
 

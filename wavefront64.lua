@@ -5,6 +5,7 @@ require("wavefront64deps.util")
 inspect = require("wavefront64deps.inspect")
 
 interactive_input = false
+default_obj_scale = 30 -- TODO figure out what this should be
 
 helptext = [[
 
@@ -123,7 +124,7 @@ function w64_initTexturedObject(argument)
 	-- asks user what tf they want
 	print("Vertex scale? [int. default:30]" )
 	io.write(">")
-	local object_scale = interactive_input and tonumber(io.read()) or 30  -- TODO figure out what this should be
+	local object_scale = interactive_input and tonumber(io.read()) or default_obj_scale
 	print("Object Scale set to "..object_scale)
 
 	print("Use gsSP1Triangle? (for Fast3D) [y/n. default:n]" )
