@@ -32,6 +32,7 @@ Vec2d* Vec2d_lerp(Vec2d* self, Vec2d* v0, Vec2d* v1, float t);
 float Vec2d_angle(Vec2d* self);
 int Vec2d_equals(Vec2d* self, Vec2d* other);
 float Vec2d_lengthSquared(Vec2d* self);
+float Vec2d_length(Vec2d* self);
 
 #ifndef __N64__
 char* Vec2d_toString(Vec2d* self, char* buffer);

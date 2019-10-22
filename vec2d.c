@@ -132,6 +132,10 @@ float Vec2d_lengthSquared(Vec2d* self) {
   return self->x * self->x + self->y * self->y;
 }
 
+float Vec2d_length(Vec2d* self) {
+  return sqrtf(self->x * self->x + self->y * self->y);
+}
+
 #ifndef __N64__
 char* Vec2d_toString(Vec2d* self, char* buffer) {
   sprintf(buffer, "{x:%f, y:%f}", self->x, self->y);

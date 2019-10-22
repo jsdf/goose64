@@ -43,6 +43,26 @@ GameObject* Game_findObjectByType(ModelType modelType) {
   return NULL;
 }
 
+float _Game_util_lerpDegrees(float start, float end, float amount) {
+  float shortestAngle;
+  shortestAngle = fmodf((fmodf((end - start), 360) + 540), 360) - 180;
+  return start + fmodf((shortestAngle * amount), 360);
+}
+
+float _Game_util_fclamp(float x, float lower, float upper) {
+  return x > upper ? upper : x < lower ? lower : x;
+}
+
+float _Game_util_rotateTowardsClamped(float from,
+                                      float to,
+                                      float maxSpeed  // must be positive
+) {
+  float shortestAngle;
+  shortestAngle = fmodf((fmodf((to - from), 360.0F) + 540.0F), 360.0F) - 180.0F;
+  return from +
+         fmodf(_Game_util_fclamp(shortestAngle, -maxSpeed, maxSpeed), 360.0F);
+}
+
 // this is a stupid function
 float _Game_util_fwrap(float x, float lower, float upper) {
   if (x > upper) {
@@ -66,6 +86,7 @@ void Game_updateCamera(Game* game) {
 
 void Game_updatePlayer(Game* game, Input* input) {
   Vec3d playerMovement;
+  float destAngle;
   GameObject* goose;
   goose = game->player.goose;
 
@@ -73,8 +94,13 @@ void Game_updatePlayer(Game* game, Input* input) {
              input->direction.y * GOOSE_SPEED);
   // player movement
   Vec3d_add(&goose->position, &playerMovement);
+
+  // rot
   if (Vec2d_lengthSquared(&input->direction) > 0) {
-    goose->rotationZ = 360.0F - radToDeg(Vec2d_angle(&input->direction));
+    destAngle = 360.0F - radToDeg(Vec2d_angle(&input->direction));
+    // rotate towards dest, but with a speed limit
+    goose->rotationZ = _Game_util_rotateTowardsClamped(
+        goose->rotationZ, destAngle, GOOSE_MAX_TURN_SPEED);
   }
 }
 

@@ -11,6 +11,8 @@
 #define GOOSE_SPEED 20.0F
 #endif
 
+#define GOOSE_MAX_TURN_SPEED 15.0f
+
 typedef struct Player {
   GameObject* goose;
 } Player;
