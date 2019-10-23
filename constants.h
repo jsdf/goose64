@@ -10,4 +10,6 @@
 #define degToRad(angleInDegrees) ((angleInDegrees)*CONST_PI / 180.0)
 #define radToDeg(angleInRadians) ((angleInRadians)*180.0 / CONST_PI)
 
+#define MEM_HEAP_BYTES 524288
+
 #endif /* CONSTANTS_H */

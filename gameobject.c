@@ -1,7 +1,6 @@
 
 #include "gameobject.h"
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include "vec3d.h"
 
@@ -21,3 +20,11 @@ GameObject* GameObject_init(GameObject* self, int id, Vec3d* initPos) {
   }
   return self;
 }
+
+#ifndef __N64__
+#include <stdio.h>
+void GameObject_print(GameObject* self) {
+  printf("%s pos=", ModelTypeStrings[self->modelType]);
+  Vec3d_print(&self->position);
+}
+#endif

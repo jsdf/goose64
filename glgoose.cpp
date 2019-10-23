@@ -57,11 +57,6 @@ void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   models[modelType].texture = loadBMP_custom(texfile);
 }
 
-char* ModelTypeStrings[] = {
-    "NoneModel",    "GooseModel",    "BookModel", "CakeModel",
-    "UniBldgModel", "UniFloorModel", "BushModel", "MAX_MODEL_TYPE",
-};
-
 void drawModel(ModelType modelType) {
   glColor3f(1.0f, 1.0f, 1.0f);  // whitish
   Model model = models[modelType];
@@ -370,6 +365,8 @@ int main(int argc, char** argv) {
   loadModel(UniFloorModel, "university_floor.obj", "green.bmp");
   loadModel(UniBldgModel, "university_bldg.obj", "redbldg.bmp");
   loadModel(BushModel, "bush.obj", "bush.bmp");
+  loadModel(FlagpoleModel, "flagpole.obj", "flagpole.bmp");
+  loadModel(GroundskeeperCharacterModel, "person.obj", "person.bmp");
 
   // enter GLUT event processing cycle
   glutMainLoop();

@@ -1,10 +1,6 @@
-# 	NuSYSTEM samples nu1 Makefile
-#       Copyright (C) 1997-1999, NINTENDO Co,Ltd.
 
 include $(ROOT)/usr/include/make/PRdefs
 
-# The directory which has the include file and library of NuSYSTEM
-#
 N64KITDIR    = c:\nintendo\n64kit
 NUSYSINCDIR  = $(N64KITDIR)/nusys/include
 NUSYSLIBDIR  = $(N64KITDIR)/nusys/lib
@@ -31,9 +27,9 @@ APP =		goose64.out
 
 TARGETS =	goose64.n64
 
-HFILES =	main.h graphic.h testingCube.h vec3d.h vec2d.h gameobject.h game.h modeltype.h renderer.h input.h
+HFILES =	main.h graphic.h testingCube.h vec3d.h vec2d.h gameobject.h game.h modeltype.h renderer.h input.h character.h player.h gameutils.h gametypes.h
 
-CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c om_mem_heap.c vec3d.c vec2d.c gameobject.c game.c renderer.c input.c
+CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c om_mem_heap.c vec3d.c vec2d.c gameobject.c game.c renderer.c input.c character.c player.c gameutils.c
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
 

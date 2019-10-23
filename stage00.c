@@ -1,12 +1,13 @@
 /*
    stage00.c
 
-   Copyright (C) 1997-1999, NINTENDO Co,Ltd.
+  the main game file
 */
 
 #include <assert.h>
 #include <nusys.h>
 #include <stdlib.h>
+// game
 #include "constants.h"
 #include "game.h"
 #include "gameobject.h"
@@ -35,8 +36,6 @@ typedef enum RenderMode {
   MAX_RENDER_MODE
 } RenderMode;
 
-static float modelRot; /* The rotational angle of the model */
-
 static Vec3d viewPos;
 static Vec3d viewRot;
 static Input input;
@@ -45,7 +44,7 @@ static u16 perspNorm;
 static u32 nearPlane; /* Near Plane */
 static u32 farPlane;  /* Far Plane */
 
-static float vel;
+static float cycleMode;
 static RenderMode renderModeSetting;
 static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 
@@ -72,8 +71,7 @@ void initStage00() {
   GameObject* loadObj;
   int i;
 
-  modelRot = 0.0;
-  vel = 1.0;
+  cycleMode = 1.0;
   renderModeSetting = TextureAndLightingRenderMode;
   nearPlane = 10;
   farPlane = 10000;
@@ -176,10 +174,6 @@ void makeDL00() {
       nuDebConTextPos(0, 12, consoleOffset++);
       sprintf(conbuf, "viewPos.z=%5.1f", viewPos.z);
       nuDebConCPuts(0, conbuf);
-
-      nuDebConTextPos(0, 12, consoleOffset++);
-      sprintf(conbuf, "modelRot=%5.1f", modelRot);
-      nuDebConCPuts(0, conbuf);
     } else {
       consoleOffset = 20;
       consoleOffset =
@@ -203,6 +197,51 @@ void makeDL00() {
   gfx_gtask_no ^= 1;
 }
 
+void checkDebugControls(Game* game) {
+  /* Change the display position by stick data */
+  viewRot.x = contdata->stick_y;  // rot around x
+  viewRot.y = contdata->stick_x;  // rot around y
+
+  /* The reverse rotation by the A button */
+  if (contdata[0].trigger & A_BUTTON) {
+    cycleMode = -cycleMode;
+  }
+  if (contdata[0].button & B_BUTTON) {
+    renderModeSetting++;
+    if (renderModeSetting >= MAX_RENDER_MODE) {
+      renderModeSetting = 0;
+    }
+  }
+  /* Change the moving speed with up/down buttons of controller */
+  if (contdata[0].button & U_JPAD)
+    viewPos.z += 10.0;
+  if (contdata[0].button & D_JPAD)
+    viewPos.z -= 10.0;
+
+  if (viewPos.z < (600.0 - farPlane)) {
+    /* It comes back near if it goes too far */
+    viewPos.z = 600.0 - nearPlane;
+  } else if (viewPos.z > (600.0 - nearPlane)) {
+    /* It goes back far if it comes too near */
+    viewPos.z = 600.0 - farPlane;
+  }
+
+  /* << XY axis shift process >> */
+  /* Move left/right with left/right buttons of controller */
+  if (contdata[0].button & L_JPAD)
+    viewPos.x -= 1.0;
+  if (contdata[0].button & R_JPAD)
+    viewPos.x += 1.0;
+  if (contdata[0].button & U_CBUTTONS)
+    viewPos.y -= 30.0;
+  if (contdata[0].button & D_CBUTTONS)
+    viewPos.y += 30.0;
+  if (contdata[0].button & L_CBUTTONS)
+    viewPos.x -= 30.0;
+  if (contdata[0].button & R_CBUTTONS)
+    viewPos.x += 30.0;
+}
+
 /* The game progressing process for stage 0 */
 void updateGame00(void) {
   Game* game;
@@ -213,76 +252,20 @@ void updateGame00(void) {
 
   /* Data reading of controller 1 */
   nuContDataGetEx(contdata, 0);
-  // if (contdata[0].button & B_BUTTON) {
-  //   game->freeView = !game->freeView;
-  // }
+  if (contdata[0].button & START_BUTTON) {
+    renderModeSetting++;
+    if (renderModeSetting >= MAX_RENDER_MODE) {
+      renderModeSetting = 0;
+    }
+  }
 
   if (game->freeView) {
-    /* Change the display position by stick data */
-    viewRot.x = contdata->stick_y;  // rot around x
-    viewRot.y = contdata->stick_x;  // rot around y
-
-    /* The reverse rotation by the A button */
-    if (contdata[0].trigger & A_BUTTON) {
-      vel = -vel;
-    }
-
-    // if (contdata[0].button & B_BUTTON) {
-    //   renderModeSetting++;
-    //   if (renderModeSetting >= MAX_RENDER_MODE) {
-    //     renderModeSetting = 0;
-    //   }
-    // }
-
-    if (modelRot > 360.0) {
-      modelRot -= 360.0;
-    } else if (modelRot < 0.0) {
-      modelRot += 360.0;
-    }
-
-    /* Change the moving speed with up/down buttons of controller */
-    if (contdata[0].button & U_JPAD) {
-      viewPos.z += 10.0;
-    }
-
-    if (contdata[0].button & D_JPAD) {
-      viewPos.z -= 10.0;
-    }
-
-    /* It comes back near if it goes too far */
-    if (viewPos.z < (600.0 - farPlane)) {
-      viewPos.z = 600.0 - nearPlane;
-    }
-
-    /* It goes back far if it comes too near */
-    else if (viewPos.z > (600.0 - nearPlane)) {
-      viewPos.z = 600.0 - farPlane;
-    }
-
-    /* << XY axis shift process >> */
-
-    /* Move left/right with left/right buttons of controller */
-    if (contdata[0].button & L_JPAD)
-      viewPos.x -= 1.0;
-
-    if (contdata[0].button & R_JPAD)
-      viewPos.x += 1.0;
-
-    if (contdata[0].button & U_CBUTTONS)
-      viewPos.y -= 30.0;
-
-    if (contdata[0].button & D_CBUTTONS) {
-      viewPos.y += 30.0;
-    }
-
-    if (contdata[0].button & L_CBUTTONS) {
-      viewPos.x -= 30.0;
-    }
-
-    if (contdata[0].button & R_CBUTTONS) {
-      viewPos.x += 30.0;
-    }
+    checkDebugControls(game);
   } else {
+    // normal controls
+    if (contdata[0].trigger & A_BUTTON) {
+      input.run = TRUE;
+    }
     if (contdata[0].button & U_CBUTTONS) {
       farPlane += 100.0;
     }
@@ -290,9 +273,11 @@ void updateGame00(void) {
     if (contdata[0].button & D_CBUTTONS) {
       farPlane -= 100.0;
     }
-    input.direction.x = -contdata->stick_x;
-    input.direction.y = contdata->stick_y;
-    Vec2d_normalise(&input.direction);
+    input.direction.x = -contdata->stick_x / 61.0F;
+    input.direction.y = contdata->stick_y / 63.0F;
+    if (Vec2d_length(&input.direction) > 1.0F) {
+      Vec2d_normalise(&input.direction);
+    }
   }
 
   Game_update(&input);
@@ -355,7 +340,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
               G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
 
     gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-    gDPSetCycleType(glistp++, vel > 0.0F ? G_CYC_1CYCLE : G_CYC_2CYCLE);
+    gDPSetCycleType(glistp++, cycleMode > 0.0F ? G_CYC_1CYCLE : G_CYC_2CYCLE);
     useZBuffering = Renderer_isZBufferedGameObject(obj);
     if (useZBuffering) {
       gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);

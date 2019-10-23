@@ -6,10 +6,10 @@
   	0x80000000  exception vectors, ...
   	0x80000400  zbuffer (size 320*240*2)
   	0x80025c00  codesegment
+                heap (512 * 1024)
 	      :  
   	0x8038F800  cfb 16b 3buffer (size 320*240*2*3)
 
-        Copyright (C) 1997-1999, NINTENDO Co,Ltd.
 */
 
 #include <nusys.h>

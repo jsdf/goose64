@@ -3,7 +3,6 @@
 
    The definition of graphic and around
 
-   Copyright (C) 1997-1999, NINTENDO Co,Ltd.
 */
 
 #ifndef _GRAPHIC_H_

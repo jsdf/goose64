@@ -16,4 +16,9 @@ typedef enum ModelType {
   MAX_MODEL_TYPE
 } ModelType;
 
+#ifndef __N64__
+
+extern char* ModelTypeStrings[];
+#endif
+
 #endif /* !MODELTYPE_H */

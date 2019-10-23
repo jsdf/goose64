@@ -46,6 +46,26 @@ float Vec3d_distanceTo(Vec3d* self, Vec3d* other) {
   return sqrtf((xDist * xDist) + (yDist * yDist) + (zDist * zDist));
 }
 
+Vec3d* Vec3d_normalise(Vec3d* self) {
+  float magnitude;
+  if (self->x == 0.0F && self->y == 0.0F && self->z == 0.0F) {
+    return self;
+  }
+
+  magnitude = sqrtf(self->x * self->x + self->y * self->y + self->z * self->z);
+  self->x /= magnitude;
+  self->y /= magnitude;
+  self->z /= magnitude;
+  return self;
+}
+
+Vec3d* Vec3d_directionTo(Vec3d* self, Vec3d* other, Vec3d* result) {
+  Vec3d_copyFrom(result, other);
+  Vec3d_sub(result, self);
+  Vec3d_normalise(result);
+  return result;
+}
+
 Vec3d* Vec3d_add(Vec3d* self, Vec3d* other) {
   self->x += other->x;
   self->y += other->y;
@@ -57,6 +77,13 @@ Vec3d* Vec3d_sub(Vec3d* self, Vec3d* other) {
   self->x -= other->x;
   self->y -= other->y;
   self->z -= other->z;
+  return self;
+}
+
+Vec3d* Vec3d_multiplyScalar(Vec3d* self, float scalar) {
+  self->x *= scalar;
+  self->y *= scalar;
+  self->z *= scalar;
   return self;
 }
 
