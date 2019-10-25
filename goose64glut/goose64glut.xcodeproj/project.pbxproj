@@ -22,6 +22,8 @@
 		73735E58235FE9C40048C9EC /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E57235FE9C40048C9EC /* player.cpp */; };
 		73735E5A235FE9E80048C9EC /* gameutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E59235FE9E80048C9EC /* gameutils.cpp */; };
 		73735E5C235FEB930048C9EC /* modeltype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5B235FEB930048C9EC /* modeltype.cpp */; };
+		73735E5E23600F730048C9EC /* characterstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5D23600F730048C9EC /* characterstate.cpp */; };
+		73735E6023600FD00048C9EC /* item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5F23600FD00048C9EC /* item.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -64,7 +66,11 @@
 		73735E57235FE9C40048C9EC /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = player.cpp; path = ../player.cpp; sourceTree = "<group>"; };
 		73735E59235FE9E80048C9EC /* gameutils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = gameutils.cpp; path = ../gameutils.cpp; sourceTree = "<group>"; };
 		73735E5B235FEB930048C9EC /* modeltype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = modeltype.cpp; path = ../modeltype.cpp; sourceTree = "<group>"; };
+		73735E5D23600F730048C9EC /* characterstate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = characterstate.cpp; path = ../characterstate.cpp; sourceTree = "<group>"; };
+		73735E5F23600FD00048C9EC /* item.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = item.cpp; path = ../item.cpp; sourceTree = "<group>"; };
+		73735E6123600FF10048C9EC /* item.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = item.h; path = ../item.h; sourceTree = "<group>"; };
 		73881964234D854C0057630E /* goose64glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = goose64glut; sourceTree = BUILT_PRODUCTS_DIR; };
+		73A2C3C42362720B0036BCCB /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +89,7 @@
 		734E1B1023556A8300FBF3CC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				73A2C3C42362720B0036BCCB /* SDL2.framework */,
 				734E1B1323556A8800FBF3CC /* GLUT.framework */,
 				734E1B1123556A8300FBF3CC /* OpenGL.framework */,
 			);
@@ -92,6 +99,7 @@
 		7388195B234D854C0057630E = {
 			isa = PBXGroup;
 			children = (
+				73735E5F23600FD00048C9EC /* item.cpp */,
 				73735E59235FE9E80048C9EC /* gameutils.cpp */,
 				733266E1235EAB8100907B30 /* game.cpp */,
 				734E1B2223556F4A00FBF3CC /* gameobject.h */,
@@ -106,6 +114,8 @@
 				733266ED235EAD0B00907B30 /* game.h */,
 				733266E0235EAB8100907B30 /* objloader.hpp */,
 				733266D6235EAB8100907B30 /* renderer.c */,
+				73735E5D23600F730048C9EC /* characterstate.cpp */,
+				73735E6123600FF10048C9EC /* item.h */,
 				733266DE235EAB8100907B30 /* renderer.cpp */,
 				73735E5B235FEB930048C9EC /* modeltype.cpp */,
 				73735E57235FE9C40048C9EC /* player.cpp */,
@@ -197,6 +207,8 @@
 				733266E9235EAB8200907B30 /* renderer.cpp in Sources */,
 				73735E5C235FEB930048C9EC /* modeltype.cpp in Sources */,
 				733266E7235EAB8200907B30 /* objloader.cpp in Sources */,
+				73735E5E23600F730048C9EC /* characterstate.cpp in Sources */,
+				73735E6023600FD00048C9EC /* item.cpp in Sources */,
 				733266E8235EAB8200907B30 /* vec2d.cpp in Sources */,
 				733266EC235EAB8200907B30 /* texture.cpp in Sources */,
 			);
@@ -319,6 +331,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -330,6 +346,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";

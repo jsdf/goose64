@@ -27,6 +27,7 @@
 
 #define RAND(x) (rand() % x) /* random number between 0 to x */
 #define DEBUG_LOG_RENDER 0
+#define FREEVIEW_SPEED 0.2f
 
 // actual vector representing the camera's direction
 float cameraLX = 0.0f, cameraLZ = -1.0f;
@@ -34,6 +35,7 @@ float cameraLX = 0.0f, cameraLZ = -1.0f;
 Vec3d viewPos = {0.0f, 1.0f, 0.0f};
 
 float cameraAngle = 0.0f;
+bool keysDown[127];
 Input input;
 
 typedef struct Model {
@@ -195,7 +197,7 @@ void renderScene(void) {
   }
 
   char debugtext[80];
-  Vec3d_toString(&viewPos, debugtext);
+  Vec3d_toString(&game->player.goose->position, debugtext);
   drawString(debugtext, 20, 20);
 
   glutSwapBuffers();
@@ -208,111 +210,117 @@ void updateCameraAngle(float newAngle) {
 }
 
 void turnLeft() {
-  updateCameraAngle(cameraAngle - 0.1f);
+  updateCameraAngle(cameraAngle - 0.01f);
 }
 
 void turnRight() {
-  updateCameraAngle(cameraAngle + 0.1f);
+  updateCameraAngle(cameraAngle + 0.01f);
 }
 
 void moveForward() {
-  viewPos.x += cameraLX * 1.0f;
-  viewPos.z += cameraLZ * 1.0f;
+  viewPos.x += cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  viewPos.z += cameraLZ * FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void moveBack() {
-  viewPos.x -= cameraLX * 1.0f;
-  viewPos.z -= cameraLZ * 1.0f;
+  viewPos.x -= cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  viewPos.z -= cameraLZ * FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void moveLeft() {
-  viewPos.x -= cameraLZ * -1.0f;
-  viewPos.z -= cameraLX * 1.0f;
+  viewPos.x -= cameraLZ * -FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  viewPos.z -= cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void moveRight() {
-  viewPos.x += cameraLZ * -1.0f;
-  viewPos.z += cameraLX * 1.0f;
+  viewPos.x += cameraLZ * -FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  viewPos.z += cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void moveUp() {
-  viewPos.y += 1.0f;
+  viewPos.y += FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void moveDown() {
-  viewPos.y -= 1.0f;
+  viewPos.y -= FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
-void processNormalKeys(unsigned char key, int _x, int _y) {
+void updateInputs() {
   Game* game;
   game = Game_get();
 
-  switch (key) {
-    case 97:  // a
+  for (int key = 0; key < 127; ++key) {
+    if (keysDown[key]) {
       if (game->freeView) {
-        moveLeft();
+        switch (key) {
+          case 97:  // a
+            moveLeft();
+            break;
+          case 100:  // d
+            moveRight();
+            break;
+          case 119:  // w
+            moveForward();
+            break;
+          case 115:  // s
+            moveBack();
+            break;
+          case 113:  // q
+            turnLeft();
+            break;
+          case 101:  // e
+            turnRight();
+            break;
+          case 114:  // r
+            moveUp();
+            break;
+          case 102:  // f
+            moveDown();
+            break;
+        }
       } else {
-        input.direction.x += 1.0;
+        switch (key) {
+          case 97:  // a
+            input.direction.x += 1.0;
+            break;
+          case 100:  // d
+            input.direction.x -= 1.0;
+            break;
+          case 119:  // w
+            input.direction.y += 1.0;
+            break;
+          case 115:  // s
+            input.direction.y -= 1.0;
+            break;
+          case 32:  // space
+            input.pickup = true;
+            break;
+        }
       }
-      break;
-    case 100:  // d
-      if (game->freeView) {
-        moveRight();
-      } else {
-        input.direction.x -= 1.0;
+
+      if (key == 99 && game->tick % 30 == 0) {  // c
+        game->freeView = !game->freeView;
       }
-      break;
-    case 119:  // w
-      if (game->freeView) {
-        moveForward();
-      } else {
-        input.direction.y += 1.0;
-      }
-      break;
-    case 115:  // s
-      if (game->freeView) {
-        moveBack();
-      } else {
-        input.direction.y -= 1.0;
-      }
-      break;
-    case 113:  // q
-      turnLeft();
-      break;
-    case 101:  // e
-      turnRight();
-      break;
-    case 114:  // r
-      moveUp();
-      break;
-    case 102:  // f
-      moveDown();
-      break;
-    case 99:  // c
-      game->freeView = !game->freeView;
-      break;
+    }
   }
+}
+
+void processNormalKeysUp(unsigned char key, int _x, int _y) {
+  keysDown[key] = false;
+  printf("normals keys up %d\n", key);
+}
+
+void processNormalKeysDown(unsigned char key, int _x, int _y) {
+  keysDown[key] = true;
 
   if (key == 27) {  // esc
     exit(0);
   }
 }
 
-void processSpecialKeys(int key, int xx, int yy) {
-  switch (key) {
-    case GLUT_KEY_LEFT:
-      turnLeft();
-      break;
-    case GLUT_KEY_RIGHT:
-      turnRight();
-      break;
-    case GLUT_KEY_UP:
-      moveUp();
-      break;
-    case GLUT_KEY_DOWN:
-      moveBack();
-      break;
-  }
+void updateAndRender() {
+  updateInputs();
+  renderScene();
 }
 
 int main(int argc, char** argv) {
@@ -352,9 +360,9 @@ int main(int argc, char** argv) {
   // register callbacks
   glutDisplayFunc(renderScene);
   glutReshapeFunc(resizeWindow);
-  glutIdleFunc(renderScene);
-  glutKeyboardFunc(processNormalKeys);
-  glutSpecialFunc(processSpecialKeys);
+  glutIdleFunc(updateAndRender);
+  glutKeyboardFunc(processNormalKeysDown);
+  glutKeyboardUpFunc(processNormalKeysUp);
 
   // OpenGL init
   glEnable(GL_DEPTH_TEST);
@@ -367,6 +375,8 @@ int main(int argc, char** argv) {
   loadModel(BushModel, "bush.obj", "bush.bmp");
   loadModel(FlagpoleModel, "flagpole.obj", "flagpole.bmp");
   loadModel(GroundskeeperCharacterModel, "person.obj", "person.bmp");
+  loadModel(BookItemModel, "testingCube.obj", "testCubeTex.bmp");
+  loadModel(HomeworkItemModel, "testingCube.obj", "testCubeTex.bmp");
 
   // enter GLUT event processing cycle
   glutMainLoop();
