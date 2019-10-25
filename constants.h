@@ -10,6 +10,12 @@
 #define degToRad(angleInDegrees) ((angleInDegrees)*CONST_PI / 180.0)
 #define radToDeg(angleInRadians) ((angleInRadians)*180.0 / CONST_PI)
 
+#ifdef __N64__
+#else
+#include <stdio.h>
+#define debugPrintf(...) printf(__VA_ARGS__)
+#endif
+
 #define MEM_HEAP_BYTES 524288
 
 #ifndef TRUE

@@ -2,16 +2,27 @@
 #include "game.h"
 #include "gameutils.h"
 #include "input.h"
+#include "item.h"
 
 #include "constants.h"
 
 #define PLAYER_NEAR_OBJ_DIST 100.0f
 #define PLAYER_PICKUP_COOLDOWN 10
 
+static Vec3d playerItemOffset = {0.0F, 80.0F, 0.0F};
+
 void Player_init(Player* self, GameObject* obj) {
+  ItemHolder_init(&self->itemHolder, PlayerItemHolder, (void*)&self);
   self->goose = obj;
-  self->heldItem = NULL;
   self->lastPickupTick = 0;
+}
+
+int Player_debounceInput(unsigned int* lastTrigger, unsigned int cooldown) {
+  if (Game_get()->tick > *lastTrigger + cooldown) {
+    *lastTrigger = Game_get()->tick;
+    return TRUE;
+  }
+  return FALSE;
 }
 
 void Player_update(Player* self, Input* input, Game* game) {
@@ -42,35 +53,47 @@ void Player_update(Player* self, Input* input, Game* game) {
         goose->rotationZ, destAngle, GOOSE_MAX_TURN_SPEED);
   }
 
-  if (self->heldItem) {
+  if (self->itemHolder.heldItem) {
     // bring item with you
-    self->heldItem->obj->position = self->goose->position;
+    self->itemHolder.heldItem->obj->position = self->goose->position;
+    Vec3d_add(&self->itemHolder.heldItem->obj->position, &playerItemOffset);
   }
 
   if (input->pickup &&
-      self->lastPickupTick < (game->tick - PLAYER_PICKUP_COOLDOWN)) {
-    if (!self->heldItem) {
+      Player_debounceInput(&self->lastPickupTick, PLAYER_PICKUP_COOLDOWN)) {
+    if (self->itemHolder.heldItem) {
+      // drop item
+      Item_drop(self->itemHolder.heldItem);
+    } else {
+      // TODO: should have a concept of target so goose can look at items to
+      // pickup
       for (i = 0, item = game->items; i < game->itemsCount; i++, item++) {
         if (Vec3d_distanceTo(&self->goose->position, &item->obj->position) <
             PLAYER_NEAR_OBJ_DIST) {
           // yes, pick up
-          self->heldItem = item;
-          // TODO: logic for letting item holders know you stole their item
+          Item_take(item, &self->itemHolder);
+          if (self->itemHolder.heldItem == item) {
+            self->lastPickupTick = game->tick;
+            // one's enough
+            break;
+          }
         }
       }
-    } else {
-      // drop item
-      self->heldItem = NULL;
     }
   }
+}
+
+void Player_haveItemTaken(Player* self) {
+  // TODO: some reaction
 }
 
 #ifndef __N64__
 #include <stdio.h>
 void Player_print(Player* self) {
   printf("Player heldItem=%s pos=",
-         self->heldItem ? ModelTypeStrings[self->heldItem->obj->modelType]
-                        : "none");
+         self->itemHolder.heldItem
+             ? ModelTypeStrings[self->itemHolder.heldItem->obj->modelType]
+             : "none");
   Vec3d_print(&self->goose->position);
 }
 #endif

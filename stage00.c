@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <nusys.h>
 #include <stdlib.h>
+
 // game
 #include "constants.h"
 #include "game.h"
@@ -18,7 +19,9 @@
 #include "renderer.h"
 #include "vec2d.h"
 #include "vec3d.h"
+
 // models
+#include "book.h"
 #include "bush.h"
 #include "flagpole.h"
 #include "goose.h"
@@ -306,6 +309,8 @@ Gfx* getModelDisplayList(GameObject* obj) {
       return Wtx_goose;
     case BushModel:
       return Wtx_bush;
+    case BookItemModel:
+      return Wtx_book;
     case UniBldgModel:
       return Wtx_university_bldg;
     case UniFloorModel:

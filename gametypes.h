@@ -5,30 +5,53 @@
 #include "characterstate.h"
 #include "gameobject.h"
 
-typedef struct Item {
-  GameObject* obj;
-  Vec3d initialLocation;
-} Item;
+typedef enum ItemHolderType {
+  PlayerItemHolder,
+  CharacterItemHolder,
+} ItemHolderType;
+
+struct ItemStruct;
+
+// composable struct for players and characters which hold things
+typedef struct ItemHolder {
+  ItemHolderType itemHolderType;
+  void* owner;
+
+  unsigned int acquiredTick;
+  struct ItemStruct* heldItem;
+} ItemHolder;
 
 typedef struct Player {
+  ItemHolder itemHolder;
+
   GameObject* goose;
-  Item* heldItem;
   unsigned int lastPickupTick;
 } Player;
 
 typedef struct Character {
+  ItemHolder itemHolder;
+
   GameObject* obj;
-  GameObject* target;
-  Item* heldItem;
-  Item* defaultActivityItem;
+
+  struct ItemStruct* target;
+  struct ItemStruct* defaultActivityItem;
+  Vec3d defaultActivityLocation;
   CharacterState state;
 
   unsigned int enteredStateTick;
-  unsigned int lastPickupTick;
+  unsigned int startedActivityTick;
 } Character;
+
+typedef struct ItemStruct {
+  GameObject* obj;
+  ItemHolder* holder;
+  unsigned int lastPickedUpTick;
+  Vec3d initialLocation;
+} Item;
 
 typedef struct Game {
   unsigned int tick;  // this will overflow if you run the game for 829 days :)
+  int paused;
   Vec3d viewPos;
   Vec3d viewRot;
   Vec3d viewTarget;

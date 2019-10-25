@@ -24,6 +24,8 @@ Item items[NUM_ITEMS];
 
 void Game_init(GameObject* worldObjects, int worldObjectsCount) {
   GameObject* goose;
+
+  game.paused = FALSE;
   game.worldObjects = worldObjects;
   game.worldObjectsCount = worldObjectsCount;
 
@@ -84,15 +86,17 @@ void Game_update(Input* input) {
 
   game = Game_get();
 
-  game->tick++;
+  if (!game->paused) {
+    game->tick++;
 
-  for (i = 0; i < NUM_CHARACTERS; ++i) {
-    Character_update(&characters[i], game);
+    for (i = 0; i < NUM_CHARACTERS; ++i) {
+      Character_update(&characters[i], game);
+    }
+
+    Player_update(&game->player, input, game);
+
+    Game_updateCamera(game);
   }
-
-  Player_update(&game->player, input, game);
-
-  Game_updateCamera(game);
 
   // reset inputs
   Input_init(input);

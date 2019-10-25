@@ -2,6 +2,7 @@
 
 #include "character.h"
 #include "game.h"
+#include "item.h"
 #include "modeltype.h"
 #include "vec2d.h"
 #include "vec3d.h"
@@ -15,18 +16,22 @@
 #define CHARACTER_MAX_TURN_SPEED 45.0f
 #define CHARACTER_FLEE_DIST 1200.0f
 #define CHARACTER_NEAR_OBJ_DIST 50.0f
-#define CHARACTER_ITEM_NEAR_HOME_DIST 50.0f
+#define CHARACTER_ITEM_NEAR_HOME_DIST 100.0f
 #define CHARACTER_SIGHT_RANGE 800.0f
 #define CHARACTER_PICKUP_COOLDOWN 120
 #define CHARACTER_MIN_IDLE_TIME 120
 #define CHARACTER_CONFUSION_TIME 120
+#define CHARACTER_DEFAULT_ACTIVITY_TIME 300
+
+static Vec3d characterItemOffset = {0.0F, 140.0F, 0.0F};
 
 #ifndef __N64__
 #include <stdio.h>
-
 void Character_print(Character* self) {
-  printf("Character target=%s pos=",
-         self->target ? ModelTypeStrings[self->target->modelType] : "none");
+  printf(
+      "Character target=%s pos=",
+
+      self->target ? ModelTypeStrings[self->target->obj->modelType] : "none");
   Vec3d_print(&self->obj->position);
 }
 
@@ -40,22 +45,16 @@ void Character_init(Character* self,
                     GameObject* obj,
                     Item* defaultActivityItem,
                     Game* game) {
+  ItemHolder_init(&self->itemHolder, CharacterItemHolder, (void*)&self);
   self->obj = obj;
   self->target = NULL;
-  self->heldItem = NULL;
   self->defaultActivityItem = defaultActivityItem;
+
+  self->defaultActivityLocation = obj->position;
   self->state = IdleState;
 
   self->enteredStateTick = 0;
-  self->lastPickupTick = 0;
-
-  // switch (obj->modelType) {
-  //   case GroundskeeperCharacterModel:
-  //     Character_setTarget(self, game->player.goose);
-  //     break;
-  //   default:
-  //     break;
-  // }
+  self->startedActivityTick = 0;
 }
 
 void Character_moveTowards(Character* self, Vec3d target) {
@@ -76,9 +75,10 @@ void Character_moveTowards(Character* self, Vec3d target) {
 }
 
 void Character_update(Character* self, Game* game) {
-  if (self->heldItem) {
+  if (self->itemHolder.heldItem) {
     // bring item with you
-    self->heldItem->obj->position = self->obj->position;
+    self->itemHolder.heldItem->obj->position = self->obj->position;
+    Vec3d_add(&self->itemHolder.heldItem->obj->position, &characterItemOffset);
   }
   Character_updateState(self, game);
 }
@@ -93,8 +93,8 @@ void Character_transitionToState(Character* self, CharacterState nextState) {
 
 void Character_maybeTransitionToHigherPriorityState(Character* self,
                                                     Game* game) {
-  if (self->state == IdleState &&
-      self->enteredStateTick > game->tick - CHARACTER_MIN_IDLE_TIME) {
+  if (self->state == ConfusionState) {
+    // the only way out of this state is for it to time out
     return;
   }
   // TODO: start fleeing
@@ -118,55 +118,73 @@ void Character_updateIdleState(Character* self, Game* game) {
   Character_transitionToState(self, DefaultActivityState);
 }
 
-void Character_updateDefaultActivityState(Character* self, Game* game) {
-  if (Vec3d_distanceTo(&self->obj->position,
-                       &self->defaultActivityItem->obj->position) >
-      CHARACTER_NEAR_OBJ_DIST) {
-    Character_moveTowards(self, self->defaultActivityItem->obj->position);
-  } else {
-    self->target = NULL;
-    // doing default activity
-    Character_transitionToState(self, IdleState);
-  }
-}
-
-void Character_updateSeekingItemState(Character* self, Game* game) {
-  Item* target;
-  target = self->defaultActivityItem;
+void Character_updateConfusionState(Character* self, Game* game) {
   if (game->tick < self->enteredStateTick + CHARACTER_CONFUSION_TIME) {
     return;
   }
+  Character_transitionToState(self, IdleState);
+}
 
-  if (self->heldItem) {
+void Character_updateDefaultActivityState(Character* self, Game* game) {
+  if (Vec3d_distanceTo(&self->obj->position, &self->defaultActivityLocation) >
+      CHARACTER_NEAR_OBJ_DIST) {
+    Character_moveTowards(self, self->defaultActivityLocation);
+  } else {
+    // do default activity
+    if (self->startedActivityTick) {
+      if (game->tick >
+          self->startedActivityTick + CHARACTER_DEFAULT_ACTIVITY_TIME) {
+        self->startedActivityTick = 0;
+        Character_transitionToState(self, IdleState);
+      } else {
+        // continue doing
+        return;
+      }
+
+    } else {
+      self->startedActivityTick = game->tick;
+
+#ifndef __N64__
+      debugPrintf("started default activity");
+#endif
+    }
+  }
+}
+
+void Character_haveItemTaken(Character* self) {
+  // let nature take its course
+  self->state = ConfusionState;
+}
+
+void Character_updateSeekingItemState(Character* self, Game* game) {
+  self->target = self->defaultActivityItem;
+
+  if (self->itemHolder.heldItem) {
     // are we near enough to drop item?
-    if (Vec3d_distanceTo(&self->obj->position, &target->initialLocation) <
+    if (Vec3d_distanceTo(&self->obj->position, &self->target->initialLocation) <
         CHARACTER_NEAR_OBJ_DIST) {
       // close enough to return item
-      self->heldItem = NULL;
+      Item_drop(self->itemHolder.heldItem);
+      self->target = NULL;
       Character_transitionToState(self, IdleState);
     } else {
       // bringing item back to initial location
-      Character_moveTowards(self, target->initialLocation);
+      Character_moveTowards(self, self->target->initialLocation);
     }
   } else {
     // are we near enough to pick up item?
-    if (Vec3d_distanceTo(&self->obj->position, &target->obj->position) <
+    if (Vec3d_distanceTo(&self->obj->position, &self->target->obj->position) <
         CHARACTER_NEAR_OBJ_DIST) {
-      if (self->lastPickupTick < game->tick - CHARACTER_PICKUP_COOLDOWN) {
-        // yes, pick up
-        self->heldItem = target;
-        self->lastPickupTick = game->tick;
-        if (game->player.heldItem == target) {
+      if (self->target->holder && self->target->holder != &self->itemHolder) {
 #ifndef __N64__
-          printf("stealing item back\n");
+        debugPrintf("stealing item back\n");
 #endif
-          // steal it back
-          game->player.heldItem = NULL;
-        }
       }
+      Item_take(self->target, &self->itemHolder);
+
     } else {
       // no, move towards
-      Character_moveTowards(self, target->obj->position);
+      Character_moveTowards(self, self->target->obj->position);
     }
   }
 }
@@ -192,6 +210,10 @@ void Character_updateState(Character* self, Game* game) {
     case IdleState:
       Character_updateIdleState(self, game);
       break;
+    case ConfusionState:
+      Character_updateConfusionState(self, game);
+      break;
+
     case DefaultActivityState:
       Character_updateDefaultActivityState(self, game);
       break;
@@ -209,6 +231,6 @@ void Character_updateState(Character* self, Game* game) {
   }
 }
 
-void Character_setTarget(Character* self, GameObject* target) {
+void Character_setTarget(Character* self, Item* target) {
   self->target = target;
 }

@@ -11,7 +11,9 @@ void Character_init(Character* self,
                     Game* game);
 void Character_update(Character* self, Game* game);
 void Character_updateState(Character* self, Game* game);
-void Character_setTarget(Character* self, GameObject* target);
+void Character_setTarget(Character* self, Item* target);
+
+void Character_haveItemTaken(Character* self);
 
 #ifndef __N64__
 void Character_print(Character* self);

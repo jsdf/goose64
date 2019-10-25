@@ -29,6 +29,8 @@
 #define DEBUG_LOG_RENDER 0
 #define FREEVIEW_SPEED 0.2f
 
+int glgooseFrame = 0;
+
 // actual vector representing the camera's direction
 float cameraLX = 0.0f, cameraLZ = -1.0f;
 // XZ position of the camera
@@ -88,7 +90,7 @@ void drawString(char* string, int x, int y) {
   glPushMatrix();
   glLoadIdentity();
 
-  glColor3f(1, 0, 0);
+  glColor3f(1.0f, 1.0f, 1.0f);
 
   glRasterPos2i(x, y);
   for (c = string; *c != '\0'; c++) {
@@ -199,6 +201,10 @@ void renderScene(void) {
   char debugtext[80];
   Vec3d_toString(&game->player.goose->position, debugtext);
   drawString(debugtext, 20, 20);
+  if (game->paused) {
+    strcpy(debugtext, "paused");
+    drawString(debugtext, w / 2 - strlen(debugtext) / 2, h / 2);
+  }
 
   glutSwapBuffers();
 }
@@ -298,6 +304,10 @@ void updateInputs() {
         }
       }
 
+      if (key == 112 && glgooseFrame % 10 == 0) {  // p
+        game->paused = !game->paused;
+      }
+
       if (key == 99 && game->tick % 30 == 0) {  // c
         game->freeView = !game->freeView;
       }
@@ -307,7 +317,6 @@ void updateInputs() {
 
 void processNormalKeysUp(unsigned char key, int _x, int _y) {
   keysDown[key] = false;
-  printf("normals keys up %d\n", key);
 }
 
 void processNormalKeysDown(unsigned char key, int _x, int _y) {
@@ -319,6 +328,7 @@ void processNormalKeysDown(unsigned char key, int _x, int _y) {
 }
 
 void updateAndRender() {
+  glgooseFrame++;
   updateInputs();
   renderScene();
 }
@@ -375,7 +385,7 @@ int main(int argc, char** argv) {
   loadModel(BushModel, "bush.obj", "bush.bmp");
   loadModel(FlagpoleModel, "flagpole.obj", "flagpole.bmp");
   loadModel(GroundskeeperCharacterModel, "person.obj", "person.bmp");
-  loadModel(BookItemModel, "testingCube.obj", "testCubeTex.bmp");
+  loadModel(BookItemModel, "book.obj", "book.bmp");
   loadModel(HomeworkItemModel, "testingCube.obj", "testCubeTex.bmp");
 
   // enter GLUT event processing cycle

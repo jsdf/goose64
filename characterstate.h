@@ -4,6 +4,7 @@
 
 typedef enum CharacterState {
   IdleState,
+  ConfusionState,
   DefaultActivityState,
   SeekingItemState,
   SeekingSoundSourceState,
