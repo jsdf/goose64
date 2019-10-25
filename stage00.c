@@ -181,8 +181,7 @@ void makeDL00() {
       consoleOffset =
           debugPrintVec3d(4, consoleOffset, "viewTarget", &game->viewTarget);
       nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "goosedist=%5.1f",
-              Vec3d_distanceTo(&game->viewPos, &game->viewTarget));
+      sprintf(conbuf, "retrace=%d", nuScRetraceCounter);
       nuDebConCPuts(0, conbuf);
     }
   } else {
@@ -265,6 +264,9 @@ void updateGame00(void) {
     // normal controls
     if (contdata[0].trigger & A_BUTTON) {
       input.run = TRUE;
+    }
+    if (contdata[0].trigger & B_BUTTON) {
+      input.pickup = TRUE;
     }
     if (contdata[0].button & U_CBUTTONS) {
       farPlane += 100.0;

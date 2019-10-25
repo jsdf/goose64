@@ -5,7 +5,10 @@
 #include "gameobject.h"
 #include "gametypes.h"
 
-void Character_init(Character* self, GameObject* obj, Game* game);
+void Character_init(Character* self,
+                    GameObject* obj,
+                    Item* defaultActivityItem,
+                    Game* game);
 void Character_update(Character* self, Game* game);
 void Character_updateState(Character* self, Game* game);
 void Character_setTarget(Character* self, GameObject* target);

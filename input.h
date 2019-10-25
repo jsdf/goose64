@@ -7,6 +7,7 @@
 typedef struct Input {
   Vec2d direction;
   int run;
+  int pickup;
 } Input;
 
 void Input_init(Input* self);

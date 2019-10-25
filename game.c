@@ -1,12 +1,15 @@
 #include <assert.h>
 #include <math.h>
+#ifndef __N64__
 #include <stdio.h>
+#endif
 #include <stdlib.h>
 // game
 #include "character.h"
 #include "game.h"
 #include "gameobject.h"
 #include "gameutils.h"
+#include "item.h"
 #include "player.h"
 #include "vec3d.h"
 
@@ -16,6 +19,8 @@ Game game;
 
 #define NUM_CHARACTERS 1
 Character characters[NUM_CHARACTERS];
+#define NUM_ITEMS 2
+Item items[NUM_ITEMS];
 
 void Game_init(GameObject* worldObjects, int worldObjectsCount) {
   GameObject* goose;
@@ -32,11 +37,17 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount) {
 
   Player_init(&game.player, goose);
 
-  // look at goose
+  // setup camera
   Vec3d_copyFrom(&game.viewTarget, &game.player.goose->position);
 
+  Item_init(&items[0], Game_findObjectByType(BookItemModel), &game);
+  Item_init(&items[1], Game_findObjectByType(HomeworkItemModel), &game);
   Character_init(&characters[0],
-                 Game_findObjectByType(GroundskeeperCharacterModel), &game);
+                 Game_findObjectByType(GroundskeeperCharacterModel),
+                 /*book*/ &items[0], &game);
+
+  game.items = items;
+  game.itemsCount = NUM_ITEMS;
 }
 
 Game* Game_get() {
@@ -73,11 +84,13 @@ void Game_update(Input* input) {
 
   game = Game_get();
 
+  game->tick++;
+
   for (i = 0; i < NUM_CHARACTERS; ++i) {
     Character_update(&characters[i], game);
   }
 
-  Player_update(&game->player, input);
+  Player_update(&game->player, input, game);
 
   Game_updateCamera(game);
 

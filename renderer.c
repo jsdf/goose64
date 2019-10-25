@@ -1,7 +1,9 @@
 
 #include "renderer.h"
 #include <math.h>
+#ifndef __N64__
 #include <stdio.h>
+#endif
 #include <stdlib.h>
 #include "game.h"
 #include "gameobject.h"
