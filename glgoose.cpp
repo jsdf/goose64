@@ -1,9 +1,9 @@
-#include <cstring>
-#include <iostream>
 #include <math.h>
-#include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cstring>
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -13,6 +13,9 @@
 #include <GL/glut.h>
 #endif
 
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <glm/glm.hpp>
 #include "character.h"
 #include "constants.h"
 #include "game.h"
@@ -23,12 +26,13 @@
 #include "renderer.h"
 #include "university_map.h"
 #include "vec3d.h"
-#include <OpenGL/gl.h>
-#include <glm/glm.hpp>
 
 #define RAND(x) (rand() % x) /* random number between 0 to x */
-#define DEBUG_LOG_RENDER 0
 #define FREEVIEW_SPEED 0.2f
+
+#define DEBUG_LOG_RENDER 0
+#define DEBUG_OBJECTS 1
+#define DEBUG_RAYCASTING 1
 
 int glgooseFrame = 0;
 
@@ -50,10 +54,10 @@ typedef struct Model {
 Model models[MAX_MODEL_TYPE];
 
 // TODO: allocate this in map header file with correct size
-static GameObject *sortedObjects[MAX_WORLD_OBJECTS];
+static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 
-void loadModel(ModelType modelType, char *modelfile, char *texfile) {
-  std::vector<glm::vec3> normals; // Won't be used at the moment.
+void loadModel(ModelType modelType, char* modelfile, char* texfile) {
+  std::vector<glm::vec3> normals;  // Won't be used at the moment.
 
   // the map exporter scales the world up by this much, so we scale up the
   // meshes to match
@@ -62,8 +66,15 @@ void loadModel(ModelType modelType, char *modelfile, char *texfile) {
   models[modelType].texture = loadBMP_custom(texfile);
 }
 
+void drawLine(Vec3d* start, Vec3d* end) {
+  glBegin(GL_LINES);
+  glVertex3f(start->x, start->y, start->z);
+  glVertex3f(end->x, end->y, end->z);
+  glEnd();
+}
+
 void drawModel(ModelType modelType) {
-  glColor3f(1.0f, 1.0f, 1.0f); // whitish
+  glColor3f(1.0f, 1.0f, 1.0f);  // whitish
   Model model = models[modelType];
 
   glEnable(GL_TEXTURE_2D);
@@ -79,8 +90,8 @@ void drawModel(ModelType modelType) {
   glEnd();
 }
 
-void drawStringInPlace(char *string) {
-  char *c;
+void drawStringInPlace(char* string) {
+  char* c;
 
   glDisable(GL_TEXTURE_2D);
   glColor3f(1.0f, 1.0f, 1.0f);
@@ -91,9 +102,9 @@ void drawStringInPlace(char *string) {
   }
 }
 
-void drawString(char *string, int x, int y) {
+void drawString(char* string, int x, int y) {
   int w, h;
-  char *c;
+  char* c;
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
@@ -118,6 +129,25 @@ void drawString(char *string, int x, int y) {
   glPopMatrix();
 }
 
+void drawStringAtPoint(char* string, Vec3d* pos) {
+  GLdouble scr[3];
+  GLdouble model[16];
+  GLdouble proj[16];
+  GLint view[4];
+
+  int stringLength;
+
+  stringLength = strlen(string);
+
+  glGetDoublev(GL_MODELVIEW_MATRIX, model);
+  glGetDoublev(GL_PROJECTION_MATRIX, proj);
+  glGetIntegerv(GL_VIEWPORT, view);
+  gluProject(pos->x, pos->y, pos->z, model, proj, view, &scr[0], &scr[1],
+             &scr[2]);
+
+  drawString(string, scr[0] - (stringLength * 8 / 2), scr[1]);
+}
+
 void resizeWindow(int w, int h) {
   float ratio;
   // Prevent a divide by zero, when window is too short
@@ -138,7 +168,7 @@ void resizeWindow(int w, int h) {
   glMatrixMode(GL_MODELVIEW);
 }
 
-void drawGameObject(GameObject *obj) {
+void drawGameObject(GameObject* obj) {
   Vec3d pos, centroidOffset;
   pos = obj->position;
   centroidOffset = modelTypesProperties[obj->modelType].centroidOffset;
@@ -156,7 +186,7 @@ void drawGameObject(GameObject *obj) {
     drawModel(obj->modelType);
     glTranslatef(centroidOffset.x, centroidOffset.y, centroidOffset.z);
 
-    glColor3f(0.9, 0.3, 0.2); // white
+    glColor3f(0.9, 0.3, 0.2);  // white
     glutWireSphere(modelTypesProperties[obj->modelType].radius,
                    /*slices*/ 5, /*stacks*/ 5);
   }
@@ -165,7 +195,7 @@ void drawGameObject(GameObject *obj) {
 
 void renderScene(void) {
   int i;
-  Game *game;
+  Game* game;
 
   game = Game_get();
 
@@ -187,16 +217,16 @@ void renderScene(void) {
   glLoadIdentity();
   // Set the camera
   if (game->freeView) {
-    gluLookAt(                                                 //
-        viewPos.x, viewPos.y, viewPos.z,                       // eye
-        viewPos.x + cameraLX, viewPos.y, viewPos.z + cameraLZ, // center
-        0.0f, 1.0f, 0.0f                                       // up
+    gluLookAt(                                                  //
+        viewPos.x, viewPos.y, viewPos.z,                        // eye
+        viewPos.x + cameraLX, viewPos.y, viewPos.z + cameraLZ,  // center
+        0.0f, 1.0f, 0.0f                                        // up
     );
   } else {
-    gluLookAt(                                                      //
-        game->viewPos.x, game->viewPos.y, game->viewPos.z,          // eye
-        game->viewTarget.x, game->viewTarget.y, game->viewTarget.z, // center
-        0.0f, 1.0f, 0.0f                                            // up
+    gluLookAt(                                                       //
+        game->viewPos.x, game->viewPos.y, game->viewPos.z,           // eye
+        game->viewTarget.x, game->viewTarget.y, game->viewTarget.z,  // center
+        0.0f, 1.0f, 0.0f                                             // up
     );
   }
 
@@ -207,7 +237,7 @@ void renderScene(void) {
 #endif
   // render world objects
   for (i = 0; i < game->worldObjectsCount; i++) {
-    GameObject *obj = sortedObjects[i];
+    GameObject* obj = sortedObjects[i];
     if (obj->modelType != NoneModel) {
 #if DEBUG_LOG_RENDER
       printf("draw obj %d %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n", obj->id,
@@ -219,17 +249,56 @@ void renderScene(void) {
     }
   }
 
+#if DEBUG_RAYCASTING
+  for (i = 0; i < gameRaycastTrace.size(); ++i) {
+    RaycastTraceEvent raycast = gameRaycastTrace[i];
+    Vec3d rayStart = raycast.origin;
+    Vec3d rayEnd = raycast.direction;
+
+    // create end point based on origin and direction
+    Vec3d_multiplyScalar(&rayEnd, 10000.0);
+    Vec3d_add(&rayEnd, &rayStart);
+
+    if (raycast.result) {
+      glColor3f(1.0f, 1.0f, 1.0f);
+    } else {
+      glColor3f(1.0f, 0.0f, 0.0f);
+    }
+
+    glDisable(GL_TEXTURE_2D);
+    drawLine(&rayStart, &rayEnd);
+  }
+
+  gameRaycastTrace.clear();
+#endif
+
+#if DEBUG_OBJECTS
+  char objdebugtext[300];
+  for (i = 0; i < game->worldObjectsCount; i++) {
+    GameObject* obj = sortedObjects[i];
+    if (obj->modelType != NoneModel) {
+      strcpy(objdebugtext, "");
+
+      sprintf(objdebugtext, "%d: %s", obj->id,
+              ModelTypeStrings[obj->modelType]);
+
+      drawStringAtPoint(objdebugtext, &obj->position);
+    }
+  }
+#endif
+
   char debugtext[80];
   Vec3d_toString(&game->player.goose->position, debugtext);
   drawString(debugtext, 20, 20);
+
+  char pausedtext[80];
   if (game->paused) {
-    strcpy(debugtext, "paused");
-    drawString(debugtext, w / 2 - strlen(debugtext) / 2, h / 2);
+    strcpy(pausedtext, "paused");
+    drawString(pausedtext, w / 2 - strlen(pausedtext) / 2, h / 2);
   }
 
   char characterString[120];
-  Character *character;
-  Vec3d pos;
+  Character* character;
   for (i = 0, character = game->characters; i < game->charactersCount;
        i++, character++) {
     Character_toString(character, characterString);
@@ -245,9 +314,13 @@ void updateCameraAngle(float newAngle) {
   cameraLZ = -cos(cameraAngle);
 }
 
-void turnLeft() { updateCameraAngle(cameraAngle - 0.01f); }
+void turnLeft() {
+  updateCameraAngle(cameraAngle - 0.01f);
+}
 
-void turnRight() { updateCameraAngle(cameraAngle + 0.01f); }
+void turnRight() {
+  updateCameraAngle(cameraAngle + 0.01f);
+}
 
 void moveForward() {
   viewPos.x += cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
@@ -269,68 +342,72 @@ void moveRight() {
   viewPos.z += cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
-void moveUp() { viewPos.y += FREEVIEW_SPEED * N64_SCALE_FACTOR; }
+void moveUp() {
+  viewPos.y += FREEVIEW_SPEED * N64_SCALE_FACTOR;
+}
 
-void moveDown() { viewPos.y -= FREEVIEW_SPEED * N64_SCALE_FACTOR; }
+void moveDown() {
+  viewPos.y -= FREEVIEW_SPEED * N64_SCALE_FACTOR;
+}
 
 void updateInputs() {
-  Game *game;
+  Game* game;
   game = Game_get();
 
   for (int key = 0; key < 127; ++key) {
     if (keysDown[key]) {
       if (game->freeView) {
         switch (key) {
-        case 97: // a
-          moveLeft();
-          break;
-        case 100: // d
-          moveRight();
-          break;
-        case 119: // w
-          moveForward();
-          break;
-        case 115: // s
-          moveBack();
-          break;
-        case 113: // q
-          turnLeft();
-          break;
-        case 101: // e
-          turnRight();
-          break;
-        case 114: // r
-          moveUp();
-          break;
-        case 102: // f
-          moveDown();
-          break;
+          case 97:  // a
+            moveLeft();
+            break;
+          case 100:  // d
+            moveRight();
+            break;
+          case 119:  // w
+            moveForward();
+            break;
+          case 115:  // s
+            moveBack();
+            break;
+          case 113:  // q
+            turnLeft();
+            break;
+          case 101:  // e
+            turnRight();
+            break;
+          case 114:  // r
+            moveUp();
+            break;
+          case 102:  // f
+            moveDown();
+            break;
         }
       } else {
         switch (key) {
-        case 97: // a
-          input.direction.x += 1.0;
-          break;
-        case 100: // d
-          input.direction.x -= 1.0;
-          break;
-        case 119: // w
-          input.direction.y += 1.0;
-          break;
-        case 115: // s
-          input.direction.y -= 1.0;
-          break;
-        case 32: // space
-          input.pickup = true;
-          break;
+          case 97:  // a
+            input.direction.x += 1.0;
+            break;
+          case 100:  // d
+            input.direction.x -= 1.0;
+            break;
+          case 119:  // w
+            input.direction.y += 1.0;
+            break;
+          case 115:  // s
+            input.direction.y -= 1.0;
+            break;
+          case 32:  // space
+            input.pickup = true;
+            break;
         }
       }
 
-      if (key == 112 && glgooseFrame % 10 == 0) { // p
+      if (key == 112 && glgooseFrame % 10 == 0) {  // p
         game->paused = !game->paused;
       }
 
-      if (key == 99 && game->tick % 30 == 0) { // c
+      if (key == 99 && game->tick % 30 == 0) {  // c
         game->freeView = !game->freeView;
       }
     }
@@ -344,7 +421,7 @@ void processNormalKeysUp(unsigned char key, int _x, int _y) {
 void processNormalKeysDown(unsigned char key, int _x, int _y) {
   keysDown[key] = true;
 
-  if (key == 27) { // esc
+  if (key == 27) {  // esc
     exit(0);
   }
 }
@@ -355,11 +432,11 @@ void updateAndRender() {
   renderScene();
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   int i;
 
-  Game *game;
-  GameObject *obj;
+  Game* game;
+  GameObject* obj;
 
   Game_init(university_map_data, UNIVERSITY_MAP_COUNT);
   game = Game_get();

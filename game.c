@@ -60,8 +60,8 @@ Character characters[NUM_CHARACTERS];
 #define NUM_ITEMS 2
 Item items[NUM_ITEMS];
 
-void Game_init(GameObject *worldObjects, int worldObjectsCount) {
-  GameObject *goose;
+void Game_init(GameObject* worldObjects, int worldObjectsCount) {
+  GameObject* goose;
 
   game.paused = FALSE;
   game.worldObjects = worldObjects;
@@ -92,12 +92,14 @@ void Game_init(GameObject *worldObjects, int worldObjectsCount) {
   game.charactersCount = NUM_CHARACTERS;
 }
 
-Game *Game_get() { return &game; }
+Game* Game_get() {
+  return &game;
+}
 
 // finds the first object with a particular modeltype
-GameObject *Game_findObjectByType(ModelType modelType) {
+GameObject* Game_findObjectByType(ModelType modelType) {
   int i;
-  GameObject *obj;
+  GameObject* obj;
 
   for (i = 0, obj = game.worldObjects; i < game.worldObjectsCount; i++, obj++) {
     if (obj->modelType == modelType) {
@@ -107,7 +109,7 @@ GameObject *Game_findObjectByType(ModelType modelType) {
   return NULL;
 }
 
-void Game_updateCamera(Game *game) {
+void Game_updateCamera(Game* game) {
   Vec3d cameraOffset;
   Vec3d_set(&cameraOffset, 0.0F, 650.0F, -800.0F);
 
@@ -118,8 +120,8 @@ void Game_updateCamera(Game *game) {
   Vec3d_copyFrom(&game->viewTarget, &game->player.goose->position);
 }
 
-void Game_update(Input *input) {
-  Game *game;
+void Game_update(Input* input) {
+  Game* game;
   int i;
 
   game = Game_get();
@@ -140,9 +142,25 @@ void Game_update(Input *input) {
   Input_init(input);
 }
 
-int Game_rayIntersectsSphere(Vec3d *origin, Vec3d *rayDirection,
-                             Vec3d *objCenter, float objRadius) {
+#ifndef __N64__
+#ifdef __cplusplus
 
+std::vector<RaycastTraceEvent> gameRaycastTrace;
+
+void Game_traceRaycast(RaycastTraceEvent event) {
+  if (gameRaycastTrace.size() > 1000) {
+    printf("!!! gameRaycastTrace overflowed\n");
+    gameRaycastTrace.clear();
+  }
+  gameRaycastTrace.push_back(event);
+}
+#endif
+#endif
+
+int Game_rayIntersectsSphere(Vec3d* origin,
+                             Vec3d* rayDirection,
+                             Vec3d* objCenter,
+                             float objRadius) {
   Vec3d l;
   float tc, d, t1c, t1, t2;
   // l = objCenter - origin;
@@ -167,36 +185,30 @@ int Game_rayIntersectsSphere(Vec3d *origin, Vec3d *rayDirection,
   return TRUE;
 }
 
-#ifndef __N64__
-#ifdef __cplusplus
-
-#include <vector>
-
-std::vector<int> Game_canSeeOtherObjectDebugChecks
-#endif
-#endif
-
-    /*
-    method: check if ray from viewer to target intersects any other object's
-    bounding sphere at a distance less than the distance to the target's
-    bounding sphere
-    */
-    int
-    Game_canSeeOtherObject(GameObject *viewer, GameObject *target,
-                           float viewerEyeOffset) {
+/*
+method: check if ray from viewer to target intersects any other object's
+bounding sphere at a distance less than the distance to the target's
+bounding sphere
+*/
+int Game_canSeeOtherObject(GameObject* viewer,
+                           GameObject* target,
+                           float viewerEyeOffset,
+                           GameObject* occuludingObjects,
+                           int occuludingObjectsCount) {
   Vec3d eye, rayDirection, objCenter;
-  int i;
+  int i, result;
   float targetDistance;
-  GameObject *obj;
+  GameObject* obj;
 
+  result = TRUE;
   eye = viewer->position;
-  eye.y += viewerEyeOffset; // eye offset
+  eye.y += viewerEyeOffset;  // eye offset
   Vec3d_directionTo(&eye, &target->position, &rayDirection);
 
   targetDistance = Vec3d_distanceTo(&eye, &target->position) -
                    modelTypesProperties[target->modelType].radius;
 
-  for (obj = game.worldObjects, i = 0; i < game.worldObjectsCount; obj++, i++) {
+  for (obj = occuludingObjects, i = 0; i < occuludingObjectsCount; obj++, i++) {
     if (obj == target || obj == viewer) {
       // the ray will definitely intersect these, but we care about
       // intersections with other things
@@ -212,10 +224,18 @@ std::vector<int> Game_canSeeOtherObjectDebugChecks
       // ignore objects further than target
       continue;
     }
+
     if (Game_rayIntersectsSphere(&eye, &rayDirection, &objCenter,
                                  modelTypesProperties[obj->modelType].radius)) {
-      return FALSE;
+      result = FALSE;
+      break;
     }
   }
-  return TRUE;
+
+#ifdef __cplusplus
+  Game_traceRaycast({/*int result;*/ result,
+                     /*Vec3d origin;*/ eye,
+                     /*Vec3d direction;*/ rayDirection});
+#endif
+  return result;
 }
