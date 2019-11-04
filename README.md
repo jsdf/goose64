@@ -2,7 +2,7 @@
 
 ## install dependencies
 ```
-brew install glfw3 glm lua
+brew install glm lua
 
 ```
 

@@ -22,30 +22,39 @@
 #define CHARACTER_MIN_IDLE_TIME 120
 #define CHARACTER_CONFUSION_TIME 120
 #define CHARACTER_DEFAULT_ACTIVITY_TIME 300
+#define CHARACTER_EYE_OFFSET_Y 10.0
 
 static Vec3d characterItemOffset = {0.0F, 140.0F, 0.0F};
 
 #ifndef __N64__
 #include <stdio.h>
-void Character_print(Character* self) {
-  printf(
-      "Character target=%s pos=",
+void Character_print(Character *self) {
+  printf("Character target=%s pos=",
 
-      self->target ? ModelTypeStrings[self->target->obj->modelType] : "none");
-  Vec3d_print(&self->obj->position);
+         self->target ? ModelTypeStrings[self->target->obj->modelType]
+                      : "none");
 }
 
-void Character_printStateTransition(Character* self, CharacterState nextState) {
+void Character_printStateTransition(Character *self, CharacterState nextState) {
   printf("%s: %s -> %s\n", ModelTypeStrings[self->obj->modelType],
          CharacterStateStrings[self->state], CharacterStateStrings[nextState]);
 }
+
+void Character_toString(Character *self, char *buffer) {
+  char pos[60];
+
+  Vec3d_toString(&self->obj->position, pos);
+  sprintf(buffer, "Character state=%s target=%s pos=%s",
+          CharacterStateStrings[self->state],
+          self->target ? ModelTypeStrings[self->target->obj->modelType]
+                       : "none",
+          pos);
+}
 #endif
 
-void Character_init(Character* self,
-                    GameObject* obj,
-                    Item* defaultActivityItem,
-                    Game* game) {
-  ItemHolder_init(&self->itemHolder, CharacterItemHolder, (void*)&self);
+void Character_init(Character *self, GameObject *obj, Item *defaultActivityItem,
+                    Game *game) {
+  ItemHolder_init(&self->itemHolder, CharacterItemHolder, (void *)&self);
   self->obj = obj;
   self->target = NULL;
   self->defaultActivityItem = defaultActivityItem;
@@ -57,7 +66,15 @@ void Character_init(Character* self,
   self->startedActivityTick = 0;
 }
 
-void Character_moveTowards(Character* self, Vec3d target) {
+int Character_canSeePlayer(Character *self, Game *game) {
+
+  // TODO: define eye positions per character?
+  return Game_canSeeOtherObject(
+      self->obj, game->player.goose,
+      /*viewer eye pos y offset*/ CHARACTER_EYE_OFFSET_Y);
+}
+
+void Character_moveTowards(Character *self, Vec3d target) {
   Vec3d movement;
   Vec2d movement2d;
   float destAngle;
@@ -74,7 +91,7 @@ void Character_moveTowards(Character* self, Vec3d target) {
       self->obj->rotationZ, destAngle, CHARACTER_MAX_TURN_SPEED);
 }
 
-void Character_update(Character* self, Game* game) {
+void Character_update(Character *self, Game *game) {
   if (self->itemHolder.heldItem) {
     // bring item with you
     self->itemHolder.heldItem->obj->position = self->obj->position;
@@ -83,7 +100,7 @@ void Character_update(Character* self, Game* game) {
   Character_updateState(self, game);
 }
 
-void Character_transitionToState(Character* self, CharacterState nextState) {
+void Character_transitionToState(Character *self, CharacterState nextState) {
 #ifndef __N64__
   Character_printStateTransition(self, nextState);
 #endif
@@ -91,8 +108,9 @@ void Character_transitionToState(Character* self, CharacterState nextState) {
   self->state = nextState;
 }
 
-void Character_maybeTransitionToHigherPriorityState(Character* self,
-                                                    Game* game) {
+void Character_maybeTransitionToHigherPriorityState(Character *self,
+                                                    Game *game) {
+  Item *possibleTarget = self->defaultActivityItem;
   if (self->state == ConfusionState) {
     // the only way out of this state is for it to time out
     return;
@@ -100,12 +118,14 @@ void Character_maybeTransitionToHigherPriorityState(Character* self,
   // TODO: start fleeing
   // TODO: heard sound
   if (self->state < SeekingItemState) {
-    if (Vec3d_distanceTo(&self->defaultActivityItem->obj->position,
-                         &self->defaultActivityItem->initialLocation) >
+    if (Vec3d_distanceTo(&possibleTarget->obj->position,
+                         &possibleTarget->initialLocation) >
         CHARACTER_ITEM_NEAR_HOME_DIST) {
       // item has been stolen
-      if (Vec3d_distanceTo(&self->defaultActivityItem->obj->position,
-                           &self->obj->position) < CHARACTER_SIGHT_RANGE) {
+      if (Vec3d_distanceTo(&possibleTarget->obj->position,
+                           &self->obj->position) < CHARACTER_SIGHT_RANGE &&
+          Game_canSeeOtherObject(self->obj, possibleTarget->obj,
+                                 CHARACTER_EYE_OFFSET_Y)) {
         // and we can see it
         Character_transitionToState(self, SeekingItemState);
         return;
@@ -114,18 +134,18 @@ void Character_maybeTransitionToHigherPriorityState(Character* self,
   }
 }
 
-void Character_updateIdleState(Character* self, Game* game) {
+void Character_updateIdleState(Character *self, Game *game) {
   Character_transitionToState(self, DefaultActivityState);
 }
 
-void Character_updateConfusionState(Character* self, Game* game) {
+void Character_updateConfusionState(Character *self, Game *game) {
   if (game->tick < self->enteredStateTick + CHARACTER_CONFUSION_TIME) {
     return;
   }
   Character_transitionToState(self, IdleState);
 }
 
-void Character_updateDefaultActivityState(Character* self, Game* game) {
+void Character_updateDefaultActivityState(Character *self, Game *game) {
   if (Vec3d_distanceTo(&self->obj->position, &self->defaultActivityLocation) >
       CHARACTER_NEAR_OBJ_DIST) {
     Character_moveTowards(self, self->defaultActivityLocation);
@@ -151,12 +171,12 @@ void Character_updateDefaultActivityState(Character* self, Game* game) {
   }
 }
 
-void Character_haveItemTaken(Character* self) {
+void Character_haveItemTaken(Character *self) {
   // let nature take its course
   self->state = ConfusionState;
 }
 
-void Character_updateSeekingItemState(Character* self, Game* game) {
+void Character_updateSeekingItemState(Character *self, Game *game) {
   self->target = self->defaultActivityItem;
 
   if (self->itemHolder.heldItem) {
@@ -172,6 +192,16 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
       Character_moveTowards(self, self->target->initialLocation);
     }
   } else {
+    // can we still see the item?
+
+    if (!Game_canSeeOtherObject(self->obj, self->target->obj,
+                                CHARACTER_EYE_OFFSET_Y)) {
+
+      // nope, give up
+      self->target = NULL;
+      Character_transitionToState(self, IdleState);
+    }
+
     // are we near enough to pick up item?
     if (Vec3d_distanceTo(&self->obj->position, &self->target->obj->position) <
         CHARACTER_NEAR_OBJ_DIST) {
@@ -188,10 +218,10 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
     }
   }
 }
-void Character_updateSeekingSoundSourceState(Character* self, Game* game) {
+void Character_updateSeekingSoundSourceState(Character *self, Game *game) {
   // TODO
 }
-void Character_updateFleeingState(Character* self, Game* game) {
+void Character_updateFleeingState(Character *self, Game *game) {
   Vec3d movement;
   Vec3d_directionTo(&game->player.goose->position, &self->obj->position,
                     &movement);
@@ -203,34 +233,34 @@ void Character_updateFleeingState(Character* self, Game* game) {
   }
 }
 
-void Character_updateState(Character* self, Game* game) {
+void Character_updateState(Character *self, Game *game) {
   Character_maybeTransitionToHigherPriorityState(self, game);
 
   switch (self->state) {
-    case IdleState:
-      Character_updateIdleState(self, game);
-      break;
-    case ConfusionState:
-      Character_updateConfusionState(self, game);
-      break;
+  case IdleState:
+    Character_updateIdleState(self, game);
+    break;
+  case ConfusionState:
+    Character_updateConfusionState(self, game);
+    break;
 
-    case DefaultActivityState:
-      Character_updateDefaultActivityState(self, game);
-      break;
-    case SeekingItemState:
-      Character_updateSeekingItemState(self, game);
-      break;
-    case SeekingSoundSourceState:
-      Character_updateSeekingSoundSourceState(self, game);
-      break;
-    case FleeingState:
-      Character_updateFleeingState(self, game);
-      break;
-    default:
-      break;
+  case DefaultActivityState:
+    Character_updateDefaultActivityState(self, game);
+    break;
+  case SeekingItemState:
+    Character_updateSeekingItemState(self, game);
+    break;
+  case SeekingSoundSourceState:
+    Character_updateSeekingSoundSourceState(self, game);
+    break;
+  case FleeingState:
+    Character_updateFleeingState(self, game);
+    break;
+  default:
+    break;
   }
 }
 
-void Character_setTarget(Character* self, Item* target) {
+void Character_setTarget(Character *self, Item *target) {
   self->target = target;
 }

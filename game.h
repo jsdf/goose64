@@ -6,11 +6,25 @@
 #include "gametypes.h"
 #include "input.h"
 
-void Game_init(GameObject* worldObjects, int worldObjectsCount);
-Game* Game_get();
+// TODO: move to modeltype.h
+typedef struct ModelProperties {
+  float radius;
+  Vec3d centroidOffset;
+} ModelProperties;
 
-GameObject* Game_findObjectByType(ModelType modelType);
+extern ModelProperties modelTypesProperties[];
 
-void Game_update(Input* input);
+void Game_init(GameObject *worldObjects, int worldObjectsCount);
+Game *Game_get();
+
+GameObject *Game_findObjectByType(ModelType modelType);
+
+int Game_rayIntersectsSphere(Vec3d *origin, Vec3d *rayDirection,
+                             Vec3d *objCenter, float objRadius);
+
+int Game_canSeeOtherObject(GameObject *viewer, GameObject *target,
+                           float viewerEyeOffset);
+
+void Game_update(Input *input);
 
 #endif /* !_GAME_H_ */

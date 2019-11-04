@@ -18,7 +18,7 @@ typedef enum ModelType {
 
 #ifndef __N64__
 
-extern char* ModelTypeStrings[];
+extern char *ModelTypeStrings[];
 #endif
 
 #endif /* !MODELTYPE_H */
