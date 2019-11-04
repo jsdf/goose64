@@ -25,7 +25,7 @@ ModelProperties modelTypesProperties[] = {
      /* centroidOffset */ {0.0, 0.0, 0.0}},
     /* GooseModel */
     {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}},
+     /* centroidOffset */ {0.0, 20.0, 0.0}},
     /* BookItemModel */
     {/* radius */ 20.0,
      /* centroidOffset */ {0.0, 0.0, 0.0}},
@@ -42,14 +42,14 @@ ModelProperties modelTypesProperties[] = {
     {/* radius */ 50.0,
      /* centroidOffset */ {0.0, 0.0, 0.0}},
     /* BushModel */
-    {/* radius */ 50.0,
+    {/* radius */ 55.0,
      /* centroidOffset */ {0.0, 15.0, 0.0}},
     /* FlagpoleModel */
     {/* radius */ 50.0,
      /* centroidOffset */ {0.0, 0.0, 0.0}},
     /* GroundskeeperCharacterModel */
     {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}},
+     /* centroidOffset */ {0.0, 70.0, 0.0}},
     /* MAX_MODEL_TYPE */
     {/* radius */ 50.0,
      /* centroidOffset */ {0.0, 0.0, 0.0}},
@@ -162,27 +162,45 @@ int Game_rayIntersectsSphere(Vec3d* origin,
                              Vec3d* objCenter,
                              float objRadius) {
   Vec3d l;
-  float tc, d, t1c, t1, t2;
+  float tca, d2, radius2, thc, t0, t1;
   // l = objCenter - origin;
   Vec3d_copyFrom(&l, objCenter);
   Vec3d_sub(&l, origin);
-  // solve for tc
-  tc = Vec3d_dot(&l, rayDirection);
-  if (tc < 0.0)
+
+  tca = Vec3d_dot(&l, rayDirection);
+  d2 = Vec3d_dot(&l, &l) - tca * tca;
+  radius2 = objRadius * objRadius;
+
+  if (d2 > radius2)
     return FALSE;
 
-  d = sqrtf((tc * tc) - Vec3d_dot(&l, &l));
-  if (d > objRadius)
+  thc = sqrtf(radius2 - d2);
+
+  // t0 = first intersect point - entrance on front of sphere
+  t0 = tca - thc;
+
+  // t1 = second intersect point - exit point on back of sphere
+  t1 = tca + thc;
+
+  // test to see if both t0 and t1 are behind the ray - if so, return null
+  if (t0 < 0 && t1 < 0)
     return FALSE;
-
-  // solve for t1c
-  t1c = sqrtf((objRadius * objRadius) - (d * d));
-
-  // solve for intersection points
-  t1 = tc - t1c;
-  t2 = tc + t1c;
 
   return TRUE;
+}
+
+void Game_getObjCenter(GameObject* obj, Vec3d* result) {
+  Vec3d_copyFrom(result, &obj->position);
+  Vec3d_add(result, &modelTypesProperties[obj->modelType].centroidOffset);
+}
+
+float Game_distanceToGameObject(Vec3d* from, GameObject* to) {
+  Vec3d toObjCenter;
+
+  Game_getObjCenter(to, &toObjCenter);
+
+  return Vec3d_distanceTo(from, &toObjCenter) -
+         modelTypesProperties[to->modelType].radius;
 }
 
 /*
@@ -196,46 +214,46 @@ int Game_canSeeOtherObject(GameObject* viewer,
                            GameObject* occuludingObjects,
                            int occuludingObjectsCount) {
   Vec3d eye, rayDirection, objCenter;
-  int i, result;
-  float targetDistance;
+  int i, canSee;
+  float targetDistance, objDistance;
   GameObject* obj;
 
-  result = TRUE;
+  canSee = TRUE;
   eye = viewer->position;
   eye.y += viewerEyeOffset;  // eye offset
   Vec3d_directionTo(&eye, &target->position, &rayDirection);
 
-  targetDistance = Vec3d_distanceTo(&eye, &target->position) -
-                   modelTypesProperties[target->modelType].radius;
+  targetDistance = Game_distanceToGameObject(&eye, target);
 
   for (obj = occuludingObjects, i = 0; i < occuludingObjectsCount; obj++, i++) {
-    if (obj == target || obj == viewer) {
+    if (obj->id == target->id || obj->id == viewer->id) {
       // the ray will definitely intersect these, but we care about
       // intersections with other things
       continue;
     }
 
-    Vec3d_copyFrom(&objCenter,
-                   &modelTypesProperties[obj->modelType].centroidOffset);
+    objDistance = Game_distanceToGameObject(&eye, obj);
 
-    if (Vec3d_distanceTo(&eye, &objCenter) -
-            modelTypesProperties[obj->modelType].radius >
-        targetDistance) {
+    if (objDistance > targetDistance) {
       // ignore objects further than target
       continue;
     }
 
+    Game_getObjCenter(obj, &objCenter);
+
     if (Game_rayIntersectsSphere(&eye, &rayDirection, &objCenter,
                                  modelTypesProperties[obj->modelType].radius)) {
-      result = FALSE;
+      canSee = FALSE;
       break;
     }
   }
 
 #ifdef __cplusplus
-  Game_traceRaycast({/*int result;*/ result,
+
+  Game_traceRaycast({/*int result;*/ canSee,
                      /*Vec3d origin;*/ eye,
-                     /*Vec3d direction;*/ rayDirection});
+                     /*Vec3d direction;*/ rayDirection,
+                     /*GameObject* hit;*/ canSee ? NULL : obj});
 #endif
-  return result;
+  return canSee;
 }

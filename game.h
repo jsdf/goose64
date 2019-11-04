@@ -41,6 +41,7 @@ typedef struct RaycastTraceEvent {
   int result;
   Vec3d origin;
   Vec3d direction;
+  GameObject* hit;
 } RaycastTraceEvent;
 
 extern std::vector<RaycastTraceEvent> gameRaycastTrace;

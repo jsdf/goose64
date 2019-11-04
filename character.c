@@ -22,9 +22,9 @@
 #define CHARACTER_MIN_IDLE_TIME 120
 #define CHARACTER_CONFUSION_TIME 120
 #define CHARACTER_DEFAULT_ACTIVITY_TIME 300
-#define CHARACTER_EYE_OFFSET_Y 10.0
+#define CHARACTER_EYE_OFFSET_Y 120.0
 
-static Vec3d characterItemOffset = {0.0F, 140.0F, 0.0F};
+static Vec3d characterItemOffset = {0.0F, 60.0F, 0.0F};
 
 #ifndef __N64__
 #include <stdio.h>
