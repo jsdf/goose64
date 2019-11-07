@@ -3,6 +3,10 @@ import re
 import math
 import collections
 
+"""
+exports a level to a header file ready to be included in the game code
+"""
+
 filename = 'university_map'
 
 # we scale the models up by this much to avoid n64 fixed point precision issues
