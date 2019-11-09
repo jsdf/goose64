@@ -2,6 +2,9 @@
 #ifndef MODELTYPE_H
 #define MODELTYPE_H
 
+#include "vec3d.h"
+
+// when updating this, also update ModelTypeStrings[]
 typedef enum ModelType {
   NoneModel,
   GooseModel,
@@ -16,9 +19,16 @@ typedef enum ModelType {
   MAX_MODEL_TYPE
 } ModelType;
 
+typedef struct ModelProperties {
+  float radius;
+  Vec3d centroidOffset;
+} ModelProperties;
+
+extern ModelProperties modelTypesProperties[];
+
 #ifndef __N64__
 
-extern char *ModelTypeStrings[];
+extern char* ModelTypeStrings[];
 #endif
 
 #endif /* !MODELTYPE_H */

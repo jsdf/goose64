@@ -6,14 +6,6 @@
 #include "gametypes.h"
 #include "input.h"
 
-// TODO: move to modeltype.h
-typedef struct ModelProperties {
-  float radius;
-  Vec3d centroidOffset;
-} ModelProperties;
-
-extern ModelProperties modelTypesProperties[];
-
 void Game_init(GameObject* worldObjects, int worldObjectsCount);
 Game* Game_get();
 

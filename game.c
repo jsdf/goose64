@@ -18,43 +18,6 @@
 
 static Game game;
 
-// TODO: move to modeltype.c
-ModelProperties modelTypesProperties[] = {
-    /* NoneModel */
-    {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}},
-    /* GooseModel */
-    {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 20.0, 0.0}},
-    /* BookItemModel */
-    {/* radius */ 20.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}},
-    /* HomeworkItemModel */
-    {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}},
-    /* CakeItemModel */
-    {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}},
-    /* UniBldgModel */
-    {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}},
-    /* UniFloorModel */
-    {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}},
-    /* BushModel */
-    {/* radius */ 55.0,
-     /* centroidOffset */ {0.0, 15.0, 0.0}},
-    /* FlagpoleModel */
-    {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}},
-    /* GroundskeeperCharacterModel */
-    {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 70.0, 0.0}},
-    /* MAX_MODEL_TYPE */
-    {/* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}},
-};
-
 #define NUM_CHARACTERS 1
 Character characters[NUM_CHARACTERS];
 #define NUM_ITEMS 2
