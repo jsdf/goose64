@@ -105,3 +105,11 @@ end
 function formatVert(floatString, object_scale)
 	return padStringLeft(math.floor(object_scale*floatString),5)
 end
+
+
+function tableLength(tbl)
+  local count = 0
+  for _ in pairs(tbl) do count = count + 1 end
+
+  return count
+end

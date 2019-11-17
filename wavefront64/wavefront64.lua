@@ -52,17 +52,32 @@ function w64_main()
 	if(arg[1]:lower()=="obj") then
 		-- OBJECT PARSING
 		-- Main functional pipeline
-		local objname, objtable, texturename, bmp, objscale, fast3d = w64_initTexturedObject(arg[2])
+		local objname, objfile_subobjtables, texturename, bmp, objscale, fast3d = w64_initTexturedObject(arg[2])
+		local is_multiple_obj_model = tableLength(objfile_subobjtables) > 1
 		local bmptable, previewtable 								= w64_bmpFileToC(bmp)
-		local facetable, verttable, verttexttable 					= w64_VFFormat(objtable, objscale)
-		local facesinpacks, facesinpacksrefs						= w64_VFSort(facetable)
-
-		-- File output pipeline (push to final_file_output)
 		local metaString, textureString 	= w64_outputTexture(objname,texturename,previewtable,bmptable)
-		local vertexString 					= w64_outputVerts(facesinpacks,facesinpacksrefs,verttexttable,objname)
-		local faceString 					= w64_outputTriangles(facesinpacks, facesinpacksrefs, fast3d, objname)
-		local displayListString 			= w64_outputDisplayList(objname,texturename)
-		final_file_output = {metaString,textureString,vertexString,faceString,displayListString}
+		table.insert(final_file_output, metaString)
+		table.insert(final_file_output, textureString)
+
+		for subobjname,subobjtable in pairs(objfile_subobjtables) do
+			local subobj_combined_name
+			if is_multiple_obj_model then
+				subobj_combined_name = objname.."_"..subobjname
+			else
+				subobj_combined_name = objname
+			end
+			local facetable, verttable, verttexttable 					= w64_VFFormat(subobjtable, objscale,subobjname)
+			local facesinpacks, facesinpacksrefs						= w64_VFSort(facetable)
+
+			-- File output pipeline (push to final_file_output)
+			local vertexString 					= w64_outputVerts(facesinpacks,facesinpacksrefs,verttexttable,subobj_combined_name)
+			local faceString 					= w64_outputTriangles(facesinpacks, facesinpacksrefs, fast3d, subobj_combined_name)
+			local displayListString 			= w64_outputDisplayList(subobj_combined_name,texturename)
+			table.insert(final_file_output, vertexString)
+			table.insert(final_file_output, faceString)
+			table.insert(final_file_output, displayListString)
+		end
+
 		filename = arg[2]
 	elseif(arg[1]:lower()=="spr") then
 		-- SPRITE ONLY PARSING
@@ -116,8 +131,8 @@ function w64_initTexturedObject(argument)
 	if(mtl_file == nil) then err("ERROR: No MTL file found for "..mtl_Path) else print("MTL file "..mtl_Path.." found.") end
 
 	-- init object
-	local obj_Table = obj_loader.load(obj_Path)
-	if(obj_Table==nil) then
+	local obj_fileTables = obj_loader.load(obj_Path)
+	if(obj_fileTables==nil) then
 		err(obj_Path.." not found")
 	else
 		print("OBJ File "..obj_Path.." found.")
@@ -147,7 +162,7 @@ function w64_initTexturedObject(argument)
 	print("Fast3D on: "..tostring(one_tri))
 
 
-	return obj_Name, obj_Table, name_of_texture, bmp, object_scale, one_tri
+	return obj_Name, obj_fileTables, name_of_texture, bmp, object_scale, one_tri
 end
 
 function w64_bmpFileToC(bmp_file)
@@ -189,7 +204,7 @@ function w64_bmpFileToC(bmp_file)
 	return table_of_bytes, table_preview
 end
 
-function w64_VFFormat(obj_Table, object_scale)
+function w64_VFFormat(obj_Table, object_scale, name)
 	--[[ 
 	======================================
 	 FACES AND VERTS OUTPUT
@@ -220,6 +235,9 @@ function w64_VFFormat(obj_Table, object_scale)
 
 	local vertsCreated = 0
 
+	-- print("obj_Table", obj_Table)
+	-- tprint(obj_Table)
+
 	-- generate faces and verts arrays
 	for i=1,#obj_Table.f do
 		local faceVertReference = {}
@@ -233,11 +251,12 @@ function w64_VFFormat(obj_Table, object_scale)
 					make vert STRING for THIS unique combination
 					TODO: change 130 to the actual vert colors (if any)
 				--]] 
-
+				local vertnormidx = obj_Table.f[i][j].vn
+				print("getting normals on",name,vert_ref_string,"vertnormidx:"..vertnormidx, "i:"..i,"j:"..j)
 				normX,normY,normZ = Vec3d_normalise(
-					obj_Table.vn[obj_Table.f[i][j].vn].x ,
-					obj_Table.vn[obj_Table.f[i][j].vn].y ,
-					obj_Table.vn[obj_Table.f[i][j].vn].z
+					obj_Table.vn[vertnormidx].x ,
+					obj_Table.vn[vertnormidx].y ,
+					obj_Table.vn[vertnormidx].z
 				)
 
 				local vertString = string.format(

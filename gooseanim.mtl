@@ -1,0 +1,24 @@
+# Blender MTL File: 'gooseanim.blend'
+# Material Count: 2
+
+newmtl vcolor
+Ns 165.306149
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.474286 0.474286 0.474286
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd goosetex.bmp
+
+newmtl vcolor.001
+Ns 165.306149
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.474286 0.474286 0.474286
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd goosetex.bmp

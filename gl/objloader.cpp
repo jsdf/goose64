@@ -9,17 +9,18 @@
 
 #include "objloader.hpp"
 
-bool loadOBJ(const char* path,
-             std::vector<glm::vec3>& out_vertices,
-             std::vector<glm::vec2>& out_uvs,
-             std::vector<glm::vec3>& out_normals,
-             float meshScale) {
+bool loadOBJ(const char* path, ObjModel& result, float meshScale) {
   printf("Loading OBJ file %s...\n", path);
 
-  std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
-  std::vector<glm::vec3> temp_vertices;
-  std::vector<glm::vec2> temp_uvs;
-  std::vector<glm::vec3> temp_normals;
+  std::vector<unsigned int> faceVertexIndices, faceUVIndices, faceNormalIndices;
+  std::vector<glm::vec3> fileVertices;
+  std::vector<glm::vec2> fileUVs;
+  std::vector<glm::vec3> fileNormals;
+
+  // we keep track of a current mesh and write any faces encountered to it until
+  // we hit another "o" line (object definition) in the OBJ file
+  std::string currentMeshName = "__default";
+  ObjMesh* currentMesh = &result.meshes[currentMeshName];
 
   FILE* file = fopen(path, "r");
   if (file == NULL) {
@@ -33,22 +34,27 @@ bool loadOBJ(const char* path,
     if (res == EOF)
       break;
 
-    if (strcmp(lineHeader, "v") == 0) {
+    if (strcmp(lineHeader, "o") == 0) {
+      char objName[256];
+      fscanf(file, "%s\n", objName);
+      currentMeshName.assign(objName);
+      currentMesh = &result.meshes[currentMeshName];
+    } else if (strcmp(lineHeader, "v") == 0) {
       glm::vec3 vertex;
       fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
 
       vertex.x *= meshScale;
       vertex.y *= meshScale;
       vertex.z *= meshScale;
-      temp_vertices.push_back(vertex);
+      fileVertices.push_back(vertex);
     } else if (strcmp(lineHeader, "vt") == 0) {
       glm::vec2 uv;
       fscanf(file, "%f %f\n", &uv.x, &uv.y);
-      temp_uvs.push_back(uv);
+      fileUVs.push_back(uv);
     } else if (strcmp(lineHeader, "vn") == 0) {
       glm::vec3 normal;
       fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
-      temp_normals.push_back(normal);
+      fileNormals.push_back(normal);
     } else if (strcmp(lineHeader, "f") == 0) {
       std::string vertex1, vertex2, vertex3;
       unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
@@ -62,15 +68,18 @@ bool loadOBJ(const char* path,
             "other options\n");
         return false;
       }
-      vertexIndices.push_back(vertexIndex[0]);
-      vertexIndices.push_back(vertexIndex[1]);
-      vertexIndices.push_back(vertexIndex[2]);
-      uvIndices.push_back(uvIndex[0]);
-      uvIndices.push_back(uvIndex[1]);
-      uvIndices.push_back(uvIndex[2]);
-      normalIndices.push_back(normalIndex[0]);
-      normalIndices.push_back(normalIndex[1]);
-      normalIndices.push_back(normalIndex[2]);
+
+      // subtract 1 from indices because OBJ format indices are 1-indexed
+      // but the std::vectors we're storing them in are 0-indexed
+      currentMesh->vertices.push_back(fileVertices[vertexIndex[0] - 1]);
+      currentMesh->vertices.push_back(fileVertices[vertexIndex[1] - 1]);
+      currentMesh->vertices.push_back(fileVertices[vertexIndex[2] - 1]);
+      currentMesh->uvs.push_back(fileUVs[uvIndex[0] - 1]);
+      currentMesh->uvs.push_back(fileUVs[uvIndex[1] - 1]);
+      currentMesh->uvs.push_back(fileUVs[uvIndex[2] - 1]);
+      currentMesh->normals.push_back(fileNormals[normalIndex[0] - 1]);
+      currentMesh->normals.push_back(fileNormals[normalIndex[1] - 1]);
+      currentMesh->normals.push_back(fileNormals[normalIndex[2] - 1]);
     } else {
       // Probably a comment, eat up the rest of the line
       char stupidBuffer[1000];
@@ -78,23 +87,9 @@ bool loadOBJ(const char* path,
     }
   }
 
-  // For each triangle
-  for (unsigned int v = 0; v < vertexIndices.size(); v += 3) {
-    // For each vertex of the triangle
-    for (unsigned int i = 0; i < 3; i += 1) {
-      unsigned int vertexIndex = vertexIndices[v + i];
-      glm::vec3 vertex = temp_vertices[vertexIndex - 1];
-
-      unsigned int uvIndex = uvIndices[v + i];
-      glm::vec2 uv = temp_uvs[uvIndex - 1];
-
-      unsigned int normalIndex = normalIndices[v + i];
-      glm::vec3 normal = temp_normals[normalIndex - 1];
-
-      out_vertices.push_back(vertex);
-      out_uvs.push_back(uv);
-      out_normals.push_back(normal);
-    }
+  // clean up default mesh if no vertices were written to it
+  if (result.meshes["__default"].vertices.size() == 0) {
+    result.meshes.erase("__default");
   }
 
   return true;

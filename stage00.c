@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 // game
+#include "animationframe.h"
 #include "constants.h"
 #include "game.h"
 #include "gameobject.h"
@@ -25,11 +26,15 @@
 #include "bush.h"
 #include "flagpole.h"
 #include "goose.h"
+#include "gooseanim.h"
 #include "person.h"
 #include "testingCube.h"
 #include "university_bldg.h"
 #include "university_floor.h"
+// map
 #include "university_map.h"
+// anim models
+#include "goosewalkanim.h"
 
 typedef enum RenderMode {
   TextureAndLightingRenderMode,
@@ -303,6 +308,15 @@ LightingType getLightingType(GameObject* obj) {
   }
 }
 
+// map the mesh type enum (used by animation frames) to the mesh displaylists
+Gfx* gooseMeshList[] = {
+    /*goosebody_goosebodymesh*/ Wtx_gooseanim_goosebody_goosebodymesh,
+    /*goosehead_gooseheadmesh*/ Wtx_gooseanim_goosehead_gooseheadmesh,
+    /*gooseleg_l_gooseleg_lmesh*/ Wtx_gooseanim_gooseleg_l_gooseleg_lmesh,
+    /*gooseleg_r_gooseleg_rmesh*/ Wtx_gooseanim_gooseleg_r_gooseleg_rmesh,
+    /*gooseneck_gooseneckmesh*/ Wtx_gooseanim_gooseneck_gooseneckmesh,
+};
+
 Gfx* getModelDisplayList(GameObject* obj) {
   switch (obj->modelType) {
     case GooseModel:
@@ -327,8 +341,9 @@ Gfx* getModelDisplayList(GameObject* obj) {
 void drawWorldObjects(Dynamic* dynamicp) {
   Game* game;
   GameObject* obj;
-  int i, useZBuffering;
+  int i, meshIdx, useZBuffering;
   Gfx* modelDisplayList;
+  AnimationFrame* animFrame;
 
   game = Game_get();
 
@@ -387,6 +402,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
       gDPSetCombineMode(glistp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
     }
 
+    // set the transform in world space for the gameobject to render
     guPosition(&dynamicp->objTransform[i],
                0.0F,            // roll
                obj->rotationZ,  // pitch. but actually rot around z ???
@@ -396,9 +412,37 @@ void drawWorldObjects(Dynamic* dynamicp) {
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->objTransform[i])),
               G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
-    modelDisplayList = getModelDisplayList(obj);
+    if (obj->modelType == GooseModel) {
+      // case for multi-part objects using rigid body animation
+      for (meshIdx = 0; meshIdx < MAX_GOOSE_MESH_TYPE; ++meshIdx) {
+        animFrame = &goosewalkanim_data[meshIdx];
+        guPosition(&dynamicp->animMeshTransform[meshIdx],
+                   animFrame->rotation.x,  // roll
+                   animFrame->rotation.z,  // pitch
+                   animFrame->rotation.y,  // yaw
+                   1.0F,                   // scale
+                   animFrame->position.x,  // pos x
+                   animFrame->position.y,  // pos y
+                   animFrame->position.z   // pos z
+        );
 
-    gSPDisplayList(glistp++, modelDisplayList);
+        // push relative transformation matrix, add task to render the
+        // displaylist then pop the relative transform off the matrix stack
+        // again
+        gSPMatrix(glistp++,
+                  OS_K0_TO_PHYSICAL(&(dynamicp->animMeshTransform[meshIdx])),
+                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
+        gSPDisplayList(glistp++, &gooseMeshList[animFrame->object]);
+
+        gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
+      }
+
+    } else {
+      // case for simple gameobjects with no moving sub-parts
+      modelDisplayList = getModelDisplayList(obj);
+
+      gSPDisplayList(glistp++, modelDisplayList);
+    }
 
     gDPPipeSync(glistp++);
   }

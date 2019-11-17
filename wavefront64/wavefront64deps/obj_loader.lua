@@ -50,19 +50,38 @@ function loader.load(file)
 	return loader.parse(lines)
 end
 
+-- modified to handle obj files with multiple objects defined, returning each as
+-- a table with references to the vert, normal, tex coord, etc lists for the
+-- entire file, but the with faces list containing only the relevant subset of
+-- faces defined on the object
 function loader.parse(object)
-	local obj = {
-		v	= {}, -- List of vertices - x, y, z, [w]=1.0
-		vt	= {}, -- Texture coordinates - u, v, [w]=0
-		vn	= {}, -- Normals - x, y, z
-		vp	= {}, -- Parameter space vertices - u, [v], [w]
-		f	= {}, -- Faces
-	}
+	local result = {} 
+
+	local v	= {} -- List of vertices - x, y, z, [w]=1.0
+	local vt	= {} -- Texture coordinates - u, v, [w]=0
+	local vn	= {} -- Normals - x, y, z
+	local vp	= {} -- Parameter space vertices - u, [v], [w]
+
+	function makeobj(name)
+		result[name] = {
+			f	= {}, -- Faces
+			v	= v,
+			vt	= vt,
+			vn	= vn,
+			vp	= vp
+		}
+		return result[name]
+	end
+
+	local obj = makeobj("__default")
 
 	for _, line in ipairs(object) do
 		local l = string_split(line, "%s+")
 		
-		if l[1] == "v" then
+		if l[1] == "o" then
+			local name = l[2]
+			obj = makeobj(name)
+		elseif  l[1] == "v" then
 			local v = {
 				x = tonumber(l[2]),
 				y = tonumber(l[3]),
@@ -100,7 +119,7 @@ function loader.parse(object)
 
 				v.v = tonumber(split[1])
 				if split[2] ~= "" then v.vt = tonumber(split[2]) end
-				v.vn = tonumber(split[3])
+ 				v.vn = tonumber(split[3])
 
 				table.insert(f, v)
 			end
@@ -109,7 +128,12 @@ function loader.parse(object)
 		end
 	end
 
-	return obj
+  -- clean up default object if no faces were written to it
+	if #result["__default"].f == 0 then
+		result["__default"] = nil
+	end
+
+	return result
 end
 
 function file_exists(file)
