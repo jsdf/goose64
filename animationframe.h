@@ -12,4 +12,9 @@ typedef struct AnimationFrame {
 
 } AnimationFrame;
 
+typedef struct AnimationRange {
+  int start;
+  int end;
+} AnimationRange;
+
 #endif /* !ANIMATION_FRAME_H */
