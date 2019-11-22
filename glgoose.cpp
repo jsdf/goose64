@@ -28,7 +28,7 @@
 #include "university_map.h"
 #include "vec3d.h"
 
-#include "goosewalkanim.h"
+#include "goose_anim.h"
 
 #define RAND(x) (rand() % x) /* random number between 0 to x */
 #define FREEVIEW_SPEED 0.2f
@@ -37,7 +37,7 @@
 #define DEBUG_OBJECTS 0
 #define DEBUG_RAYCASTING 0
 #define DEBUG_ANIMATION 1
-#define USE_LIGHTING 0
+#define USE_LIGHTING 1
 
 int glgooseFrame = 0;
 
@@ -53,12 +53,14 @@ Input input;
 ObjModel models[MAX_MODEL_TYPE];
 
 char* GooseMeshTypeStrings[] = {
-    "goosebody_goosebodymesh",    //
-    "goosehead_gooseheadmesh",    //
-    "gooseleg_l_gooseleg_lmesh",  //
-    "gooseleg_r_gooseleg_rmesh",  //
-    "gooseneck_gooseneckmesh",    //
-    "MAX_GOOSE_MESH_TYPE",        //
+    "goosebody_goosebodymesh",      //
+    "goosehead_gooseheadmesh",      //
+    "gooseleg_l_gooseleg_lmesh",    //
+    "goosefoot_l_goosefoot_lmesh",  //
+    "gooseleg_r_gooseleg_rmesh",    //
+    "goosefoot_r_goosefoot_rmesh",  //
+    "gooseneck_gooseneckmesh",      //
+    "MAX_GOOSE_MESH_TYPE",          //
 };
 
 // TODO: allocate this in map header file with correct size
@@ -109,6 +111,16 @@ void drawString(char* string, int x, int y) {
   glPopAttrib();
 }
 
+void printModel(ModelType modelType) {
+  ObjModel& model = models[modelType];
+  std::map<std::string, ObjMesh>::iterator it = model.meshes.begin();
+  while (it != model.meshes.end()) {
+    std::cout << "model: " << ModelTypeStrings[modelType]
+              << " mesh:" << it->first << std::endl;
+    it++;
+  }
+}
+
 void drawStringAtPoint(char* string, Vec3d* pos, int centered) {
   GLdouble scr[3];
   GLdouble model[16];
@@ -129,6 +141,14 @@ void drawStringAtPoint(char* string, Vec3d* pos, int centered) {
              scr[1]);
 }
 
+void drawMarker(float r, float g, float b) {
+  glDisable(GL_TEXTURE_2D);
+  glColor3f(r, g, b);  // red
+  glutWireSphere(/*radius*/ 5, /*slices*/ 5, /*stacks*/ 5);
+  glColor3f(1.0f, 1.0f, 1.0f);
+  glEnable(GL_TEXTURE_2D);
+}
+
 void drawModel(ModelType modelType) {
   glColor3f(1.0f, 1.0f, 1.0f);  // whitish
   ObjModel& model = models[modelType];
@@ -141,32 +161,49 @@ void drawModel(ModelType modelType) {
 
     AnimationFrame* animFrameBase;
     AnimationFrame* animFrame;
+    GooseAnimType curAnim;
+    AnimationRange* curAnimRange;
+    curAnim = goose_idle_anim;
+    curAnimRange = &goose_anim_ranges[curAnim];
 
-    int frameNum = (glgooseFrame / 2) % GOOSEWALKANIM_FRAME_COUNT;
+    drawMarker(1.0f, 0.0f, 0.0f);  // origin marker, red
+
+    int animDuration = curAnimRange->end - curAnimRange->start;
+    // int animDuration = 1;
+
+    int frameNum = (glgooseFrame / 5) % animDuration + curAnimRange->start;
     for (int modelMeshIdx = 0; modelMeshIdx < MAX_GOOSE_MESH_TYPE;
          ++modelMeshIdx) {
-      animFrameBase = &goosewalkanim_data[modelMeshIdx];
+      // if (modelMeshIdx != goosehead_gooseheadmesh)
+      //   continue;
+      animFrameBase = &goose_anim_data[modelMeshIdx];
       int frameDataOffset = frameNum * MAX_GOOSE_MESH_TYPE + modelMeshIdx;
-      animFrame = &goosewalkanim_data[frameDataOffset];
+      animFrame = &goose_anim_data[frameDataOffset];
 
       Vec3d animRelativePos;
       Vec3d_copyFrom(&animRelativePos, &animFrame->position);
-      Vec3d_sub(&animRelativePos, &animFrameBase->position);
+      // Vec3d_sub(&animRelativePos, &animFrameBase->position);
       Vec3d animRelativeRot;
       Vec3d_copyFrom(&animRelativeRot, &animFrame->rotation);
-      Vec3d_sub(&animRelativeRot, &animFrameBase->rotation);
-      // push relative transformation matrix, render the mesh, then pop the
-      // relative transform off the matrix stack again
+      // Vec3d_sub(&animRelativeRot, &animFrameBase->rotation);
+
+      // origin pose
       // Vec3d_identity(&animRelativePos);
       // Vec3d_identity(&animRelativeRot);
-      if (false) {
+
+      // push relative transformation matrix, render the mesh, then pop the
+      // relative transform off the matrix stack again
+      if (true) {
         glPushMatrix();
-        glTranslatef(animRelativePos.x, animRelativePos.y, animRelativePos.z);
 
-        glRotatef(animRelativeRot.x, 1, 0, 0);
-        glRotatef(animRelativeRot.y, 0, 1, 0);
-        glRotatef(animRelativeRot.z, 0, 0, 1);
+        glTranslatef(animRelativePos.x, animRelativePos.y, -animRelativePos.z);
+        // glRotatef(90.0f, 0, 1, 0);  // undo our weird global rotation
 
+        glRotatef(animRelativeRot.x, 0, 1, 0);
+        glRotatef(animRelativeRot.y, 0, 0, 1);
+        glRotatef(animRelativeRot.z, 1, 0, 0);
+
+        drawMarker(0.0f, 0.0f, 1.0f);  // bone marker, blue
         ObjMesh& mesh =
             model.meshes.at(GooseMeshTypeStrings[animFrame->object]);
 
@@ -181,44 +218,44 @@ void drawModel(ModelType modelType) {
         }
         glEnd();
 
+        // overlay cones
+#if DEBUG_ANIMATION
+
+        if (false) {
+          glPushMatrix();
+
+          glRotatef(90.0f, 0, 0,
+                    1);  // cone points towards z by default, flip up
+                         // on the z axis to make cone point up at y
+          glRotatef(90.0f, 0, 1, 0);  // undo our weird global rotation
+          glDisable(GL_TEXTURE_2D);
+          glColor3f(1.0f, 0.0f, 0.0f);    // red
+          glutSolidCone(4.2, 30, 4, 20);  // cone with 4 slices = pyramid-like
+
+          glColor3f(1.0f, 1.0f, 1.0f);
+          glEnable(GL_TEXTURE_2D);
+
+          glPopMatrix();
+        }
+#endif
+
         glPopMatrix();
       }
 
 #if DEBUG_ANIMATION
-      // printf("%d %d %s\n", frameNum, frameDataOffset,
-      //        GooseMeshTypeStrings[animFrame->object]);
-
-      // overlay cones
-      glPushMatrix();
-      glTranslatef(animRelativePos.x, animRelativePos.y, animRelativePos.z);
-      glRotatef(90.0f, 0, 0, 1);  // cone points towards z by default, flip up
-                                  // on the z axis to make cone point up at y
-      glRotatef(90.0f, 0, 1, 0);  // undo our weird global rotation
-
-      glRotatef(animRelativeRot.x, 1, 0, 0);
-      glRotatef(animRelativeRot.y, 0, 1, 0);
-      glRotatef(animRelativeRot.z, 0, 0, 1);
-
-      glDisable(GL_TEXTURE_2D);
-      glColor3f(1.0f, 0.0f, 0.0f);    // red
-      glutSolidCone(4.2, 30, 4, 20);  // cone with 4 slices = pyramid-like
-
-      glColor3f(1.0f, 1.0f, 1.0f);
-      glEnable(GL_TEXTURE_2D);
-
-      glPopMatrix();
-
       // overlay text
-      glPushMatrix();
-      glTranslatef(animRelativePos.x, animRelativePos.y, animRelativePos.z);
+      if (false) {
+        glPushMatrix();
+        glTranslatef(animRelativePos.x, animRelativePos.y, animRelativePos.z);
 
-      Vec3d animFrameGlobalPos;
-      Vec3d_identity(&animFrameGlobalPos);
+        Vec3d animFrameGlobalPos;
+        Vec3d_identity(&animFrameGlobalPos);
 
-      drawStringAtPoint(GooseMeshTypeStrings[animFrame->object],
-                        &animFrameGlobalPos, FALSE);
+        drawStringAtPoint(GooseMeshTypeStrings[animFrame->object],
+                          &animFrameGlobalPos, FALSE);
 
-      glPopMatrix();
+        glPopMatrix();
+      }
 #endif
     }
 
@@ -610,7 +647,8 @@ int main(int argc, char** argv) {
   glEnable(GL_CULL_FACE);
 
   // load goose
-  loadModel(GooseModel, "gooseanim.obj", "goosetex.bmp");
+  loadModel(GooseModel, "gooserig.obj", "goosetex.bmp");
+  // loadModel(GooseModel, "gooseanim.obj", "goosetex.bmp");
   // loadModel(GooseModel, "goose.obj", "goosetex.bmp");
   loadModel(UniFloorModel, "university_floor.obj", "green.bmp");
   loadModel(UniBldgModel, "university_bldg.obj", "redbldg.bmp");

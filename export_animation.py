@@ -60,20 +60,25 @@ AnimationFrame %s_data[] = {
 scene = bpy.context.scene
 frame_current = scene.frame_current
 
+bones_child_objects = {}
+for armature_child in scene.objects['Armature'].children:
+    bones_child_objects[armature_child.parent_bone] = armature_child
+
 for frame in range(scene.frame_start, scene.frame_end + 1):
     scene.frame_set(frame)
     for bone_name in bone_types:
-        obj = scene.objects['Armature'].pose.bones[bone_name]
-        mat = obj.matrix
+        obj = bones_child_objects[bone_name]
+        mat = obj.matrix_world 
         pos = mat.translation.xzy
         rot = mat.to_euler() 
+        print(frame, bone_name, pos, rot)
 
         out += "{"
         out += "%d, " % (frame-scene.frame_start)
 
         out += "%s_%smesh, " % (modelname+bone_name, modelname+bone_name)
 
-        out += "{%f, %f, %f}, " % (pos.x*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR, -(pos.y*N64_SCALE_FACTOR)) # y axis is inverted
+        out += "{%f, %f, %f}, " % (pos.x*N64_SCALE_FACTOR, (pos.y*N64_SCALE_FACTOR), pos.z*N64_SCALE_FACTOR) # y axis is inverted
         out += "{%f, %f, %f}, " % (math.degrees(rot.x), math.degrees(rot.y), math.degrees(rot.z))
         out += "},\n" 
 
@@ -90,7 +95,7 @@ out += """
 anim_ranges = defaultdict(dict)
 for marker_name, marker_data in scene.timeline_markers.items():
     matches = re.match(r"^(.*)_(start|end)$", marker_name)
-    print("marker_name",marker_name,"matches",matches,matches[1],matches[2])
+    print("marker_name",marker_name,"frame", marker_data.frame)
     if matches:
         anim_name = matches[1]
         anim_ranges[anim_name][matches[2]] = marker_data.frame
@@ -103,7 +108,7 @@ for anim_name in anim_types:
         raise NameError("missing start for "+anim_name)
     if anim_ranges[anim_name].get("end") is None:
         raise NameError("missing end for "+anim_name)
-    out += "{%f, %f}, // %s\n" % (anim_ranges[anim_name].get("start",0), anim_ranges[anim_name].get("end",0), modelname+"_"+anim_name+"_anim")
+    out += "{%d, %d}, // %s\n" % (anim_ranges[anim_name].get("start",0), anim_ranges[anim_name].get("end",0), modelname+"_"+anim_name+"_anim")
 out += """
 };
 """ 
