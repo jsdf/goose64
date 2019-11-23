@@ -16,6 +16,8 @@
 #else
 #include <stdio.h>
 #define debugPrintf(...) printf(__VA_ARGS__)
+
+#define RAND(x) (rand() % x) /* random number between 0 to x */
 #endif
 
 #define MEM_HEAP_BYTES 524288

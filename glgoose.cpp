@@ -30,7 +30,6 @@
 
 #include "goose_anim.h"
 
-#define RAND(x) (rand() % x) /* random number between 0 to x */
 #define FREEVIEW_SPEED 0.2f
 
 #define DEBUG_LOG_RENDER 0
@@ -145,6 +144,14 @@ void drawMarker(float r, float g, float b) {
   glDisable(GL_TEXTURE_2D);
   glColor3f(r, g, b);  // red
   glutWireSphere(/*radius*/ 5, /*slices*/ 5, /*stacks*/ 5);
+  glColor3f(1.0f, 1.0f, 1.0f);
+  glEnable(GL_TEXTURE_2D);
+}
+
+void drawPhysBall(float radius) {
+  glDisable(GL_TEXTURE_2D);
+  glColor3f(1.0, 1.0, 0.0);  // yellow
+  glutWireSphere(/*radius*/ radius, /*slices*/ 10, /*stacks*/ 10);
   glColor3f(1.0f, 1.0f, 1.0f);
   glEnable(GL_TEXTURE_2D);
 }
@@ -416,6 +423,15 @@ void renderScene(void) {
 #endif
       drawGameObject(sortedObjects[i]);
     }
+  }
+
+  PhysBody* body;
+  for (i = 0, body = game->physicsBodies; i < game->physicsBodiesCount;
+       i++, body++) {
+    glPushMatrix();
+    glTranslatef(body->position.x, body->position.y, body->position.z);
+    drawPhysBall(body->radius);
+    glPopMatrix();
   }
 
 #if DEBUG_RAYCASTING

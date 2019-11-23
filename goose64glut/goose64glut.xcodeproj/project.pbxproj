@@ -24,6 +24,7 @@
 		73735E5C235FEB930048C9EC /* modeltype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5B235FEB930048C9EC /* modeltype.cpp */; };
 		73735E5E23600F730048C9EC /* characterstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5D23600F730048C9EC /* characterstate.cpp */; };
 		73735E6023600FD00048C9EC /* item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5F23600FD00048C9EC /* item.cpp */; };
+		73A093502389088400C53E85 /* physics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73A0934E2389088400C53E85 /* physics.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -70,6 +71,8 @@
 		73735E5F23600FD00048C9EC /* item.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = item.cpp; path = ../item.cpp; sourceTree = "<group>"; };
 		73735E6123600FF10048C9EC /* item.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = item.h; path = ../item.h; sourceTree = "<group>"; };
 		73881964234D854C0057630E /* goose64glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = goose64glut; sourceTree = BUILT_PRODUCTS_DIR; };
+		73A0934E2389088400C53E85 /* physics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = physics.cpp; path = ../physics.cpp; sourceTree = "<group>"; };
+		73A0934F2389088400C53E85 /* physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = physics.h; path = ../physics.h; sourceTree = "<group>"; };
 		73A2C3C42362720B0036BCCB /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -114,6 +117,8 @@
 				733266ED235EAD0B00907B30 /* game.h */,
 				733266E0235EAB8100907B30 /* objloader.hpp */,
 				733266D6235EAB8100907B30 /* renderer.c */,
+				73A0934E2389088400C53E85 /* physics.cpp */,
+				73A0934F2389088400C53E85 /* physics.h */,
 				73735E5D23600F730048C9EC /* characterstate.cpp */,
 				73735E6123600FF10048C9EC /* item.h */,
 				733266DE235EAB8100907B30 /* renderer.cpp */,
@@ -211,6 +216,7 @@
 				73735E6023600FD00048C9EC /* item.cpp in Sources */,
 				733266E8235EAB8200907B30 /* vec2d.cpp in Sources */,
 				733266EC235EAB8200907B30 /* texture.cpp in Sources */,
+				73A093502389088400C53E85 /* physics.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
