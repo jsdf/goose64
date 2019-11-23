@@ -134,10 +134,6 @@ void Game_update(Input* input) {
                   /* mass */ 100.0,
                   /* radius */ 30.0, &items[0].obj->position, 2);
 
-    PhysBody_init(&physicsBodies[2],
-                  /* mass */ 100.0,
-                  /* radius */ 30.0, &items[0].obj->position, 2);
-
     PhysState_step(&game->physicsState, game->physicsBodies,
                    game->physicsBodiesCount,
                    (float)game->tick / 60.0f * 1000.0f);

@@ -72,6 +72,7 @@ int Character_canSeeItem(Character* self, Item* item, Game* game) {
   GameObject visibilityCheckObjects[MAX_WORLD_OBJECTS];
   int visibilityCheckObjectsCount = 0;
   int i;
+  Vec3d vecToObject;
   GameObject* obj;
 
   for (obj = game->worldObjects, i = 0; i < game->worldObjectsCount;
@@ -87,6 +88,8 @@ int Character_canSeeItem(Character* self, Item* item, Game* game) {
       default:
         break;
     }
+
+    Vec3d_directionTo(&self->obj->position, &obj->position, &vecToObject);
 
     visibilityCheckObjects[visibilityCheckObjectsCount] = *obj;
     visibilityCheckObjectsCount++;
