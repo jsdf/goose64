@@ -12,7 +12,7 @@ GameObject* GameObject_alloc() {
 GameObject* GameObject_init(GameObject* self, int id, Vec3d* initPos) {
   self->id = id;
   Vec3d_set(&self->position, 0, 0, 0);
-  self->rotationZ = 0.0F;
+  self->rotationY = 0.0F;
   self->modelType = NoneModel;
 
   if (initPos) {

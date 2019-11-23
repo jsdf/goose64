@@ -404,11 +404,14 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
     // set the transform in world space for the gameobject to render
     guPosition(&dynamicp->objTransform[i],
-               0.0F,            // roll
-               obj->rotationZ,  // pitch. but actually rot around z ???
-               0.0F,            // yaw
-               1.0F,            // scale
-               obj->position.x, obj->position.y, obj->position.z);
+               0.0F,             // rot x
+               obj->rotationY,   // rot y
+               0.0F,             // rot z
+               1.0F,             // scale
+               obj->position.x,  // pos x
+               obj->position.y,  // pos y
+               obj->position.z   // pos z
+    );
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->objTransform[i])),
               G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 

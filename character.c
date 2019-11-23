@@ -121,8 +121,8 @@ void Character_moveTowards(Character* self, Vec3d target) {
   // rotate towards target, but with a speed limit
   Vec2d_init(&movement2d, movement.x, movement.z);
   destAngle = 360.0 - radToDeg(Vec2d_angle(&movement2d));
-  self->obj->rotationZ = GameUtils_rotateTowardsClamped(
-      self->obj->rotationZ, destAngle, CHARACTER_MAX_TURN_SPEED);
+  self->obj->rotationY = GameUtils_rotateTowardsClamped(
+      self->obj->rotationY, destAngle, CHARACTER_MAX_TURN_SPEED);
 }
 
 void Character_update(Character* self, Game* game) {

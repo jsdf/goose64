@@ -8,7 +8,7 @@
 typedef struct GameObject {
   int id;
   Vec3d position;
-  float rotationZ;
+  float rotationY;
   ModelType modelType;
 } GameObject;
 
