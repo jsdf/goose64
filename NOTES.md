@@ -42,7 +42,7 @@ in descending order or priority (lower priority states won't be entered from hig
     - after a short time, return to idle
 - seeking stolen item
   - entered when seeing a stolen owned item (in visual area)
-  - go to item location
+  - move towards location (if in view) or last seen location
   - when in range, pickup item
   - go to item home location
   - drop item
@@ -50,5 +50,6 @@ in descending order or priority (lower priority states won't be entered from hig
 - default activity
   - go to location of default activity
   - when in range, do default activity
+  - should rotate between activities in different places to create opportunities to see goose
 - idle state
   - enter eligable state of highest priority
