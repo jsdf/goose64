@@ -42,6 +42,8 @@ bone_types = [
   "neck",
 ]
 
+scene = bpy.context.scene
+
 include_guard = filename.upper()+'_H'
 
 out = """
@@ -52,24 +54,45 @@ out = """
 
 """ % (include_guard,include_guard,modelname)
 
-
-out += """
-AnimationFrame %s_data[] = {
-""" % (filename)
-
-scene = bpy.context.scene
-frame_current = scene.frame_current
+frames_markers = dict()
+for marker_name, marker_data in scene.timeline_markers.items():
+  frames_markers[marker_data.frame] = marker_name
 
 bones_child_objects = {}
 for armature_child in scene.objects['Armature'].children:
     bones_child_objects[armature_child.parent_bone] = armature_child
 
+frame_current = scene.frame_current
+
+out += """
+Vec3d %s_bone_origins[] = {
+""" % (filename)
+
+scene.frame_set(0)
+for bone_name in bone_types:
+    obj = bones_child_objects[bone_name]
+    mat = obj.matrix_world 
+    pos = mat.translation.xyz
+    print("bone origin", bone_name, pos)
+
+    out += "{%f, %f, %f},\n" % (pos.x*N64_SCALE_FACTOR, pos.y*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR)
+
+out += """
+};
+""" 
+
+out += """
+AnimationFrame %s_data[] = {
+""" % (filename)
+
 for frame in range(scene.frame_start, scene.frame_end + 1):
     scene.frame_set(frame)
+    if frame in frames_markers:
+      out += "// " + frames_markers[frame] + '\n'
     for bone_name in bone_types:
         obj = bones_child_objects[bone_name]
         mat = obj.matrix_world 
-        pos = mat.translation.xzy
+        pos = mat.translation.xyz
         rot = mat.to_euler() 
         print(frame, bone_name, pos, rot)
 
@@ -78,8 +101,8 @@ for frame in range(scene.frame_start, scene.frame_end + 1):
 
         out += "%s_%smesh, " % (modelname+bone_name, modelname+bone_name)
 
-        out += "{%f, %f, %f}, " % (pos.x*N64_SCALE_FACTOR, (pos.z*N64_SCALE_FACTOR), -pos.y*N64_SCALE_FACTOR) # y axis is inverted
-        out += "{%f, %f, %f}, " % (math.degrees(rot.x), math.degrees(rot.z), -math.degrees(rot.y))
+        out += "{%f, %f, %f}, " % (pos.x*N64_SCALE_FACTOR, pos.y*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR)
+        out += "{%f, %f, %f}, " % (math.degrees(rot.x), math.degrees(rot.y), math.degrees(rot.z))
         out += "},\n" 
 
 scene.frame_set(frame_current)

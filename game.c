@@ -89,7 +89,9 @@ GameObject* Game_findObjectByType(ModelType modelType) {
 void Game_updateCamera(Game* game) {
   float cameraDist;
   Vec3d cameraOffset;
-  cameraDist = 1000.0f / 2.0f;
+  float zoom;
+  zoom = 4.0f;
+  cameraDist = 1000.0f / zoom;
   Vec3d_set(&cameraOffset, 0.0F, 0.65F, -0.8F);
   // Vec3d_set(&cameraOffset, 0.0F, 0, -0.8F); // side view
 
@@ -119,12 +121,12 @@ void Game_update(Input* input) {
 
     Game_updateCamera(game);
 
-    physicsBodies[0].position = game->player.goose->position;
+    // physicsBodies[0].position = game->player.goose->position;
     physicsBodies[1].position = characters[0].obj->position;
     physicsBodies[2].position = items[0].obj->position;
-    PhysBody_init(&physicsBodies[0],
-                  /* mass */ 20.0,
-                  /* radius */ 30.0, &game->player.goose->position, 0);
+    // PhysBody_init(&physicsBodies[0],
+    //               /* mass */ 20.0,
+    //               /* radius */ 30.0, &game->player.goose->position, 0);
 
     PhysBody_init(&physicsBodies[1],
                   /* mass */ 200.0,
@@ -138,7 +140,7 @@ void Game_update(Input* input) {
                    game->physicsBodiesCount,
                    (float)game->tick / 60.0f * 1000.0f);
 
-    game->player.goose->position = physicsBodies[0].position;
+    // game->player.goose->position = physicsBodies[0].position;
     characters[0].obj->position = physicsBodies[1].position;
     items[0].obj->position = physicsBodies[2].position;
   }

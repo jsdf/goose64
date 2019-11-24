@@ -34,8 +34,10 @@
 
 #define DEBUG_LOG_RENDER 0
 #define DEBUG_OBJECTS 0
-#define DEBUG_RAYCASTING 1
-#define DEBUG_ANIMATION 1
+#define DEBUG_RAYCASTING 0
+#define DEBUG_ANIMATION 0
+#define DEBUG_ANIMATION2 0
+#define DEBUG_PHYSICS 0
 #define USE_LIGHTING 1
 
 int glgooseFrame = 0;
@@ -110,16 +112,6 @@ void drawString(char* string, int x, int y) {
   glPopAttrib();
 }
 
-void printModel(ModelType modelType) {
-  ObjModel& model = models[modelType];
-  std::map<std::string, ObjMesh>::iterator it = model.meshes.begin();
-  while (it != model.meshes.end()) {
-    std::cout << "model: " << ModelTypeStrings[modelType]
-              << " mesh:" << it->first << std::endl;
-    it++;
-  }
-}
-
 void drawStringAtPoint(char* string, Vec3d* pos, int centered) {
   GLdouble scr[3];
   GLdouble model[16];
@@ -140,20 +132,22 @@ void drawStringAtPoint(char* string, Vec3d* pos, int centered) {
              scr[1]);
 }
 
-void drawMarker(float r, float g, float b) {
+void drawMarker(float r, float g, float b, float radius) {
+  glPushAttrib(GL_LIGHTING_BIT | GL_TEXTURE_BIT | GL_CURRENT_BIT);
   glDisable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
   glColor3f(r, g, b);  // red
-  glutWireSphere(/*radius*/ 5, /*slices*/ 5, /*stacks*/ 5);
-  glColor3f(1.0f, 1.0f, 1.0f);
-  glEnable(GL_TEXTURE_2D);
+  glutWireSphere(/*radius*/ radius, /*slices*/ 5, /*stacks*/ 5);
+  glPopAttrib();
 }
 
 void drawPhysBall(float radius) {
+  glPushAttrib(GL_LIGHTING_BIT | GL_TEXTURE_BIT | GL_CURRENT_BIT);
   glDisable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
   glColor3f(1.0, 1.0, 0.0);  // yellow
   glutWireSphere(/*radius*/ radius, /*slices*/ 10, /*stacks*/ 10);
-  glColor3f(1.0f, 1.0f, 1.0f);
-  glEnable(GL_TEXTURE_2D);
+  glPopAttrib();
 }
 
 void drawModel(ModelType modelType) {
@@ -170,16 +164,20 @@ void drawModel(ModelType modelType) {
     AnimationFrame* animFrame;
     GooseAnimType curAnim;
     AnimationRange* curAnimRange;
+    Vec3d* boneOrigin;
     // curAnim = goose_idle_anim;
     curAnim = goose_walk_anim;
     curAnimRange = &goose_anim_ranges[curAnim];
 
-    drawMarker(1.0f, 0.0f, 0.0f);  // origin marker, red
+    glDisable(GL_DEPTH_TEST);
+    drawMarker(1.0f, 0.0f, 0.0f, 5);  // origin marker, red
+    glEnable(GL_DEPTH_TEST);
 
     int animDuration = curAnimRange->end - curAnimRange->start;
     // int animDuration = 1;
-
-    int frameNum = (glgooseFrame / 5) % animDuration + curAnimRange->start;
+    int speedScale = 5;
+    int frameNum =
+        (glgooseFrame / speedScale) % animDuration + curAnimRange->start;
     for (int modelMeshIdx = 0; modelMeshIdx < MAX_GOOSE_MESH_TYPE;
          ++modelMeshIdx) {
       // if (modelMeshIdx != goosehead_gooseheadmesh)
@@ -187,9 +185,12 @@ void drawModel(ModelType modelType) {
       animFrameBase = &goose_anim_data[modelMeshIdx];
       int frameDataOffset = frameNum * MAX_GOOSE_MESH_TYPE + modelMeshIdx;
       animFrame = &goose_anim_data[frameDataOffset];
+      boneOrigin = &goose_anim_bone_origins[modelMeshIdx];
 
       Vec3d animRelativePos;
       Vec3d_copyFrom(&animRelativePos, &animFrame->position);
+      // Vec3d_sub(&animRelativePos, boneOrigin);
+
       // Vec3d_sub(&animRelativePos, &animFrameBase->position);
       Vec3d animRelativeRot;
       Vec3d_copyFrom(&animRelativeRot, &animFrame->rotation);
@@ -201,70 +202,62 @@ void drawModel(ModelType modelType) {
 
       // push relative transformation matrix, render the mesh, then pop the
       // relative transform off the matrix stack again
+      glPushMatrix();
+
+      glRotatef(-90.0f, 1, 0, 0);  // z-up to y-up
+      // glTranslatef(-boneOrigin->x, -boneOrigin->y, -boneOrigin->z);
+
+      glTranslatef(animRelativePos.x, animRelativePos.y, animRelativePos.z);
+
+      glRotatef(animRelativeRot.x, 1, 0, 0);
+      glRotatef(animRelativeRot.y, 0, 1, 0);
+      glRotatef(animRelativeRot.z, 0, 0, 1);
+
+      ObjMesh& mesh = model.meshes.at(GooseMeshTypeStrings[animFrame->object]);
+
       if (true) {
-        glPushMatrix();
-
-        glTranslatef(animRelativePos.x, animRelativePos.y, animRelativePos.z);
-        // glRotatef(90.0f, 0, 1, 0);  // undo our weird global rotation
-
-        glRotatef(animRelativeRot.x, 1, 0, 0);
-        glRotatef(animRelativeRot.y, 0, 1, 0);
-        glRotatef(animRelativeRot.z, 0, 0, 1);
-
-        drawMarker(0.0f, 0.0f, 1.0f);  // bone marker, blue
-        ObjMesh& mesh =
-            model.meshes.at(GooseMeshTypeStrings[animFrame->object]);
-
         // draw mesh
         glBegin(GL_TRIANGLES);
         for (int ivert = 0; ivert < mesh.vertices.size(); ++ivert) {
           glTexCoord2d(mesh.uvs[ivert].x, mesh.uvs[ivert].y);
           glNormal3f(mesh.normals[ivert].x, mesh.normals[ivert].y,
                      mesh.normals[ivert].z);
-          glVertex3f(mesh.vertices[ivert].x, mesh.vertices[ivert].y,
-                     mesh.vertices[ivert].z);
+          glVertex3f(mesh.vertices[ivert].x - boneOrigin->x,
+                     mesh.vertices[ivert].y - boneOrigin->y,
+                     mesh.vertices[ivert].z - boneOrigin->z);
         }
         glEnd();
-
-        // overlay cones
-#if DEBUG_ANIMATION
-
-        if (false) {
-          glPushMatrix();
-
-          glRotatef(90.0f, 0, 0,
-                    1);  // cone points towards z by default, flip up
-                         // on the z axis to make cone point up at y
-          glRotatef(90.0f, 0, 1, 0);  // undo our weird global rotation
-          glDisable(GL_TEXTURE_2D);
-          glColor3f(1.0f, 0.0f, 0.0f);    // red
-          glutSolidCone(4.2, 30, 4, 20);  // cone with 4 slices = pyramid-like
-
-          glColor3f(1.0f, 1.0f, 1.0f);
-          glEnable(GL_TEXTURE_2D);
-
-          glPopMatrix();
-        }
-#endif
-
-        glPopMatrix();
       }
 
-#if DEBUG_ANIMATION
+      drawMarker(0.0f, 0.0f, 1.0f, 1);  // bone marker, blue
+
+#if DEBUG_ANIMATION2
+      // overlay cones
+      glPushMatrix();
+
+      glRotatef(90.0f, 0, 0,
+                1);               // cone points towards z by default, flip up
+                                  // on the z axis to make cone point up at y
+      glRotatef(90.0f, 0, 1, 0);  // undo our weird global rotation
+      glDisable(GL_TEXTURE_2D);
+      glColor3f(1.0f, 0.0f, 0.0f);    // red
+      glutSolidCone(4.2, 30, 4, 20);  // cone with 4 slices = pyramid-like
+
+      glColor3f(1.0f, 1.0f, 1.0f);
+      glEnable(GL_TEXTURE_2D);
+
+      glPopMatrix();
+
       // overlay text
-      if (false) {
-        glPushMatrix();
-        glTranslatef(animRelativePos.x, animRelativePos.y, animRelativePos.z);
-
-        Vec3d animFrameGlobalPos;
-        Vec3d_identity(&animFrameGlobalPos);
-
-        drawStringAtPoint(GooseMeshTypeStrings[animFrame->object],
-                          &animFrameGlobalPos, FALSE);
-
-        glPopMatrix();
-      }
+      glPushMatrix();
+      Vec3d animFrameGlobalPos;
+      Vec3d_identity(&animFrameGlobalPos);
+      drawStringAtPoint(GooseMeshTypeStrings[animFrame->object],
+                        &animFrameGlobalPos, FALSE);
+      glPopMatrix();
 #endif
+
+      glPopMatrix();
     }
 
   } else {
@@ -426,6 +419,7 @@ void renderScene(void) {
     }
   }
 
+#if DEBUG_PHYSICS
   PhysBody* body;
   for (i = 0, body = game->physicsBodies; i < game->physicsBodiesCount;
        i++, body++) {
@@ -434,6 +428,7 @@ void renderScene(void) {
     drawPhysBall(body->radius);
     glPopMatrix();
   }
+#endif
 
 #if DEBUG_RAYCASTING
   for (i = 0; i < gameRaycastTrace.size(); ++i) {

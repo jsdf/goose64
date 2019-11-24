@@ -9,6 +9,14 @@
 
 #include "objloader.hpp"
 
+void printModel(ObjModel& model) {
+  std::map<std::string, ObjMesh>::iterator it = model.meshes.begin();
+  while (it != model.meshes.end()) {
+    std::cout << " mesh:" << it->first << std::endl;
+    it++;
+  }
+}
+
 bool loadOBJ(const char* path, ObjModel& result, float meshScale) {
   printf("Loading OBJ file %s...\n", path);
 
@@ -91,6 +99,8 @@ bool loadOBJ(const char* path, ObjModel& result, float meshScale) {
   if (result.meshes["__default"].vertices.size() == 0) {
     result.meshes.erase("__default");
   }
+
+  printModel(result);
 
   return true;
 }
