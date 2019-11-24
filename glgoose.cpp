@@ -170,7 +170,8 @@ void drawModel(ModelType modelType) {
     AnimationFrame* animFrame;
     GooseAnimType curAnim;
     AnimationRange* curAnimRange;
-    curAnim = goose_idle_anim;
+    // curAnim = goose_idle_anim;
+    curAnim = goose_walk_anim;
     curAnimRange = &goose_anim_ranges[curAnim];
 
     drawMarker(1.0f, 0.0f, 0.0f);  // origin marker, red
@@ -203,12 +204,12 @@ void drawModel(ModelType modelType) {
       if (true) {
         glPushMatrix();
 
-        glTranslatef(animRelativePos.x, animRelativePos.y, -animRelativePos.z);
+        glTranslatef(animRelativePos.x, animRelativePos.y, animRelativePos.z);
         // glRotatef(90.0f, 0, 1, 0);  // undo our weird global rotation
 
-        glRotatef(animRelativeRot.x, 0, 1, 0);
-        glRotatef(animRelativeRot.y, 0, 0, 1);
-        glRotatef(animRelativeRot.z, 1, 0, 0);
+        glRotatef(animRelativeRot.x, 1, 0, 0);
+        glRotatef(animRelativeRot.y, 0, 1, 0);
+        glRotatef(animRelativeRot.z, 0, 0, 1);
 
         drawMarker(0.0f, 0.0f, 1.0f);  // bone marker, blue
         ObjMesh& mesh =
