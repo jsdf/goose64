@@ -11,8 +11,8 @@ GameObject* GameObject_alloc() {
 
 GameObject* GameObject_init(GameObject* self, int id, Vec3d* initPos) {
   self->id = id;
-  Vec3d_set(&self->position, 0, 0, 0);
-  self->rotationY = 0.0F;
+  Vec3d_identity(&self->position);
+  Vec3d_identity(&self->rotation);
   self->modelType = NoneModel;
 
   if (initPos) {

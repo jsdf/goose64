@@ -405,7 +405,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
     // set the transform in world space for the gameobject to render
     guPosition(&dynamicp->objTransform[i],
                0.0F,             // rot x
-               obj->rotationY,   // rot y
+               obj->rotation.y,  // rot y
                0.0F,             // rot z
                1.0F,             // scale
                obj->position.x,  // pos x

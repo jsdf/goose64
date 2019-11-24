@@ -322,7 +322,7 @@ void drawGameObject(GameObject* obj) {
 
   glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
-  glRotatef(obj->rotationY, 0, 1, 0);
+  glRotatef(obj->rotation.y, 0, 1, 0);
 
   if (obj->modelType != NoneModel) {
     if (Renderer_isZBufferedGameObject(obj)) {

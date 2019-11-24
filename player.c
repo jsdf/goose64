@@ -49,8 +49,8 @@ void Player_update(Player* self, Input* input, Game* game) {
   if (Vec2d_lengthSquared(&input->direction) > 0) {
     destAngle = 360.0F - radToDeg(Vec2d_angle(&input->direction));
     // rotate towards dest, but with a speed limit
-    goose->rotationY = GameUtils_rotateTowardsClamped(
-        goose->rotationY, destAngle, GOOSE_MAX_TURN_SPEED);
+    goose->rotation.y = GameUtils_rotateTowardsClamped(
+        goose->rotation.y, destAngle, GOOSE_MAX_TURN_SPEED);
   }
 
   if (self->itemHolder.heldItem) {

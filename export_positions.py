@@ -57,7 +57,7 @@ for index,obj in enumerate(world_objects):
   out += "{"
   out += "%d, " % (index)
   out += "{%f, %f, %f}, " % (pos.x*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR, -(pos.y*N64_SCALE_FACTOR)) # y axis is inverted
-  out += "%f, " % (math.degrees(rot.z))
+  out += "%f, " % (math.degrees(rot.x), math.degrees(rot.z), -math.degrees(rot.y))
   out += "%sModel" % (re.sub(r'[.].*?$', '', obj.name))
   out += "},\n"
 out += """

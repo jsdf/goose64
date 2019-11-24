@@ -78,8 +78,8 @@ for frame in range(scene.frame_start, scene.frame_end + 1):
 
         out += "%s_%smesh, " % (modelname+bone_name, modelname+bone_name)
 
-        out += "{%f, %f, %f}, " % (pos.x*N64_SCALE_FACTOR, (pos.y*N64_SCALE_FACTOR), pos.z*N64_SCALE_FACTOR) # y axis is inverted
-        out += "{%f, %f, %f}, " % (math.degrees(rot.x), math.degrees(rot.y), math.degrees(rot.z))
+        out += "{%f, %f, %f}, " % (pos.x*N64_SCALE_FACTOR, (pos.z*N64_SCALE_FACTOR), -pos.y*N64_SCALE_FACTOR) # y axis is inverted
+        out += "{%f, %f, %f}, " % (math.degrees(rot.x), math.degrees(rot.z), -math.degrees(rot.y))
         out += "},\n" 
 
 scene.frame_set(frame_current)
