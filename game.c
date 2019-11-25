@@ -20,7 +20,7 @@ static Game game;
 
 #define NUM_CHARACTERS 1
 Character characters[NUM_CHARACTERS];
-#define NUM_ITEMS 2
+#define NUM_ITEMS 5
 Item items[NUM_ITEMS];
 #define NUM_PHYS_BODIES 10
 PhysBody physicsBodies[NUM_PHYS_BODIES];
@@ -54,13 +54,12 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount) {
                  Game_findObjectByType(GroundskeeperCharacterModel),
                  /*book*/ &items[0], &game);
 
-  // for (i = 0; i < NUM_PHYS_BODIES; ++i) {
-  //   Vec3d_init(&pos, RAND(200), RAND(10) + 10, RAND(200));
-  //   Vec3d_identity(&pos);
-  //   PhysBody_init(&physicsBodies[i],
-  //                 /* mass */ 10.0,
-  //                 /* radius */ 20.0, &pos, i);
-  // }
+  for (i = 0; i < NUM_PHYS_BODIES; ++i) {
+    Vec3d_init(&pos, RAND(200), RAND(10) + 10, RAND(200));
+    PhysBody_init(&physicsBodies[i],
+                  /* mass */ 10.0,
+                  /* radius */ 20.0, &pos, i);
+  }
 
   game.items = items;
   game.itemsCount = NUM_ITEMS;
@@ -82,6 +81,23 @@ GameObject* Game_findObjectByType(ModelType modelType) {
   for (i = 0, obj = game.worldObjects; i < game.worldObjectsCount; i++, obj++) {
     if (obj->modelType == modelType) {
       return obj;
+    }
+  }
+  return NULL;
+}
+GameObject* Game_findObjectNByType(ModelType modelType, int n) {
+  int i, found;
+  GameObject* obj;
+
+  found = 0;
+
+  for (i = 0, obj = game.worldObjects; i < game.worldObjectsCount; i++, obj++) {
+    if (obj->modelType == modelType) {
+      if (found < n) {
+        found++;
+      } else {
+        return obj;
+      }
     }
   }
   return NULL;
@@ -122,28 +138,28 @@ void Game_update(Input* input) {
 
     Game_updateCamera(game);
 
-    // // physicsBodies[0].position = game->player.goose->position;
-    // physicsBodies[1].position = characters[0].obj->position;
-    // physicsBodies[2].position = items[0].obj->position;
-    // // PhysBody_init(&physicsBodies[0],
-    // //               /* mass */ 20.0,
-    // //               /* radius */ 30.0, &game->player.goose->position, 0);
+    physicsBodies[0].position = game->player.goose->position;
+    physicsBodies[1].position = characters[0].obj->position;
+    physicsBodies[2].position = items[0].obj->position;
+    PhysBody_init(&physicsBodies[0],
+                  /* mass */ 20.0,
+                  /* radius */ 30.0, &game->player.goose->position, 0);
 
-    // PhysBody_init(&physicsBodies[1],
-    //               /* mass */ 200.0,
-    //               /* radius */ 30.0, &characters[0].obj->position, 1);
+    PhysBody_init(&physicsBodies[1],
+                  /* mass */ 200.0,
+                  /* radius */ 30.0, &characters[0].obj->position, 1);
 
-    // PhysBody_init(&physicsBodies[2],
-    //               /* mass */ 100.0,
-    //               /* radius */ 30.0, &items[0].obj->position, 2);
+    PhysBody_init(&physicsBodies[2],
+                  /* mass */ 100.0,
+                  /* radius */ 30.0, &items[0].obj->position, 2);
 
-    // PhysState_step(&game->physicsState, game->physicsBodies,
-    //                game->physicsBodiesCount,
-    //                (float)game->tick / 60.0f * 1000.0f);
+    PhysState_step(&game->physicsState, game->physicsBodies,
+                   game->physicsBodiesCount,
+                   (float)game->tick / 60.0f * 1000.0f);
 
-    // // game->player.goose->position = physicsBodies[0].position;
-    // characters[0].obj->position = physicsBodies[1].position;
-    // items[0].obj->position = physicsBodies[2].position;
+    game->player.goose->position = physicsBodies[0].position;
+    characters[0].obj->position = physicsBodies[1].position;
+    items[0].obj->position = physicsBodies[2].position;
   }
 
   // reset inputs

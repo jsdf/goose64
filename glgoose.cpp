@@ -38,7 +38,7 @@
 #define DEBUG_RAYCASTING 0
 #define DEBUG_ANIMATION 0
 #define DEBUG_ANIMATION_MORE 0
-#define DEBUG_PHYSICS 0
+#define DEBUG_PHYSICS 1
 #define USE_LIGHTING 1
 
 int glgooseFrame = 0;

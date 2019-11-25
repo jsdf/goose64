@@ -10,6 +10,7 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount);
 Game* Game_get();
 
 GameObject* Game_findObjectByType(ModelType modelType);
+GameObject* Game_findObjectNByType(ModelType modelType, int n);
 
 int Game_rayIntersectsSphere(Vec3d* origin,
                              Vec3d* rayDirection,
