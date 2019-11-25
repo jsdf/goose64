@@ -57,7 +57,6 @@ void Player_update(Player* self, Input* input, Game* game) {
       // enter walk anim
       self->animState.progress = 0.0;
     } else {
-      printf("playerMovement %f\n", Vec3d_mag(&playerMovement));
       // advance walk anim
       self->animState.progress = fmodf(
           self->animState.progress +

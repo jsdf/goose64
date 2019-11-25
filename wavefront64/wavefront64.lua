@@ -72,7 +72,7 @@ function w64_main()
 			-- File output pipeline (push to final_file_output)
 			local vertexString 					= w64_outputVerts(facesinpacks,facesinpacksrefs,verttexttable,subobj_combined_name)
 			local faceString 					= w64_outputTriangles(facesinpacks, facesinpacksrefs, fast3d, subobj_combined_name)
-			local displayListString 			= w64_outputDisplayList(subobj_combined_name,texturename)
+			local displayListString 			= w64_outputDisplayList(subobj_combined_name,objname,texturename)
 			table.insert(final_file_output, vertexString)
 			table.insert(final_file_output, faceString)
 			table.insert(final_file_output, displayListString)
@@ -424,7 +424,7 @@ function w64_outputTriangles(facesInPacks, facesPackRefs, one_tri, objname)
 	)
 end
 
-function w64_outputDisplayList(obj_Name,name_of_texture)
+function w64_outputDisplayList(subobj_combined_name,obj_Name,name_of_texture)
 	-- output final display list
 	-- This isn't customisable at the moment at all but until I 
 	-- actually figure out what'd need changing, I'll leave this!
@@ -435,10 +435,10 @@ function w64_outputDisplayList(obj_Name,name_of_texture)
 		"\t  gsSPDisplayList(Vtx_%s_mesh01_dl),\n"..
 		"\t  gsSPEndDisplayList()\n"..
 		"};",
-		obj_Name,
+		subobj_combined_name,
 		obj_Name,
 		name_of_texture,
-		obj_Name
+		subobj_combined_name
 	)
 end
 

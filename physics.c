@@ -1,5 +1,6 @@
 
 #include <math.h>
+#include <stdlib.h>
 
 #include "physics.h"
 
@@ -191,7 +192,9 @@ void PhysState_step(PhysState* physics,
     if (physics->accumulatedTime < 1.0) {
       physics->accumulatedTime = physics->accumulatedTime + delta;
     } else {
+#ifndef __N64__
       printf("Physics: accumulated too much time, not accumulating any more\n");
+#endif
     };
     /* Integrate until the accumulatedTime is empty or until the */
     /* maximum amount of iterations per step is reached. */

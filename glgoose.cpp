@@ -163,7 +163,6 @@ void drawModel(GameObject* obj) {
     // TODO: generalize this for other model types using other skeletons with
     // retargetable animations
 
-    AnimationFrame* animFrameBase;
     AnimationFrame* animFrame;
     GooseAnimType curAnim;
     AnimationRange* curAnimRange;
@@ -182,7 +181,6 @@ void drawModel(GameObject* obj) {
     int frameNum = AnimationState_getAnimFrame(obj->animState, curAnimRange);
     for (int modelMeshIdx = 0; modelMeshIdx < MAX_GOOSE_MESH_TYPE;
          ++modelMeshIdx) {
-      animFrameBase = &goose_anim_data[modelMeshIdx];
       int frameDataOffset = frameNum * MAX_GOOSE_MESH_TYPE + modelMeshIdx;
       animFrame = &goose_anim_data[frameDataOffset];
       boneOrigin = &goose_anim_bone_origins[modelMeshIdx];

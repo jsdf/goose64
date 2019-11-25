@@ -27,7 +27,10 @@ typedef struct {
   // themselves so we only allocate as many as are needed and don't need to keep
   // anything in sync
   Mtx objTransform[MAX_WORLD_OBJECTS];
+  // animation
   Mtx animMeshTransform[MAX_ANIM_MESH_PARTS];
+  Mtx zUpToYUpCoordinatesRotation;
+  Mtx boneOrigin[MAX_ANIM_MESH_PARTS];
 } Dynamic;
 
 /*-------------------------------- parameter---------------------------------*/

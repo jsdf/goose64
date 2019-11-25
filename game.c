@@ -55,7 +55,8 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount) {
                  /*book*/ &items[0], &game);
 
   for (i = 0; i < NUM_PHYS_BODIES; ++i) {
-    Vec3d_init(&pos, RAND(200), RAND(10) + 10, RAND(200));
+    // Vec3d_init(&pos, RAND(200), RAND(10) + 10, RAND(200));
+    Vec3d_identity(&pos);
     PhysBody_init(&physicsBodies[i],
                   /* mass */ 10.0,
                   /* radius */ 20.0, &pos, i);
@@ -93,7 +94,7 @@ void Game_updateCamera(Game* game) {
   Vec3d_set(&cameraOffset, 0.0F, 0.65F, -0.8F);
   // Vec3d_set(&cameraOffset, 0.0F, 0, -0.8F); // side view
 
-  zoom = 2.0f;
+  zoom = 1.0f;
   cameraDist = 1000.0f / zoom;
   Vec3d_multiplyScalar(&cameraOffset, cameraDist);
 
@@ -121,28 +122,28 @@ void Game_update(Input* input) {
 
     Game_updateCamera(game);
 
-    // physicsBodies[0].position = game->player.goose->position;
-    physicsBodies[1].position = characters[0].obj->position;
-    physicsBodies[2].position = items[0].obj->position;
-    // PhysBody_init(&physicsBodies[0],
-    //               /* mass */ 20.0,
-    //               /* radius */ 30.0, &game->player.goose->position, 0);
+    // // physicsBodies[0].position = game->player.goose->position;
+    // physicsBodies[1].position = characters[0].obj->position;
+    // physicsBodies[2].position = items[0].obj->position;
+    // // PhysBody_init(&physicsBodies[0],
+    // //               /* mass */ 20.0,
+    // //               /* radius */ 30.0, &game->player.goose->position, 0);
 
-    PhysBody_init(&physicsBodies[1],
-                  /* mass */ 200.0,
-                  /* radius */ 30.0, &characters[0].obj->position, 1);
+    // PhysBody_init(&physicsBodies[1],
+    //               /* mass */ 200.0,
+    //               /* radius */ 30.0, &characters[0].obj->position, 1);
 
-    PhysBody_init(&physicsBodies[2],
-                  /* mass */ 100.0,
-                  /* radius */ 30.0, &items[0].obj->position, 2);
+    // PhysBody_init(&physicsBodies[2],
+    //               /* mass */ 100.0,
+    //               /* radius */ 30.0, &items[0].obj->position, 2);
 
-    PhysState_step(&game->physicsState, game->physicsBodies,
-                   game->physicsBodiesCount,
-                   (float)game->tick / 60.0f * 1000.0f);
+    // PhysState_step(&game->physicsState, game->physicsBodies,
+    //                game->physicsBodiesCount,
+    //                (float)game->tick / 60.0f * 1000.0f);
 
-    // game->player.goose->position = physicsBodies[0].position;
-    characters[0].obj->position = physicsBodies[1].position;
-    items[0].obj->position = physicsBodies[2].position;
+    // // game->player.goose->position = physicsBodies[0].position;
+    // characters[0].obj->position = physicsBodies[1].position;
+    // items[0].obj->position = physicsBodies[2].position;
   }
 
   // reset inputs

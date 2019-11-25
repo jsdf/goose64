@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 // game
-#include "animationframe.h"
+#include "animation.h"
 #include "constants.h"
 #include "game.h"
 #include "gameobject.h"
@@ -25,16 +25,15 @@
 #include "book.h"
 #include "bush.h"
 #include "flagpole.h"
-#include "goose.h"
-#include "gooseanim.h"
+#include "gooserig.h"
 #include "person.h"
 #include "testingCube.h"
 #include "university_bldg.h"
 #include "university_floor.h"
 // map
 #include "university_map.h"
-// anim models
-#include "goosewalkanim.h"
+// anim data
+#include "goose_anim.h"
 
 typedef enum RenderMode {
   TextureAndLightingRenderMode,
@@ -310,17 +309,17 @@ LightingType getLightingType(GameObject* obj) {
 
 // map the mesh type enum (used by animation frames) to the mesh displaylists
 Gfx* gooseMeshList[] = {
-    /*goosebody_goosebodymesh*/ Wtx_gooseanim_goosebody_goosebodymesh,
-    /*goosehead_gooseheadmesh*/ Wtx_gooseanim_goosehead_gooseheadmesh,
-    /*gooseleg_l_gooseleg_lmesh*/ Wtx_gooseanim_gooseleg_l_gooseleg_lmesh,
-    /*gooseleg_r_gooseleg_rmesh*/ Wtx_gooseanim_gooseleg_r_gooseleg_rmesh,
-    /*gooseneck_gooseneckmesh*/ Wtx_gooseanim_gooseneck_gooseneckmesh,
+    /*goosebody_goosebodymesh*/ Wtx_gooserig_goosebody_goosebodymesh,
+    /*goosehead_gooseheadmesh*/ Wtx_gooserig_goosehead_gooseheadmesh,
+    /*gooseleg_l_gooseleg_lmesh*/ Wtx_gooserig_gooseleg_l_gooseleg_lmesh,
+    /*goosefoot_l_goosefoot_lmesh*/ Wtx_gooserig_goosefoot_l_goosefoot_lmesh,
+    /*gooseleg_r_gooseleg_rmesh*/ Wtx_gooserig_gooseleg_r_gooseleg_rmesh,
+    /*goosefoot_r_goosefoot_rmesh*/ Wtx_gooserig_goosefoot_r_goosefoot_rmesh,
+    /*gooseneck_gooseneckmesh*/ Wtx_gooserig_gooseneck_gooseneckmesh,
 };
 
 Gfx* getModelDisplayList(GameObject* obj) {
   switch (obj->modelType) {
-    case GooseModel:
-      return Wtx_goose;
     case BushModel:
       return Wtx_bush;
     case BookItemModel:
@@ -341,9 +340,15 @@ Gfx* getModelDisplayList(GameObject* obj) {
 void drawWorldObjects(Dynamic* dynamicp) {
   Game* game;
   GameObject* obj;
-  int i, meshIdx, useZBuffering;
+  int i, useZBuffering;
+  int frameNum;
+  int modelMeshIdx;
+  int frameDataOffset;
   Gfx* modelDisplayList;
   AnimationFrame* animFrame;
+  AnimationRange* curAnimRange;
+  GooseAnimType curAnim;
+  Vec3d* boneOrigin;
 
   game = Game_get();
 
@@ -417,27 +422,54 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
     if (obj->modelType == GooseModel) {
       // case for multi-part objects using rigid body animation
-      for (meshIdx = 0; meshIdx < MAX_GOOSE_MESH_TYPE; ++meshIdx) {
-        animFrame = &goosewalkanim_data[meshIdx];
-        guPosition(&dynamicp->animMeshTransform[meshIdx],
-                   animFrame->rotation.x,  // roll
-                   animFrame->rotation.z,  // pitch
-                   animFrame->rotation.y,  // yaw
-                   1.0F,                   // scale
-                   animFrame->position.x,  // pos x
-                   animFrame->position.y,  // pos y
-                   animFrame->position.z   // pos z
-        );
 
-        // push relative transformation matrix, add task to render the
-        // displaylist then pop the relative transform off the matrix stack
-        // again
-        gSPMatrix(glistp++,
-                  OS_K0_TO_PHYSICAL(&(dynamicp->animMeshTransform[meshIdx])),
-                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
+      curAnim = (GooseAnimType)obj->animState->state;
+      curAnimRange = &goose_anim_ranges[curAnim];
+      frameNum = AnimationState_getAnimFrame(obj->animState, curAnimRange);
+
+      for (modelMeshIdx = 0; modelMeshIdx < MAX_GOOSE_MESH_TYPE;
+           ++modelMeshIdx) {
+        frameDataOffset = frameNum * MAX_GOOSE_MESH_TYPE + modelMeshIdx;
+        animFrame = &goose_anim_data[frameDataOffset];
+        boneOrigin = &goose_anim_bone_origins[modelMeshIdx];
+
+        // push matrix with the blender to n64 coord rotation, then mulitply
+        // it by the model's offset
+
+        // rotate from z-up (blender) to y-up (opengl) coords
+        // guRotate(&dynamicp->zUpToYUpCoordinatesRotation, -90.0f, 1, 0, 0);
+        // gSPMatrix(glistp++,
+        //           OS_K0_TO_PHYSICAL(&(dynamicp->zUpToYUpCoordinatesRotation)),
+        //           G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
+
+        // guPosition(&dynamicp->animMeshTransform[modelMeshIdx],
+        //            animFrame->rotation.x,                  // roll
+        //            animFrame->rotation.z,                  // pitch
+        //            animFrame->rotation.y,                  // yaw
+        //            1.0F,                                   // scale
+        //            animFrame->position.x - boneOrigin->x,  // pos x
+        //            animFrame->position.y - boneOrigin->y,  // pos y
+        //            animFrame->position.z - boneOrigin->z   // pos z
+        // );
+        // gSPMatrix(
+        //     glistp++,
+        //     OS_K0_TO_PHYSICAL(&(dynamicp->animMeshTransform[modelMeshIdx])),
+        //     G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
+
+        // draw mesh
+        // glBegin(GL_TRIANGLES);
+        // for (int ivert = 0; ivert < mesh.vertices.size(); ++ivert) {
+        //   glTexCoord2d(mesh.uvs[ivert].x, mesh.uvs[ivert].y);
+        //   glNormal3f(mesh.normals[ivert].x, mesh.normals[ivert].y,
+        //              mesh.normals[ivert].z);
+        //   glVertex3f(mesh.vertices[ivert].x - boneOrigin->x,
+        //              mesh.vertices[ivert].y - boneOrigin->y,
+        //              mesh.vertices[ivert].z - boneOrigin->z);
+        // }
+        // glEnd();
         gSPDisplayList(glistp++, &gooseMeshList[animFrame->object]);
 
-        gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
+        // gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
       }
 
     } else {
