@@ -54,13 +54,13 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount) {
                  Game_findObjectByType(GroundskeeperCharacterModel),
                  /*book*/ &items[0], &game);
 
-  for (i = 0; i < NUM_PHYS_BODIES; ++i) {
-    // Vec3d_init(&pos, RAND(200), RAND(10) + 10, RAND(200));
-    Vec3d_identity(&pos);
-    PhysBody_init(&physicsBodies[i],
-                  /* mass */ 10.0,
-                  /* radius */ 20.0, &pos, i);
-  }
+  // for (i = 0; i < NUM_PHYS_BODIES; ++i) {
+  //   Vec3d_init(&pos, RAND(200), RAND(10) + 10, RAND(200));
+  //   Vec3d_identity(&pos);
+  //   PhysBody_init(&physicsBodies[i],
+  //                 /* mass */ 10.0,
+  //                 /* radius */ 20.0, &pos, i);
+  // }
 
   game.items = items;
   game.itemsCount = NUM_ITEMS;
@@ -94,7 +94,7 @@ void Game_updateCamera(Game* game) {
   Vec3d_set(&cameraOffset, 0.0F, 0.65F, -0.8F);
   // Vec3d_set(&cameraOffset, 0.0F, 0, -0.8F); // side view
 
-  zoom = 1.0f;
+  zoom = 2.0f;
   cameraDist = 1000.0f / zoom;
   Vec3d_multiplyScalar(&cameraOffset, cameraDist);
 

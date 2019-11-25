@@ -35,6 +35,9 @@
 // anim data
 #include "goose_anim.h"
 
+#define CONSOLE_VIEW_DEBUG 0
+#define CONSOLE_DEBUG 1
+
 typedef enum RenderMode {
   TextureAndLightingRenderMode,
   TextureNoLightingRenderMode,
@@ -166,7 +169,8 @@ void makeDL00() {
                  (s32)(glistp - gfx_glist[gfx_gtask_no]) * sizeof(Gfx),
                  NU_GFX_UCODE_F3DEX, NU_SC_NOSWAPBUFFER);
 
-  // debug text overlay
+// debug text overlay
+#if CONSOLE_VIEW_DEBUG
   if (contPattern & 0x1) {
     if (game->freeView) {
       consoleOffset = 23;
@@ -195,6 +199,7 @@ void makeDL00() {
     nuDebConTextPos(0, 9, 24);
     nuDebConCPuts(0, "Controller1 not connect");
   }
+#endif
 
   /* Display characters on the frame buffer */
   nuDebConDisp(NU_SC_SWAPBUFFER);
@@ -434,44 +439,34 @@ void drawWorldObjects(Dynamic* dynamicp) {
         boneOrigin = &goose_anim_bone_origins[modelMeshIdx];
 
         // push matrix with the blender to n64 coord rotation, then mulitply
-        // it by the model's offset
+        // it by the model's rotation and offset
 
         // rotate from z-up (blender) to y-up (opengl) coords
-        // guRotate(&dynamicp->zUpToYUpCoordinatesRotation, -90.0f, 1, 0, 0);
-        // gSPMatrix(glistp++,
-        //           OS_K0_TO_PHYSICAL(&(dynamicp->zUpToYUpCoordinatesRotation)),
-        //           G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
+        // TODO: move as many of these transformations as possible to
+        // be precomputed in animation data
+        guRotate(&dynamicp->zUpToYUpCoordinatesRotation, -90.0f, 1, 0, 0);
+        gSPMatrix(glistp++,
+                  OS_K0_TO_PHYSICAL(&(dynamicp->zUpToYUpCoordinatesRotation)),
+                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
 
-        // guPosition(&dynamicp->animMeshTransform[modelMeshIdx],
-        //            animFrame->rotation.x,                  // roll
-        //            animFrame->rotation.z,                  // pitch
-        //            animFrame->rotation.y,                  // yaw
-        //            1.0F,                                   // scale
-        //            animFrame->position.x - boneOrigin->x,  // pos x
-        //            animFrame->position.y - boneOrigin->y,  // pos y
-        //            animFrame->position.z - boneOrigin->z   // pos z
-        // );
-        // gSPMatrix(
-        //     glistp++,
-        //     OS_K0_TO_PHYSICAL(&(dynamicp->animMeshTransform[modelMeshIdx])),
-        //     G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
+        guPosition(&dynamicp->animMeshTransform[modelMeshIdx],
+                   animFrame->rotation.x,  // roll
+                   animFrame->rotation.y,  // pitch
+                   animFrame->rotation.z,  // yaw
+                   1.0F,                   // scale
+                   animFrame->position.x,  // pos x
+                   animFrame->position.y,  // pos y
+                   animFrame->position.z   // pos z
+        );
+        gSPMatrix(
+            glistp++,
+            OS_K0_TO_PHYSICAL(&(dynamicp->animMeshTransform[modelMeshIdx])),
+            G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
-        // draw mesh
-        // glBegin(GL_TRIANGLES);
-        // for (int ivert = 0; ivert < mesh.vertices.size(); ++ivert) {
-        //   glTexCoord2d(mesh.uvs[ivert].x, mesh.uvs[ivert].y);
-        //   glNormal3f(mesh.normals[ivert].x, mesh.normals[ivert].y,
-        //              mesh.normals[ivert].z);
-        //   glVertex3f(mesh.vertices[ivert].x - boneOrigin->x,
-        //              mesh.vertices[ivert].y - boneOrigin->y,
-        //              mesh.vertices[ivert].z - boneOrigin->z);
-        // }
-        // glEnd();
-        gSPDisplayList(glistp++, &gooseMeshList[animFrame->object]);
+        gSPDisplayList(glistp++, gooseMeshList[animFrame->object]);
 
-        // gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
+        gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
       }
-
     } else {
       // case for simple gameobjects with no moving sub-parts
       modelDisplayList = getModelDisplayList(obj);

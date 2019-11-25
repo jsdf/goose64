@@ -30,6 +30,7 @@ typedef struct {
   // animation
   Mtx animMeshTransform[MAX_ANIM_MESH_PARTS];
   Mtx zUpToYUpCoordinatesRotation;
+  Mtx animMeshRotate[MAX_ANIM_MESH_PARTS];
   Mtx boneOrigin[MAX_ANIM_MESH_PARTS];
 } Dynamic;
 

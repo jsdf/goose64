@@ -75,7 +75,7 @@ for bone_name in bone_types:
     pos = mat.translation.xyz
     print("bone origin", bone_name, pos)
 
-    out += "{%f.7, %f.7, %f.7},\n" % (pos.x*N64_SCALE_FACTOR, pos.y*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR)
+    out += "{%.10f, %.10f, %.10f},\n" % (pos.x*N64_SCALE_FACTOR, pos.y*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR)
 
 out += """
 };
@@ -101,8 +101,8 @@ for frame in range(scene.frame_start, scene.frame_end + 1):
 
         out += "%s_%smesh, " % (modelname+bone_name, modelname+bone_name)
 
-        out += "{%f.7, %f.7, %f.7}, " % (pos.x*N64_SCALE_FACTOR, pos.y*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR)
-        out += "{%f.7, %f.7, %f.7}, " % (math.degrees(rot.x), math.degrees(rot.y), math.degrees(rot.z))
+        out += "{%.10f, %.10f, %.10f}, " % (pos.x*N64_SCALE_FACTOR, pos.y*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR)
+        out += "{%.10f, %.10f, %.10f}, " % (math.degrees(rot.x), math.degrees(rot.y), math.degrees(rot.z))
         out += "},\n" 
 
 scene.frame_set(frame_current)

@@ -207,9 +207,8 @@ void drawModel(GameObject* obj) {
         glTexCoord2d(mesh.uvs[ivert].x, mesh.uvs[ivert].y);
         glNormal3f(mesh.normals[ivert].x, mesh.normals[ivert].y,
                    mesh.normals[ivert].z);
-        glVertex3f(mesh.vertices[ivert].x - boneOrigin->x,
-                   mesh.vertices[ivert].y - boneOrigin->y,
-                   mesh.vertices[ivert].z - boneOrigin->z);
+        glVertex3f(mesh.vertices[ivert].x, mesh.vertices[ivert].y,
+                   mesh.vertices[ivert].z);
       }
       glEnd();
 
