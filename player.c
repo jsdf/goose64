@@ -1,19 +1,26 @@
-#include "player.h"
+#include <math.h>
+
+#include "animation.h"
 #include "game.h"
 #include "gameutils.h"
+#include "gooseanimtypes.h"
 #include "input.h"
 #include "item.h"
+#include "player.h"
 
 #include "constants.h"
 
 #define PLAYER_NEAR_OBJ_DIST 100.0f
 #define PLAYER_PICKUP_COOLDOWN 10
+#define PLAYER_WALK_ANIM_MOVEMENT_DIVISOR 100.0
 
 static Vec3d playerItemOffset = {0.0F, 80.0F, 0.0F};
 
 void Player_init(Player* self, GameObject* obj) {
   ItemHolder_init(&self->itemHolder, PlayerItemHolder, (void*)&self);
+  AnimationState_init(&self->animState);
   self->goose = obj;
+  obj->animState = &self->animState;
   self->lastPickupTick = 0;
 }
 
@@ -44,6 +51,25 @@ void Player_update(Player* self, Input* input, Game* game) {
   Vec3d_init(&playerMovement, input->direction.x * movementSpeed, 0.0F,
              input->direction.y * movementSpeed);
   Vec3d_add(&goose->position, &playerMovement);
+
+  if (Vec3d_magSq(&playerMovement) > 0) {
+    if (self->animState.state != goose_walk_anim) {
+      // enter walk anim
+      self->animState.progress = 0.0;
+    } else {
+      printf("playerMovement %f\n", Vec3d_mag(&playerMovement));
+      // advance walk anim
+      self->animState.progress = fmodf(
+          self->animState.progress +
+              Vec3d_mag(&playerMovement) / PLAYER_WALK_ANIM_MOVEMENT_DIVISOR,
+          1.0);
+    }
+    self->animState.state = goose_walk_anim;
+
+  } else {
+    self->animState.state = goose_idle_anim;
+    self->animState.progress = 0.0;
+  }
 
   // rot
   if (Vec2d_lengthSquared(&input->direction) > 0) {

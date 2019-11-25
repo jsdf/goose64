@@ -2,6 +2,7 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
+#include "animation.h"
 #include "modeltype.h"
 #include "vec3d.h"
 
@@ -10,6 +11,7 @@ typedef struct GameObject {
   Vec3d position;
   Vec3d rotation;
   ModelType modelType;
+  AnimationState* animState;
 } GameObject;
 
 GameObject* GameObject_alloc();

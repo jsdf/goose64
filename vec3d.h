@@ -22,6 +22,7 @@ Vec3d* Vec3d_sub(Vec3d* self, Vec3d* other);
 Vec3d* Vec3d_multiplyScalar(Vec3d* self, float scalar);
 Vec3d* Vec3d_normalise(Vec3d* self);
 float Vec3d_magSq(Vec3d* self);
+float Vec3d_mag(Vec3d* self);
 float Vec3d_dot(Vec3d* self, Vec3d* other);
 
 #ifndef __N64__

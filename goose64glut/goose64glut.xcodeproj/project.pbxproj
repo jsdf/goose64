@@ -25,6 +25,7 @@
 		73735E5E23600F730048C9EC /* characterstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5D23600F730048C9EC /* characterstate.cpp */; };
 		73735E6023600FD00048C9EC /* item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5F23600FD00048C9EC /* item.cpp */; };
 		73A093502389088400C53E85 /* physics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73A0934E2389088400C53E85 /* physics.cpp */; };
+		73E90496238B326100CF5D2F /* animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E90494238B326100CF5D2F /* animation.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -74,6 +75,8 @@
 		73A0934E2389088400C53E85 /* physics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = physics.cpp; path = ../physics.cpp; sourceTree = "<group>"; };
 		73A0934F2389088400C53E85 /* physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = physics.h; path = ../physics.h; sourceTree = "<group>"; };
 		73A2C3C42362720B0036BCCB /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		73E90494238B326100CF5D2F /* animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animation.cpp; path = ../animation.cpp; sourceTree = "<group>"; };
+		73E90495238B326100CF5D2F /* animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = animation.h; path = ../animation.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +120,8 @@
 				733266ED235EAD0B00907B30 /* game.h */,
 				733266E0235EAB8100907B30 /* objloader.hpp */,
 				733266D6235EAB8100907B30 /* renderer.c */,
+				73E90494238B326100CF5D2F /* animation.cpp */,
+				73E90495238B326100CF5D2F /* animation.h */,
 				73A0934E2389088400C53E85 /* physics.cpp */,
 				73A0934F2389088400C53E85 /* physics.h */,
 				73735E5D23600F730048C9EC /* characterstate.cpp */,
@@ -211,6 +216,7 @@
 				733266F0235EC53400907B30 /* character.cpp in Sources */,
 				733266E9235EAB8200907B30 /* renderer.cpp in Sources */,
 				73735E5C235FEB930048C9EC /* modeltype.cpp in Sources */,
+				73E90496238B326100CF5D2F /* animation.cpp in Sources */,
 				733266E7235EAB8200907B30 /* objloader.cpp in Sources */,
 				73735E5E23600F730048C9EC /* characterstate.cpp in Sources */,
 				73735E6023600FD00048C9EC /* item.cpp in Sources */,

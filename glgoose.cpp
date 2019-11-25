@@ -17,6 +17,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <glm/glm.hpp>
+#include "animation.h"
 #include "character.h"
 #include "constants.h"
 #include "game.h"
@@ -150,23 +151,26 @@ void drawPhysBall(float radius) {
   glPopAttrib();
 }
 
-void drawModel(ModelType modelType) {
+void drawModel(GameObject* obj) {
   glColor3f(1.0f, 1.0f, 1.0f);  // whitish
-  ObjModel& model = models[modelType];
+  ObjModel& model = models[obj->modelType];
 
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, model.texture);
 
-  if (modelType == GooseModel) {
+  if (obj->modelType == GooseModel) {
     // case for multi-part objects using rigid body animation
+    // TODO: generalize this for other model types using other skeletons with
+    // retargetable animations
 
     AnimationFrame* animFrameBase;
     AnimationFrame* animFrame;
     GooseAnimType curAnim;
     AnimationRange* curAnimRange;
     Vec3d* boneOrigin;
-    // curAnim = goose_idle_anim;
-    curAnim = goose_walk_anim;
+
+    assert(obj->animState != NULL);
+    curAnim = (GooseAnimType)obj->animState->state;
     curAnimRange = &goose_anim_ranges[curAnim];
 
 #if DEBUG_ANIMATION
@@ -175,11 +179,7 @@ void drawModel(ModelType modelType) {
     glEnable(GL_DEPTH_TEST);
 #endif
 
-    int animDuration = curAnimRange->end - curAnimRange->start;
-    // int animDuration = 1;
-    int speedScale = 2;
-    int frameNum =
-        (glgooseFrame / speedScale) % animDuration + curAnimRange->start;
+    int frameNum = AnimationState_getAnimFrame(obj->animState, curAnimRange);
     for (int modelMeshIdx = 0; modelMeshIdx < MAX_GOOSE_MESH_TYPE;
          ++modelMeshIdx) {
       animFrameBase = &goose_anim_data[modelMeshIdx];
@@ -254,7 +254,7 @@ void drawModel(ModelType modelType) {
     // render each model mesh. usually there will only be one
     std::map<std::string, ObjMesh>::iterator it = model.meshes.begin();
     while (it != model.meshes.end()) {
-      // std::cout << "drawing model: " << ModelTypeStrings[modelType]
+      // std::cout << "drawing model: " << ModelTypeStrings[obj->modelType]
       //           << " mesh:" << it->first << std::endl;
 
       ObjMesh& mesh = it->second;
@@ -312,7 +312,7 @@ void drawGameObject(GameObject* obj) {
     } else {
       glDisable(GL_DEPTH_TEST);
     }
-    drawModel(obj->modelType);
+    drawModel(obj);
 
 #if DEBUG_RAYCASTING
     glTranslatef(centroidOffset.x, centroidOffset.y, centroidOffset.z);
@@ -569,6 +569,9 @@ void updateInputs() {
           case 32:  // space
             input.pickup = true;
             break;
+          case 118:  // v
+            input.run = true;
+            break;
         }
       }
 
@@ -589,6 +592,7 @@ void processNormalKeysUp(unsigned char key, int _x, int _y) {
 
 void processNormalKeysDown(unsigned char key, int _x, int _y) {
   keysDown[key] = true;
+  printf("%d\n", key);
 
   if (key == 27) {  // esc
     exit(0);

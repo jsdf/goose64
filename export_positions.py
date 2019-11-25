@@ -42,23 +42,26 @@ def get_bounds(obj):
 out = """
 #ifndef %s
 #define %s 1
+#include "constants.h"
 #include "gameobject.h"
 
-""" % (include_guard,include_guard)
+""" % (include_guard, include_guard)
 
 out += """
 GameObject %s_data[] = {
-""" % ( filename)
+""" % (filename)
 
 for index,obj in enumerate(world_objects):
   pos = obj.location
   rot = obj.rotation_euler
 
   out += "{"
-  out += "%d, " % (index)
-  out += "{%f, %f, %f}, " % (pos.x*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR, -(pos.y*N64_SCALE_FACTOR)) # y axis is inverted
-  out += "%f, " % (math.degrees(rot.x), math.degrees(rot.z), -math.degrees(rot.y))
-  out += "%sModel" % (re.sub(r'[.].*?$', '', obj.name))
+  out += "%d, // object id\n" % (index)
+  # we rotate the position and rotation from z-up (blender) to y-up (opengl)
+  out += "{%f, %f, %f}, // position\n" % (pos.x*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR, -(pos.y*N64_SCALE_FACTOR))
+  out += "%f, // rotation\n" % (math.degrees(rot.x), math.degrees(rot.z), -math.degrees(rot.y))
+  out += "%sModel, // modelType\n" % (re.sub(r'[.].*?$', '', obj.name))
+  out += "NULL, // animState\n"
   out += "},\n"
 out += """
 };

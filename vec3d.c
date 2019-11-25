@@ -63,6 +63,10 @@ float Vec3d_magSq(Vec3d* self) {
   return self->x * self->x + self->y * self->y + self->z * self->z;
 }
 
+float Vec3d_mag(Vec3d* self) {
+  return sqrtf(self->x * self->x + self->y * self->y + self->z * self->z);
+}
+
 Vec3d* Vec3d_directionTo(Vec3d* self, Vec3d* other, Vec3d* result) {
   Vec3d_copyFrom(result, other);
   Vec3d_sub(result, self);

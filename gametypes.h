@@ -2,6 +2,7 @@
 #ifndef _GAMETYPES_H_
 #define _GAMETYPES_H_
 
+#include "animation.h"
 #include "characterstate.h"
 #include "gameobject.h"
 #include "physics.h"
@@ -26,6 +27,8 @@ typedef struct Player {
   ItemHolder itemHolder;
 
   GameObject* goose;
+  AnimationState animState;
+
   unsigned int lastPickupTick;
 } Player;
 
@@ -33,6 +36,7 @@ typedef struct Character {
   ItemHolder itemHolder;
 
   GameObject* obj;
+  AnimationState animState;
 
   struct ItemStruct* target;
   struct ItemStruct* defaultActivityItem;

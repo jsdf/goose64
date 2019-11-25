@@ -90,11 +90,11 @@ void Game_updateCamera(Game* game) {
   float cameraDist;
   Vec3d cameraOffset;
   float zoom;
-  zoom = 4.0f;
-  cameraDist = 1000.0f / zoom;
   Vec3d_set(&cameraOffset, 0.0F, 0.65F, -0.8F);
   // Vec3d_set(&cameraOffset, 0.0F, 0, -0.8F); // side view
 
+  zoom = 2.0f;
+  cameraDist = 1000.0f / zoom;
   Vec3d_multiplyScalar(&cameraOffset, cameraDist);
 
   Vec3d_copyFrom(&game->viewPos, &game->player.goose->position);
