@@ -22,9 +22,20 @@ typedef struct AnimationState {
   float progress;
 } AnimationState;
 
+typedef struct AnimationInterpolation {
+  int currentFrame;
+  int nextFrame;
+  float t;
+} AnimationInterpolation;
+
 void AnimationState_init(AnimationState* self);
 
-int AnimationState_getAnimFrame(AnimationState* self,
-                                AnimationRange* animRange);
+void AnimationInterpolation_calc(AnimationInterpolation* self,
+                                 AnimationState* state,
+                                 AnimationRange* animRange);
 
+void AnimationFrame_lerp(AnimationFrame* self,
+                         AnimationFrame* a,
+                         AnimationFrame* b,
+                         AnimationInterpolation* interp);
 #endif /* !ANIMATION_H */

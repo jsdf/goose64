@@ -99,6 +99,14 @@ float Vec3d_dot(Vec3d* self, Vec3d* other) {
   return self->x * other->x + self->y * other->y + self->z * other->z;
 }
 
+Vec3d* Vec3d_lerp(Vec3d* self, Vec3d* v, float alpha) {
+  self->x += (v->x - self->x) * alpha;
+  self->y += (v->y - self->y) * alpha;
+  self->z += (v->z - self->z) * alpha;
+
+  return self;
+}
+
 #ifndef __N64__
 char* Vec3d_toString(Vec3d* self, char* buffer) {
   sprintf(buffer, "{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
