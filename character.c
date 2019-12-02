@@ -56,7 +56,7 @@ void Character_init(Character* self,
                     GameObject* obj,
                     Item* defaultActivityItem,
                     Game* game) {
-  ItemHolder_init(&self->itemHolder, CharacterItemHolder, (void*)&self);
+  ItemHolder_init(&self->itemHolder, CharacterItemHolder, (void*)self);
   self->obj = obj;
   self->target = NULL;
   self->defaultActivityItem = defaultActivityItem;

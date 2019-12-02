@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "constants.h"
 #include "gameobject.h"
 #include "rotation.h"
 #include "vec3d.h"
@@ -16,6 +17,9 @@ GameObject* GameObject_init(GameObject* self, int id, Vec3d* initPos) {
   Vec3d_origin(&self->position);
   EulerDegrees_origin(&self->rotation);
   self->modelType = NoneModel;
+  self->animState = NULL;
+  self->visible = TRUE;
+  self->solid = TRUE;
 
   if (initPos) {
     Vec3d_copyFrom(&self->position, initPos);

@@ -14,6 +14,8 @@ typedef struct GameObject {
   EulerDegrees rotation;
   ModelType modelType;
   AnimationState* animState;
+  int visible;
+  int solid;
   Mtx objTransform;
 } GameObject;
 

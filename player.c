@@ -17,10 +17,15 @@
 static Vec3d playerItemOffset = {0.0F, 80.0F, 0.0F};
 
 void Player_init(Player* self, GameObject* obj) {
-  ItemHolder_init(&self->itemHolder, PlayerItemHolder, (void*)&self);
+  ItemHolder_init(&self->itemHolder, PlayerItemHolder, (void*)self);
   AnimationState_init(&self->animState);
   self->goose = obj;
   obj->animState = &self->animState;
+  // setup picked-up object attachment point
+  self->animState.attachment.boneIndex = (int)goosehead_gooseheadmesh;
+  self->animState.attachment.offset.x = 30;
+  self->animState.attachment.offset.z = -10;
+  self->animState.attachment.rotation.x = 90;
   self->lastPickupTick = 0;
 }
 
@@ -30,6 +35,10 @@ int Player_debounceInput(unsigned int* lastTrigger, unsigned int cooldown) {
     return TRUE;
   }
   return FALSE;
+}
+
+void Player_setVisibleItemAttachment(Player* self, ModelType modelType) {
+  self->animState.attachment.modelType = modelType;
 }
 
 void Player_update(Player* self, Input* input, Game* game) {
@@ -52,6 +61,7 @@ void Player_update(Player* self, Input* input, Game* game) {
              input->direction.y * movementSpeed);
   Vec3d_add(&goose->position, &playerMovement);
 
+  // update animation
   if (Vec3d_magSq(&playerMovement) > 0) {
     if (self->animState.state != goose_walk_anim) {
       // enter walk anim
@@ -68,6 +78,14 @@ void Player_update(Player* self, Input* input, Game* game) {
   } else {
     self->animState.state = goose_idle_anim;
     self->animState.progress = 0.0;
+  }
+
+  // update held item visual attachment
+  if (self->itemHolder.heldItem != NULL) {
+    Player_setVisibleItemAttachment(self,
+                                    self->itemHolder.heldItem->obj->modelType);
+  } else {
+    Player_setVisibleItemAttachment(self, NoneModel);
   }
 
   // rot
@@ -109,7 +127,7 @@ void Player_update(Player* self, Input* input, Game* game) {
 }
 
 void Player_haveItemTaken(Player* self) {
-  // TODO: some reaction
+  // react to item being taken
 }
 
 #ifndef __N64__

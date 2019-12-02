@@ -61,7 +61,6 @@ for index,obj in enumerate(world_objects):
   out += "{%f, %f, %f}, // position\n" % (pos.x*N64_SCALE_FACTOR, pos.z*N64_SCALE_FACTOR, -(pos.y*N64_SCALE_FACTOR))
   out += "{%f, %f, %f}, // rotation\n" % (math.degrees(rot.x), math.degrees(rot.z), -math.degrees(rot.y))
   out += "%sModel, // modelType\n" % (re.sub(r'[.].*?$', '', obj.name))
-  out += "NULL, // animState\n"
   out += "},\n"
 out += """
 };

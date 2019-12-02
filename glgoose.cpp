@@ -152,12 +152,44 @@ void drawPhysBall(float radius) {
   glPopAttrib();
 }
 
-void drawModel(GameObject* obj) {
+void drawMesh(ObjMesh& mesh, GLuint texture) {
   glColor3f(1.0f, 1.0f, 1.0f);  // whitish
-  ObjModel& model = models[obj->modelType];
-
   glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, model.texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glBegin(GL_TRIANGLES);
+  for (int ivert = 0; ivert < mesh.vertices.size(); ++ivert) {
+    glTexCoord2d(mesh.uvs[ivert].x, mesh.uvs[ivert].y);
+    glNormal3f(mesh.normals[ivert].x, mesh.normals[ivert].y,
+               mesh.normals[ivert].z);
+    glVertex3f(mesh.vertices[ivert].x, mesh.vertices[ivert].y,
+               mesh.vertices[ivert].z);
+  }
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+}
+
+void drawMeshesForModel(ObjModel& model) {
+  // render each model mesh. usually there will only be one
+  std::map<std::string, ObjMesh>::iterator it = model.meshes.begin();
+  while (it != model.meshes.end()) {
+    // std::cout << "drawing model: " << ModelTypeStrings[obj->modelType]
+    //           << " mesh:" << it->first << std::endl;
+
+    ObjMesh& mesh = it->second;
+
+    // draw mesh
+    drawMesh(mesh, model.texture);
+
+    it++;
+  }
+}
+
+void drawModel(GameObject* obj) {
+  if (!obj->visible) {
+    return;
+  }
+
+  ObjModel& model = models[obj->modelType];
 
   if (obj->modelType == GooseModel) {
     // case for multi-part objects using rigid body animation
@@ -215,16 +247,22 @@ void drawModel(GameObject* obj) {
 
       ObjMesh& mesh = model.meshes.at(GooseMeshTypeStrings[animFrame.object]);
 
-      // draw mesh
-      glBegin(GL_TRIANGLES);
-      for (int ivert = 0; ivert < mesh.vertices.size(); ++ivert) {
-        glTexCoord2d(mesh.uvs[ivert].x, mesh.uvs[ivert].y);
-        glNormal3f(mesh.normals[ivert].x, mesh.normals[ivert].y,
-                   mesh.normals[ivert].z);
-        glVertex3f(mesh.vertices[ivert].x, mesh.vertices[ivert].y,
-                   mesh.vertices[ivert].z);
+      drawMesh(mesh, model.texture);
+
+      // attachment drawing stuff
+      AnimationBoneAttachment& attachment = obj->animState->attachment;
+      if (attachment.modelType != NoneModel &&
+          attachment.boneIndex == modelMeshIdx) {
+        glPushMatrix();
+        glTranslatef(attachment.offset.x, attachment.offset.y,
+                     attachment.offset.z);
+        glRotatef(attachment.rotation.x, 1, 0, 0);
+        glRotatef(attachment.rotation.y, 0, 1, 0);
+        glRotatef(attachment.rotation.z, 0, 0, 1);
+        ObjModel& attachmentModel = models[attachment.modelType];
+        drawMeshesForModel(attachmentModel);
+        glPopMatrix();
       }
-      glEnd();
 
 #if DEBUG_ANIMATION
       glDisable(GL_DEPTH_TEST);
@@ -261,31 +299,8 @@ void drawModel(GameObject* obj) {
 
   } else {
     // case for simple gameobjects with no moving sub-parts
-
-    // render each model mesh. usually there will only be one
-    std::map<std::string, ObjMesh>::iterator it = model.meshes.begin();
-    while (it != model.meshes.end()) {
-      // std::cout << "drawing model: " << ModelTypeStrings[obj->modelType]
-      //           << " mesh:" << it->first << std::endl;
-
-      ObjMesh& mesh = it->second;
-
-      // draw mesh
-      glBegin(GL_TRIANGLES);
-      for (int ivert = 0; ivert < mesh.vertices.size(); ++ivert) {
-        glTexCoord2d(mesh.uvs[ivert].x, mesh.uvs[ivert].y);
-        glNormal3f(mesh.normals[ivert].x, mesh.normals[ivert].y,
-                   mesh.normals[ivert].z);
-        glVertex3f(mesh.vertices[ivert].x, mesh.vertices[ivert].y,
-                   mesh.vertices[ivert].z);
-      }
-      glEnd();
-
-      it++;
-    }
+    drawMeshesForModel(model);
   }
-
-  glDisable(GL_TEXTURE_2D);
 }
 
 void resizeWindow(int w, int h) {

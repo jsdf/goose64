@@ -10,6 +10,14 @@
 void AnimationState_init(AnimationState* self) {
   self->state = 0;
   self->progress = 0.0f;
+  AnimationBoneAttachment_init(&self->attachment);
+}
+
+void AnimationBoneAttachment_init(AnimationBoneAttachment* self) {
+  self->boneIndex = 0;
+  self->modelType = NoneModel;
+  Vec3d_origin(&self->offset);
+  EulerDegrees_origin(&self->rotation);
 }
 
 void AnimationInterpolation_calc(AnimationInterpolation* self,

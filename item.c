@@ -75,6 +75,10 @@ void Item_take(Item* self, ItemHolder* newHolder) {
     // be held by new holder
     self->holder = newHolder;
     self->lastPickedUpTick = Game_get()->tick;
+
+    // disable rendering and physics (character will show as attachment instead)
+    self->obj->visible = FALSE;
+    self->obj->solid = FALSE;
   }
 }
 
@@ -91,6 +95,10 @@ void Item_drop(Item* self) {
   self->holder = NULL;
   // put it back on the ground
   self->obj->position.y = 0;
+
+  // re-enable rendering and physics
+  self->obj->visible = TRUE;
+  self->obj->solid = TRUE;
 }
 
 void ItemHolder_init(ItemHolder* self,

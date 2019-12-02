@@ -2,6 +2,7 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+#include "modeltype.h"
 #include "n64compat.h"
 #include "rotation.h"
 #include "vec3d.h"
@@ -23,9 +24,17 @@ typedef struct AnimationRange {
   int end;
 } AnimationRange;
 
+typedef struct AnimationBoneAttachment {
+  int boneIndex;
+  ModelType modelType;
+  Vec3d offset;
+  EulerDegrees rotation;
+} AnimationBoneAttachment;
+
 typedef struct AnimationState {
   int state;
   float progress;
+  AnimationBoneAttachment attachment;
   // for each bone, used for the n64 renderer
   Mtx animMeshTransform[MAX_ANIM_MESH_PARTS];
 } AnimationState;
@@ -37,6 +46,8 @@ typedef struct AnimationInterpolation {
 } AnimationInterpolation;
 
 void AnimationState_init(AnimationState* self);
+
+void AnimationBoneAttachment_init(AnimationBoneAttachment* self);
 
 void AnimationInterpolation_calc(AnimationInterpolation* self,
                                  AnimationState* state,

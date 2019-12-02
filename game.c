@@ -29,10 +29,18 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount) {
   int i;
   Vec3d pos;
   GameObject* goose;
+  GameObject* obj;
 
   game.paused = FALSE;
   game.worldObjects = worldObjects;
   game.worldObjectsCount = worldObjectsCount;
+
+  // init world objects loaded from map data
+  for (i = 0, obj = game.worldObjects; i < game.worldObjectsCount; i++, obj++) {
+    obj->animState = NULL;
+    obj->visible = TRUE;
+    obj->solid = TRUE;
+  }
 
   // camera
   Vec3d_init(&game.viewPos, 0.0F, 0.0F, -400.0F);
