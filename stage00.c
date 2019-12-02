@@ -323,8 +323,8 @@ Gfx* gooseMeshList[] = {
     /*gooseneck_gooseneckmesh*/ Wtx_gooserig_gooseneck_gooseneckmesh,
 };
 
-Gfx* getModelDisplayList(GameObject* obj) {
-  switch (obj->modelType) {
+Gfx* getModelDisplayList(ModelType modelType) {
+  switch (modelType) {
     case BushModel:
       return Wtx_bush;
     case BookItemModel:
@@ -352,6 +352,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   AnimationInterpolation animInterp;
   AnimationRange* curAnimRange;
   GooseAnimType curAnim;
+  AnimationBoneAttachment* attachment;
 
   game = Game_get();
 
@@ -360,7 +361,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   // render world objects
   for (i = 0; i < game->worldObjectsCount; i++) {
     obj = sortedObjects[i];
-    if (obj->modelType == NoneModel) {
+    if (obj->modelType == NoneModel || !obj->visible) {
       continue;
     }
     // setup view
@@ -467,11 +468,31 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
         gSPDisplayList(glistp++, gooseMeshList[animFrame.object]);
 
+        attachment = &obj->animState->attachment;
+        if (attachment->modelType != NoneModel &&
+            attachment->boneIndex == modelMeshIdx) {
+          guPosition(&obj->animState->attachmentTransform,
+                     attachment->rotation.x,  // roll
+                     attachment->rotation.y,  // pitch
+                     attachment->rotation.z,  // yaw
+                     1.0F,                    // scale
+                     attachment->offset.x,    // pos x
+                     attachment->offset.y,    // pos y
+                     attachment->offset.z     // pos z
+          );
+          gSPMatrix(glistp++,
+                    OS_K0_TO_PHYSICAL(&(obj->animState->attachmentTransform)),
+                    G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
+          modelDisplayList = getModelDisplayList(attachment->modelType);
+          gSPDisplayList(glistp++, modelDisplayList);
+          gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
+        }
+
         gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
       }
     } else {
       // case for simple gameobjects with no moving sub-parts
-      modelDisplayList = getModelDisplayList(obj);
+      modelDisplayList = getModelDisplayList(obj->modelType);
 
       gSPDisplayList(glistp++, modelDisplayList);
     }

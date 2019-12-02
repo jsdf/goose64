@@ -37,6 +37,8 @@ typedef struct AnimationState {
   AnimationBoneAttachment attachment;
   // for each bone, used for the n64 renderer
   Mtx animMeshTransform[MAX_ANIM_MESH_PARTS];
+  // same but for attachment (there can only be one)
+  Mtx attachmentTransform;
 } AnimationState;
 
 typedef struct AnimationInterpolation {
