@@ -411,7 +411,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
     }
 
     // set the transform in world space for the gameobject to render
-    guPosition(&dynamicp->objTransform[i],
+    guPosition(&obj->objTransform,
                0.0F,             // rot x
                obj->rotation.y,  // rot y
                0.0F,             // rot z
@@ -420,7 +420,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
                obj->position.y,  // pos y
                obj->position.z   // pos z
     );
-    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->objTransform[i])),
+    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(obj->objTransform)),
               G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
     if (obj->modelType == GooseModel) {
@@ -451,7 +451,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
                   OS_K0_TO_PHYSICAL(&(dynamicp->zUpToYUpCoordinatesRotation)),
                   G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
 
-        guPosition(&dynamicp->animMeshTransform[modelMeshIdx],
+        guPosition(&obj->animState->animMeshTransform[modelMeshIdx],
                    animFrame.rotation.x,  // roll
                    animFrame.rotation.y,  // pitch
                    animFrame.rotation.z,  // yaw
@@ -460,10 +460,10 @@ void drawWorldObjects(Dynamic* dynamicp) {
                    animFrame.position.y,  // pos y
                    animFrame.position.z   // pos z
         );
-        gSPMatrix(
-            glistp++,
-            OS_K0_TO_PHYSICAL(&(dynamicp->animMeshTransform[modelMeshIdx])),
-            G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
+        gSPMatrix(glistp++,
+                  OS_K0_TO_PHYSICAL(
+                      &(obj->animState->animMeshTransform[modelMeshIdx])),
+                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
         gSPDisplayList(glistp++, gooseMeshList[animFrame.object]);
 

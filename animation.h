@@ -2,8 +2,13 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+#include "n64compat.h"
 #include "rotation.h"
 #include "vec3d.h"
+
+// max num bones per character
+// on n64 we allocate this many transform matrices per character
+#define MAX_ANIM_MESH_PARTS 10
 
 typedef struct AnimationFrame {
   int frame;
@@ -21,6 +26,8 @@ typedef struct AnimationRange {
 typedef struct AnimationState {
   int state;
   float progress;
+  // for each bone, used for the n64 renderer
+  Mtx animMeshTransform[MAX_ANIM_MESH_PARTS];
 } AnimationState;
 
 typedef struct AnimationInterpolation {

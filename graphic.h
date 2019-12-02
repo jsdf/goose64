@@ -23,15 +23,7 @@ typedef struct {
   Mtx modeling;
   Mtx camera;
 
-  // TODO: move the ownership of these structures to the relevant objects
-  // themselves so we only allocate as many as are needed and don't need to keep
-  // anything in sync
-  Mtx objTransform[MAX_WORLD_OBJECTS];
-  // animation
-  Mtx animMeshTransform[MAX_ANIM_MESH_PARTS];
   Mtx zUpToYUpCoordinatesRotation;
-  Mtx animMeshRotate[MAX_ANIM_MESH_PARTS];
-  Mtx boneOrigin[MAX_ANIM_MESH_PARTS];
 } Dynamic;
 
 /*-------------------------------- parameter---------------------------------*/

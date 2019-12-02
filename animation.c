@@ -1,4 +1,7 @@
 #include <math.h>
+#ifndef __N64__
+#include <assert.h>
+#endif
 
 #include "animation.h"
 #include "constants.h"
@@ -36,6 +39,10 @@ void AnimationFrame_get(
 ) {
   int frameDataOffset;
 
+#ifndef __N64__
+  assert(animDataNumBones <= MAX_ANIM_MESH_PARTS);
+#endif
+
   frameDataOffset = interp->currentFrame * animDataNumBones + boneIdx;
   *result = *(animData + frameDataOffset);
 }
@@ -51,9 +58,12 @@ void AnimationFrame_lerp(
 ) {
   Quaternion quaternionA, quaternionB;
   Euler radiansA, radiansB, radiansResult;
-
   int frameDataOffsetA, frameDataOffsetB;
   AnimationFrame *a, *b;
+
+#ifndef __N64__
+  assert(animDataNumBones <= MAX_ANIM_MESH_PARTS);
+#endif
 
   frameDataOffsetA = interp->currentFrame * animDataNumBones + boneIdx;
   frameDataOffsetB = interp->nextFrame * animDataNumBones + boneIdx;
