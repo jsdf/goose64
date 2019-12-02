@@ -259,7 +259,7 @@ void updateGame00(void) {
 
   game = Game_get();
 
-  Vec2d_identity(&input.direction);
+  Vec2d_origin(&input.direction);
 
   /* Data reading of controller 1 */
   nuContDataGetEx(contdata, 0);

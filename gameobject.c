@@ -13,8 +13,8 @@ GameObject* GameObject_alloc() {
 
 GameObject* GameObject_init(GameObject* self, int id, Vec3d* initPos) {
   self->id = id;
-  Vec3d_identity(&self->position);
-  EulerDegrees_identity(&self->rotation);
+  Vec3d_origin(&self->position);
+  EulerDegrees_origin(&self->rotation);
   self->modelType = NoneModel;
 
   if (initPos) {

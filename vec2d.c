@@ -29,7 +29,7 @@ Vec2d* Vec2d_init(Vec2d* self, float x, float y) {
   return self;
 }
 
-Vec2d* Vec2d_identity(Vec2d* self) {
+Vec2d* Vec2d_origin(Vec2d* self) {
   return Vec2d_init(self, 0.0F, 0.0F);
 }
 

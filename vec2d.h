@@ -13,7 +13,7 @@ float _Vec2dutil_lerp(float v0, float v1, float t);
 
 Vec2d* Vec2d_alloc();
 Vec2d* Vec2d_init(Vec2d* self, float x, float y);
-Vec2d* Vec2d_identity(Vec2d* self);
+Vec2d* Vec2d_origin(Vec2d* self);
 Vec2d* Vec2d_clone(Vec2d* v);
 Vec2d* Vec2d_copyFrom(Vec2d* self, Vec2d* other);
 Vec2d* Vec2d_add(Vec2d* self, Vec2d* other);

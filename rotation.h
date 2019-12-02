@@ -31,7 +31,7 @@ void Euler_fromEulerDegrees(Euler* radians, EulerDegrees* degrees);
 void Euler_setFromQuaternion(Euler* self, Quaternion* quaternion);
 
 void EulerDegrees_fromEuler(EulerDegrees* degrees, Euler* radians);
-EulerDegrees* EulerDegrees_identity(EulerDegrees* self);
+EulerDegrees* EulerDegrees_origin(EulerDegrees* self);
 
 void Matrix4_makeRotationFromEuler(Matrix4* self, Euler* euler);
 

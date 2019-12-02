@@ -26,10 +26,10 @@ void PhysBody_init(PhysBody* self,
   self->restitution = 1.0;
   self->position = *position;
   self->prevPosition = *position;
-  Vec3d_identity(&self->velocity);
-  Vec3d_identity(&self->nonIntegralVelocity);
-  Vec3d_identity(&self->acceleration);
-  Vec3d_identity(&self->prevAcceleration);
+  Vec3d_origin(&self->velocity);
+  Vec3d_origin(&self->nonIntegralVelocity);
+  Vec3d_origin(&self->acceleration);
+  Vec3d_origin(&self->prevAcceleration);
 }
 
 void PhysBehavior_floorBounce(PhysBody* body, float floorHeight) {
@@ -60,8 +60,8 @@ void PhysBehavior_collision(PhysBody* body, PhysBody* pool, int numInPool) {
       otherBodySeparationForce;
   PhysBody* otherBody;
 
-  Vec3d_identity(&delta);
-  Vec3d_identity(&direction);
+  Vec3d_origin(&delta);
+  Vec3d_origin(&direction);
 
   for (i = 0, otherBody = pool; i < numInPool; i++, otherBody++) {
     if (body != otherBody) {
@@ -113,7 +113,7 @@ void PhysBody_update(PhysBody* self,
 
 void PhysBody_integrateMotion(PhysBody* body, float dt, float drag) {
   Vec3d newPosition;
-  Vec3d_identity(&newPosition);
+  Vec3d_origin(&newPosition);
   /* Scale force to mass. */
   Vec3d_multiplyScalar(&body->acceleration, body->massInverse);
   /* Derive velocity. */
@@ -133,7 +133,7 @@ void PhysBody_integrateMotion(PhysBody* body, float dt, float drag) {
   Vec3d_copyFrom(&body->position, &newPosition);
   /* Reset acceleration force. */
   Vec3d_copyFrom(&body->prevAcceleration, &body->acceleration);
-  Vec3d_identity(&body->acceleration);
+  Vec3d_origin(&body->acceleration);
   /* store velocity for use in acc calculations by user code */
   Vec3d_copyFrom(&body->nonIntegralVelocity, &body->velocity);
   Vec3d_multiplyScalar(&body->nonIntegralVelocity, 1.0 / dt);

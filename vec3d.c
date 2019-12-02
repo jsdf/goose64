@@ -27,7 +27,7 @@ Vec3d* Vec3d_init(Vec3d* self, float x, float y, float z) {
   return self;
 }
 
-Vec3d* Vec3d_identity(Vec3d* self) {
+Vec3d* Vec3d_origin(Vec3d* self) {
   return Vec3d_init(self, 0.0F, 0.0F, 0.0F);
 }
 

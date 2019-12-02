@@ -104,7 +104,7 @@ void Euler_setFromRotationMatrix(Euler* self, Matrix4* m) {
   }
 }
 
-EulerDegrees* EulerDegrees_identity(EulerDegrees* self) {
+EulerDegrees* EulerDegrees_origin(EulerDegrees* self) {
   self->x = 0.0F;
   self->y = 0.0F;
   self->z = 0.0F;

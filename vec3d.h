@@ -11,7 +11,7 @@ typedef struct Vec3d {
 Vec3d* Vec3d_alloc(float x, float y, float z);
 void Vec3d_set(Vec3d* self, float x, float y, float z);
 Vec3d* Vec3d_init(Vec3d* self, float x, float y, float z);
-Vec3d* Vec3d_identity(Vec3d* self);
+Vec3d* Vec3d_origin(Vec3d* self);
 Vec3d* Vec3d_copyFrom(Vec3d* self, Vec3d* other);
 float Vec3d_distanceTo(Vec3d* self, Vec3d* other);
 Vec3d* Vec3d_directionTo(Vec3d* self, Vec3d* other, Vec3d* result);
