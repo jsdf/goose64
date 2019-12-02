@@ -45,6 +45,7 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount) {
   // camera
   Vec3d_init(&game.viewPos, 0.0F, 0.0F, -400.0F);
   Vec3d_init(&game.viewRot, 0.0F, 0.0F, 0.0F);
+  game.viewZoom = 2.0f;
   game.freeView = 0;
 
   goose = Game_findObjectByType(GooseModel);
@@ -111,15 +112,20 @@ GameObject* Game_findObjectNByType(ModelType modelType, int n) {
   return NULL;
 }
 
-void Game_updateCamera(Game* game) {
+void Game_updateCamera(Game* game, Input* input) {
   float cameraDist;
   Vec3d cameraOffset;
-  float zoom;
+  float desiredZoom, desiredZoomDist;
+
+  // spring to desired zoom level
+  desiredZoom = input->zoomIn ? 3.0 : input->zoomOut ? 1.0 : 2.0;
+  desiredZoomDist = game->viewZoom - desiredZoom;
+  game->viewZoom -= desiredZoomDist * 0.1;
+
   Vec3d_set(&cameraOffset, 0.0F, 0.65F, -0.8F);
   // Vec3d_set(&cameraOffset, 0.0F, 0, -0.8F); // side view
 
-  zoom = 2.0f;
-  cameraDist = 1000.0f / zoom;
+  cameraDist = 1000.0f / game->viewZoom;
   Vec3d_multiplyScalar(&cameraOffset, cameraDist);
 
   Vec3d_copyFrom(&game->viewPos, &game->player.goose->position);
@@ -144,7 +150,7 @@ void Game_update(Input* input) {
 
     Player_update(&game->player, input, game);
 
-    Game_updateCamera(game);
+    Game_updateCamera(game, input);
 
     physicsBodies[0].position = game->player.goose->position;
     physicsBodies[1].position = characters[0].obj->position;

@@ -580,6 +580,12 @@ void updateInputs() {
         }
       } else {
         switch (key) {
+          case 113:  // q
+            input.zoomIn = TRUE;
+            break;
+          case 101:  // e
+            input.zoomOut = TRUE;
+            break;
           case 97:  // a
             input.direction.x += 1.0;
             break;

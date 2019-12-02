@@ -62,6 +62,7 @@ typedef struct Game {
   Vec3d viewPos;
   Vec3d viewRot;
   Vec3d viewTarget;
+  float viewZoom;
   int freeView;
   GameObject* worldObjects;
   int worldObjectsCount;

@@ -217,7 +217,7 @@ void checkDebugControls(Game* game) {
   if (contdata[0].trigger & A_BUTTON) {
     cycleMode = -cycleMode;
   }
-  if (contdata[0].button & B_BUTTON) {
+  if (contdata[0].trigger & B_BUTTON) {
     renderModeSetting++;
     if (renderModeSetting >= MAX_RENDER_MODE) {
       renderModeSetting = 0;
@@ -263,7 +263,7 @@ void updateGame00(void) {
 
   /* Data reading of controller 1 */
   nuContDataGetEx(contdata, 0);
-  if (contdata[0].button & START_BUTTON) {
+  if (contdata[0].trigger & START_BUTTON) {
     renderModeSetting++;
     if (renderModeSetting >= MAX_RENDER_MODE) {
       renderModeSetting = 0;
@@ -280,6 +280,16 @@ void updateGame00(void) {
     if (contdata[0].trigger & B_BUTTON) {
       input.pickup = TRUE;
     }
+    if (contdata[0].button & Z_TRIG) {
+      input.zoomIn = TRUE;
+    }
+    if (contdata[0].button & L_TRIG) {
+      input.zoomIn = TRUE;
+    }
+    if (contdata[0].button & R_TRIG) {
+      input.zoomOut = TRUE;
+    }
+
     if (contdata[0].button & U_CBUTTONS) {
       farPlane += 100.0;
     }
