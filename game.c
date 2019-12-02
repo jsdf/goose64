@@ -20,7 +20,7 @@ static Game game;
 
 #define NUM_CHARACTERS 1
 Character characters[NUM_CHARACTERS];
-#define NUM_ITEMS 5
+#define NUM_ITEMS 2
 Item items[NUM_ITEMS];
 #define NUM_PHYS_BODIES 10
 PhysBody physicsBodies[NUM_PHYS_BODIES];
