@@ -26,6 +26,7 @@
 		73735E6023600FD00048C9EC /* item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5F23600FD00048C9EC /* item.cpp */; };
 		73A093502389088400C53E85 /* physics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73A0934E2389088400C53E85 /* physics.cpp */; };
 		73E90496238B326100CF5D2F /* animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E90494238B326100CF5D2F /* animation.cpp */; };
+		73E9049923944EE700CF5D2F /* rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E9049823944EE700CF5D2F /* rotation.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -77,6 +78,8 @@
 		73A2C3C42362720B0036BCCB /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		73E90494238B326100CF5D2F /* animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animation.cpp; path = ../animation.cpp; sourceTree = "<group>"; };
 		73E90495238B326100CF5D2F /* animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = animation.h; path = ../animation.h; sourceTree = "<group>"; };
+		73E9049723944EE600CF5D2F /* rotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rotation.h; path = ../rotation.h; sourceTree = "<group>"; };
+		73E9049823944EE700CF5D2F /* rotation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rotation.cpp; path = ../rotation.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +124,8 @@
 				733266E0235EAB8100907B30 /* objloader.hpp */,
 				733266D6235EAB8100907B30 /* renderer.c */,
 				73E90494238B326100CF5D2F /* animation.cpp */,
+				73E9049823944EE700CF5D2F /* rotation.cpp */,
+				73E9049723944EE600CF5D2F /* rotation.h */,
 				73E90495238B326100CF5D2F /* animation.h */,
 				73A0934E2389088400C53E85 /* physics.cpp */,
 				73A0934F2389088400C53E85 /* physics.h */,
@@ -221,6 +226,7 @@
 				73735E5E23600F730048C9EC /* characterstate.cpp in Sources */,
 				73735E6023600FD00048C9EC /* item.cpp in Sources */,
 				733266E8235EAB8200907B30 /* vec2d.cpp in Sources */,
+				73E9049923944EE700CF5D2F /* rotation.cpp in Sources */,
 				733266EC235EAB8200907B30 /* texture.cpp in Sources */,
 				73A093502389088400C53E85 /* physics.cpp in Sources */,
 			);

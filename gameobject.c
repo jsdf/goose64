@@ -1,7 +1,9 @@
 
-#include "gameobject.h"
 #include <math.h>
 #include <stdlib.h>
+
+#include "gameobject.h"
+#include "rotation.h"
 #include "vec3d.h"
 
 GameObject* GameObject_alloc() {
@@ -12,7 +14,7 @@ GameObject* GameObject_alloc() {
 GameObject* GameObject_init(GameObject* self, int id, Vec3d* initPos) {
   self->id = id;
   Vec3d_identity(&self->position);
-  Vec3d_identity(&self->rotation);
+  EulerDegrees_identity(&self->rotation);
   self->modelType = NoneModel;
 
   if (initPos) {

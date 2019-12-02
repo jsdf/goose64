@@ -346,14 +346,12 @@ void drawWorldObjects(Dynamic* dynamicp) {
   Game* game;
   GameObject* obj;
   int i, useZBuffering;
-  int frameNum;
   int modelMeshIdx;
-  int frameDataOffset;
   Gfx* modelDisplayList;
-  AnimationFrame* animFrame;
+  AnimationFrame animFrame;
+  AnimationInterpolation animInterp;
   AnimationRange* curAnimRange;
   GooseAnimType curAnim;
-  Vec3d* boneOrigin;
 
   game = Game_get();
 
@@ -430,13 +428,17 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
       curAnim = (GooseAnimType)obj->animState->state;
       curAnimRange = &goose_anim_ranges[curAnim];
-      frameNum = AnimationState_getAnimFrame(obj->animState, curAnimRange);
+      AnimationInterpolation_calc(&animInterp, obj->animState, curAnimRange);
 
       for (modelMeshIdx = 0; modelMeshIdx < MAX_GOOSE_MESH_TYPE;
            ++modelMeshIdx) {
-        frameDataOffset = frameNum * MAX_GOOSE_MESH_TYPE + modelMeshIdx;
-        animFrame = &goose_anim_data[frameDataOffset];
-        boneOrigin = &goose_anim_bone_origins[modelMeshIdx];
+        AnimationFrame_lerp(
+            &animInterp,          // result of AnimationInterpolation_calc()
+            goose_anim_data,      // pointer to start of AnimationFrame list
+            MAX_GOOSE_MESH_TYPE,  // num bones in rig used by animData
+            modelMeshIdx,  // index of bone in rig to produce transform for
+            &animFrame     // the resultant interpolated animation frame
+        );
 
         // push matrix with the blender to n64 coord rotation, then mulitply
         // it by the model's rotation and offset
@@ -450,20 +452,20 @@ void drawWorldObjects(Dynamic* dynamicp) {
                   G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
 
         guPosition(&dynamicp->animMeshTransform[modelMeshIdx],
-                   animFrame->rotation.x,  // roll
-                   animFrame->rotation.y,  // pitch
-                   animFrame->rotation.z,  // yaw
-                   1.0F,                   // scale
-                   animFrame->position.x,  // pos x
-                   animFrame->position.y,  // pos y
-                   animFrame->position.z   // pos z
+                   animFrame.rotation.x,  // roll
+                   animFrame.rotation.y,  // pitch
+                   animFrame.rotation.z,  // yaw
+                   1.0F,                  // scale
+                   animFrame.position.x,  // pos x
+                   animFrame.position.y,  // pos y
+                   animFrame.position.z   // pos z
         );
         gSPMatrix(
             glistp++,
             OS_K0_TO_PHYSICAL(&(dynamicp->animMeshTransform[modelMeshIdx])),
             G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
-        gSPDisplayList(glistp++, gooseMeshList[animFrame->object]);
+        gSPDisplayList(glistp++, gooseMeshList[animFrame.object]);
 
         gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
       }

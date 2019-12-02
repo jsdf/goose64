@@ -34,4 +34,23 @@
 #define NULL 0
 #endif
 
+#ifndef MIN
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+#ifndef MAX
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef CLAMP
+#define CLAMP(x, low, high) \
+  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
+#endif
+#define INTFLOOR(x) (int)x
+#define INTCEIL(x) ((int)x) + 1
+
+#ifdef __N64__
+#ifndef FLT_EPSILON
+#define FLT_EPSILON 0.0000001192
+#endif
+#endif
+
 #endif /* CONSTANTS_H */

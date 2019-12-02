@@ -4,12 +4,13 @@
 
 #include "animation.h"
 #include "modeltype.h"
+#include "rotation.h"
 #include "vec3d.h"
 
 typedef struct GameObject {
   int id;
   Vec3d position;
-  Vec3d rotation;
+  EulerDegrees rotation;
   ModelType modelType;
   AnimationState* animState;
 } GameObject;

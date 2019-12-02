@@ -2,13 +2,14 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+#include "rotation.h"
 #include "vec3d.h"
 
 typedef struct AnimationFrame {
   int frame;
   int object;
   Vec3d position;
-  Vec3d rotation;
+  EulerDegrees rotation;
 
 } AnimationFrame;
 
@@ -34,8 +35,22 @@ void AnimationInterpolation_calc(AnimationInterpolation* self,
                                  AnimationState* state,
                                  AnimationRange* animRange);
 
-void AnimationFrame_lerp(AnimationFrame* self,
-                         AnimationFrame* a,
-                         AnimationFrame* b,
-                         AnimationInterpolation* interp);
+void AnimationFrame_get(
+    AnimationInterpolation* interp,  // result of AnimationInterpolation_calc()
+    AnimationFrame* animData,        // pointer to start of AnimationFrame list
+                                     // exported for some rig
+    int animDataNumBones,            // num bones in rig used by animData
+    int boneIdx,            // index of bone in rig to produce transform for
+    AnimationFrame* result  // the resultant   animation frame
+);
+
+void AnimationFrame_lerp(
+    AnimationInterpolation* interp,  // result of AnimationInterpolation_calc()
+    AnimationFrame* animData,        // pointer to start of AnimationFrame list
+                                     // exported for some rig
+    int animDataNumBones,            // num bones in rig used by animData
+    int boneIdx,            // index of bone in rig to produce transform for
+    AnimationFrame* result  // the resultant interpolated animation frame
+);
+
 #endif /* !ANIMATION_H */

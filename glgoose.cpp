@@ -36,10 +36,11 @@
 #define DEBUG_LOG_RENDER 0
 #define DEBUG_OBJECTS 0
 #define DEBUG_RAYCASTING 0
-#define DEBUG_ANIMATION 0
+#define DEBUG_ANIMATION 1
 #define DEBUG_ANIMATION_MORE 0
-#define DEBUG_PHYSICS 1
+#define DEBUG_PHYSICS 0
 #define USE_LIGHTING 1
+#define USE_ANIM_FRAME_LERP 1
 
 int glgooseFrame = 0;
 
@@ -163,12 +164,10 @@ void drawModel(GameObject* obj) {
     // TODO: generalize this for other model types using other skeletons with
     // retargetable animations
 
-    AnimationFrame* animFrameA;
-    AnimationFrame* animFrameB;
-    AnimationFrame animFrameInterp;
-    AnimationInterpolation animInterp;
-    GooseAnimType curAnim;
-    AnimationRange* curAnimRange;
+    GooseAnimType curAnim;         // id of anim clip to play
+    AnimationRange* curAnimRange;  // range of frames representing anim clip
+    AnimationInterpolation animInterp;  // interpolation value for frame
+    AnimationFrame animFrame;           // animation frame data for one bone
 
     assert(obj->animState != NULL);
     curAnim = (GooseAnimType)obj->animState->state;
@@ -183,15 +182,22 @@ void drawModel(GameObject* obj) {
     AnimationInterpolation_calc(&animInterp, obj->animState, curAnimRange);
     for (int modelMeshIdx = 0; modelMeshIdx < MAX_GOOSE_MESH_TYPE;
          ++modelMeshIdx) {
-      int frameDataOffsetA =
-          animInterp.currentFrame * MAX_GOOSE_MESH_TYPE + modelMeshIdx;
-      int frameDataOffsetB =
-          animInterp.nextFrame * MAX_GOOSE_MESH_TYPE + modelMeshIdx;
-      animFrameA = &goose_anim_data[frameDataOffsetA];
-      animFrameB = &goose_anim_data[frameDataOffsetB];
-
-      AnimationFrame_lerp(&animFrameInterp, animFrameA, animFrameB,
-                          &animInterp);
+#if USE_ANIM_FRAME_LERP
+      AnimationFrame_lerp(
+          &animInterp,          // result of AnimationInterpolation_calc()
+          goose_anim_data,      // pointer to start of AnimationFrame list
+          MAX_GOOSE_MESH_TYPE,  // num bones in rig used by animData
+          modelMeshIdx,         // index of bone in rig to produce transform for
+          &animFrame            // the resultant interpolated animation frame
+      );
+#else
+      AnimationFrame_get(
+          &animInterp,          // result of AnimationInterpolation_calc()
+          goose_anim_data,      // pointer to start of AnimationFrame list
+          MAX_GOOSE_MESH_TYPE,  // num bones in rig used by animData
+          modelMeshIdx,         // index of bone in rig to produce transform for
+          &animFrame);
+#endif
 
       // push relative transformation matrix, render the mesh, then pop the
       // relative transform off the matrix stack again
@@ -200,15 +206,14 @@ void drawModel(GameObject* obj) {
       // rotate from z-up (blender) to y-up (opengl) coords
       glRotatef(-90.0f, 1, 0, 0);
 
-      glTranslatef(animFrameInterp.position.x, animFrameInterp.position.y,
-                   animFrameInterp.position.z);
+      glTranslatef(animFrame.position.x, animFrame.position.y,
+                   animFrame.position.z);
 
-      glRotatef(animFrameInterp.rotation.x, 1, 0, 0);
-      glRotatef(animFrameInterp.rotation.y, 0, 1, 0);
-      glRotatef(animFrameInterp.rotation.z, 0, 0, 1);
+      glRotatef(animFrame.rotation.x, 1, 0, 0);
+      glRotatef(animFrame.rotation.y, 0, 1, 0);
+      glRotatef(animFrame.rotation.z, 0, 0, 1);
 
-      ObjMesh& mesh =
-          model.meshes.at(GooseMeshTypeStrings[animFrameInterp.object]);
+      ObjMesh& mesh = model.meshes.at(GooseMeshTypeStrings[animFrame.object]);
 
       // draw mesh
       glBegin(GL_TRIANGLES);
@@ -594,12 +599,10 @@ void updateInputs() {
 
 void processNormalKeysUp(unsigned char key, int _x, int _y) {
   keysDown[key] = false;
-  printf("released %d\n", key);
 }
 
 void processNormalKeysDown(unsigned char key, int _x, int _y) {
   keysDown[key] = true;
-  printf("pressed %d\n", key);
 
   if (key == 27) {  // esc
     exit(0);
