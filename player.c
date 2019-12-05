@@ -10,9 +10,13 @@
 
 #include "constants.h"
 
+#define GOOSE_SPEED 5.0F
+#define GOOSE_FORCE 5000.0F
+#define GOOSE_MAX_TURN_SPEED 15.0f
 #define PLAYER_NEAR_OBJ_DIST 100.0f
 #define PLAYER_PICKUP_COOLDOWN 10
 #define PLAYER_WALK_ANIM_MOVEMENT_DIVISOR 100.0
+#define PLAYER_PHYS_WALK_ANIM_MOVEMENT_DIVISOR 5200.0
 
 static Vec3d playerItemOffset = {0.0F, 80.0F, 0.0F};
 
@@ -42,13 +46,13 @@ void Player_setVisibleItemAttachment(Player* self, ModelType modelType) {
 }
 
 void Player_update(Player* self, Input* input, Game* game) {
-  Vec3d playerMovement;
-  float destAngle, movementSpeed;
+  Vec3d playerMovement, playerMovementScaled;
+  float destAngle, movementSpeed, resultantMovementSpeed;
   GameObject* goose;
   int i;
   Item* item;
 
-  movementSpeed = GOOSE_SPEED * (input->run ? 2.0 : 0.75);
+  movementSpeed = (input->run ? 1.0 : 0.5);
   goose = self->goose;
 
   // prevent moving too fast diagonally
@@ -59,19 +63,33 @@ void Player_update(Player* self, Input* input, Game* game) {
   // movement
   Vec3d_init(&playerMovement, input->direction.x * movementSpeed, 0.0F,
              input->direction.y * movementSpeed);
-  Vec3d_add(&goose->position, &playerMovement);
+  playerMovementScaled = playerMovement;
+
+#if USE_PHYSICS_MOVEMENT
+  Vec3d_multiplyScalar(&playerMovementScaled, GOOSE_FORCE);
+  Vec3d_add(&goose->physBody->acceleration, &playerMovementScaled);
+  playerMovement = goose->physBody->nonIntegralVelocity;  // from last frame :(
+  playerMovement.y = 0;
+
+  resultantMovementSpeed = Vec3d_mag(&playerMovement);
+  resultantMovementSpeed /= PLAYER_PHYS_WALK_ANIM_MOVEMENT_DIVISOR;
+#else
+  Vec3d_multiplyScalar(&playerMovementScaled, GOOSE_SPEED);
+  Vec3d_add(&goose->position, &playerMovementScaled);
+  // PhysBody_translateWithoutForce(goose->physBody, &playerMovementScaled);
+  resultantMovementSpeed = Vec3d_mag(&playerMovementScaled);
+  resultantMovementSpeed /= PLAYER_WALK_ANIM_MOVEMENT_DIVISOR;
+#endif
 
   // update animation
-  if (Vec3d_magSq(&playerMovement) > 0) {
+  if (resultantMovementSpeed > 0.001) {
     if (self->animState.state != goose_walk_anim) {
       // enter walk anim
       self->animState.progress = 0.0;
     } else {
       // advance walk anim
-      self->animState.progress = fmodf(
-          self->animState.progress +
-              Vec3d_mag(&playerMovement) / PLAYER_WALK_ANIM_MOVEMENT_DIVISOR,
-          1.0);
+      self->animState.progress =
+          fmodf(self->animState.progress + resultantMovementSpeed, 1.0);
     }
     self->animState.state = goose_walk_anim;
 
@@ -138,5 +156,17 @@ void Player_print(Player* self) {
              ? ModelTypeStrings[self->itemHolder.heldItem->obj->modelType]
              : "none");
   Vec3d_print(&self->goose->position);
+}
+
+void Player_toString(Player* self, char* buffer) {
+  char pos[60];
+  char vel[60];
+  Vec3d_toString(&self->goose->position, pos);
+  Vec3d_toString(&self->goose->physBody->nonIntegralVelocity, vel);
+  sprintf(buffer, "Player id=%d pos=%s vel=%s heldItem=%s", self->goose->id,
+          pos, vel,
+          self->itemHolder.heldItem
+              ? ModelTypeStrings[self->itemHolder.heldItem->obj->modelType]
+              : "none");
 }
 #endif

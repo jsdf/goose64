@@ -5,6 +5,7 @@
 #include "animation.h"
 #include "modeltype.h"
 #include "n64compat.h"
+#include "physics.h"
 #include "rotation.h"
 #include "vec3d.h"
 
@@ -14,6 +15,7 @@ typedef struct GameObject {
   EulerDegrees rotation;
   ModelType modelType;
   AnimationState* animState;
+  PhysBody* physBody;
   int visible;
   int solid;
   Mtx objTransform;

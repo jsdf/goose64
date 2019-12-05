@@ -24,6 +24,7 @@ void PhysBody_init(PhysBody* self,
   self->radius = radius;
   self->radiusSquared = radius * radius;
   self->restitution = 1.0;
+  self->enabled = TRUE;
   self->position = *position;
   self->prevPosition = *position;
   Vec3d_origin(&self->velocity);
@@ -77,8 +78,8 @@ void PhysBehavior_collision(PhysBody* body, PhysBody* pool, int numInPool) {
         /* Total mass. */
         mt = body->mass + otherBody->mass;
         /* Distribute collision responses. */
-        bodySeparationForce = body->mass / mt;
-        otherBodySeparationForce = otherBody->mass / mt;
+        bodySeparationForce = otherBody->mass / mt;
+        otherBodySeparationForce = body->mass / mt;
 
         /* Move particles so they no longer overlap.*/
         PhysBehavior_collisionSeparationOffset(
@@ -94,8 +95,28 @@ void PhysBehavior_collision(PhysBody* body, PhysBody* pool, int numInPool) {
   }
 }
 
+void PhysBody_setEnabled(PhysBody* body, int enabled) {
+  if (enabled) {
+    body->enabled = TRUE;
+    // prevent velocity from movement while disabled
+    Vec3d_copyFrom(&body->prevPosition, &body->position);
+  } else {
+    body->enabled = FALSE;
+  }
+}
+
 void PhysBehavior_constantForce(PhysBody* body, Vec3d force) {
   Vec3d_add(&body->acceleration, &force);
+}
+
+void PhysBody_applyForce(PhysBody* body, Vec3d* force) {
+  Vec3d_add(&body->acceleration, force);
+}
+
+// move but don't affect velocity
+void PhysBody_translateWithoutForce(PhysBody* body, Vec3d* translation) {
+  Vec3d_add(&body->position, translation);
+  Vec3d_add(&body->prevPosition, translation);
 }
 
 void PhysBody_update(PhysBody* self,
@@ -147,11 +168,15 @@ void PhysBody_integrateBodies(PhysBody* bodies,
   int i;
 
   for (i = 0, body = bodies; i < numBodies; i++, body++) {
-    PhysBody_update(body, dt, drag, bodies, numBodies);
+    if (body->enabled) {
+      PhysBody_update(body, dt, drag, bodies, numBodies);
+    }
   }
 
   for (i = 0, body = bodies; i < numBodies; i++, body++) {
-    PhysBody_integrateMotion(body, dt, drag);
+    if (body->enabled) {
+      PhysBody_integrateMotion(body, dt, drag);
+    }
   }
 }
 
@@ -209,3 +234,15 @@ void PhysState_step(PhysState* physics,
     }
   }
 }
+
+#ifndef __N64__
+#include <stdio.h>
+
+void PhysBody_toString(PhysBody* self, char* buffer) {
+  char pos[60];
+  char vel[60];
+  Vec3d_toString(&self->position, pos);
+  Vec3d_toString(&self->nonIntegralVelocity, vel);
+  sprintf(buffer, "PhysBody id=%d pos=%s vel=%s", self->id, pos, vel);
+}
+#endif

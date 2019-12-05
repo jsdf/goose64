@@ -16,6 +16,8 @@
 
 #include "constants.h"
 
+#define GENERATE_DEBUG_BODIES 0
+
 static Game game;
 
 #define NUM_CHARACTERS 1
@@ -25,9 +27,15 @@ Item items[NUM_ITEMS];
 #define NUM_PHYS_BODIES 10
 PhysBody physicsBodies[NUM_PHYS_BODIES];
 
+void Game_initGameObjectPhysBody(PhysBody* body, GameObject* obj) {
+  PhysBody_init(body, modelTypesProperties[obj->modelType].mass,
+                modelTypesProperties[obj->modelType].radius, &obj->position,
+                obj->id);
+  obj->physBody = body;
+}
+
 void Game_init(GameObject* worldObjects, int worldObjectsCount) {
-  int i;
-  Vec3d pos;
+  int i, itemsCount, physicsBodiesCount, charactersCount;
   GameObject* goose;
   GameObject* obj;
 
@@ -52,34 +60,63 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount) {
   assert(goose != NULL);
 
   Player_init(&game.player, goose);
-  PhysState_init(&game.physicsState, 0.02);
+  PhysState_init(&game.physicsState, /* viscosity */ 0.1);
 
   // setup camera
   Vec3d_copyFrom(&game.viewTarget, &game.player.goose->position);
 
+  itemsCount = 2;
   Item_init(&items[0], Game_findObjectByType(BookItemModel), &game);
   Item_init(&items[1], Game_findObjectByType(HomeworkItemModel), &game);
+
+  charactersCount = 1;
   Character_init(&characters[0],
                  Game_findObjectByType(GroundskeeperCharacterModel),
                  /*book*/ &items[0], &game);
 
+  physicsBodiesCount = 0;
+#if GENERATE_DEBUG_BODIES
   for (i = 0; i < NUM_PHYS_BODIES; ++i) {
     Vec3d_init(&pos, RAND(200), RAND(10) + 10, RAND(200));
     PhysBody_init(&physicsBodies[i],
                   /* mass */ 10.0,
                   /* radius */ 20.0, &pos, i);
+    physicsBodiesCount++;
   }
+#else
+  obj = game.player.goose;
+  Game_initGameObjectPhysBody(&physicsBodies[physicsBodiesCount], obj);
+  physicsBodiesCount++;
+  assert(physicsBodiesCount <= NUM_PHYS_BODIES);
+  for (i = 0; i < NUM_CHARACTERS; ++i) {
+    obj = characters[i].obj;
+    Game_initGameObjectPhysBody(&physicsBodies[physicsBodiesCount], obj);
+    physicsBodiesCount++;
+    assert(physicsBodiesCount <= NUM_PHYS_BODIES);
+  }
+  for (i = 0; i < NUM_ITEMS; ++i) {
+    obj = items[i].obj;
+    Game_initGameObjectPhysBody(&physicsBodies[physicsBodiesCount], obj);
+    physicsBodiesCount++;
+    assert(physicsBodiesCount <= NUM_PHYS_BODIES);
+  }
+#endif
 
   game.items = items;
-  game.itemsCount = NUM_ITEMS;
+  game.itemsCount = itemsCount;
   game.characters = characters;
-  game.charactersCount = NUM_CHARACTERS;
+  game.charactersCount = charactersCount;
   game.physicsBodies = physicsBodies;
-  game.physicsBodiesCount = NUM_PHYS_BODIES;
+  game.physicsBodiesCount = physicsBodiesCount;
 }
 
 Game* Game_get() {
   return &game;
+}
+
+GameObject* Game_getObjectByID(int id) {
+  assert(id < game.worldObjectsCount);
+  return game.worldObjects + id;
 }
 
 // finds the first object with a particular modeltype
@@ -135,6 +172,73 @@ void Game_updateCamera(Game* game, Input* input) {
   Vec3d_copyFrom(&game->viewTarget, &game->player.goose->position);
 }
 
+void Game_updatePhysics(Game* game) {
+  int i, bodyIdx;
+  Vec3d positionDelta;
+  PhysBody* body;
+  GameObject* obj;
+  char buffer[120];  // for now we need to copy the object's pos to the
+                     // physbody...
+  for (i = 0, body = game->physicsBodies; i < game->physicsBodiesCount;
+       ++i, body++) {
+    obj = Game_getObjectByID(body->id);
+#if USE_PHYSICS_MOVEMENT
+    body->position = obj->position;
+#else
+
+#ifndef __N64__
+    if (body->id == 2) {
+      printf("applying force to body %d\n", body->id);
+      PhysBody_toString(body, buffer);
+      printf("Before: %s\n", buffer);
+    }
+#endif
+
+    Vec3d_copyFrom(&positionDelta, &obj->position);
+    Vec3d_sub(&positionDelta, &body->position);
+    PhysBody_translateWithoutForce(body, &positionDelta);
+
+#ifndef __N64__
+    if (body->id == 2) {
+      PhysBody_toString(body, buffer);
+      printf("After: %s\n", buffer);
+      Vec3d_toString(&positionDelta, buffer);
+      printf("positionDelta: %s\n", buffer);
+    }
+#endif
+
+#endif
+  }
+
+#if USE_PHYSICS_MOVEMENT
+#else
+  // bodyIdx = 0;
+  // obj = game->player.goose;
+  // Game_initGameObjectPhysBody(&physicsBodies[i], obj);
+  // bodyIdx++;
+  // for (i = 0; i < NUM_CHARACTERS; ++i) {
+  //   obj = characters[i].obj;
+  //   Game_initGameObjectPhysBody(&physicsBodies[bodyIdx], obj);
+  //   bodyIdx++;
+  // }
+  // for (i = 0; i < NUM_ITEMS; ++i) {
+  //   obj = items[i].obj;
+  //   Game_initGameObjectPhysBody(&physicsBodies[bodyIdx], obj);
+  //   bodyIdx++;
+  // }
+#endif
+
+  // simulate physics
+  PhysState_step(&game->physicsState, game->physicsBodies,
+                 game->physicsBodiesCount, (float)game->tick / 60.0f * 1000.0f);
+  // ...and copy its position back again
+  for (i = 0, body = game->physicsBodies; i < game->physicsBodiesCount;
+       ++i, body++) {
+    obj = Game_getObjectByID(body->id);
+    obj->position = body->position;
+  }
+}
+
 void Game_update(Input* input) {
   Game* game;
   int i;
@@ -150,30 +254,9 @@ void Game_update(Input* input) {
 
     Player_update(&game->player, input, game);
 
+    Game_updatePhysics(game);
+
     Game_updateCamera(game, input);
-
-    physicsBodies[0].position = game->player.goose->position;
-    physicsBodies[1].position = characters[0].obj->position;
-    physicsBodies[2].position = items[0].obj->position;
-    PhysBody_init(&physicsBodies[0],
-                  /* mass */ 20.0,
-                  /* radius */ 30.0, &game->player.goose->position, 0);
-
-    PhysBody_init(&physicsBodies[1],
-                  /* mass */ 200.0,
-                  /* radius */ 30.0, &characters[0].obj->position, 1);
-
-    PhysBody_init(&physicsBodies[2],
-                  /* mass */ 100.0,
-                  /* radius */ 30.0, &items[0].obj->position, 2);
-
-    PhysState_step(&game->physicsState, game->physicsBodies,
-                   game->physicsBodiesCount,
-                   (float)game->tick / 60.0f * 1000.0f);
-
-    game->player.goose->position = physicsBodies[0].position;
-    characters[0].obj->position = physicsBodies[1].position;
-    items[0].obj->position = physicsBodies[2].position;
   }
 
   // reset inputs

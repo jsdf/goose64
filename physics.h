@@ -25,6 +25,7 @@ typedef struct PhysBody {
   float radius;
   float radiusSquared;
   float restitution;
+  int enabled;
   Vec3d prevPosition;
   Vec3d position;
   Vec3d velocity;
@@ -45,5 +46,15 @@ void PhysBody_init(PhysBody* self,
                    float radius,
                    Vec3d* position,
                    int id);
+
+void PhysBody_applyForce(PhysBody* body, Vec3d* force);
+void PhysBody_translateWithoutForce(PhysBody* body, Vec3d* translation);
+void PhysBody_setEnabled(PhysBody* body, int enabled);
+
+#ifndef __N64__
+#include <stdio.h>
+
+void PhysBody_toString(PhysBody* self, char* buffer);
+#endif
 
 #endif /* !PHYSICS_H */

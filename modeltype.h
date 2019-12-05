@@ -20,6 +20,7 @@ typedef enum ModelType {
 } ModelType;
 
 typedef struct ModelProperties {
+  float mass;
   float radius;
   Vec3d centroidOffset;
 } ModelProperties;

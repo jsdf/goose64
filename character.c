@@ -11,11 +11,15 @@
 
 #include "constants.h"
 
+#if USE_PHYSICS_MOVEMENT
+#define CHARACTER_SPEED 0.1F
+#else
 #define CHARACTER_SPEED 2.0F
+#endif
 
 #define CHARACTER_MAX_TURN_SPEED 45.0f
 #define CHARACTER_FLEE_DIST 1200.0f
-#define CHARACTER_NEAR_OBJ_DIST 100.0f
+#define CHARACTER_NEAR_OBJ_DIST 200.0f
 #define CHARACTER_ITEM_NEAR_HOME_DIST 100.0f
 #define CHARACTER_SIGHT_RANGE 800.0f
 #define CHARACTER_PICKUP_COOLDOWN 120
@@ -57,7 +61,15 @@ void Character_init(Character* self,
                     Item* defaultActivityItem,
                     Game* game) {
   ItemHolder_init(&self->itemHolder, CharacterItemHolder, (void*)self);
+  AnimationState_init(&self->animState);
   self->obj = obj;
+  obj->animState = &self->animState;
+  // setup picked-up object attachment point
+  self->animState.attachment.boneIndex = 0;  // TODO: add character model here
+  self->animState.attachment.offset.x = 30;
+  self->animState.attachment.offset.z = -10;
+  self->animState.attachment.rotation.x = 90;
+
   self->target = NULL;
   self->defaultActivityItem = defaultActivityItem;
 
@@ -125,11 +137,23 @@ void Character_moveTowards(Character* self, Vec3d target) {
       self->obj->rotation.y, destAngle, CHARACTER_MAX_TURN_SPEED);
 }
 
+void Character_setVisibleItemAttachment(Character* self, ModelType modelType) {
+  self->animState.attachment.modelType = modelType;
+}
+
 void Character_update(Character* self, Game* game) {
   if (self->itemHolder.heldItem) {
     // bring item with you
     self->itemHolder.heldItem->obj->position = self->obj->position;
     Vec3d_add(&self->itemHolder.heldItem->obj->position, &characterItemOffset);
+  }
+
+  // update held item visual attachment
+  if (self->itemHolder.heldItem != NULL) {
+    Character_setVisibleItemAttachment(
+        self, self->itemHolder.heldItem->obj->modelType);
+  } else {
+    Character_setVisibleItemAttachment(self, NoneModel);
   }
   Character_updateState(self, game);
 }

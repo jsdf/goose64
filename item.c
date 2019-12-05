@@ -79,6 +79,9 @@ void Item_take(Item* self, ItemHolder* newHolder) {
     // disable rendering and physics (character will show as attachment instead)
     self->obj->visible = FALSE;
     self->obj->solid = FALSE;
+    if (self->obj->physBody) {
+      PhysBody_setEnabled(self->obj->physBody, FALSE);
+    }
   }
 }
 
@@ -99,6 +102,9 @@ void Item_drop(Item* self) {
   // re-enable rendering and physics
   self->obj->visible = TRUE;
   self->obj->solid = TRUE;
+  if (self->obj->physBody) {
+    PhysBody_setEnabled(self->obj->physBody, TRUE);
+  }
 }
 
 void ItemHolder_init(ItemHolder* self,

@@ -25,6 +25,7 @@
 #include "gl/objloader.hpp"
 #include "gl/texture.hpp"
 #include "input.h"
+#include "player.h"
 #include "renderer.h"
 #include "university_map.h"
 #include "vec3d.h"
@@ -36,9 +37,9 @@
 #define DEBUG_LOG_RENDER 0
 #define DEBUG_OBJECTS 0
 #define DEBUG_RAYCASTING 0
-#define DEBUG_ANIMATION 1
+#define DEBUG_ANIMATION 0
 #define DEBUG_ANIMATION_MORE 0
-#define DEBUG_PHYSICS 0
+#define DEBUG_PHYSICS 1
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
 
@@ -499,6 +500,9 @@ void renderScene(void) {
     Character_toString(character, characterString);
     drawString(characterString, 20, glutGet(GLUT_WINDOW_HEIGHT) - 40 * (i + 1));
   }
+  i++;
+  Player_toString(&game->player, characterString);
+  drawString(characterString, 20, glutGet(GLUT_WINDOW_HEIGHT) - 40 * (i + 1));
 
   glutSwapBuffers();
 }
