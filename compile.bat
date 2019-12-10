@@ -1,5 +1,10 @@
+set startpath=%cd%
+set startdrive=%CD:~0,2%
+
 C:
 cd C:\ultra
 call setup.bat
-cd C:\nintendo\n64kit\nusys\sample\nu1goose64
+
+%startdrive%
+cd %startpath%
 exew32 make
