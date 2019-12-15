@@ -15,6 +15,8 @@ void Character_setTarget(Character* self, Item* target);
 
 void Character_haveItemTaken(Character* self);
 
+float Character_topDownAngleMagToObj(Character* self, GameObject* obj);
+
 #ifndef __N64__
 void Character_print(Character* self);
 void Character_toString(Character* self, char* buffer);

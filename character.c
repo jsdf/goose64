@@ -17,9 +17,10 @@
 #define CHARACTER_SPEED 2.0F
 #endif
 
-#define CHARACTER_MAX_TURN_SPEED 45.0f
+#define CHARACTER_MAX_TURN_SPEED 4.0f
 #define CHARACTER_FLEE_DIST 1200.0f
-#define CHARACTER_NEAR_OBJ_DIST 200.0f
+#define CHARACTER_NEAR_OBJ_DROP_DIST 100.0f
+#define CHARACTER_NEAR_OBJ_TAKE_DIST 100.0f
 #define CHARACTER_ITEM_NEAR_HOME_DIST 100.0f
 #define CHARACTER_SIGHT_RANGE 800.0f
 #define CHARACTER_PICKUP_COOLDOWN 120
@@ -27,6 +28,8 @@
 #define CHARACTER_CONFUSION_TIME 120
 #define CHARACTER_DEFAULT_ACTIVITY_TIME 300
 #define CHARACTER_EYE_OFFSET_Y 120.0
+#define CHARACTER_VIEW_ANGLE_HALF 90.0
+#define CHARACTER_FACING_OBJECT_ANGLE 30.0
 
 static Vec3d characterItemOffset = {0.0F, 60.0F, 0.0F};
 
@@ -46,13 +49,19 @@ void Character_printStateTransition(Character* self, CharacterState nextState) {
 
 void Character_toString(Character* self, char* buffer) {
   char pos[60];
+  char rot[60];
+  float angleToPlayer;
+
+  angleToPlayer =
+      Character_topDownAngleMagToObj(self, Game_get()->player.goose);
 
   Vec3d_toString(&self->obj->position, pos);
+  Vec3d_toString((Vec3d*)&self->obj->rotation, rot);
   sprintf(
-      buffer, "Character state=%s target=%s pos=%s",
+      buffer, "Character state=%s target=%s pos=%s rot=%s angleToPlayer=%f",
       CharacterStateStrings[self->state],
       self->target ? ModelTypeStrings[self->target->obj->modelType] : "none",
-      pos);
+      pos, rot, angleToPlayer);
 }
 #endif
 
@@ -80,6 +89,49 @@ void Character_init(Character* self,
   self->startedActivityTick = 0;
 }
 
+// find smallest angle delta, discarding sign
+float Character_angleDeltaMag(float a1, float a2) {
+  return fabsf(180.0F -
+               fabsf(fabsf(fmodf(a1, 360.0f) - fmodf(a2, 360.0f)) - 180.0F));
+}
+
+float Character_topDownAngleToPos(Character* self, Vec3d* position) {
+  Vec3d toPos;
+  Vec2d toPos2d;
+  float angleToPos;
+
+  Vec3d_directionTo(&self->obj->position, position, &toPos);
+  toPos2d.x = toPos.x;
+  toPos2d.y = -toPos.z;
+  angleToPos = radToDeg(Vec2d_angle(&toPos2d));
+
+  return Character_angleDeltaMag(self->obj->rotation.y, angleToPos);
+}
+
+float Character_topDownAngleMagToObj(Character* self, GameObject* obj) {
+  float angleFromHeadingToPos;
+  angleFromHeadingToPos = Character_topDownAngleToPos(self, &obj->position);
+  return fabsf(fmodf(angleFromHeadingToPos, 360.0f));
+}
+
+int Character_posIsInViewArc(Character* self, Vec3d* position) {
+  float angleFromHeadingToPos;
+
+  // within range
+  if (Vec3d_distanceTo(position, &self->obj->position) >
+      CHARACTER_SIGHT_RANGE) {
+    return FALSE;
+  }
+
+  // within arc
+  angleFromHeadingToPos = Character_topDownAngleToPos(self, position);
+  if (fabsf(fmodf(angleFromHeadingToPos, 360.0f)) > CHARACTER_VIEW_ANGLE_HALF) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
 int Character_canSeeItem(Character* self, Item* item, Game* game) {
   GameObject visibilityCheckObjects[MAX_WORLD_OBJECTS];
   int visibilityCheckObjectsCount = 0;
@@ -87,6 +139,11 @@ int Character_canSeeItem(Character* self, Item* item, Game* game) {
   Vec3d vecToObject;
   GameObject* obj;
 
+  if (!Character_posIsInViewArc(self, &item->obj->position)) {
+    return FALSE;
+  }
+
+  // build list of occluding objects for line of sight raycasting
   for (obj = game->worldObjects, i = 0; i < game->worldObjectsCount;
        obj++, i++) {
     // these object types don't occlude
@@ -107,6 +164,7 @@ int Character_canSeeItem(Character* self, Item* item, Game* game) {
     visibilityCheckObjectsCount++;
   }
 
+  // check line of sight by raycasting
   return Game_canSeeOtherObject(
       self->obj, item->obj,
       /*viewer eye pos y offset*/ CHARACTER_EYE_OFFSET_Y,
@@ -114,6 +172,11 @@ int Character_canSeeItem(Character* self, Item* item, Game* game) {
 }
 
 int Character_canSeePlayer(Character* self, Game* game) {
+  // check whether player is in view arc of character
+  if (!Character_posIsInViewArc(self, &game->player.goose->position)) {
+    return FALSE;
+  }
+  // check line of sight by raycasting
   return Game_canSeeOtherObject(
       self->obj, game->player.goose,
       /*viewer eye pos y offset*/ CHARACTER_EYE_OFFSET_Y, game->worldObjects,
@@ -160,6 +223,9 @@ void Character_update(Character* self, Game* game) {
 
 void Character_transitionToState(Character* self, CharacterState nextState) {
 #ifndef __N64__
+  if (nextState == SeekingItemState) {
+    printf("starting SeekingItemState\n");
+  }
   Character_printStateTransition(self, nextState);
 #endif
   self->enteredStateTick = Game_get()->tick;
@@ -176,16 +242,14 @@ void Character_maybeTransitionToHigherPriorityState(Character* self,
   // TODO: start fleeing
   // TODO: heard sound
   if (self->state < SeekingItemState) {
+    // has item been stolen?
     if (Vec3d_distanceTo(&possibleTarget->obj->position,
                          &possibleTarget->initialLocation) >
         CHARACTER_ITEM_NEAR_HOME_DIST) {
-      // item has been stolen
-      if (Vec3d_distanceTo(&possibleTarget->obj->position,
-                           &self->obj->position) < CHARACTER_SIGHT_RANGE &&
-          // can actually see it
-          Character_canSeeItem(self, possibleTarget, game)) {
-        // and we can see it
+      // and can we see it?
+      if (Character_canSeeItem(self, possibleTarget, game)) {
         Character_transitionToState(self, SeekingItemState);
+        Character_canSeeItem(self, possibleTarget, game);
         return;
       }
     }
@@ -204,8 +268,13 @@ void Character_updateConfusionState(Character* self, Game* game) {
 }
 
 void Character_updateDefaultActivityState(Character* self, Game* game) {
-  if (Vec3d_distanceTo(&self->obj->position, &self->defaultActivityLocation) >
-      CHARACTER_NEAR_OBJ_DIST) {
+  if (
+      // not close enough
+      Vec3d_distanceTo(&self->obj->position, &self->defaultActivityLocation) >
+          CHARACTER_NEAR_OBJ_DROP_DIST ||
+      // not facing towards enough
+      Character_topDownAngleToPos(self, &self->defaultActivityLocation) >
+          CHARACTER_FACING_OBJECT_ANGLE) {
     Character_moveTowards(self, self->defaultActivityLocation);
   } else {
     // do default activity
@@ -240,8 +309,12 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
   if (self->itemHolder.heldItem) {
     // are we near enough to drop item?
     if (Vec3d_distanceTo(&self->obj->position, &self->target->initialLocation) <
-        CHARACTER_NEAR_OBJ_DIST) {
+        CHARACTER_NEAR_OBJ_DROP_DIST) {
       // close enough to return item
+
+      Vec3d_copyFrom(&self->itemHolder.heldItem->obj->position,
+                     &self->target->initialLocation);
+
       Item_drop(self->itemHolder.heldItem);
       self->target = NULL;
       Character_transitionToState(self, IdleState);
@@ -264,7 +337,7 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
 
     // are we near enough to pick up item?
     if (Vec3d_distanceTo(&self->obj->position, &self->target->obj->position) <
-        CHARACTER_NEAR_OBJ_DIST) {
+        CHARACTER_NEAR_OBJ_TAKE_DIST) {
       if (self->target->holder && self->target->holder != &self->itemHolder) {
 #ifndef __N64__
         debugPrintf("stealing item back\n");
