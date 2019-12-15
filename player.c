@@ -10,7 +10,9 @@
 
 #include "constants.h"
 
-#define GOOSE_SPEED 5.0F
+// max speed, slightly slower than character speed
+#define GOOSE_SPEED 3.9F
+#define GOOSE_WALK_SPEED_RATIO 0.5
 #define GOOSE_FORCE 5000.0F
 #define GOOSE_MAX_TURN_SPEED 15.0f
 #define PLAYER_NEAR_OBJ_DIST 100.0f
@@ -33,9 +35,8 @@ void Player_init(Player* self, GameObject* obj) {
   self->lastPickupTick = 0;
 }
 
-int Player_debounceInput(unsigned int* lastTrigger, unsigned int cooldown) {
-  if (Game_get()->tick > *lastTrigger + cooldown) {
-    *lastTrigger = Game_get()->tick;
+int Player_debounceInput(unsigned int lastTrigger, unsigned int cooldown) {
+  if (Game_get()->tick > lastTrigger + cooldown) {
     return TRUE;
   }
   return FALSE;
@@ -47,12 +48,12 @@ void Player_setVisibleItemAttachment(Player* self, ModelType modelType) {
 
 void Player_update(Player* self, Input* input, Game* game) {
   Vec3d playerMovement, playerMovementScaled;
-  float destAngle, movementSpeed, resultantMovementSpeed;
+  float destAngle, movementSpeedRatio, resultantMovementSpeed;
   GameObject* goose;
   int i;
   Item* item;
 
-  movementSpeed = (input->run ? 1.0 : 0.5);
+  movementSpeedRatio = (input->run ? 1.0 : GOOSE_WALK_SPEED_RATIO);
   goose = self->goose;
 
   // prevent moving too fast diagonally
@@ -61,8 +62,8 @@ void Player_update(Player* self, Input* input, Game* game) {
   }
 
   // movement
-  Vec3d_init(&playerMovement, input->direction.x * movementSpeed, 0.0F,
-             input->direction.y * movementSpeed);
+  Vec3d_init(&playerMovement, input->direction.x * movementSpeedRatio, 0.0F,
+             input->direction.y * movementSpeedRatio);
   playerMovementScaled = playerMovement;
 
 #if USE_PHYSICS_MOVEMENT
@@ -75,6 +76,7 @@ void Player_update(Player* self, Input* input, Game* game) {
   resultantMovementSpeed /= PLAYER_PHYS_WALK_ANIM_MOVEMENT_DIVISOR;
 #else
   Vec3d_multiplyScalar(&playerMovementScaled, GOOSE_SPEED);
+
   Vec3d_add(&goose->position, &playerMovementScaled);
   // PhysBody_translateWithoutForce(goose->physBody, &playerMovementScaled);
   resultantMovementSpeed = Vec3d_mag(&playerMovementScaled);
@@ -121,10 +123,11 @@ void Player_update(Player* self, Input* input, Game* game) {
   }
 
   if (input->pickup &&
-      Player_debounceInput(&self->lastPickupTick, PLAYER_PICKUP_COOLDOWN)) {
+      Player_debounceInput(self->lastPickupTick, PLAYER_PICKUP_COOLDOWN)) {
     if (self->itemHolder.heldItem) {
       // drop item
       Item_drop(self->itemHolder.heldItem);
+      self->lastPickupTick = game->tick;
     } else {
       // TODO: should have a concept of target so goose can look at items to
       // pickup

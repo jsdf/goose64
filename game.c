@@ -60,7 +60,7 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount) {
   assert(goose != NULL);
 
   Player_init(&game.player, goose);
-  PhysState_init(&game.physicsState, /* viscosity */ 0.1);
+  PhysState_init(&game.physicsState, /* viscosity */ 0.5);
 
   // setup camera
   Vec3d_copyFrom(&game.viewTarget, &game.player.goose->position);
@@ -156,6 +156,7 @@ void Game_updateCamera(Game* game, Input* input) {
 
   // spring to desired zoom level
   desiredZoom = input->zoomIn ? 3.0 : input->zoomOut ? 1.0 : 2.0;
+  desiredZoom = 1.0;
   desiredZoomDist = game->viewZoom - desiredZoom;
   game->viewZoom -= desiredZoomDist * 0.1;
 
@@ -188,9 +189,9 @@ void Game_updatePhysics(Game* game) {
 
 #ifndef __N64__
     if (body->id == 2) {
-      printf("applying force to body %d\n", body->id);
+      // printf("applying force to body %d\n", body->id);
       PhysBody_toString(body, buffer);
-      printf("Before: %s\n", buffer);
+      // printf("Before: %s\n", buffer);
     }
 #endif
 
@@ -201,9 +202,9 @@ void Game_updatePhysics(Game* game) {
 #ifndef __N64__
     if (body->id == 2) {
       PhysBody_toString(body, buffer);
-      printf("After: %s\n", buffer);
+      // printf("After: %s\n", buffer);
       Vec3d_toString(&positionDelta, buffer);
-      printf("positionDelta: %s\n", buffer);
+      // printf("positionDelta: %s\n", buffer);
     }
 #endif
 

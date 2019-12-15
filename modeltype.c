@@ -23,7 +23,7 @@ ModelProperties modelTypesProperties[] = {
     {/* mass */ 100, /* radius */ 50.0,
      /* centroidOffset */ {0.0, 0.0, 0.0}},
     /* GooseModel */
-    {/* mass */ 200, /* radius */ 50.0,
+    {/* mass */ 200, /* radius */ 25.0,
      /* centroidOffset */ {0.0, 20.0, 0.0}},
     /* BookItemModel */
     {/* mass */ 10, /* radius */ 20.0,
@@ -47,7 +47,7 @@ ModelProperties modelTypesProperties[] = {
     {/* mass */ 100, /* radius */ 50.0,
      /* centroidOffset */ {0.0, 0.0, 0.0}},
     /* GroundskeeperCharacterModel */
-    {/* mass */ 2000, /* radius */ 50.0,
+    {/* mass */ 2000, /* radius */ 25.0,
      /* centroidOffset */ {0.0, 70.0, 0.0}},
     /* MAX_MODEL_TYPE */
     {/* mass */ 100, /* radius */ 50.0,

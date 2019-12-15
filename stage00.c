@@ -274,10 +274,10 @@ void updateGame00(void) {
     checkDebugControls(game);
   } else {
     // normal controls
-    if (contdata[0].trigger & A_BUTTON) {
+    if (contdata[0].button & A_BUTTON) {
       input.run = TRUE;
     }
-    if (contdata[0].trigger & B_BUTTON) {
+    if (contdata[0].button & B_BUTTON) {
       input.pickup = TRUE;
     }
     if (contdata[0].button & Z_TRIG) {
