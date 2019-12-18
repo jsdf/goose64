@@ -29,8 +29,8 @@ void Player_init(Player* self, GameObject* obj) {
   obj->animState = &self->animState;
   // setup picked-up object attachment point
   self->animState.attachment.boneIndex = (int)goosehead_gooseheadmesh;
-  self->animState.attachment.offset.x = 30;
-  self->animState.attachment.offset.z = -10;
+  self->animState.attachment.offset.x = 14;
+  self->animState.attachment.offset.z = -2;
   self->animState.attachment.rotation.x = 90;
   self->lastPickupTick = 0;
 }

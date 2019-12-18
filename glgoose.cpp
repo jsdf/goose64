@@ -38,8 +38,8 @@
 #define DEBUG_LOG_RENDER 0
 #define DEBUG_OBJECTS 0
 #define DEBUG_RAYCASTING 0
-#define DEBUG_ANIMATION 1
-#define DEBUG_ANIMATION_MORE 1
+#define DEBUG_ANIMATION 0
+#define DEBUG_ANIMATION_MORE 0
 #define DEBUG_PHYSICS 0
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
@@ -227,6 +227,15 @@ AnimationRange* getCurrentAnimationRange(GameObject* obj) {
   }
 }
 
+AnimationFrame* getAnimData(ModelType modelType) {
+  switch (modelType) {
+    case GooseModel:
+      return goose_anim_data;
+    default:
+      return character_anim_data;
+  }
+}
+
 void drawModel(GameObject* obj) {
   if (!obj->visible) {
     return;
@@ -258,20 +267,24 @@ void drawModel(GameObject* obj) {
     for (int modelMeshIdx = 0; modelMeshIdx < modelMeshParts; ++modelMeshIdx) {
 #if USE_ANIM_FRAME_LERP
       AnimationFrame_lerp(
-          &animInterp,      // result of AnimationInterpolation_calc()
-          goose_anim_data,  // pointer to start of AnimationFrame list
-          modelMeshParts,   // num bones in rig used by animData
-          modelMeshIdx,     // index of bone in rig to produce transform for
-          &animFrame        // the resultant interpolated animation frame
+          &animInterp,  // result of AnimationInterpolation_calc()
+          getAnimData(
+              obj->modelType),  // pointer to start of AnimationFrame list
+          modelMeshParts,       // num bones in rig used by animData
+          modelMeshIdx,         // index of bone in rig to produce transform for
+          &animFrame            // the resultant interpolated animation frame
       );
 #else
       AnimationFrame_get(
-          &animInterp,      // result of AnimationInterpolation_calc()
-          goose_anim_data,  // pointer to start of AnimationFrame list
-          modelMeshParts,   // num bones in rig used by animData
-          modelMeshIdx,     // index of bone in rig to produce transform for
+          &animInterp,  // result of AnimationInterpolation_calc()
+          getAnimData(
+              obj->modelType),  // pointer to start of AnimationFrame list
+          modelMeshParts,       // num bones in rig used by animData
+          modelMeshIdx,         // index of bone in rig to produce transform for
           &animFrame);
 #endif
+
+      assert(animFrame.object < MAX_ANIM_MESH_PARTS);
 
       // push relative transformation matrix, render the mesh, then pop the
       // relative transform off the matrix stack again

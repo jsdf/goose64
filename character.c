@@ -208,6 +208,10 @@ void Character_setVisibleItemAttachment(Character* self, ModelType modelType) {
 }
 
 void Character_update(Character* self, Game* game) {
+  Vec3d startPos;
+  float resultantMovementSpeed;
+
+  Vec3d_copyFrom(&startPos, &self->obj->position);
   if (self->itemHolder.heldItem) {
     // bring item with you
     self->itemHolder.heldItem->obj->position = self->obj->position;
@@ -222,6 +226,26 @@ void Character_update(Character* self, Game* game) {
     Character_setVisibleItemAttachment(self, NoneModel);
   }
   Character_updateState(self, game);
+
+  resultantMovementSpeed =
+      Vec3d_distanceTo(&startPos, &self->obj->position) / 100.0f;
+
+  // update animation
+  if (resultantMovementSpeed > 0.001) {
+    if (self->animState.state != character_walk_anim) {
+      // enter walk anim
+      self->animState.progress = 0.0;
+    } else {
+      // advance walk anim
+      self->animState.progress =
+          fmodf(self->animState.progress + resultantMovementSpeed, 1.0);
+    }
+    self->animState.state = character_walk_anim;
+
+  } else {
+    self->animState.state = character_idle_anim;
+    self->animState.progress = 0.0;
+  }
 }
 
 void Character_transitionToState(Character* self, CharacterState nextState) {

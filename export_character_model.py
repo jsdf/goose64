@@ -6,7 +6,7 @@ import mathutils
 Character model export script
 
 - Change export_rel_path to an appropriate name for the exported model
-- 'Select hierarchy' on the Armature object in the scene, so all child meshes to be exported are selected
+- select all the model parts to be exported (but not the Armature object itself)
 - run script
 """
 
