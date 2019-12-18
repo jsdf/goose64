@@ -9,8 +9,10 @@
 
 // max num bones per character
 // on n64 we allocate this many transform matrices per character
-#define MAX_ANIM_MESH_PARTS 10
+#define MAX_ANIM_MESH_PARTS 12
 
+// data for one frame of an animation
+// for character models, this is the data for one model part/bone
 typedef struct AnimationFrame {
   int frame;
   int object;

@@ -2,11 +2,20 @@ import bpy
 import os
 import mathutils
 
-export_rel_path = "../gooserig.obj"
+"""
+Character model export script
+
+- Change export_rel_path to an appropriate name for the exported model
+- 'Select hierarchy' on the Armature object in the scene, so all child meshes to be exported are selected
+- run script
+"""
+
+# export_rel_path = "../gooserig.obj" # export goose
+export_rel_path = "../characterrig.obj" # export character
 
 blend_file_path = bpy.data.filepath
 directory = os.path.dirname(blend_file_path)
-target_file = os.path.realpath(export_rel_path)
+target_file = os.path.realpath(os.path.join(directory, export_rel_path))
 
 print("target_file",target_file)
 

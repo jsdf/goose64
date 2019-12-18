@@ -11,6 +11,8 @@
 
 #include "constants.h"
 
+#include "characteranimtypes.h"
+
 #if USE_PHYSICS_MOVEMENT
 #define CHARACTER_SPEED 0.1F
 #else
@@ -74,7 +76,9 @@ void Character_init(Character* self,
   self->obj = obj;
   obj->animState = &self->animState;
   // setup picked-up object attachment point
-  self->animState.attachment.boneIndex = 0;  // TODO: add character model here
+  self->animState.attachment.boneIndex = (int)
+      characterhand_r_characterhand_rmesh;  // TODO: add character model here
+  self->animState.state = character_idle_anim;
   self->animState.attachment.offset.x = 30;
   self->animState.attachment.offset.z = -10;
   self->animState.attachment.rotation.x = 90;
@@ -91,8 +95,7 @@ void Character_init(Character* self,
 
 // find smallest angle delta, discarding sign
 float Character_angleDeltaMag(float a1, float a2) {
-  return fabsf(180.0F -
-               fabsf(fabsf(fmodf(a1, 360.0f) - fmodf(a2, 360.0f)) - 180.0F));
+  return fabsf(180.0F - fabsf(fabsf(fmodf(a1 - a2, 360.0f)) - 180.0F));
 }
 
 float Character_topDownAngleToPos(Character* self, Vec3d* position) {

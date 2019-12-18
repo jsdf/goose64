@@ -66,6 +66,8 @@ function w64_main()
 			else
 				subobj_combined_name = objname
 			end
+			subobj_combined_name = string.gsub(subobj_combined_name, "%.", "_")
+
 			local facetable, verttable, verttexttable 					= w64_VFFormat(subobjtable, objscale,subobjname)
 			local facesinpacks, facesinpacksrefs						= w64_VFSort(facetable)
 

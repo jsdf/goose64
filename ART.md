@@ -11,12 +11,14 @@ Single-body models should be exported with the following settings enabled:
 
 plus any other ones which make sense for your scene/workflow (eg. Apply Modifiers, Selection Only, etc)
 
+Run `./rebuild_models.sh` to turn your .obj file into a .h file containing displaylists for rendering the model.
+
 
 ## Level Editing
 Place all the objects you want in your game level. They should have the same name as the ModelType defined to represent them in the ModelTypes enum.
 
 
-To export the animation, run the script `export_positions.py` using Blender's text editor (or however you prefer to run Blender Python scripts)
+To export the level, run the script `export_positions.py` using Blender's text editor (or however you prefer to run Blender Python scripts)
 
 ## Character Animation
 
@@ -31,4 +33,10 @@ Character models should be exported with the following settings enabled:
 
 as well as any other flags that make sense for your workflow.
 
-To export the animation, run the script `export_animation.py` in Blender
+To export the animation, run the script `export_animation.py` in Blender which will generate `${modelname}_anim.h`
+
+Manually create a `${modelname}animtypes.h` file defining a `${ModelName}MeshType` enum which includes all the enum values used to refer to model parts in `${modelname}_anim_data` of the generated `${modelname}_anim.h` file. Also define another enum which includes all the animation names in the order they are defined in `${modelname}_anim_ranges`. (maybe we can just output these enums into the generated header file in future?)
+
+To export the character model, run the script `export_character_model.py` in Blender which will generate `${modelname}rig.obj`. Running `./rebuild_models.sh` will generate a .h file containing displaylists for rendering the model (one displaylist per model part).
+ 
+Somewhere (stage00.c ??) define an array like `Gfx* ${modelname}MeshList[] = {...}` containing pointers to the displaylists to render for each model part, in the same order as the corresponding parts appear in the `${ModelName}MeshType` enum. This mapping will be used to determine which displaylist to render for each AnimationFrame struct in the animation frame data.

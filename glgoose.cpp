@@ -30,6 +30,7 @@
 #include "university_map.h"
 #include "vec3d.h"
 
+#include "character_anim.h"
 #include "goose_anim.h"
 
 #define FREEVIEW_SPEED 0.2f
@@ -37,9 +38,9 @@
 #define DEBUG_LOG_RENDER 0
 #define DEBUG_OBJECTS 0
 #define DEBUG_RAYCASTING 0
-#define DEBUG_ANIMATION 0
-#define DEBUG_ANIMATION_MORE 0
-#define DEBUG_PHYSICS 1
+#define DEBUG_ANIMATION 1
+#define DEBUG_ANIMATION_MORE 1
+#define DEBUG_PHYSICS 0
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
 
@@ -65,6 +66,21 @@ char* GooseMeshTypeStrings[] = {
     "goosefoot_r_goosefoot_rmesh",  //
     "gooseneck_gooseneckmesh",      //
     "MAX_GOOSE_MESH_TYPE",          //
+};
+
+char* CharacterMeshTypeStrings[] = {
+    "gkbicep.l_gkbicep_lrmesh",    // characterbicep_l_characterbicep_lmesh
+    "gkbicep.r_gkbicep_rmesh",     // characterbicep_r_characterbicep_rmesh
+    "gkfoot.l_gkfoot_lrmesh",      // characterfoot_l_characterfoot_lmesh
+    "gkfoot.r_gkfoot_rmesh",       // characterfoot_r_characterfoot_rmesh
+    "gkfoream.l_gkfoream_lrmesh",  // characterhand_l_characterhand_lmesh
+    "gkfoream.r_gkfoream_rmesh",   // characterhand_r_characterhand_rmesh
+    "gkhead_gkheadmesh",           // characterhead_characterheadmesh
+    "gkshin.l_gkshin_lmesh",       // charactershin_l_charactershin_lmesh
+    "gkshin.r_gkshin_rmesh",       // charactershin_r_charactershin_rmesh
+    "gktorso_gktorsomesh",         // characterspine_characterspinemesh
+    "gkthigh.l_gkthigh_lmesh",     // characterthigh_l_characterthigh_lmesh
+    "gkthigh.r_gkthigh_rmesh",     // characterthigh_r_characterthigh_rmesh
 };
 
 // TODO: allocate this in map header file with correct size
@@ -185,6 +201,32 @@ void drawMeshesForModel(ObjModel& model) {
   }
 }
 
+char* getMeshNameForModelMeshPart(ModelType modelType, int meshPart) {
+  switch (modelType) {
+    case GooseModel:
+      return GooseMeshTypeStrings[meshPart];
+    default:
+      return CharacterMeshTypeStrings[meshPart];
+  }
+}
+
+int getAnimationNumModelMeshParts(ModelType modelType) {
+  switch (modelType) {
+    case GooseModel:
+      return MAX_GOOSE_MESH_TYPE;
+    default:
+      return MAX_CHARACTER_MESH_TYPE;
+  }
+}
+
+AnimationRange* getCurrentAnimationRange(GameObject* obj) {
+  if (obj->modelType == GooseModel) {
+    return &goose_anim_ranges[(GooseAnimType)obj->animState->state];
+  } else {
+    return &character_anim_ranges[(CharacterAnimType)obj->animState->state];
+  }
+}
+
 void drawModel(GameObject* obj) {
   if (!obj->visible) {
     return;
@@ -192,19 +234,19 @@ void drawModel(GameObject* obj) {
 
   ObjModel& model = models[obj->modelType];
 
-  if (obj->modelType == GooseModel) {
+  if (obj->modelType == GooseModel ||
+      obj->modelType == GroundskeeperCharacterModel) {
     // case for multi-part objects using rigid body animation
     // TODO: generalize this for other model types using other skeletons with
     // retargetable animations
 
-    GooseAnimType curAnim;         // id of anim clip to play
     AnimationRange* curAnimRange;  // range of frames representing anim clip
     AnimationInterpolation animInterp;  // interpolation value for frame
     AnimationFrame animFrame;           // animation frame data for one bone
+    int modelMeshParts = getAnimationNumModelMeshParts(obj->modelType);
 
     assert(obj->animState != NULL);
-    curAnim = (GooseAnimType)obj->animState->state;
-    curAnimRange = &goose_anim_ranges[curAnim];
+    curAnimRange = getCurrentAnimationRange(obj);
 
 #if DEBUG_ANIMATION
     glDisable(GL_DEPTH_TEST);
@@ -213,22 +255,21 @@ void drawModel(GameObject* obj) {
 #endif
 
     AnimationInterpolation_calc(&animInterp, obj->animState, curAnimRange);
-    for (int modelMeshIdx = 0; modelMeshIdx < MAX_GOOSE_MESH_TYPE;
-         ++modelMeshIdx) {
+    for (int modelMeshIdx = 0; modelMeshIdx < modelMeshParts; ++modelMeshIdx) {
 #if USE_ANIM_FRAME_LERP
       AnimationFrame_lerp(
-          &animInterp,          // result of AnimationInterpolation_calc()
-          goose_anim_data,      // pointer to start of AnimationFrame list
-          MAX_GOOSE_MESH_TYPE,  // num bones in rig used by animData
-          modelMeshIdx,         // index of bone in rig to produce transform for
-          &animFrame            // the resultant interpolated animation frame
+          &animInterp,      // result of AnimationInterpolation_calc()
+          goose_anim_data,  // pointer to start of AnimationFrame list
+          modelMeshParts,   // num bones in rig used by animData
+          modelMeshIdx,     // index of bone in rig to produce transform for
+          &animFrame        // the resultant interpolated animation frame
       );
 #else
       AnimationFrame_get(
-          &animInterp,          // result of AnimationInterpolation_calc()
-          goose_anim_data,      // pointer to start of AnimationFrame list
-          MAX_GOOSE_MESH_TYPE,  // num bones in rig used by animData
-          modelMeshIdx,         // index of bone in rig to produce transform for
+          &animInterp,      // result of AnimationInterpolation_calc()
+          goose_anim_data,  // pointer to start of AnimationFrame list
+          modelMeshParts,   // num bones in rig used by animData
+          modelMeshIdx,     // index of bone in rig to produce transform for
           &animFrame);
 #endif
 
@@ -246,7 +287,8 @@ void drawModel(GameObject* obj) {
       glRotatef(animFrame.rotation.y, 0, 1, 0);
       glRotatef(animFrame.rotation.z, 0, 0, 1);
 
-      ObjMesh& mesh = model.meshes.at(GooseMeshTypeStrings[animFrame.object]);
+      ObjMesh& mesh = model.meshes.at(
+          getMeshNameForModelMeshPart(obj->modelType, animFrame.object));
 
       drawMesh(mesh, model.texture);
 
@@ -279,8 +321,8 @@ void drawModel(GameObject* obj) {
                                   // on the z axis to make cone point up at y
       glRotatef(90.0f, 0, 1, 0);  // undo our weird global rotation
       glDisable(GL_TEXTURE_2D);
-      glColor3f(1.0f, 0.0f, 0.0f);    // red
-      glutSolidCone(4.2, 30, 4, 20);  // cone with 4 slices = pyramid-like
+      glColor3f(1.0f, 0.0f, 0.0f);  // red
+      // glutSolidCone(4.2, 30, 4, 20);  // cone with 4 slices = pyramid-like
 
       glColor3f(1.0f, 1.0f, 1.0f);
       glEnable(GL_TEXTURE_2D);
@@ -289,9 +331,10 @@ void drawModel(GameObject* obj) {
       // overlay text
       glPushMatrix();
       Vec3d animFrameGlobalPos;
-      Vec3d_identity(&animFrameGlobalPos);
-      drawStringAtPoint(GooseMeshTypeStrings[animFrame->object],
-                        &animFrameGlobalPos, FALSE);
+      Vec3d_origin(&animFrameGlobalPos);
+      drawStringAtPoint(
+          getMeshNameForModelMeshPart(obj->modelType, animFrame.object),
+          &animFrameGlobalPos, FALSE);
       glPopMatrix();
 #endif
 
@@ -693,7 +736,7 @@ int main(int argc, char** argv) {
   loadModel(UniBldgModel, "university_bldg.obj", "redbldg.bmp");
   loadModel(BushModel, "bush.obj", "bush.bmp");
   loadModel(FlagpoleModel, "flagpole.obj", "flagpole.bmp");
-  loadModel(GroundskeeperCharacterModel, "person.obj", "person.bmp");
+  loadModel(GroundskeeperCharacterModel, "characterrig.obj", "person.bmp");
   loadModel(BookItemModel, "book.obj", "book.bmp");
   loadModel(HomeworkItemModel, "testingCube.obj", "testCubeTex.bmp");
 

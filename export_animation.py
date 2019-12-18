@@ -24,7 +24,7 @@ the
 # we scale the models up by this much to avoid n64 fixed point precision issues
 N64_SCALE_FACTOR = 30
 
-modelname = "goose" # should be one of goose, character
+modelname = "character" # should be one of goose, character
 filename = modelname+"_anim"
 
 # this needs to match the members and ordering of the anim type enum in
@@ -42,6 +42,25 @@ bone_types = [
   "neck",
 ]
 
+if modelname != "goose":
+  bone_types = [
+    "spine",
+    "head",
+    "thigh_l",
+    "shin_l",
+    "foot_l",
+    "bicep_l",
+    "hand_l",
+    "thigh_r",
+    "shin_r",
+    "foot_r",
+    "bicep_r",
+    "hand_r",
+  ]
+
+def blender_bone_name_to_bone_type(blender_bone_name):
+    return re.sub(r'\.', '_', blender_bone_name)
+
 scene = bpy.context.scene
 
 include_guard = filename.upper()+'_H'
@@ -56,14 +75,18 @@ out = """
 
 frames_markers = dict()
 for marker_name, marker_data in scene.timeline_markers.items():
-  frames_markers[marker_data.frame] = marker_name
+    frames_markers[marker_data.frame] = marker_name
 
 bones_child_objects = {}
 for armature_child in scene.objects['Armature'].children:
-    bones_child_objects[armature_child.parent_bone] = armature_child
+    bone_type = blender_bone_name_to_bone_type(armature_child.parent_bone)
+    bones_child_objects[bone_type] = armature_child
+
+print("bones_child_objects", bones_child_objects)
 
 frame_current = scene.frame_current
 
+# TODO: remove this? don't think we're using bone origins anymore
 out += """
 Vec3d %s_bone_origins[] = {
 """ % (filename)
