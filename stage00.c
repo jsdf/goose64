@@ -24,15 +24,16 @@
 // models
 #include "book.h"
 #include "bush.h"
+#include "characterrig.h"
 #include "flagpole.h"
 #include "gooserig.h"
-#include "person.h"
 #include "testingCube.h"
 #include "university_bldg.h"
 #include "university_floor.h"
 // map
 #include "university_map.h"
 // anim data
+#include "character_anim.h"
 #include "goose_anim.h"
 
 #define CONSOLE_VIEW_DEBUG 0
@@ -323,15 +324,65 @@ LightingType getLightingType(GameObject* obj) {
 }
 
 // map the mesh type enum (used by animation frames) to the mesh displaylists
-Gfx* gooseMeshList[] = {
-    /*goosebody_goosebodymesh*/ Wtx_gooserig_goosebody_goosebodymesh,
-    /*goosehead_gooseheadmesh*/ Wtx_gooserig_goosehead_gooseheadmesh,
-    /*gooseleg_l_gooseleg_lmesh*/ Wtx_gooserig_gooseleg_l_gooseleg_lmesh,
-    /*goosefoot_l_goosefoot_lmesh*/ Wtx_gooserig_goosefoot_l_goosefoot_lmesh,
-    /*gooseleg_r_gooseleg_rmesh*/ Wtx_gooserig_gooseleg_r_gooseleg_rmesh,
-    /*goosefoot_r_goosefoot_rmesh*/ Wtx_gooserig_goosefoot_r_goosefoot_rmesh,
-    /*gooseneck_gooseneckmesh*/ Wtx_gooserig_gooseneck_gooseneckmesh,
+Gfx* GooseMeshList[] = {
+    Wtx_gooserig_goosebody_goosebodymesh,      // goosebody_goosebodymesh
+    Wtx_gooserig_goosehead_gooseheadmesh,      // goosehead_gooseheadmesh
+    Wtx_gooserig_gooseleg_l_gooseleg_lmesh,    // gooseleg_l_gooseleg_lmesh
+    Wtx_gooserig_goosefoot_l_goosefoot_lmesh,  // goosefoot_l_goosefoot_lmesh
+    Wtx_gooserig_gooseleg_r_gooseleg_rmesh,    // gooseleg_r_gooseleg_rmesh
+    Wtx_gooserig_goosefoot_r_goosefoot_rmesh,  // goosefoot_r_goosefoot_rmesh
+    Wtx_gooserig_gooseneck_gooseneckmesh,      // gooseneck_gooseneckmesh
 };
+
+Gfx* CharacterMeshList[] = {
+    Wtx_characterrig_gkbicep_l_gkbicep_lrmesh,  // characterbicep_l_characterbicep_lmesh
+    Wtx_characterrig_gkbicep_r_gkbicep_rmesh,  // characterbicep_r_characterbicep_rmesh
+    Wtx_characterrig_gkfoot_l_gkfoot_lrmesh,  // characterfoot_l_characterfoot_lmesh
+    Wtx_characterrig_gkfoot_r_gkfoot_rmesh,  // characterfoot_r_characterfoot_rmesh
+    Wtx_characterrig_gkfoream_l_gkfoream_lrmesh,  // characterhand_l_characterhand_lmesh
+    Wtx_characterrig_gkfoream_r_gkfoream_rmesh,  // characterhand_r_characterhand_rmesh
+    Wtx_characterrig_gkhead_gkheadmesh,      // characterhead_characterheadmesh
+    Wtx_characterrig_gkshin_l_gkshin_lmesh,  // charactershin_l_charactershin_lmesh
+    Wtx_characterrig_gkshin_r_gkshin_rmesh,  // charactershin_r_charactershin_rmesh
+    Wtx_characterrig_gktorso_gktorsomesh,  // characterspine_characterspinemesh
+    Wtx_characterrig_gkthigh_l_gkthigh_lmesh,  // characterthigh_l_characterthigh_lmesh
+    Wtx_characterrig_gkthigh_r_gkthigh_rmesh,  // characterthigh_r_characterthigh_rmesh
+};
+
+int getAnimationNumModelMeshParts(ModelType modelType) {
+  switch (modelType) {
+    case GooseModel:
+      return MAX_GOOSE_MESH_TYPE;
+    default:
+      return MAX_CHARACTER_MESH_TYPE;
+  }
+}
+
+AnimationRange* getCurrentAnimationRange(GameObject* obj) {
+  if (obj->modelType == GooseModel) {
+    return &goose_anim_ranges[(GooseAnimType)obj->animState->state];
+  } else {
+    return &character_anim_ranges[(CharacterAnimType)obj->animState->state];
+  }
+}
+
+Gfx* getMeshDisplayListForModelMeshPart(ModelType modelType, int meshPart) {
+  switch (modelType) {
+    case GooseModel:
+      return GooseMeshList[meshPart];
+    default:
+      return CharacterMeshList[meshPart];
+  }
+}
+
+AnimationFrame* getAnimData(ModelType modelType) {
+  switch (modelType) {
+    case GooseModel:
+      return goose_anim_data;
+    default:
+      return character_anim_data;
+  }
+}
 
 Gfx* getModelDisplayList(ModelType modelType) {
   switch (modelType) {
@@ -357,11 +408,11 @@ void drawWorldObjects(Dynamic* dynamicp) {
   GameObject* obj;
   int i, useZBuffering;
   int modelMeshIdx;
+  int modelMeshParts;
   Gfx* modelDisplayList;
   AnimationFrame animFrame;
   AnimationInterpolation animInterp;
   AnimationRange* curAnimRange;
-  GooseAnimType curAnim;
   AnimationBoneAttachment* attachment;
 
   game = Game_get();
@@ -434,19 +485,20 @@ void drawWorldObjects(Dynamic* dynamicp) {
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(obj->objTransform)),
               G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
-    if (obj->modelType == GooseModel) {
+    if (obj->modelType == GooseModel ||
+        obj->modelType == GroundskeeperCharacterModel) {
       // case for multi-part objects using rigid body animation
 
-      curAnim = (GooseAnimType)obj->animState->state;
-      curAnimRange = &goose_anim_ranges[curAnim];
+      modelMeshParts = getAnimationNumModelMeshParts(obj->modelType);
+      curAnimRange = getCurrentAnimationRange(obj);
       AnimationInterpolation_calc(&animInterp, obj->animState, curAnimRange);
 
-      for (modelMeshIdx = 0; modelMeshIdx < MAX_GOOSE_MESH_TYPE;
-           ++modelMeshIdx) {
+      for (modelMeshIdx = 0; modelMeshIdx < modelMeshParts; ++modelMeshIdx) {
         AnimationFrame_lerp(
-            &animInterp,          // result of AnimationInterpolation_calc()
-            goose_anim_data,      // pointer to start of AnimationFrame list
-            MAX_GOOSE_MESH_TYPE,  // num bones in rig used by animData
+            &animInterp,  // result of AnimationInterpolation_calc()
+            getAnimData(
+                obj->modelType),  // pointer to start of AnimationFrame list
+            modelMeshParts,       // num bones in rig used by animData
             modelMeshIdx,  // index of bone in rig to produce transform for
             &animFrame     // the resultant interpolated animation frame
         );
@@ -476,7 +528,8 @@ void drawWorldObjects(Dynamic* dynamicp) {
                       &(obj->animState->animMeshTransform[modelMeshIdx])),
                   G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
-        gSPDisplayList(glistp++, gooseMeshList[animFrame.object]);
+        gSPDisplayList(glistp++, getMeshDisplayListForModelMeshPart(
+                                     obj->modelType, animFrame.object));
 
         attachment = &obj->animState->attachment;
         if (attachment->modelType != NoneModel &&

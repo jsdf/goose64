@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu
 
-./build.sh
+# ./build.sh
 for f in *.n64; do
   romfile="$f"
 done
