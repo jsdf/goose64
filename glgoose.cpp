@@ -17,6 +17,13 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <glm/glm.hpp>
+
+// Dear Imgui
+#include "imgui/imgui.h"
+// imgui.h needs to be before these
+#include "imgui/examples/imgui_impl_glut.h"
+#include "imgui/examples/imgui_impl_opengl2.h"
+
 #include "animation.h"
 #include "character.h"
 #include "constants.h"
@@ -94,6 +101,30 @@ void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   // meshes to match
   loadOBJ(modelfile, models[modelType], N64_SCALE_FACTOR);
   models[modelType].texture = loadBMP_custom(texfile);
+}
+
+void drawGUI() {
+  static float f = 0.0f;
+  static int counter = 0;
+
+  ImGui::Begin("Hello, world!");  // Create a window called "Hello, world!" and
+                                  // append into it.
+
+  ImGui::Text("This is some useful text.");  // Display some text (you can use a
+                                             // format strings too)
+
+  ImGui::SliderFloat("float", &f, 0.0f,
+                     1.0f);  // Edit 1 float using a slider from 0.0f to 1.0f
+
+  if (ImGui::Button("Button"))  // Buttons return true when clicked (most
+                                // widgets return true when edited/activated)
+    counter++;
+  ImGui::SameLine();
+  ImGui::Text("counter = %d", counter);
+
+  ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+              1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+  ImGui::End();
 }
 
 void drawLine(Vec3d* start, Vec3d* end) {
@@ -381,6 +412,7 @@ void drawModel(GameObject* obj) {
 }
 
 void resizeWindow(int w, int h) {
+  ImGui_ImplGLUT_ReshapeFunc(w, h);
   float ratio;
   // Prevent a divide by zero, when window is too short
   // (you cant make a window of zero width).
@@ -432,6 +464,10 @@ void drawGameObject(GameObject* obj) {
 void renderScene(void) {
   int i;
   Game* game;
+
+  // Start the Dear ImGui frame
+  ImGui_ImplOpenGL2_NewFrame();
+  ImGui_ImplGLUT_NewFrame();
 
   game = Game_get();
 
@@ -574,6 +610,12 @@ void renderScene(void) {
   Player_toString(&game->player, characterString);
   drawString(characterString, 20, glutGet(GLUT_WINDOW_HEIGHT) - 40 * (i + 1));
 
+  // Imgui Rendering
+  drawGUI();
+  ImGui::Render();
+  ImGuiIO& io = ImGui::GetIO();
+  ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+
   glutSwapBuffers();
 }
 
@@ -692,16 +734,42 @@ void updateInputs() {
   }
 }
 
+void quit(int exitCode) {
+  ImGui_ImplOpenGL2_Shutdown();
+  ImGui_ImplGLUT_Shutdown();
+  ImGui::DestroyContext();
+  exit(exitCode);
+}
+
 void processNormalKeysUp(unsigned char key, int _x, int _y) {
+  ImGui_ImplGLUT_KeyboardUpFunc(key, _x, _y);
+  if (ImGui::GetIO().WantCaptureKeyboard) {
+    return;
+  }
+
   keysDown[key] = false;
 }
 
 void processNormalKeysDown(unsigned char key, int _x, int _y) {
+  ImGui_ImplGLUT_KeyboardFunc(key, _x, _y);
+  if (ImGui::GetIO().WantCaptureKeyboard) {
+    return;
+  }
+
   keysDown[key] = true;
 
   if (key == 27) {  // esc
-    exit(0);
+    quit(0);
   }
+}
+
+void processMouse(int button, int state, int x, int y) {
+  ImGui_ImplGLUT_MouseFunc(button, state, x, y);
+  if (ImGui::GetIO().WantCaptureMouse) {
+    return;
+  }
+
+//  selectedObject = Game_getIntersectingObject();
 }
 
 void updateAndRender() {
@@ -753,26 +821,45 @@ int main(int argc, char** argv) {
 
   // init GLUT and create window
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+  glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE);
   glutInitWindowPosition(300, 100);
   glutInitWindowSize(1440, 1080);
   glutCreateWindow("Goose");
 
   // register callbacks
   glutDisplayFunc(renderScene);
-  glutReshapeFunc(resizeWindow);
   glutIdleFunc(updateAndRender);
+
+  // Setup Dear ImGui context
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO();
+  (void)io;
+  // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable
+  // Keyboard Controls
+
+  // Setup Dear ImGui style
+  ImGui::StyleColorsDark();
+  // ImGui::StyleColorsClassic();
+
+  // Setup Platform/Renderer bindings
+  ImGui_ImplGLUT_Init();
+  ImGui_ImplGLUT_InstallFuncs();
+  ImGui_ImplOpenGL2_Init();
+
+  // replace some handlers after ImGui_ImplGLUT_InstallFuncs() sets its own
+  // our impls will call the Imgui impls internally
+  glutReshapeFunc(resizeWindow);
   glutKeyboardFunc(processNormalKeysDown);
   glutKeyboardUpFunc(processNormalKeysUp);
+  glutMouseFunc(processMouse);
 
   // OpenGL init
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
 
-  // load goose
+  // Load models. This has to be after OpenGL init because it creates textures
   loadModel(GooseModel, "gooserig.obj", "goosetex.bmp");
-  // loadModel(GooseModel, "gooseanim.obj", "goosetex.bmp");
-  // loadModel(GooseModel, "goose.obj", "goosetex.bmp");
   loadModel(UniFloorModel, "university_floor.obj", "green.bmp");
   loadModel(UniBldgModel, "university_bldg.obj", "redbldg.bmp");
   loadModel(BushModel, "bush.obj", "bush.bmp");
@@ -784,5 +871,5 @@ int main(int argc, char** argv) {
   // enter GLUT event processing cycle
   glutMainLoop();
 
-  return 1;
+  quit(1);
 }
