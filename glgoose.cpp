@@ -43,6 +43,7 @@
 #define DEBUG_PHYSICS 0
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
+#define UPDATE_SKIP_RATE 1
 
 int glgooseFrame = 0;
 
@@ -300,10 +301,15 @@ void drawModel(GameObject* obj) {
       glRotatef(animFrame.rotation.y, 0, 1, 0);
       glRotatef(animFrame.rotation.z, 0, 0, 1);
 
-      ObjMesh& mesh = model.meshes.at(
-          getMeshNameForModelMeshPart(obj->modelType, animFrame.object));
-
-      drawMesh(mesh, model.texture);
+      char* meshName =
+          getMeshNameForModelMeshPart(obj->modelType, animFrame.object);
+      try {
+        ObjMesh& mesh = model.meshes.at(meshName);
+        drawMesh(mesh, model.texture);
+      } catch (const std::out_of_range& oor) {
+        std::cerr << "missing mesh: " << meshName << " on model "
+                  << ModelTypeStrings[obj->modelType] << "\n";
+      }
 
       // attachment drawing stuff
       AnimationBoneAttachment& attachment = obj->animState->attachment;
@@ -414,12 +420,6 @@ void renderScene(void) {
   Game* game;
 
   game = Game_get();
-
-  Game_update(&input);
-
-  if (game->freeView) {
-    game->viewPos = viewPos;
-  }
 
   // Clear Color and Depth Buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -691,8 +691,22 @@ void processNormalKeysDown(unsigned char key, int _x, int _y) {
 }
 
 void updateAndRender() {
+  Game* game;
+
   glgooseFrame++;
-  updateInputs();
+  if (glgooseFrame % UPDATE_SKIP_RATE == 0) {
+    updateInputs();
+
+    game = Game_get();
+
+    Game_update(&input);
+
+    if (game->freeView) {
+      game->viewPos = viewPos;
+    }
+  } else {
+    printf("skipping frame %d\n", glgooseFrame % UPDATE_SKIP_RATE);
+  }
   renderScene();
 }
 

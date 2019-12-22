@@ -8,6 +8,13 @@ Character model export script
 - Change export_rel_path to an appropriate name for the exported model
 - select all the model parts to be exported (but not the Armature object itself)
 - run script
+
+
+
+Works best when mesh origins align with bone origins. To fix broken transforms/poorly tracking parts: 
+- run "Apply Object Transform"
+- run "Set Origin" > "Origin to Geometry"
+- to improve further, for each part, select bone in pose mode and choose "Snap Cursor to Selected" then select the child object and "Set Origin" > "Origin to 3d Cursor"
 """
 
 # export_rel_path = "../gooserig.obj" # export goose
@@ -18,6 +25,11 @@ directory = os.path.dirname(blend_file_path)
 target_file = os.path.realpath(os.path.join(directory, export_rel_path))
 
 print("target_file", target_file)
+
+
+assert (
+    len(bpy.context.selected_objects) > 0
+), "No objects selected, you must select some objects to use this script"
 
 objects = []
 for obj in bpy.context.selected_objects:

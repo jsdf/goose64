@@ -396,8 +396,6 @@ Gfx* getModelDisplayList(ModelType modelType) {
       return Wtx_university_floor;
     case FlagpoleModel:
       return Wtx_flagpole;
-    case GroundskeeperCharacterModel:
-      return Wtx_person;
     default:
       return Wtx_testingCube;
   }

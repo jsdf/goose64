@@ -32,6 +32,8 @@
 #define CHARACTER_EYE_OFFSET_Y 120.0
 #define CHARACTER_VIEW_ANGLE_HALF 90.0
 #define CHARACTER_FACING_OBJECT_ANGLE 30.0
+#define CHARACTER_DEBUG_ANIMATION 0
+#define CHARACTER_WALK_ANIM_MOVEMENT_DIVISOR 1.6
 
 static Vec3d characterItemOffset = {0.0F, 60.0F, 0.0F};
 
@@ -230,15 +232,21 @@ void Character_update(Character* self, Game* game) {
   resultantMovementSpeed =
       Vec3d_distanceTo(&startPos, &self->obj->position) / 100.0f;
 
+#if CHARACTER_DEBUG_ANIMATION
+  resultantMovementSpeed = 0.001;
+#endif
+
   // update animation
-  if (resultantMovementSpeed > 0.001) {
+  if (resultantMovementSpeed > 0.0001) {
     if (self->animState.state != character_walk_anim) {
       // enter walk anim
       self->animState.progress = 0.0;
     } else {
       // advance walk anim
-      self->animState.progress =
-          fmodf(self->animState.progress + resultantMovementSpeed, 1.0);
+      self->animState.progress = fmodf(
+          self->animState.progress +
+              (resultantMovementSpeed / CHARACTER_WALK_ANIM_MOVEMENT_DIVISOR),
+          1.0);
     }
     self->animState.state = character_walk_anim;
 

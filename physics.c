@@ -45,6 +45,12 @@ void PhysBehavior_floorBounce(PhysBody* body, float floorHeight) {
   }
 }
 
+void PhysBehavior_floorClamp(PhysBody* body, float floorHeight) {
+  if (body->position.y - body->radius < floorHeight) {
+    body->position.y = floorHeight + body->radius;
+  }
+}
+
 void PhysBehavior_collisionSeparationOffset(Vec3d* result,
                                             Vec3d* pos,
                                             float overlap,
@@ -124,12 +130,15 @@ void PhysBody_update(PhysBody* self,
                      float drag,
                      PhysBody* pool,
                      int numInPool) {
+  int floorHeight;
   Vec3d gravity;
   Vec3d_init(&gravity, 0, -98.0 * self->mass, 0);
   // do behaviours
   PhysBehavior_constantForce(self, gravity);
   PhysBehavior_collision(self, pool, numInPool);
-  PhysBehavior_floorBounce(self, 0.0);
+  floorHeight = 0.0;
+  // PhysBehavior_floorBounce(self,floorHeight);
+  PhysBehavior_floorClamp(self, floorHeight);
 }
 
 void PhysBody_integrateMotion(PhysBody* body, float dt, float drag) {
