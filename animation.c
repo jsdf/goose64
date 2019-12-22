@@ -53,6 +53,10 @@ void AnimationFrame_get(
 
   frameDataOffset = interp->currentFrame * animDataNumBones + boneIdx;
   *result = *(animData + frameDataOffset);
+
+#ifndef __N64__
+  assert(result->object == boneIdx);
+#endif
 }
 
 // produces an interpolated AnimationFrame for one bone in a rig
@@ -78,6 +82,13 @@ void AnimationFrame_lerp(
   a = animData + frameDataOffsetA;
   b = animData + frameDataOffsetB;
 
+#ifndef __N64__
+  // if either of these fail, the animation data is messed up
+  assert(a->object == boneIdx);
+  assert(b->object == boneIdx);
+#endif
+
+  // start with data from A
   *result = *a;
 
   Vec3d_lerp(&result->position, &b->position, interp->t);

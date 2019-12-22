@@ -38,8 +38,10 @@
 #define DEBUG_LOG_RENDER 0
 #define DEBUG_OBJECTS 0
 #define DEBUG_RAYCASTING 0
+#define DEBUG_MODELS 1
 #define DEBUG_ANIMATION 0
 #define DEBUG_ANIMATION_MORE 0
+#define DEBUG_ATTACHMENT 0
 #define DEBUG_PHYSICS 0
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
@@ -70,18 +72,18 @@ char* GooseMeshTypeStrings[] = {
 };
 
 char* CharacterMeshTypeStrings[] = {
-    "gkbicep.l_gkbicep_lrmesh",    // characterbicep_l_characterbicep_lmesh
-    "gkbicep.r_gkbicep_rmesh",     // characterbicep_r_characterbicep_rmesh
-    "gkfoot.l_gkfoot_lrmesh",      // characterfoot_l_characterfoot_lmesh
-    "gkfoot.r_gkfoot_rmesh",       // characterfoot_r_characterfoot_rmesh
-    "gkfoream.l_gkfoream_lrmesh",  // characterhand_l_characterhand_lmesh
-    "gkfoream.r_gkfoream_rmesh",   // characterhand_r_characterhand_rmesh
-    "gkhead_gkheadmesh",           // characterhead_characterheadmesh
-    "gkshin.l_gkshin_lmesh",       // charactershin_l_charactershin_lmesh
-    "gkshin.r_gkshin_rmesh",       // charactershin_r_charactershin_rmesh
-    "gktorso_gktorsomesh",         // characterspine_characterspinemesh
-    "gkthigh.l_gkthigh_lmesh",     // characterthigh_l_characterthigh_lmesh
-    "gkthigh.r_gkthigh_rmesh",     // characterthigh_r_characterthigh_rmesh
+    "gkbicep.l_gkbicep_lrmesh",      // characterbicep_l_characterbicep_lmesh
+    "gkbicep.r_gkbicep_rmesh",       // characterbicep_r_characterbicep_rmesh
+    "gkfoot.l_gkfoot_lrmesh",        // characterfoot_l_characterfoot_lmesh
+    "gkfoot.r_gkfoot_rmesh",         // characterfoot_r_characterfoot_rmesh
+    "gkforearm.l_gkforearm_lrmesh",  // characterforearm_l_characterforearm_lmesh
+    "gkforearm.r_gkforearm_rmesh",  // characterforearm_r_characterforearm_rmesh
+    "gkhead_gkheadmesh",            // characterhead_characterheadmesh
+    "gkshin.l_gkshin_lmesh",        // charactershin_l_charactershin_lmesh
+    "gkshin.r_gkshin_rmesh",        // charactershin_r_charactershin_rmesh
+    "gktorso_gktorsomesh",          // charactertorso_charactertorsomesh
+    "gkthigh.l_gkthigh_lmesh",      // characterthigh_l_characterthigh_lmesh
+    "gkthigh.r_gkthigh_rmesh",      // characterthigh_r_characterthigh_rmesh
 };
 
 // TODO: allocate this in map header file with correct size
@@ -153,9 +155,11 @@ void drawStringAtPoint(char* string, Vec3d* pos, int centered) {
 }
 
 void drawMarker(float r, float g, float b, float radius) {
-  glPushAttrib(GL_LIGHTING_BIT | GL_TEXTURE_BIT | GL_CURRENT_BIT);
+  glPushAttrib(GL_LIGHTING_BIT | GL_TEXTURE_BIT | GL_CURRENT_BIT |
+               GL_DEPTH_BUFFER_BIT);
   glDisable(GL_TEXTURE_2D);
   glDisable(GL_LIGHTING);
+  glDisable(GL_DEPTH_TEST);
   glColor3f(r, g, b);  // red
   glutWireSphere(/*radius*/ radius, /*slices*/ 5, /*stacks*/ 5);
   glPopAttrib();
@@ -285,8 +289,6 @@ void drawModel(GameObject* obj) {
           &animFrame);
 #endif
 
-      assert(animFrame.object < MAX_ANIM_MESH_PARTS);
-
       // push relative transformation matrix, render the mesh, then pop the
       // relative transform off the matrix stack again
       glPushMatrix();
@@ -315,6 +317,15 @@ void drawModel(GameObject* obj) {
       AnimationBoneAttachment& attachment = obj->animState->attachment;
       if (attachment.modelType != NoneModel &&
           attachment.boneIndex == modelMeshIdx) {
+#if DEBUG_ATTACHMENT
+        printf(
+            "drawing attachment %s on %s (animFrame.object=%d) at boneIdx=%d "
+            "mesh=%s\n",
+            ModelTypeStrings[attachment.modelType],
+            ModelTypeStrings[obj->modelType], animFrame.object,
+            attachment.boneIndex,
+            getMeshNameForModelMeshPart(obj->modelType, attachment.boneIndex));
+#endif
         glPushMatrix();
         glTranslatef(attachment.offset.x, attachment.offset.y,
                      attachment.offset.z);
@@ -363,6 +374,9 @@ void drawModel(GameObject* obj) {
   } else {
     // case for simple gameobjects with no moving sub-parts
     drawMeshesForModel(model);
+#if DEBUG_MODELS
+    drawMarker(255.0, 0.0, 255.0, 1);  // obj marker, purple
+#endif
   }
 }
 

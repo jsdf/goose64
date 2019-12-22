@@ -339,12 +339,12 @@ Gfx* CharacterMeshList[] = {
     Wtx_characterrig_gkbicep_r_gkbicep_rmesh,  // characterbicep_r_characterbicep_rmesh
     Wtx_characterrig_gkfoot_l_gkfoot_lrmesh,  // characterfoot_l_characterfoot_lmesh
     Wtx_characterrig_gkfoot_r_gkfoot_rmesh,  // characterfoot_r_characterfoot_rmesh
-    Wtx_characterrig_gkfoream_l_gkfoream_lrmesh,  // characterhand_l_characterhand_lmesh
-    Wtx_characterrig_gkfoream_r_gkfoream_rmesh,  // characterhand_r_characterhand_rmesh
+    Wtx_characterrig_gkforearm_l_gkforearm_lrmesh,  // characterforearm_l_characterforearm_lmesh
+    Wtx_characterrig_gkforearm_r_gkforearm_rmesh,  // characterforearm_r_characterforearm_rmesh
     Wtx_characterrig_gkhead_gkheadmesh,      // characterhead_characterheadmesh
     Wtx_characterrig_gkshin_l_gkshin_lmesh,  // charactershin_l_charactershin_lmesh
     Wtx_characterrig_gkshin_r_gkshin_rmesh,  // charactershin_r_charactershin_rmesh
-    Wtx_characterrig_gktorso_gktorsomesh,  // characterspine_characterspinemesh
+    Wtx_characterrig_gktorso_gktorsomesh,  // charactertorso_charactertorsomesh
     Wtx_characterrig_gkthigh_l_gkthigh_lmesh,  // characterthigh_l_characterthigh_lmesh
     Wtx_characterrig_gkthigh_r_gkthigh_rmesh,  // characterthigh_r_characterthigh_rmesh
 };
@@ -396,6 +396,8 @@ Gfx* getModelDisplayList(ModelType modelType) {
       return Wtx_university_floor;
     case FlagpoleModel:
       return Wtx_flagpole;
+    case GroundskeeperCharacterModel:
+      return Wtx_person;
     default:
       return Wtx_testingCube;
   }

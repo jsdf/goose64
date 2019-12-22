@@ -34,6 +34,8 @@
 #define CHARACTER_FACING_OBJECT_ANGLE 30.0
 #define CHARACTER_DEBUG_ANIMATION 0
 #define CHARACTER_WALK_ANIM_MOVEMENT_DIVISOR 1.6
+#define CHARACTER_SPEED_MULTIPLIER_RUN 1.0
+#define CHARACTER_SPEED_MULTIPLIER_WALK 0.5
 
 static Vec3d characterItemOffset = {0.0F, 60.0F, 0.0F};
 
@@ -78,12 +80,13 @@ void Character_init(Character* self,
   self->obj = obj;
   obj->animState = &self->animState;
   // setup picked-up object attachment point
-  self->animState.attachment.boneIndex = (int)
-      characterhand_r_characterhand_rmesh;  // TODO: add character model here
-  self->animState.state = character_idle_anim;
-  self->animState.attachment.offset.x = 30;
-  self->animState.attachment.offset.z = -10;
+  self->animState.attachment.boneIndex =
+      (int)characterforearm_r_characterforearm_rmesh;
+  self->animState.attachment.modelType = BookItemModel;
+  self->animState.attachment.offset.z = -32;  // down along arm
+  self->animState.attachment.offset.y = -10;  // back
   self->animState.attachment.rotation.x = 90;
+  self->animState.attachment.rotation.z = 90;
 
   self->target = NULL;
   self->defaultActivityItem = defaultActivityItem;
@@ -188,13 +191,15 @@ int Character_canSeePlayer(Character* self, Game* game) {
       game->worldObjectsCount);
 }
 
-void Character_moveTowards(Character* self, Vec3d target) {
+void Character_moveTowards(Character* self,
+                           Vec3d target,
+                           float speedMultiplier) {
   Vec3d movement;
   Vec2d movement2d;
   float destAngle;
   Vec3d_directionTo(&self->obj->position, &target, &movement);
 
-  Vec3d_multiplyScalar(&movement, CHARACTER_SPEED);
+  Vec3d_multiplyScalar(&movement, CHARACTER_SPEED * speedMultiplier);
 
   Vec3d_add(&self->obj->position, &movement);
 
@@ -302,6 +307,7 @@ void Character_updateConfusionState(Character* self, Game* game) {
   Character_transitionToState(self, IdleState);
 }
 
+// in this state the charcter is trying to go to a 'default activity' and do it
 void Character_updateDefaultActivityState(Character* self, Game* game) {
   if (
       // not close enough
@@ -310,7 +316,9 @@ void Character_updateDefaultActivityState(Character* self, Game* game) {
       // not facing towards enough
       Character_topDownAngleToPos(self, &self->defaultActivityLocation) >
           CHARACTER_FACING_OBJECT_ANGLE) {
-    Character_moveTowards(self, self->defaultActivityLocation);
+    // go there
+    Character_moveTowards(self, self->defaultActivityLocation,
+                          CHARACTER_SPEED_MULTIPLIER_WALK);
   } else {
     // do default activity
     if (self->startedActivityTick) {
@@ -339,6 +347,7 @@ void Character_haveItemTaken(Character* self) {
 }
 
 void Character_updateSeekingItemState(Character* self, Game* game) {
+  int someoneElseIsHoldingItem;
   self->target = self->defaultActivityItem;
 
   if (self->itemHolder.heldItem) {
@@ -355,7 +364,8 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
       Character_transitionToState(self, IdleState);
     } else {
       // bringing item back to initial location
-      Character_moveTowards(self, self->target->initialLocation);
+      Character_moveTowards(self, self->target->initialLocation,
+                            CHARACTER_SPEED_MULTIPLIER_WALK);
     }
   } else {
     // can we still see the item?
@@ -370,10 +380,13 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
       return;
     }
 
+    someoneElseIsHoldingItem =
+        self->target->holder && self->target->holder != &self->itemHolder;
+
     // are we near enough to pick up item?
     if (Vec3d_distanceTo(&self->obj->position, &self->target->obj->position) <
         CHARACTER_NEAR_OBJ_TAKE_DIST) {
-      if (self->target->holder && self->target->holder != &self->itemHolder) {
+      if (someoneElseIsHoldingItem) {
 #ifndef __N64__
         debugPrintf("stealing item back\n");
 #endif
@@ -382,7 +395,10 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
 
     } else {
       // no, move towards
-      Character_moveTowards(self, self->target->obj->position);
+      Character_moveTowards(self, self->target->obj->position,
+                            someoneElseIsHoldingItem
+                                ? CHARACTER_SPEED_MULTIPLIER_RUN
+                                : CHARACTER_SPEED_MULTIPLIER_WALK);
     }
   }
 }

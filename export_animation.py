@@ -44,18 +44,18 @@ bone_types = [
 
 if modelname != "goose":
     bone_types = [
-        "spine",
-        "head",
-        "thigh_l",
-        "shin_l",
-        "foot_l",
         "bicep_l",
-        "hand_l",
-        "thigh_r",
-        "shin_r",
-        "foot_r",
         "bicep_r",
-        "hand_r",
+        "foot_l",
+        "foot_r",
+        "forearm_l",
+        "forearm_r",
+        "head",
+        "shin_l",
+        "shin_r",
+        "torso",
+        "thigh_l",
+        "thigh_r",
     ]
 
 
