@@ -26,6 +26,7 @@ Vec3d* Vec3d_lerp(Vec3d* self, Vec3d* v, float alpha);
 float Vec3d_magSq(Vec3d* self);
 float Vec3d_mag(Vec3d* self);
 float Vec3d_dot(Vec3d* self, Vec3d* other);
+void Vec3d_cross(Vec3d* self, Vec3d* other, Vec3d* result);
 
 #ifndef __N64__
 char* Vec3d_toString(Vec3d* self, char* buffer);

@@ -99,6 +99,12 @@ float Vec3d_dot(Vec3d* self, Vec3d* other) {
   return self->x * other->x + self->y * other->y + self->z * other->z;
 }
 
+void Vec3d_cross(Vec3d* self, Vec3d* other, Vec3d* result) {
+  result->x = self->y * other->z - self->z * other->y;
+  result->y = self->z * other->x - self->x * other->z;
+  result->z = self->x * other->y - self->y * other->x;
+}
+
 Vec3d* Vec3d_lerp(Vec3d* self, Vec3d* v, float alpha) {
   self->x += (v->x - self->x) * alpha;
   self->y += (v->y - self->y) * alpha;

@@ -1,41 +1,36 @@
 {
-    "folders": [
-        {
-            "path": "."
-        }
-    ],
-    "settings": {
-        "ClangFormat": {
-            "style": "Chromium",
-            "format_on_save": true
-        },
-        "linters": {
-          "clang": {
-              "args": "-Wall -fsyntax-only -fno-caret-diagnostics -std=c89 -pedantic -Wall -Wno-deprecated-declarations -Wno-comment",
-              "I": [
-                  "${folder}",
-                "${file_path}",
-              ]
-          },
-          "clang++": {
-              "args": "-Wall -fsyntax-only -fno-caret-diagnostics -Wno-deprecated-declarations -Wno-comment",
-              "I": [
-                  "${folder}",
-                  "${file_path}",
-              ]
-          },
-        }
+  "folders": [
+    {
+      "path": ".",
+      "folder_exclude_patterns": ["imgui"]
+    }
+  ],
+  "settings": {
+    "ClangFormat": {
+      "style": "Chromium",
+      "format_on_save": true
+    },
+    "linters": {
+      "clang": {
+        "args": "-Wall -fsyntax-only -fno-caret-diagnostics -std=c89 -pedantic -Wall -Wno-deprecated-declarations -Wno-comment",
+        "I": ["${folder}", "${file_path}"]
+      },
+      "clang++": {
+        "args": "-Wall -fsyntax-only -fno-caret-diagnostics -Wno-deprecated-declarations -Wno-comment",
+        "I": ["${folder}", "${file_path}"]
+      }
+    }
+  },
+
+  "build_systems": [
+    {
+      "name": "GL Build",
+      "cmd": ["./glbuild.sh"]
     },
 
-    "build_systems": [
-        {
-            "name": "GL Build",
-            "cmd": ["./glbuild.sh"]
-        },
-
-        {
-            "name": "Emu Build",
-            "cmd": ["./build_and_run.sh"]
-        }
-    ]
+    {
+      "name": "Emu Build",
+      "cmd": ["./build_and_run.sh"]
+    }
+  ]
 }

@@ -3,9 +3,13 @@
 #ifndef __N64__
 #include <stdio.h>
 #endif
+#ifndef __N64__
+#include <float.h>
+#endif
 #include <stdlib.h>
 // game
 #include "character.h"
+#include "constants.h"
 #include "game.h"
 #include "gameobject.h"
 #include "gameutils.h"
@@ -279,10 +283,10 @@ void Game_traceRaycast(RaycastTraceEvent event) {
 #endif
 #endif
 
-int Game_rayIntersectsSphere(Vec3d* origin,
-                             Vec3d* rayDirection,
-                             Vec3d* objCenter,
-                             float objRadius) {
+float Game_rayIntersectsSphereDist(Vec3d* origin,
+                                   Vec3d* rayDirection,
+                                   Vec3d* objCenter,
+                                   float objRadius) {
   Vec3d l;
   float tca, d2, radius2, thc, t0, t1;
   // l = objCenter - origin;
@@ -294,7 +298,7 @@ int Game_rayIntersectsSphere(Vec3d* origin,
   radius2 = objRadius * objRadius;
 
   if (d2 > radius2)
-    return FALSE;
+    return -1;  // no intersection
 
   thc = sqrtf(radius2 - d2);
 
@@ -306,6 +310,28 @@ int Game_rayIntersectsSphere(Vec3d* origin,
 
   // test to see if both t0 and t1 are behind the ray - if so, return null
   if (t0 < 0 && t1 < 0)
+    return -1;  // no intersection
+
+  // test to see if t0 is behind the ray:
+  // if it is, the ray is inside the sphere, so return the second exit point
+  // scaled by t1, in order to always return an intersect point that is in front
+  // of the ray.
+  if (t0 < 0)
+    return t1;
+
+  // else t0 is in front of the ray, so return the first collision point scaled
+  // by t0
+  return t0;
+}
+
+int Game_rayIntersectsSphere(Vec3d* origin,
+                             Vec3d* rayDirection,
+                             Vec3d* objCenter,
+                             float objRadius) {
+  float dist =
+      Game_rayIntersectsSphereDist(origin, rayDirection, objCenter, objRadius);
+
+  if (dist < 0)
     return FALSE;
 
   return TRUE;
@@ -316,6 +342,10 @@ void Game_getObjCenter(GameObject* obj, Vec3d* result) {
   Vec3d_add(result, &modelTypesProperties[obj->modelType].centroidOffset);
 }
 
+float Game_getObjRadius(GameObject* obj) {
+  return modelTypesProperties[obj->modelType].radius;
+}
+
 float Game_distanceToGameObject(Vec3d* from, GameObject* to) {
   Vec3d toObjCenter;
 
@@ -323,6 +353,50 @@ float Game_distanceToGameObject(Vec3d* from, GameObject* to) {
 
   return Vec3d_distanceTo(from, &toObjCenter) -
          modelTypesProperties[to->modelType].radius;
+}
+
+/*
+Finds the closest object intersecting a cast ray
+Method: iterate objects and check ray-sphere intersection. When intersecting,
+check if intersection distance is less than previously found intersection (if
+any).
+Crappy code for debug use only
+ */
+GameObject* Game_getIntersectingObject(Vec3d* raySource, Vec3d* rayDirection) {
+  int i, hit;
+  float closestObjHitDist, intersectDist;
+  GameObject* obj;
+  GameObject* closestObjHit;
+  Vec3d objCenter;
+
+  closestObjHitDist = FLT_MAX;
+  closestObjHit = NULL;
+
+  for (i = 0, obj = game.worldObjects; i < game.worldObjectsCount; i++, obj++) {
+    Game_getObjCenter(obj, &objCenter);
+
+    intersectDist = Game_rayIntersectsSphereDist(
+        raySource, rayDirection, &objCenter, Game_getObjRadius(obj));
+    hit = intersectDist >= 0;
+
+#ifndef __N64__
+    // printf("checking id=%d %s: %s\n", obj->id,
+    // ModelTypeStrings[obj->modelType],
+    //        hit ? "hit" : "miss");
+#endif
+
+    if (hit) {
+      if (intersectDist < closestObjHitDist) {
+        // printf("is closest\n");
+        closestObjHit = obj;
+        closestObjHitDist = intersectDist;
+      } else {
+        // printf("is NOT closest\n");
+      }
+    }
+  }
+
+  return closestObjHit;
 }
 
 /*

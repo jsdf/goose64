@@ -335,7 +335,7 @@ void Character_updateDefaultActivityState(Character* self, Game* game) {
       self->startedActivityTick = game->tick;
 
 #ifndef __N64__
-      debugPrintf("started default activity");
+      debugPrintf("started default activity\n");
 #endif
     }
   }

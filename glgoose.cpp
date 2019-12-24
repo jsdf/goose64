@@ -43,27 +43,34 @@
 #define FREEVIEW_SPEED 0.2f
 
 #define DEBUG_LOG_RENDER 0
-#define DEBUG_OBJECTS 0
-#define DEBUG_RAYCASTING 0
-#define DEBUG_MODELS 1
+#define DEBUG_OBJECTS 1
+#define DEBUG_RAYCASTING 1
+#define DEBUG_MODELS 0
 #define DEBUG_ANIMATION 0
 #define DEBUG_ANIMATION_MORE 0
 #define DEBUG_ATTACHMENT 0
-#define DEBUG_PHYSICS 0
+#define DEBUG_PHYSICS 1
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
 #define UPDATE_SKIP_RATE 1
 
 int glgooseFrame = 0;
 
-// actual vector representing the camera's direction
+// actual vector representing the freeview camera's direction
 float cameraLX = 0.0f, cameraLZ = -1.0f;
-// XZ position of the camera
-Vec3d viewPos = {0.0f, 1.0f, 0.0f};
+// XZ position of the freeview camera
+Vec3d viewPos = {0.0f, 50.0f, 0.0f};
+// freeview camera angle
+float cameraAngle = 180.0f;
 
-float cameraAngle = 0.0f;
 bool keysDown[127];
 Input input;
+GameObject* selectedObject = NULL;
+
+// crap for gluProject/gluUnProject
+GLdouble lastModelView[16];
+GLdouble lastProjection[16];
+GLint lastViewport[4];
 
 ObjModel models[MAX_MODEL_TYPE];
 
@@ -103,35 +110,78 @@ void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   models[modelType].texture = loadBMP_custom(texfile);
 }
 
-void drawGUI() {
-  static float f = 0.0f;
-  static int counter = 0;
+void screenCoordsToWorld(Vec3d* screenPos, Vec3d* result) {
+  GLdouble res[3];
 
-  ImGui::Begin("Hello, world!");  // Create a window called "Hello, world!" and
-                                  // append into it.
+  gluUnProject(/*winX*/ screenPos->x,
+               /*winY*/ screenPos->y,
+               /*winZ*/ screenPos->z, lastModelView, lastProjection,
+               lastViewport,
+               /*objX*/ &res[0],
+               /*objY*/ &res[1],
+               /*objZ*/ &res[2]);
 
-  ImGui::Text("This is some useful text.");  // Display some text (you can use a
-                                             // format strings too)
-
-  ImGui::SliderFloat("float", &f, 0.0f,
-                     1.0f);  // Edit 1 float using a slider from 0.0f to 1.0f
-
-  if (ImGui::Button("Button"))  // Buttons return true when clicked (most
-                                // widgets return true when edited/activated)
-    counter++;
-  ImGui::SameLine();
-  ImGui::Text("counter = %d", counter);
-
-  ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
-              1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-  ImGui::End();
+  Vec3d_init(result, res[0], res[1], res[2]);
 }
 
-void drawLine(Vec3d* start, Vec3d* end) {
-  glBegin(GL_LINES);
-  glVertex3f(start->x, start->y, start->z);
-  glVertex3f(end->x, end->y, end->z);
-  glEnd();
+void worldCoordsToScreen(Vec3d* pos, Vec3d* result) {
+  GLdouble scr[3];
+
+  gluProject(pos->x, pos->y, pos->z, lastModelView, lastProjection,
+             lastViewport, &scr[0], &scr[1], &scr[2]);
+
+  result->x = scr[0];
+  result->y = scr[1];
+  result->z = scr[2];
+}
+
+std::string formatVec3d(Vec3d* self) {
+  char buffer[60];
+  sprintf(buffer, "{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
+  return buffer;
+}
+
+std::string formatEuler(EulerDegrees* self) {
+  char buffer[60];
+  sprintf(buffer, "{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
+  return buffer;
+}
+
+void drawGUI() {
+  GameObject* obj = selectedObject;
+  ImGuiInputTextFlags inputFlags =
+      ImGuiInputTextFlags_EnterReturnsTrue;  // only update on blur
+
+  ImGui::Begin("Object Inspector");  // Create a window called "Hello, world!"
+                                     // and append into it.
+
+  // Display some text (you can use a format strings too)
+  ImGui::Text("Selected object: %d (%s)", obj ? obj->id : -1,
+              obj ? ModelTypeStrings[obj->modelType] : "none");
+
+  if (obj) {
+    ImGui::InputFloat3("Position", (float*)&obj->position, "%.3f", inputFlags);
+    ImGui::InputFloat3("Rotation", (float*)&obj->rotation, "%.3f", inputFlags);
+
+    if (obj->physBody) {
+      ImGui::InputFloat3("Velocity",
+                         (float*)&obj->physBody->nonIntegralVelocity, "%.3f",
+                         ImGuiInputTextFlags_ReadOnly);
+    }
+
+    ImGui::InputFloat3(
+        "centroidOffset",
+        (float*)&modelTypesProperties[obj->modelType].centroidOffset, "%.3f",
+        inputFlags);
+
+    ImGui::InputFloat("radius",
+                      (float*)&modelTypesProperties[obj->modelType].radius, 0.1,
+                      1.0, "%.3f", inputFlags);
+  }
+
+  ImGui::Text("Frametime %.3f ms (%.1f FPS)",
+              1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+  ImGui::End();
 }
 
 void drawString(char* string, int x, int y) {
@@ -166,23 +216,15 @@ void drawString(char* string, int x, int y) {
 }
 
 void drawStringAtPoint(char* string, Vec3d* pos, int centered) {
-  GLdouble scr[3];
-  GLdouble model[16];
-  GLdouble proj[16];
-  GLint view[4];
+  Vec3d screen;  // x, y, zdepth
+  worldCoordsToScreen(pos, &screen);
 
   int stringLength;
 
   stringLength = strlen(string);
 
-  glGetDoublev(GL_MODELVIEW_MATRIX, model);
-  glGetDoublev(GL_PROJECTION_MATRIX, proj);
-  glGetIntegerv(GL_VIEWPORT, view);
-  gluProject(pos->x, pos->y, pos->z, model, proj, view, &scr[0], &scr[1],
-             &scr[2]);
-
-  drawString(string, scr[0] - (centered ? (stringLength * 8 / 2) : 0.0),
-             scr[1]);
+  drawString(string, screen.x - (centered ? (stringLength * 8 / 2) : 0.0),
+             screen.y);
 }
 
 void drawMarker(float r, float g, float b, float radius) {
@@ -192,8 +234,44 @@ void drawMarker(float r, float g, float b, float radius) {
   glDisable(GL_LIGHTING);
   glDisable(GL_DEPTH_TEST);
   glColor3f(r, g, b);  // red
-  glutWireSphere(/*radius*/ radius, /*slices*/ 5, /*stacks*/ 5);
+  glutWireSphere(/*radius*/ radius, /*slices*/ 10, /*stacks*/ 10);
   glPopAttrib();
+}
+
+void drawLine(Vec3d* start, Vec3d* end) {
+  glBegin(GL_LINES);
+  glVertex3f(start->x, start->y, start->z);
+  glVertex3f(end->x, end->y, end->z);
+  glEnd();
+}
+
+void drawRaycastLine(RaycastTraceEvent raycast) {
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
+  glPushMatrix();
+
+  // create end point based on origin and direction
+  Vec3d rayEnd = raycast.direction;
+  Vec3d_multiplyScalar(&rayEnd, 1000.0);
+  Vec3d_add(&rayEnd, &raycast.origin);
+
+  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
+  if (raycast.result) {
+    glColor3f(1.0f, 1.0f, 1.0f);
+  } else {
+    glColor3f(1.0f, 0.0f, 0.0f);
+  }
+  drawLine(&raycast.origin, &rayEnd);
+  glPushMatrix();
+  glTranslatef(raycast.origin.x, raycast.origin.y, raycast.origin.z);
+  drawMarker(0.8f, 0.8f, 0.8f, 1);
+  glPopMatrix();
+  glPushMatrix();
+  glTranslatef(rayEnd.x, rayEnd.y, rayEnd.z);
+  drawMarker(0.8f, 0.8f, 0.8f, 1);
+  glPopMatrix();
+  glPopAttrib();
+  glPopMatrix();
 }
 
 void drawPhysBall(float radius) {
@@ -427,9 +505,33 @@ void resizeWindow(int w, int h) {
   // Set the viewport to be the entire window
   glViewport(0, 0, w, h);
   // Set the correct perspective.
-  gluPerspective(45.0f, ratio, 0.1f, 3000.0f);
+  gluPerspective(45.0f, ratio, 10.0f, 3000.0f);
   // Get Back to the Modelview
   glMatrixMode(GL_MODELVIEW);
+}
+
+void enableLighting() {
+  GLfloat light_ambient[] = {0.1f, 0.1f, 0.1f, 1.0f};   /* default value */
+  GLfloat light_diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};   /* default value */
+  GLfloat light_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};  /* default value */
+  GLfloat light_position[] = {1.0f, 1.0f, -1.0f, 0.0f}; /* NOT default value */
+  GLfloat lightModel_ambient[] = {0.2f, 0.2f, 0.2f, 1.0f}; /* default value */
+  GLfloat material_specular[] = {1.0f, 1.0f, 1.0f,
+                                 1.0f}; /* NOT default value */
+  GLfloat material_emission[] = {0.0f, 0.0f, 0.0f, 1.0f}; /* default value */
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightModel_ambient);
+  glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material_specular);
+  glMaterialfv(GL_FRONT, GL_EMISSION, material_emission);
+  glMaterialf(GL_FRONT, GL_SHININESS, 10.0); /* NOT default value   */
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+  glEnable(GL_NORMALIZE);
+  glEnable(GL_COLOR_MATERIAL);
 }
 
 void drawGameObject(GameObject* obj) {
@@ -448,15 +550,6 @@ void drawGameObject(GameObject* obj) {
       glDisable(GL_DEPTH_TEST);
     }
     drawModel(obj);
-
-#if DEBUG_RAYCASTING
-    glTranslatef(centroidOffset.x, centroidOffset.y, centroidOffset.z);
-
-    glColor3f(0.9, 0.3, 0.2);  // white
-
-    glutWireSphere(modelTypesProperties[obj->modelType].radius,
-                   /*slices*/ 5, /*stacks*/ 5);
-#endif
   }
   glPopMatrix();
 }
@@ -479,31 +572,6 @@ void renderScene(void) {
   int h = glutGet(GLUT_WINDOW_HEIGHT);
   resizeWindow(w, h);
 
-#if USE_LIGHTING
-
-  GLfloat light_ambient[] = {0.1f, 0.1f, 0.1f, 1.0f};   /* default value */
-  GLfloat light_diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};   /* default value */
-  GLfloat light_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};  /* default value */
-  GLfloat light_position[] = {1.0f, 1.0f, -1.0f, 0.0f}; /* NOT default value */
-  GLfloat lightModel_ambient[] = {0.2f, 0.2f, 0.2f, 1.0f}; /* default value */
-  GLfloat material_specular[] = {1.0f, 1.0f, 1.0f,
-                                 1.0f}; /* NOT default value */
-  GLfloat material_emission[] = {0.0f, 0.0f, 0.0f, 1.0f}; /* default value */
-  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightModel_ambient);
-  glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, material_specular);
-  glMaterialfv(GL_FRONT, GL_EMISSION, material_emission);
-  glMaterialf(GL_FRONT, GL_SHININESS, 10.0); /* NOT default value   */
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-  glEnable(GL_NORMALIZE);
-  glEnable(GL_COLOR_MATERIAL);
-#endif
-
   // Reset transformations
   glLoadIdentity();
   // Set the camera
@@ -521,7 +589,16 @@ void renderScene(void) {
     );
   }
 
+  // store the viewport for later
+  glGetDoublev(GL_MODELVIEW_MATRIX, lastModelView);
+  glGetDoublev(GL_PROJECTION_MATRIX, lastProjection);
+  glGetIntegerv(GL_VIEWPORT, lastViewport);
+
   Renderer_sortWorldObjects(sortedObjects, game->worldObjectsCount);
+
+#if USE_LIGHTING
+  enableLighting();
+#endif
 
 #if DEBUG_LOG_RENDER
   printf("draw start\n");
@@ -553,25 +630,10 @@ void renderScene(void) {
 
 #if DEBUG_RAYCASTING
   for (i = 0; i < gameRaycastTrace.size(); ++i) {
-    RaycastTraceEvent raycast = gameRaycastTrace[i];
-    Vec3d rayStart = raycast.origin;
-    Vec3d rayEnd = raycast.direction;
-
-    // create end point based on origin and direction
-    Vec3d_multiplyScalar(&rayEnd, 10000.0);
-    Vec3d_add(&rayEnd, &rayStart);
-
-    if (raycast.result) {
-      glColor3f(1.0f, 1.0f, 1.0f);
-    } else {
-      glColor3f(1.0f, 0.0f, 0.0f);
-    }
-
-    glDisable(GL_TEXTURE_2D);
-    drawLine(&rayStart, &rayEnd);
+    drawRaycastLine(gameRaycastTrace[i]);
   }
 
-  gameRaycastTrace.clear();
+  // gameRaycastTrace.clear();
 #endif
 
 #if DEBUG_OBJECTS
@@ -585,6 +647,15 @@ void renderScene(void) {
               ModelTypeStrings[obj->modelType]);
 
       drawStringAtPoint(objdebugtext, &obj->position, TRUE);
+
+      Vec3d objCenter;
+      Game_getObjCenter(obj, &objCenter);
+
+      glPushMatrix();
+      glTranslatef(objCenter.x, objCenter.y, objCenter.z);
+      obj == selectedObject ? drawMarker(1.0, 0.5, 0.0, Game_getObjRadius(obj))
+                            : drawMarker(0.2, 0.2, 0.2, Game_getObjRadius(obj));
+      glPopMatrix();
     }
   }
 #endif
@@ -727,7 +798,7 @@ void updateInputs() {
         game->paused = !game->paused;
       }
 
-      if (key == 99 && game->tick % 30 == 0) {  // c
+      if (key == 99 && game->tick % 10 == 0) {  // c
         game->freeView = !game->freeView;
       }
     }
@@ -763,13 +834,36 @@ void processNormalKeysDown(unsigned char key, int _x, int _y) {
   }
 }
 
+void selectObjectAtScreenPos(int x, int y) {
+  Vec3d mouseScreenPos0, mouseScreenPos1;
+  Vec3d raySource, rayTarget, rayDirection;
+  int invY = lastViewport[3] - y;
+
+  // near end, ray origin
+  Vec3d_init(&mouseScreenPos0, x, invY, 0.0f);
+  screenCoordsToWorld(&mouseScreenPos0, &raySource);
+
+  // far end
+  GLfloat depth;
+  glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+  Vec3d_init(&mouseScreenPos1, x, invY, depth);
+  screenCoordsToWorld(&mouseScreenPos1, &rayTarget);
+
+  // ray direction
+  Vec3d_directionTo(&raySource, &rayTarget, &rayDirection);
+
+  selectedObject = Game_getIntersectingObject(&raySource, &rayDirection);
+}
+
 void processMouse(int button, int state, int x, int y) {
   ImGui_ImplGLUT_MouseFunc(button, state, x, y);
   if (ImGui::GetIO().WantCaptureMouse) {
     return;
   }
 
-//  selectedObject = Game_getIntersectingObject();
+  if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+    selectObjectAtScreenPos(x, y);
+  }
 }
 
 void updateAndRender() {
@@ -802,7 +896,8 @@ int main(int argc, char** argv) {
   game = Game_get();
 
   Input_init(&input);
-  game->viewPos = viewPos;
+
+  updateCameraAngle(180);
 
   for (i = 0, obj = game->worldObjects; i < game->worldObjectsCount;
        i++, obj++) {

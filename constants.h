@@ -48,8 +48,14 @@
 #define INTCEIL(x) ((int)x) + 1
 
 #ifdef __N64__
+// hard coded arch-dependent values for n64
+
 #ifndef FLT_EPSILON
 #define FLT_EPSILON 0.0000001192
+#endif
+
+#ifndef FLT_MAX
+#define FLT_MAX 3.402823e+38
 #endif
 #endif
 
