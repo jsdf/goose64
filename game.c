@@ -21,6 +21,7 @@
 #include "constants.h"
 
 #define GENERATE_DEBUG_BODIES 0
+#define DEBUG_PHYSICS_MOTION_SYNC 0
 
 static Game game;
 
@@ -32,8 +33,10 @@ Item items[NUM_ITEMS];
 PhysBody physicsBodies[NUM_PHYS_BODIES];
 
 void Game_initGameObjectPhysBody(PhysBody* body, GameObject* obj) {
+  Vec3d objCenter;
+  Game_getObjCenter(obj, &objCenter);
   PhysBody_init(body, modelTypesProperties[obj->modelType].mass,
-                modelTypesProperties[obj->modelType].radius, &obj->position,
+                modelTypesProperties[obj->modelType].radius, &objCenter,
                 obj->id);
   obj->physBody = body;
 }
@@ -178,12 +181,12 @@ void Game_updateCamera(Game* game, Input* input) {
 }
 
 void Game_updatePhysics(Game* game) {
-  int i, bodyIdx;
-  Vec3d positionDelta;
+  int i;
+  Vec3d positionDelta, physUpdatedPosition;
   PhysBody* body;
   GameObject* obj;
-  char buffer[120];  // for now we need to copy the object's pos to the
-                     // physbody...
+  // for now we need to copy the object's pos to the
+  // physbody...
   for (i = 0, body = game->physicsBodies; i < game->physicsBodiesCount;
        ++i, body++) {
     obj = Game_getObjectByID(body->id);
@@ -192,46 +195,33 @@ void Game_updatePhysics(Game* game) {
 #else
 
 #ifndef __N64__
-    if (body->id == 2) {
-      // printf("applying force to body %d\n", body->id);
+#if DEBUG_PHYSICS_MOTION_SYNC
+    char buffer[120];
+    if (body->id == 2) {  // use
+      printf("applying force to body %d\n", body->id);
       PhysBody_toString(body, buffer);
-      // printf("Before: %s\n", buffer);
+      printf("Before: %s\n", buffer);
     }
 #endif
+#endif
 
-    Vec3d_copyFrom(&positionDelta, &obj->position);
+    Game_getObjCenter(obj, &positionDelta);
     Vec3d_sub(&positionDelta, &body->position);
     PhysBody_translateWithoutForce(body, &positionDelta);
 
 #ifndef __N64__
+#if DEBUG_PHYSICS_MOTION_SYNC
     if (body->id == 2) {
       PhysBody_toString(body, buffer);
-      // printf("After: %s\n", buffer);
+      printf("After: %s\n", buffer);
       Vec3d_toString(&positionDelta, buffer);
-      // printf("positionDelta: %s\n", buffer);
+      printf("positionDelta: %s\n", buffer);
     }
+#endif
 #endif
 
 #endif
   }
-
-#if USE_PHYSICS_MOVEMENT
-#else
-  // bodyIdx = 0;
-  // obj = game->player.goose;
-  // Game_initGameObjectPhysBody(&physicsBodies[i], obj);
-  // bodyIdx++;
-  // for (i = 0; i < NUM_CHARACTERS; ++i) {
-  //   obj = characters[i].obj;
-  //   Game_initGameObjectPhysBody(&physicsBodies[bodyIdx], obj);
-  //   bodyIdx++;
-  // }
-  // for (i = 0; i < NUM_ITEMS; ++i) {
-  //   obj = items[i].obj;
-  //   Game_initGameObjectPhysBody(&physicsBodies[bodyIdx], obj);
-  //   bodyIdx++;
-  // }
-#endif
 
   // simulate physics
   PhysState_step(&game->physicsState, game->physicsBodies,
@@ -241,6 +231,11 @@ void Game_updatePhysics(Game* game) {
        ++i, body++) {
     obj = Game_getObjectByID(body->id);
     obj->position = body->position;
+
+    Vec3d_copyFrom(&physUpdatedPosition, &body->position);
+    Vec3d_sub(&physUpdatedPosition,
+              &modelTypesProperties[obj->modelType].centroidOffset);
+    Vec3d_copyFrom(&obj->position, &physUpdatedPosition);
   }
 }
 
