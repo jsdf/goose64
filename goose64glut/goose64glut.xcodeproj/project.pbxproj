@@ -30,6 +30,7 @@
 		73E1066C23B0146600DE8673 /* imgui_impl_opengl2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066923B0146600DE8673 /* imgui_impl_opengl2.cpp */; };
 		73E1066F23B014A600DE8673 /* imgui_widgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066D23B014A600DE8673 /* imgui_widgets.cpp */; };
 		73E1067023B014A600DE8673 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066E23B014A600DE8673 /* imgui_draw.cpp */; };
+		73E1067323B483A400DE8673 /* collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1067123B483A300DE8673 /* collision.cpp */; };
 		73E90496238B326100CF5D2F /* animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E90494238B326100CF5D2F /* animation.cpp */; };
 		73E9049923944EE700CF5D2F /* rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E9049823944EE700CF5D2F /* rotation.cpp */; };
 /* End PBXBuildFile section */
@@ -91,6 +92,8 @@
 		73E1066923B0146600DE8673 /* imgui_impl_opengl2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_impl_opengl2.cpp; path = ../imgui/examples/imgui_impl_opengl2.cpp; sourceTree = "<group>"; };
 		73E1066D23B014A600DE8673 /* imgui_widgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_widgets.cpp; path = ../imgui/imgui_widgets.cpp; sourceTree = "<group>"; };
 		73E1066E23B014A600DE8673 /* imgui_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_draw.cpp; path = ../imgui/imgui_draw.cpp; sourceTree = "<group>"; };
+		73E1067123B483A300DE8673 /* collision.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = collision.cpp; path = ../collision.cpp; sourceTree = "<group>"; };
+		73E1067223B483A400DE8673 /* collision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = collision.h; path = ../collision.h; sourceTree = "<group>"; };
 		73E90494238B326100CF5D2F /* animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animation.cpp; path = ../animation.cpp; sourceTree = "<group>"; };
 		73E90495238B326100CF5D2F /* animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = animation.h; path = ../animation.h; sourceTree = "<group>"; };
 		73E9049723944EE600CF5D2F /* rotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rotation.h; path = ../rotation.h; sourceTree = "<group>"; };
@@ -133,6 +136,8 @@
 				733266D7235EAB8100907B30 /* gameobject.cpp */,
 				733266DB235EAB8100907B30 /* input.h */,
 				733266EF235EC53400907B30 /* character.cpp */,
+				73E1067123B483A300DE8673 /* collision.cpp */,
+				73E1067223B483A400DE8673 /* collision.h */,
 				733266EE235EC53400907B30 /* character.h */,
 				733266D9235EAB8100907B30 /* objloader.cpp */,
 				733266ED235EAD0B00907B30 /* game.h */,
@@ -262,6 +267,7 @@
 				73E90496238B326100CF5D2F /* animation.cpp in Sources */,
 				733266E7235EAB8200907B30 /* objloader.cpp in Sources */,
 				73735E5E23600F730048C9EC /* characterstate.cpp in Sources */,
+				73E1067323B483A400DE8673 /* collision.cpp in Sources */,
 				73735E6023600FD00048C9EC /* item.cpp in Sources */,
 				733266E8235EAB8200907B30 /* vec2d.cpp in Sources */,
 				73E9049923944EE700CF5D2F /* rotation.cpp in Sources */,

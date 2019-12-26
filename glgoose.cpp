@@ -35,6 +35,7 @@
 #include "player.h"
 #include "renderer.h"
 #include "university_map.h"
+#include "university_map_collision.h"
 #include "vec3d.h"
 
 #include "character_anim.h"
@@ -50,6 +51,7 @@
 #define DEBUG_ANIMATION_MORE 0
 #define DEBUG_ATTACHMENT 0
 #define DEBUG_PHYSICS 0
+#define DEBUG_COLLISION_MESH 1
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
 #define UPDATE_SKIP_RATE 1
@@ -63,6 +65,7 @@ Vec3d viewPos = {0.0f, 50.0f, 0.0f};
 // freeview camera angle
 float cameraAngle = 180.0f;
 
+int testCollisionResult;
 bool keysDown[127];
 Input input;
 GameObject* selectedObject = NULL;
@@ -158,6 +161,8 @@ void drawGUI() {
   // Display some text (you can use a format strings too)
   ImGui::Text("Selected object: %d (%s)", obj ? obj->id : -1,
               obj ? ModelTypeStrings[obj->modelType] : "none");
+  ImGui::InputInt("testCollisionResult", (int*)&testCollisionResult, 0, 1,
+                  inputFlags);
 
   if (obj) {
     ImGui::InputFloat3("Position", (float*)&obj->position, "%.3f", inputFlags);
@@ -617,6 +622,32 @@ void renderScene(void) {
     }
   }
 
+#if DEBUG_COLLISION_MESH
+  Triangle* tri;
+
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
+  glDisable(GL_TEXTURE_2D);
+  glEnable(GL_AUTO_NORMAL);
+  glEnable(GL_LIGHTING);
+  glPushMatrix();
+  glTranslatef(0.0, 0.0, 0.0);
+  glBegin(GL_TRIANGLES);
+  for (i = 0, tri = university_map_collision_collision_mesh;
+       i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
+    if (testCollisionResult == i) {
+      glColor3f(0.5f, 0.0f, 0.0f);
+      glVertex3f(tri->a.x, tri->a.y, tri->a.z);
+      glVertex3f(tri->b.x, tri->b.y, tri->b.z);
+      glVertex3f(tri->c.x, tri->c.y, tri->c.z);
+    } else {
+      continue;
+    }
+  }
+  glEnd();
+  glPopMatrix();
+  glPopAttrib();
+#endif
+
 #if DEBUG_PHYSICS
   PhysBody* body;
   for (i = 0, body = game->physicsBodies; i < game->physicsBodiesCount;
@@ -866,6 +897,40 @@ void processMouse(int button, int state, int x, int y) {
   }
 }
 
+void testCollision() {
+  int i;
+  Triangle* tri;
+  Game* game = Game_get();
+  Vec3d gooseCenter;
+  Game_getObjCenter(game->player.goose, &gooseCenter);
+  float gooseRadius = Game_getObjRadius(game->player.goose);
+  float closestHitDist = FLT_MAX;
+  float hitDist;
+
+  testCollisionResult = -1;
+  for (i = 0, tri = university_map_collision_collision_mesh;
+       i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
+    int result = !Collision_sphereTriangleIsSeparated(
+        &tri->a, &tri->b, &tri->c, &gooseCenter, gooseRadius);
+
+    if (result) {
+      printf("collided with: %d ", i);
+      Vec3d_print(&tri->a);
+      Vec3d_print(&tri->b);
+      Vec3d_print(&tri->c);
+      printf("\n");
+
+      hitDist = MIN(MIN(Vec3d_distanceTo(&gooseCenter, &tri->a),
+                        Vec3d_distanceTo(&gooseCenter, &tri->b)),
+                    Vec3d_distanceTo(&gooseCenter, &tri->c));
+      if (hitDist < closestHitDist) {
+        closestHitDist = hitDist;
+        testCollisionResult = i;
+      }
+    }
+  }
+}
+
 void updateAndRender() {
   Game* game;
 
@@ -875,6 +940,7 @@ void updateAndRender() {
 
     game = Game_get();
 
+    testCollision();
     Game_update(&input);
 
     if (game->freeView) {

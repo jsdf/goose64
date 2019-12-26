@@ -28,6 +28,7 @@ int Game_canSeeOtherObject(GameObject* viewer,
                            int occuludingObjectsCount);
 
 void Game_getObjCenter(GameObject* obj, Vec3d* result);
+float Game_getObjRadius(GameObject* obj);
 
 void Game_update(Input* input);
 
