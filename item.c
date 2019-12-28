@@ -41,14 +41,14 @@ void Item_take(Item* self, ItemHolder* newHolder) {
           : Game_get()->tick > self->lastPickedUpTick + ITEM_STEAL_COOLDOWN) {
     if (self->holder) {
 #ifndef __N64__
-      debugPrintf("item taken from %s by %s\n",
-                  ItemHolderTypeStrings[self->holder->itemHolderType],
-                  ItemHolderTypeStrings[newHolder->itemHolderType]);
+      printf("item taken from %s by %s\n",
+             ItemHolderTypeStrings[self->holder->itemHolderType],
+             ItemHolderTypeStrings[newHolder->itemHolderType]);
 #endif
     } else {
 #ifndef __N64__
-      debugPrintf("item picked up by %s\n",
-                  ItemHolderTypeStrings[newHolder->itemHolderType]);
+      printf("item picked up by %s\n",
+             ItemHolderTypeStrings[newHolder->itemHolderType]);
 #endif
     }
 
@@ -89,8 +89,8 @@ void Item_drop(Item* self) {
   assert(self->holder != NULL);
 
 #ifndef __N64__
-  debugPrintf("item dropped by %s\n",
-              ItemHolderTypeStrings[self->holder->itemHolderType]);
+  printf("item dropped by %s\n",
+         ItemHolderTypeStrings[self->holder->itemHolderType]);
 #endif
   // clear back reference
   self->holder->heldItem = NULL;

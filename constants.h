@@ -11,12 +11,8 @@
 #define radToDeg(angleInRadians) ((angleInRadians)*180.0 / CONST_PI)
 
 #ifdef __N64__
-
 #define RAND(x) (guRandom() % x) /* random number between 0 to x */
 #else
-#include <stdio.h>
-#define debugPrintf(...) printf(__VA_ARGS__)
-
 #define RAND(x) (rand() % x) /* random number between 0 to x */
 #endif
 

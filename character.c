@@ -335,7 +335,7 @@ void Character_updateDefaultActivityState(Character* self, Game* game) {
       self->startedActivityTick = game->tick;
 
 #ifndef __N64__
-      debugPrintf("started default activity\n");
+      printf("started default activity\n");
 #endif
     }
   }
@@ -374,7 +374,7 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
       // nope, give up
       self->target = NULL;
 #ifndef __N64__
-      debugPrintf("can't see the item anymore, giving up\n");
+      printf("can't see the item anymore, giving up\n");
 #endif
       Character_transitionToState(self, IdleState);
       return;
@@ -388,7 +388,7 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
         CHARACTER_NEAR_OBJ_TAKE_DIST) {
       if (someoneElseIsHoldingItem) {
 #ifndef __N64__
-        debugPrintf("stealing item back\n");
+        printf("stealing item back\n");
 #endif
       }
       Item_take(self->target, &self->itemHolder);
