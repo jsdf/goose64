@@ -385,19 +385,19 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
     hit = !Collision_sphereTriangleIsSeparated(tri, objCenter, objRadius);
 
     if (hit) {
-      printf("collided with: %d ", i);
-      Vec3d_print(&tri->a);
-      Vec3d_print(&tri->b);
-      Vec3d_print(&tri->c);
-      printf("\n");
+      // printf("collided with: %d ", i);
+      // Vec3d_print(&tri->a);
+      // Vec3d_print(&tri->b);
+      // Vec3d_print(&tri->c);
+      // printf("\n");
 
       Collision_distancePointTriangleExact(objCenter, tri,
                                            &closestPointOnTriangle);
-      printf("objCenter:");
-      Vec3d_print(objCenter);
-      printf("closestPointOnTriangle:");
-      Vec3d_print(&closestPointOnTriangle);
-      printf(" \n");
+      // printf("objCenter:");
+      // Vec3d_print(objCenter);
+      // printf("closestPointOnTriangle:");
+      // Vec3d_print(&closestPointOnTriangle);
+      // printf(" \n");
 
       hitDist = Vec3d_distanceTo(objCenter, &closestPointOnTriangle);
 
@@ -408,7 +408,7 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
       testCollisionResults.insert(
           std::pair<int, SphereTriangleCollision>(i, debugResult));
 
-      printf("hit dist: %f\n", hitDist);
+      // printf("hit dist: %f\n", hitDist);
 #endif
 #endif
 

@@ -10,6 +10,11 @@
 #define degToRad(angleInDegrees) ((angleInDegrees)*CONST_PI / 180.0)
 #define radToDeg(angleInRadians) ((angleInRadians)*180.0 / CONST_PI)
 
+#ifndef __N64__
+// dumb
+#include <stdio.h>
+#endif
+
 #ifdef __N64__
 #define RAND(x) (guRandom() % x) /* random number between 0 to x */
 #else
