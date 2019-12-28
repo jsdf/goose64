@@ -22,6 +22,7 @@ typedef struct SphereTriangleCollision {
 
 #include <map>
 extern int testCollisionResult;
+extern int testCollisionTrace;
 
 extern std::map<int, SphereTriangleCollision> testCollisionResults;
 #endif

@@ -355,6 +355,7 @@ void Collision_distancePointTriangleExact(Vec3d* point,
 
 #include <map>
 int testCollisionResult;
+int testCollisionTrace = FALSE;  // set to true to capture trace
 
 std::map<int, SphereTriangleCollision> testCollisionResults;
 #endif
@@ -377,7 +378,9 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 
 #ifndef __N64__
 #ifdef __cplusplus
-  testCollisionResults.clear();
+  if (testCollisionTrace) {
+    testCollisionResults.clear();
+  }
 #endif
 #endif
 
@@ -403,11 +406,12 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 
 #ifndef __N64__
 #ifdef __cplusplus
-      SphereTriangleCollision debugResult = {i, hitDist, closestPointOnTriangle,
-                                             tri};
-      testCollisionResults.insert(
-          std::pair<int, SphereTriangleCollision>(i, debugResult));
-
+      if (testCollisionTrace) {
+        SphereTriangleCollision debugResult = {i, hitDist,
+                                               closestPointOnTriangle, tri};
+        testCollisionResults.insert(
+            std::pair<int, SphereTriangleCollision>(i, debugResult));
+      }
       // printf("hit dist: %f\n", hitDist);
 #endif
 #endif
@@ -426,13 +430,11 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 
 #ifndef __N64__
 #ifdef __cplusplus
-  testCollisionResult = closestHitTriangleIndex;
+  if (testCollisionTrace) {
+    testCollisionResult = closestHitTriangleIndex;
+  }
 #endif
 #endif
 
-  if (closestHitTriangleIndex > -1) {
-    return TRUE;
-  } else {
-    return FALSE;
-  }
+  return closestHitTriangleIndex > -1;
 }

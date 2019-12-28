@@ -957,10 +957,11 @@ void testCollision() {
   Game_getObjCenter(game->player.goose, &gooseCenter);
   float gooseRadius = Game_getObjRadius(game->player.goose);
   SphereTriangleCollision result;
-
+  testCollisionTrace = TRUE;
   Collision_testMeshSphereCollision(university_map_collision_collision_mesh,
                                     UNIVERSITY_MAP_COLLISION_LENGTH,
                                     &gooseCenter, gooseRadius, &result);
+  testCollisionTrace = FALSE;
 }
 
 void updateAndRender() {
