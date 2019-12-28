@@ -10,10 +10,37 @@ typedef struct Triangle {
   Vec3d c;
 } Triangle;
 
-int Collision_sphereTriangleIsSeparated(Vec3d* AOrig,
-                                        Vec3d* BOrig,
-                                        Vec3d* COrig,
-                                        Vec3d* P,
-                                        double r);
+typedef struct SphereTriangleCollision {
+  int index;
+  float distance;
+  Vec3d posInTriangle;
+  Triangle* triangle;
+} SphereTriangleCollision;
+
+#ifndef __N64__
+#ifdef __cplusplus
+
+#include <map>
+extern int testCollisionResult;
+
+extern std::map<int, SphereTriangleCollision> testCollisionResults;
+#endif
+#endif
+
+void Triangle_getCentroid(Triangle* triangle, Vec3d* result);
+
+int Collision_sphereTriangleIsSeparated(Triangle* triangle,
+                                        Vec3d* sphereCenter,
+                                        double sphereRadius);
+
+void Collision_distancePointTriangleExact(Vec3d* point,
+                                          Triangle* triangle,
+                                          Vec3d* closest);
+
+int Collision_testMeshSphereCollision(Triangle* triangles,
+                                      int trianglesLength,
+                                      Vec3d* objCenter,
+                                      float objRadius,
+                                      SphereTriangleCollision* result);
 
 #endif /* !_COLLISION_H_ */

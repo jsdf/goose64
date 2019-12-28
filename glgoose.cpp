@@ -26,6 +26,7 @@
 
 #include "animation.h"
 #include "character.h"
+#include "collision.h"
 #include "constants.h"
 #include "game.h"
 #include "gameobject.h"
@@ -65,7 +66,6 @@ Vec3d viewPos = {0.0f, 50.0f, 0.0f};
 // freeview camera angle
 float cameraAngle = 180.0f;
 
-int testCollisionResult;
 bool keysDown[127];
 Input input;
 GameObject* selectedObject = NULL;
@@ -217,6 +217,7 @@ void drawString(char* string, int x, int y) {
   glPopMatrix();
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
   glPopAttrib();
 }
 
@@ -559,6 +560,81 @@ void drawGameObject(GameObject* obj) {
   glPopMatrix();
 }
 
+void drawCollisionMesh() {
+  int i;
+
+  Triangle* tri;
+  Vec3d triCentroid;
+  char triIndexText[100];
+
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
+               GL_DEPTH_BUFFER_BIT | GL_POLYGON_BIT);
+  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+
+  glPushMatrix();
+  float triColor;
+  for (i = 0, tri = university_map_collision_collision_mesh;
+       i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
+    triColor = (i / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
+    glColor3f(0.0f, triColor, 1.0f - triColor);
+    if (testCollisionResults.count(i) > 0) {
+      if (testCollisionResult == i) {
+        glColor3f(0.5f, 0.0f, 0.0f);
+      }
+      glBegin(GL_TRIANGLES);
+      glVertex3f(tri->a.x, tri->a.y, tri->a.z);
+      glVertex3f(tri->b.x, tri->b.y, tri->b.z);
+      glVertex3f(tri->c.x, tri->c.y, tri->c.z);
+      glEnd();
+
+    } else {
+      glBegin(GL_LINES);
+      glVertex3f(tri->a.x, tri->a.y, tri->a.z);
+      glVertex3f(tri->b.x, tri->b.y, tri->b.z);
+      glVertex3f(tri->c.x, tri->c.y, tri->c.z);
+      glEnd();
+    }
+  }
+
+  for (i = 0, tri = university_map_collision_collision_mesh;
+       i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
+    triColor = (i / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
+    Triangle_getCentroid(tri, &triCentroid);
+
+    float triCollisionDistance = 0;
+    if (testCollisionResults.count(i) > 0) {
+      try {
+        SphereTriangleCollision& collisionTestResult =
+            testCollisionResults.at(i);
+
+        // marker showing closest hit point in triangle
+        Vec3d& hitPos = collisionTestResult.posInTriangle;
+        glPushMatrix();
+        glTranslatef(hitPos.x, hitPos.y, hitPos.z);
+        if (testCollisionResult == i) {
+          drawMarker(0.5f * 0.8, 0.0f, 0.0f, 1);
+        } else {
+          drawMarker(0.0f, triColor * 0.8, (1.0f - triColor) * 0.8, 1);
+        }
+        glPopMatrix();
+
+        // text label
+        triCollisionDistance = collisionTestResult.distance;
+        sprintf(triIndexText, "%d: %f %s", i, triCollisionDistance,
+                i == testCollisionResult ? "[closest]" : "");
+        drawStringAtPoint(triIndexText, &triCentroid, TRUE);
+      } catch (const std::out_of_range& oor) {
+        std::cerr << "missing SphereTriangleCollision: " << i << "\n";
+      }
+    }
+  }
+
+  glPopMatrix();
+  glPopAttrib();
+}
+
 void renderScene(void) {
   int i;
   Game* game;
@@ -623,29 +699,7 @@ void renderScene(void) {
   }
 
 #if DEBUG_COLLISION_MESH
-  Triangle* tri;
-
-  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
-  glDisable(GL_TEXTURE_2D);
-  glEnable(GL_AUTO_NORMAL);
-  glEnable(GL_LIGHTING);
-  glPushMatrix();
-  glTranslatef(0.0, 0.0, 0.0);
-  glBegin(GL_TRIANGLES);
-  for (i = 0, tri = university_map_collision_collision_mesh;
-       i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
-    if (testCollisionResult == i) {
-      glColor3f(0.5f, 0.0f, 0.0f);
-      glVertex3f(tri->a.x, tri->a.y, tri->a.z);
-      glVertex3f(tri->b.x, tri->b.y, tri->b.z);
-      glVertex3f(tri->c.x, tri->c.y, tri->c.z);
-    } else {
-      continue;
-    }
-  }
-  glEnd();
-  glPopMatrix();
-  glPopAttrib();
+  drawCollisionMesh();
 #endif
 
 #if DEBUG_PHYSICS
@@ -898,37 +952,15 @@ void processMouse(int button, int state, int x, int y) {
 }
 
 void testCollision() {
-  int i;
-  Triangle* tri;
   Game* game = Game_get();
   Vec3d gooseCenter;
   Game_getObjCenter(game->player.goose, &gooseCenter);
   float gooseRadius = Game_getObjRadius(game->player.goose);
-  float closestHitDist = FLT_MAX;
-  float hitDist;
+  SphereTriangleCollision result;
 
-  testCollisionResult = -1;
-  for (i = 0, tri = university_map_collision_collision_mesh;
-       i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
-    int result = !Collision_sphereTriangleIsSeparated(
-        &tri->a, &tri->b, &tri->c, &gooseCenter, gooseRadius);
-
-    if (result) {
-      printf("collided with: %d ", i);
-      Vec3d_print(&tri->a);
-      Vec3d_print(&tri->b);
-      Vec3d_print(&tri->c);
-      printf("\n");
-
-      hitDist = MIN(MIN(Vec3d_distanceTo(&gooseCenter, &tri->a),
-                        Vec3d_distanceTo(&gooseCenter, &tri->b)),
-                    Vec3d_distanceTo(&gooseCenter, &tri->c));
-      if (hitDist < closestHitDist) {
-        closestHitDist = hitDist;
-        testCollisionResult = i;
-      }
-    }
-  }
+  Collision_testMeshSphereCollision(university_map_collision_collision_mesh,
+                                    UNIVERSITY_MAP_COLLISION_LENGTH,
+                                    &gooseCenter, gooseRadius, &result);
 }
 
 void updateAndRender() {

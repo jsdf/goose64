@@ -95,6 +95,13 @@ Vec3d* Vec3d_multiplyScalar(Vec3d* self, float scalar) {
   return self;
 }
 
+Vec3d* Vec3d_divScalar(Vec3d* self, float scalar) {
+  self->x /= scalar;
+  self->y /= scalar;
+  self->z /= scalar;
+  return self;
+}
+
 float Vec3d_dot(Vec3d* self, Vec3d* other) {
   return self->x * other->x + self->y * other->y + self->z * other->z;
 }
