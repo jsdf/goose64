@@ -83,7 +83,7 @@ Vec2d* Vec2d_subScalar(Vec2d* self, float scalar) {
   return self;
 }
 
-Vec2d* Vec2d_multiplyScalar(Vec2d* self, float scalar) {
+Vec2d* Vec2d_mulScalar(Vec2d* self, float scalar) {
   self->x *= scalar;
   self->y *= scalar;
   return self;

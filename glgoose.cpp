@@ -257,7 +257,7 @@ void drawRaycastLine(RaycastTraceEvent raycast) {
 
   // create end point based on origin and direction
   Vec3d rayEnd = raycast.direction;
-  Vec3d_multiplyScalar(&rayEnd, 1000.0);
+  Vec3d_mulScalar(&rayEnd, 1000.0);
   Vec3d_add(&rayEnd, &raycast.origin);
 
   glDisable(GL_TEXTURE_2D);

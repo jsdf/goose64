@@ -57,7 +57,7 @@ void PhysBehavior_collisionSeparationOffset(Vec3d* result,
                                             float separationForce) {
   Vec3d_copyFrom(result, pos);
   Vec3d_normalise(result);
-  Vec3d_multiplyScalar(result, overlap * separationForce);
+  Vec3d_mulScalar(result, overlap * separationForce);
 }
 
 void PhysBehavior_collision(PhysBody* body, PhysBody* pool, int numInPool) {
@@ -145,17 +145,17 @@ void PhysBody_integrateMotion(PhysBody* body, float dt, float drag) {
   Vec3d newPosition;
   Vec3d_origin(&newPosition);
   /* Scale force to mass. */
-  Vec3d_multiplyScalar(&body->acceleration, body->massInverse);
+  Vec3d_mulScalar(&body->acceleration, body->massInverse);
   /* Derive velocity. */
   Vec3d_copyFrom(&body->velocity, &body->position);
   Vec3d_sub(&body->velocity, &body->prevPosition);
   /* Apply friction. */
-  Vec3d_multiplyScalar(&body->velocity, drag);
+  Vec3d_mulScalar(&body->velocity, drag);
   /* Apply acceleration force to new position. */
   /* Get integral acceleration, apply to velocity, then apply updated
      velocity to position */
   Vec3d_copyFrom(&newPosition, &body->position);
-  Vec3d_multiplyScalar(&body->acceleration, dt);
+  Vec3d_mulScalar(&body->acceleration, dt);
   Vec3d_add(&body->velocity, &body->acceleration);
   Vec3d_add(&newPosition, &body->velocity);
   /* Store old position, update position to new position. */
@@ -166,7 +166,7 @@ void PhysBody_integrateMotion(PhysBody* body, float dt, float drag) {
   Vec3d_origin(&body->acceleration);
   /* store velocity for use in acc calculations by user code */
   Vec3d_copyFrom(&body->nonIntegralVelocity, &body->velocity);
-  Vec3d_multiplyScalar(&body->nonIntegralVelocity, 1.0 / dt);
+  Vec3d_mulScalar(&body->nonIntegralVelocity, 1.0 / dt);
 }
 
 void PhysBody_integrateBodies(PhysBody* bodies,

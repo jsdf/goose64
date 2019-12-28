@@ -171,7 +171,7 @@ void Game_updateCamera(Game* game, Input* input) {
   // Vec3d_set(&cameraOffset, 0.0F, 0, -0.8F); // side view
 
   cameraDist = 1000.0f / game->viewZoom;
-  Vec3d_multiplyScalar(&cameraOffset, cameraDist);
+  Vec3d_mulScalar(&cameraOffset, cameraDist);
 
   Vec3d_copyFrom(&game->viewPos, &game->player.goose->position);
   Vec3d_add(&game->viewPos, &cameraOffset);

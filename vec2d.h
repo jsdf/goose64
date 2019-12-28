@@ -23,7 +23,7 @@ Vec2d* Vec2d_normalise(Vec2d* self);
 Vec2d* Vec2d_addScalar(Vec2d* self, float scalar);
 
 Vec2d* Vec2d_subScalar(Vec2d* self, float scalar);
-Vec2d* Vec2d_multiplyScalar(Vec2d* self, float scalar);
+Vec2d* Vec2d_mulScalar(Vec2d* self, float scalar);
 Vec2d* Vec2d_divideScalar(Vec2d* self, float scalar);
 
 float Vec2d_distanceTo(Vec2d* self, Vec2d* other);

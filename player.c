@@ -67,7 +67,7 @@ void Player_update(Player* self, Input* input, Game* game) {
   playerMovementScaled = playerMovement;
 
 #if USE_PHYSICS_MOVEMENT
-  Vec3d_multiplyScalar(&playerMovementScaled, GOOSE_FORCE);
+  Vec3d_mulScalar(&playerMovementScaled, GOOSE_FORCE);
   Vec3d_add(&goose->physBody->acceleration, &playerMovementScaled);
   playerMovement = goose->physBody->nonIntegralVelocity;  // from last frame :(
   playerMovement.y = 0;
@@ -75,7 +75,7 @@ void Player_update(Player* self, Input* input, Game* game) {
   resultantMovementSpeed = Vec3d_mag(&playerMovement);
   resultantMovementSpeed /= PLAYER_PHYS_WALK_ANIM_MOVEMENT_DIVISOR;
 #else
-  Vec3d_multiplyScalar(&playerMovementScaled, GOOSE_SPEED);
+  Vec3d_mulScalar(&playerMovementScaled, GOOSE_SPEED);
 
   Vec3d_add(&goose->position, &playerMovementScaled);
   // PhysBody_translateWithoutForce(goose->physBody, &playerMovementScaled);

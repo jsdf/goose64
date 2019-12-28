@@ -98,14 +98,14 @@ int Collision_sphereTriangleIsSeparated(Triangle* triangle,
 
   // Q1 = A * e1 - AB * d1
   Vec3d_copyFrom(&Q1, &A);
-  Vec3d_multiplyScalar(&Q1, e1);
+  Vec3d_mulScalar(&Q1, e1);
   Vec3d_copyFrom(&ABd1, &AB);
-  Vec3d_multiplyScalar(&ABd1, d1);
+  Vec3d_mulScalar(&ABd1, d1);
   Vec3d_sub(&Q1, &ABd1);
 
   // QC = C * e1 - Q1
   Vec3d_copyFrom(&QC, &C);
-  Vec3d_multiplyScalar(&QC, e1);
+  Vec3d_mulScalar(&QC, e1);
   Vec3d_sub(&QC, &Q1);
 
   sep5 = (Vec3d_dot(&Q1, &Q1) > rr * e1 * e1) & (Vec3d_dot(&Q1, &QC) > 0);
@@ -118,14 +118,14 @@ int Collision_sphereTriangleIsSeparated(Triangle* triangle,
 
   // Q2 = B * e2 - BC * d2
   Vec3d_copyFrom(&Q2, &B);
-  Vec3d_multiplyScalar(&Q2, e2);
+  Vec3d_mulScalar(&Q2, e2);
   Vec3d_copyFrom(&BCd2, &BC);
-  Vec3d_multiplyScalar(&BCd2, d2);
+  Vec3d_mulScalar(&BCd2, d2);
   Vec3d_sub(&Q2, &BCd2);
 
   // QA = A * e2 - Q2
   Vec3d_copyFrom(&QA, &A);
-  Vec3d_multiplyScalar(&QA, e2);
+  Vec3d_mulScalar(&QA, e2);
   Vec3d_sub(&QA, &Q2);
 
   sep6 = (Vec3d_dot(&Q2, &Q2) > rr * e2 * e2) & (Vec3d_dot(&Q2, &QA) > 0);
@@ -138,14 +138,14 @@ int Collision_sphereTriangleIsSeparated(Triangle* triangle,
 
   // Q3 = C * e3 - CA * d3
   Vec3d_copyFrom(&Q3, &C);
-  Vec3d_multiplyScalar(&Q3, e3);
+  Vec3d_mulScalar(&Q3, e3);
   Vec3d_copyFrom(&CAd3, &CA);
-  Vec3d_multiplyScalar(&CAd3, d3);
+  Vec3d_mulScalar(&CAd3, d3);
   Vec3d_sub(&Q3, &CAd3);
 
   // QB = B * e3 - Q3
   Vec3d_copyFrom(&QB, &B);
-  Vec3d_multiplyScalar(&QB, e3);
+  Vec3d_mulScalar(&QB, e3);
   Vec3d_sub(&QB, &Q3);
 
   sep7 = (Vec3d_dot(&Q3, &Q3) > rr * e3 * e3) & (Vec3d_dot(&Q3, &QB) > 0);
@@ -327,9 +327,9 @@ void Collision_distancePointTriangleExact(Vec3d* point,
 
   // closest = triangle->a + t0 * edge0 + t1 * edge1;
   t0edge0 = edge0;
-  Vec3d_multiplyScalar(&t0edge0, t0);
+  Vec3d_mulScalar(&t0edge0, t0);
   t1edge1 = edge1;
-  Vec3d_multiplyScalar(&t1edge1, t1);
+  Vec3d_mulScalar(&t1edge1, t1);
   *closest = triangle->a;
   Vec3d_add(closest, &t0edge0);
   Vec3d_add(closest, &t1edge1);

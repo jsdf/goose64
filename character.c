@@ -199,7 +199,7 @@ void Character_moveTowards(Character* self,
   float destAngle;
   Vec3d_directionTo(&self->obj->position, &target, &movement);
 
-  Vec3d_multiplyScalar(&movement, CHARACTER_SPEED * speedMultiplier);
+  Vec3d_mulScalar(&movement, CHARACTER_SPEED * speedMultiplier);
 
   Vec3d_add(&self->obj->position, &movement);
 

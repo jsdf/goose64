@@ -88,7 +88,7 @@ Vec3d* Vec3d_sub(Vec3d* self, Vec3d* other) {
   return self;
 }
 
-Vec3d* Vec3d_multiplyScalar(Vec3d* self, float scalar) {
+Vec3d* Vec3d_mulScalar(Vec3d* self, float scalar) {
   self->x *= scalar;
   self->y *= scalar;
   self->z *= scalar;
