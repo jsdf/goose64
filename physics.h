@@ -2,12 +2,19 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
+#include "collision.h"
 #include "constants.h"
 #include "vec3d.h"
 
 #define PHYS_MAX_STEPS 4
 
 #define PHYS_TIMESTEP 1.0 / 60.0
+
+typedef struct PhysWorldData {
+  Triangle* worldMeshTris;
+  int worldMeshTrisLength;
+  float gravity;
+} PhysWorldData;
 
 typedef struct PhysState {
   float accumulatedTime;
@@ -16,6 +23,7 @@ typedef struct PhysState {
   float simulationRate;
   float timeScale;
   int dynamicTimestep;  // boolean
+  PhysWorldData* worldData;
 } PhysState;
 
 typedef struct PhysBody {
@@ -34,7 +42,7 @@ typedef struct PhysBody {
   Vec3d prevAcceleration;
 } PhysBody;
 
-void PhysState_init(PhysState* self, float viscosity);
+void PhysState_init(PhysState* self, float viscosity, PhysWorldData* worldData);
 
 void PhysState_step(PhysState* physics,
                     PhysBody* bodies,

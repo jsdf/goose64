@@ -45,19 +45,19 @@
 #define FREEVIEW_SPEED 0.2f
 
 #define DEBUG_LOG_RENDER 0
-#define DEBUG_OBJECTS 1
-#define DEBUG_RAYCASTING 1
+#define DEBUG_OBJECTS 0
+#define DEBUG_RAYCASTING 0
 #define DEBUG_MODELS 0
 #define DEBUG_ANIMATION 0
 #define DEBUG_ANIMATION_MORE 0
 #define DEBUG_ATTACHMENT 0
 #define DEBUG_PHYSICS 0
-#define DEBUG_COLLISION_MESH 1
+#define DEBUG_COLLISION_MESH 0
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
-#define UPDATE_SKIP_RATE 1
 
 int glgooseFrame = 0;
+int updateSkipRate = 1;
 
 // actual vector representing the freeview camera's direction
 float cameraLX = 0.0f, cameraLZ = -1.0f;
@@ -70,10 +70,18 @@ bool keysDown[127];
 Input input;
 GameObject* selectedObject = NULL;
 
+PhysWorldData physWorldData = {university_map_collision_collision_mesh,
+                               UNIVERSITY_MAP_COLLISION_LENGTH,
+                               /*gravity*/ -98.0};
+
 // crap for gluProject/gluUnProject
 GLdouble lastModelView[16];
 GLdouble lastProjection[16];
 GLint lastViewport[4];
+
+// profiling
+float profTimeCharacters = 0;
+float profTimePhysics = 0;
 
 ObjModel models[MAX_MODEL_TYPE];
 
@@ -161,16 +169,39 @@ void drawGUI() {
   // Display some text (you can use a format strings too)
   ImGui::Text("Selected object: %d (%s)", obj ? obj->id : -1,
               obj ? ModelTypeStrings[obj->modelType] : "none");
+
+  ImGui::Text("collision");
   ImGui::InputInt("testCollisionResult", (int*)&testCollisionResult, 0, 1,
                   inputFlags);
+
+  std::string collKeys;
+  if (testCollisionResults.size()) {
+    std::map<int, SphereTriangleCollision>::iterator collIter =
+        testCollisionResults.begin();
+
+    while (collIter != testCollisionResults.end()) {
+      collKeys += std::to_string(collIter->first) + ",";
+
+      collIter++;
+    }
+  }
+  ImGui::Text("colliding tris=%s", collKeys.c_str());
 
   if (obj) {
     ImGui::InputFloat3("Position", (float*)&obj->position, "%.3f", inputFlags);
     ImGui::InputFloat3("Rotation", (float*)&obj->rotation, "%.3f", inputFlags);
 
     if (obj->physBody) {
-      ImGui::InputFloat3("Velocity",
+      ImGui::InputInt("physBody", (int*)&obj->physBody->id, 0, 1,
+                      ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat3("phys Velocity",
                          (float*)&obj->physBody->nonIntegralVelocity, "%.3f",
+                         ImGuiInputTextFlags_ReadOnly);
+
+      ImGui::InputFloat3("phys position", (float*)&obj->physBody->position,
+                         "%.3f", ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat3("phys prevPosition",
+                         (float*)&obj->physBody->prevPosition, "%.3f",
                          ImGuiInputTextFlags_ReadOnly);
     }
 
@@ -184,8 +215,18 @@ void drawGUI() {
                       1.0, "%.3f", inputFlags);
   }
 
+  ImGui::InputFloat("physWorldData.gravity", (float*)&physWorldData.gravity,
+                    1.0, 10.0, "%.3f", inputFlags);
+
+  ImGui::InputInt("updateSkipRate", (int*)&updateSkipRate, 1, 10, inputFlags);
+  updateSkipRate = MAX(updateSkipRate, 1);
+
   ImGui::Text("Frametime %.3f ms (%.1f FPS)",
               1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+  ImGui::Text("Phys=%.3fms, Characters=%.3f ms", profTimePhysics,
+              profTimeCharacters);
+
   ImGui::End();
 }
 
@@ -249,6 +290,42 @@ void drawLine(Vec3d* start, Vec3d* end) {
   glVertex3f(start->x, start->y, start->z);
   glVertex3f(end->x, end->y, end->z);
   glEnd();
+}
+
+void drawMotionVectorLine(Vec3d* from, Vec3d* to) {
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
+               GL_DEPTH_BUFFER_BIT);
+  glPushMatrix();
+
+  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_DEPTH_TEST);
+  glColor3f(0.0f, 0.0f, 0.0f);  // blue
+  drawLine(from, to);
+  glPushMatrix();
+  glTranslatef(from->x, from->y, from->z);
+  drawMarker(0.8f, 0.0f, 0.0f, 1);  // from red
+  glPopMatrix();
+  glPushMatrix();
+  glTranslatef(to->x, to->y, to->z);
+  drawMarker(0.0f, 0.8f, 0.0f, 1);  // to green
+  glPopMatrix();
+  glPopAttrib();
+  glPopMatrix();
+}
+
+void drawTriNormal(Vec3d* normal, Vec3d* position) {
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
+               GL_DEPTH_BUFFER_BIT);
+  glPushMatrix();
+
+  Vec3d from, to;
+
+  from = *position;
+  to = *normal;
+  Vec3d_mulScalar(&to, 20.0);
+  Vec3d_add(&to, position);
+  drawMotionVectorLine(&from, &to);
 }
 
 void drawRaycastLine(RaycastTraceEvent raycast) {
@@ -553,7 +630,8 @@ void drawGameObject(GameObject* obj) {
     if (Renderer_isZBufferedGameObject(obj)) {
       glEnable(GL_DEPTH_TEST);
     } else {
-      glDisable(GL_DEPTH_TEST);
+      // glDisable(GL_DEPTH_TEST);
+      glEnable(GL_DEPTH_TEST);
     }
     drawModel(obj);
   }
@@ -564,14 +642,16 @@ void drawCollisionMesh() {
   int i;
 
   Triangle* tri;
-  Vec3d triCentroid;
+  Vec3d triCentroid, triNormal;
   char triIndexText[100];
 
   glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
                GL_DEPTH_BUFFER_BIT | GL_POLYGON_BIT);
   glDisable(GL_TEXTURE_2D);
-  glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
+
+  // draw on top of everything else
+  // glDisable(GL_DEPTH_TEST);
 
   glPushMatrix();
   float triColor;
@@ -602,6 +682,7 @@ void drawCollisionMesh() {
        i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
     triColor = (i / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
     Triangle_getCentroid(tri, &triCentroid);
+    Triangle_getNormal(tri, &triNormal);
 
     float triCollisionDistance = 0;
     if (testCollisionResults.count(i) > 0) {
@@ -628,7 +709,13 @@ void drawCollisionMesh() {
       } catch (const std::out_of_range& oor) {
         std::cerr << "missing SphereTriangleCollision: " << i << "\n";
       }
+    } else {
+      // print other tri indexes
+      sprintf(triIndexText, "%d ", i);
+      drawStringAtPoint(triIndexText, &triCentroid, TRUE);
     }
+
+    drawTriNormal(&triNormal, &triCentroid);
   }
 
   glPopMatrix();
@@ -710,6 +797,7 @@ void renderScene(void) {
     glTranslatef(body->position.x, body->position.y, body->position.z);
     drawPhysBall(body->radius);
     glPopMatrix();
+    drawMotionVectorLine(&body->prevPosition, &body->position);
   }
 #endif
 
@@ -718,7 +806,7 @@ void renderScene(void) {
     drawRaycastLine(gameRaycastTrace[i]);
   }
 
-  // gameRaycastTrace.clear();
+  gameRaycastTrace.clear();
 #endif
 
 #if DEBUG_OBJECTS
@@ -817,7 +905,7 @@ void moveDown() {
   viewPos.y -= FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
-void updateInputs() {
+void updateFreeView() {
   Game* game;
   game = Game_get();
 
@@ -850,7 +938,27 @@ void updateInputs() {
             moveDown();
             break;
         }
-      } else {
+      }
+
+      if (key == 99 && glgooseFrame % 10 == 0) {  // c
+        game->freeView = !game->freeView;
+        if (game->freeView) {
+          printf("changing to freeview\n");
+        } else {
+          printf("changing from freeview\n");
+        }
+      }
+    }
+  }
+}
+
+void updateInputs() {
+  Game* game;
+  game = Game_get();
+
+  for (int key = 0; key < 127; ++key) {
+    if (keysDown[key]) {
+      if (!game->freeView) {
         switch (key) {
           case 113:  // q
             input.zoomIn = TRUE;
@@ -881,10 +989,6 @@ void updateInputs() {
 
       if (key == 112 && glgooseFrame % 10 == 0) {  // p
         game->paused = !game->paused;
-      }
-
-      if (key == 99 && game->tick % 10 == 0) {  // c
-        game->freeView = !game->freeView;
       }
     }
   }
@@ -966,21 +1070,28 @@ void testCollision() {
 
 void updateAndRender() {
   Game* game;
+  game = Game_get();
 
   glgooseFrame++;
-  if (glgooseFrame % UPDATE_SKIP_RATE == 0) {
+  updateFreeView();
+  if (glgooseFrame % updateSkipRate == 0) {
     updateInputs();
 
-    game = Game_get();
-
-    testCollision();
-    Game_update(&input);
-
-    if (game->freeView) {
-      game->viewPos = viewPos;
+    if (game->tick % 60 == 0) {
+      profTimeCharacters = game->profTimeCharacters / 60.0f;
+      game->profTimeCharacters = 0.0f;
+      profTimePhysics = game->profTimePhysics / 60.0f;
+      game->profTimePhysics = 0.0f;
     }
-  } else {
-    printf("skipping frame %d\n", glgooseFrame % UPDATE_SKIP_RATE);
+
+#if DEBUG_COLLISION_MESH
+    testCollision();
+#endif
+
+    Game_update(&input);
+  }
+  if (game->freeView) {
+    game->viewPos = viewPos;
   }
   renderScene();
 }
@@ -991,7 +1102,7 @@ int main(int argc, char** argv) {
   Game* game;
   GameObject* obj;
 
-  Game_init(university_map_data, UNIVERSITY_MAP_COUNT);
+  Game_init(university_map_data, UNIVERSITY_MAP_COUNT, &physWorldData);
   game = Game_get();
 
   Input_init(&input);

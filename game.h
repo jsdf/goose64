@@ -5,8 +5,11 @@
 #include "gameobject.h"
 #include "gametypes.h"
 #include "input.h"
+#include "physics.h"
 
-void Game_init(GameObject* worldObjects, int worldObjectsCount);
+void Game_init(GameObject* worldObjects,
+               int worldObjectsCount,
+               PhysWorldData* physWorldData);
 Game* Game_get();
 
 GameObject* Game_findObjectByType(ModelType modelType);

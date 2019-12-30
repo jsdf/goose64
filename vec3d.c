@@ -46,6 +46,14 @@ float Vec3d_distanceTo(Vec3d* self, Vec3d* other) {
   return sqrtf((xDist * xDist) + (yDist * yDist) + (zDist * zDist));
 }
 
+float Vec3d_distanceToSq(Vec3d* self, Vec3d* other) {
+  float xDist, yDist, zDist;
+  xDist = self->x - other->x;
+  yDist = self->y - other->y;
+  zDist = self->z - other->z;
+  return (xDist * xDist) + (yDist * yDist) + (zDist * zDist);
+}
+
 Vec3d* Vec3d_normalise(Vec3d* self) {
   float magnitude;
   if (self->x == 0.0F && self->y == 0.0F && self->z == 0.0F) {
@@ -129,5 +137,14 @@ char* Vec3d_toString(Vec3d* self, char* buffer) {
 void Vec3d_print(Vec3d* self) {
   printf("{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
 }
+
+#ifdef __cplusplus
+#include <string>
+std::string Vec3d_toStdString(Vec3d* self) {
+  char buffer[100];
+  sprintf(buffer, "{x:%.3f, y:%.3f, z:%.3f}", self->x, self->y, self->z);
+  return buffer;
+}
+#endif
 
 #endif

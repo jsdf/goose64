@@ -29,6 +29,8 @@ extern std::map<int, SphereTriangleCollision> testCollisionResults;
 #endif
 
 void Triangle_getCentroid(Triangle* triangle, Vec3d* result);
+void Triangle_getNormal(Triangle* triangle, Vec3d* result);
+float Triangle_comparePoint(Triangle* triangle, Vec3d* point);
 
 int Collision_sphereTriangleIsSeparated(Triangle* triangle,
                                         Vec3d* sphereCenter,

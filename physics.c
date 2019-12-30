@@ -2,15 +2,21 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "collision.h"
 #include "physics.h"
 
-void PhysState_init(PhysState* self, float viscosity) {
+#define PHYS_MIN_MOVEMENT 0.5
+
+void PhysState_init(PhysState* self,
+                    float viscosity,
+                    PhysWorldData* worldData) {
   self->accumulatedTime = 0.0;
   self->clock = 0.0;
   self->viscosity = viscosity;
   self->simulationRate = 1.0;
   self->timeScale = 1.0;
   self->dynamicTimestep = TRUE;
+  self->worldData = worldData;
 }
 
 void PhysBody_init(PhysBody* self,
@@ -49,6 +55,133 @@ void PhysBehavior_floorClamp(PhysBody* body, float floorHeight) {
   if (body->position.y - body->radius < floorHeight) {
     body->position.y = floorHeight + body->radius;
   }
+}
+
+int PhysBehavior_worldCollisionResponseStep(PhysBody* body,
+                                            PhysWorldData* world) {
+  int hasCollision;
+  float distanceToIntersect, responseDistance, bodyInFrontOfTriangle;
+  SphereTriangleCollision collision;
+  Vec3d response, beforePos;
+
+  hasCollision = Collision_testMeshSphereCollision(
+      world->worldMeshTris, world->worldMeshTrisLength, &body->position,
+      body->radius, &collision);
+
+  if (!hasCollision) {
+    return FALSE;
+  }
+
+#ifndef __N64__
+  if (body->id == 2) {
+    printf("player collided\n");
+  }
+#endif
+  distanceToIntersect = collision.distance;
+
+  bodyInFrontOfTriangle =
+      Triangle_comparePoint(collision.triangle, &body->position);
+
+  // move to intersect + radius
+  Triangle_getNormal(collision.triangle, &response);
+
+  responseDistance = 0;
+
+  if (bodyInFrontOfTriangle >= 0) {
+    // center of body is in front of or on face
+    responseDistance = body->radius + 0.01 - distanceToIntersect;
+  } else {
+    // center of body is behind face
+    responseDistance = body->radius + 0.01 + distanceToIntersect;
+  }
+  beforePos = body->position;
+  Vec3d_mulScalar(&response, responseDistance);
+  PhysBody_translateWithoutForce(body, &response);
+  // Vec3d_mulScalar(&response, responseDistance * body->mass);
+  // PhysBody_applyForce(body, &response);
+
+  //
+
+  //     if (distanceToIntersect < 0.001) {
+  //       Triangle_getNormal(collision.triangle, &response);
+  //     } else {
+  //       if (bodyInFrontOfTriangle >= 0) {
+  //         Vec3d_directionTo(&collision.posInTriangle, &body->position,
+  //         &response);
+  //       } else {
+  //         Vec3d_directionTo(&body->position, &collision.posInTriangle,
+  //         &response);
+  //       }
+  //     }
+
+  //     responseDistance = 0;
+
+  //     if (bodyInFrontOfTriangle >= 0) {
+  //       // center of body is in front of or on face
+  //       responseDistance = body->radius - distanceToIntersect;
+  //     } else {
+  //       // center of body is behind face
+  //       responseDistance = body->radius + distanceToIntersect;
+  //     }
+
+  //     if (Vec3d_mag(&response) > 1) {
+  //       printf("response is not a unit vector\n");
+  //     }
+
+  //     Vec3d_mulScalar(&response, responseDistance);
+
+  //     if (Vec3d_mag(&response) > body->radius + 0.0001) {
+  //       printf("moving further than radius\n");
+  //     }
+
+#ifdef __cplusplus
+  printf(
+      "PhysBody id=%d hasCollision tri=%d distanceToIntersect=%f beforePos=%s "
+      "afterPos=%s "
+      "posInTriangle=%s response=%s "
+      "responseDistance=%f bodyInFrontOfTriangle=%f",
+      body->id, collision.index, distanceToIntersect,
+      Vec3d_toStdString(&beforePos).c_str(),
+      Vec3d_toStdString(&body->position).c_str(),
+      Vec3d_toStdString(&collision.posInTriangle).c_str(),
+      Vec3d_toStdString(&response).c_str(), responseDistance,
+      bodyInFrontOfTriangle
+
+  );
+#endif
+  // PhysBody_translateWithoutForce(body, &response);
+  // Vec3d_sub(&response, &body->position);
+
+  // Vec3d_mulScalar(&response, body->mass);
+  // PhysBody_applyForce(body, &response);
+
+#ifdef __cplusplus
+  printf("newpos=%s\n", Vec3d_toStdString(&body->position).c_str());
+#endif
+
+  // bounce response
+  // response = collision.posInTriangle;
+  // Vec3d_sub(&response, &body->position);
+  // Vec3d_add(&body->acceleration, &response);
+
+  // printf("PhysBody id=%d hasCollision, response={%f %f %f}\n", body->id,
+  //        response.x, response.y, response.z);
+
+  return TRUE;
+}
+
+void PhysBehavior_worldCollisionResponse(PhysBody* body, PhysWorldData* world) {
+  int i;
+  for (i = 0; i < 10; ++i) {
+    if (!PhysBehavior_worldCollisionResponseStep(body, world)) {
+      break;
+    }
+  }
+#ifndef __N64__
+  if (i > 0) {
+    printf("collision response took %d iters\n", i);
+  }
+#endif
 }
 
 void PhysBehavior_collisionSeparationOffset(Vec3d* result,
@@ -129,16 +262,18 @@ void PhysBody_update(PhysBody* self,
                      float dt,
                      float drag,
                      PhysBody* pool,
-                     int numInPool) {
+                     int numInPool,
+                     PhysState* physics) {
   int floorHeight;
   Vec3d gravity;
-  Vec3d_init(&gravity, 0, -98.0 * self->mass, 0);
+  Vec3d_init(&gravity, 0, physics->worldData->gravity * self->mass, 0);
   // do behaviours
-  PhysBehavior_constantForce(self, gravity);
+  PhysBehavior_constantForce(self, gravity);  // apply gravity
   PhysBehavior_collision(self, pool, numInPool);
   floorHeight = 0.0;
-  // PhysBehavior_floorBounce(self,floorHeight);
+  // PhysBehavior_floorBounce(self, floorHeight);
   PhysBehavior_floorClamp(self, floorHeight);
+  PhysBehavior_worldCollisionResponse(self, physics->worldData);
 }
 
 void PhysBody_integrateMotion(PhysBody* body, float dt, float drag) {
@@ -158,9 +293,21 @@ void PhysBody_integrateMotion(PhysBody* body, float dt, float drag) {
   Vec3d_mulScalar(&body->acceleration, dt);
   Vec3d_add(&body->velocity, &body->acceleration);
   Vec3d_add(&newPosition, &body->velocity);
+
   /* Store old position, update position to new position. */
   Vec3d_copyFrom(&body->prevPosition, &body->position);
   Vec3d_copyFrom(&body->position, &newPosition);
+
+  // dampen small movements
+  if (Vec3d_distanceTo(&body->position, &body->prevPosition) <
+      PHYS_MIN_MOVEMENT) {
+    body->position = body->prevPosition;
+    Vec3d_origin(&body->velocity);
+    Vec3d_origin(&body->nonIntegralVelocity);
+    Vec3d_origin(&body->acceleration);
+    Vec3d_origin(&body->prevAcceleration);
+  }
+
   /* Reset acceleration force. */
   Vec3d_copyFrom(&body->prevAcceleration, &body->acceleration);
   Vec3d_origin(&body->acceleration);
@@ -172,13 +319,14 @@ void PhysBody_integrateMotion(PhysBody* body, float dt, float drag) {
 void PhysBody_integrateBodies(PhysBody* bodies,
                               int numBodies,
                               float dt,
-                              float drag) {
+                              float drag,
+                              PhysState* physics) {
   PhysBody* body;
   int i;
 
   for (i = 0, body = bodies; i < numBodies; i++, body++) {
     if (body->enabled) {
-      PhysBody_update(body, dt, drag, bodies, numBodies);
+      PhysBody_update(body, dt, drag, bodies, numBodies, physics);
     }
   }
 
@@ -236,7 +384,7 @@ void PhysState_step(PhysState* physics,
     timestep = PHYS_TIMESTEP * physics->timeScale;
     while (physics->accumulatedTime >= timestep && i < PHYS_MAX_STEPS) {
       /* Integrate bodies by fixed timestep. */
-      PhysBody_integrateBodies(bodies, numBodies, timestep, drag);
+      PhysBody_integrateBodies(bodies, numBodies, timestep, drag, physics);
       /* Reduce accumulatedTime by one timestep. */
       physics->accumulatedTime = physics->accumulatedTime - timestep;
       i++;

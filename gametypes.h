@@ -75,6 +75,10 @@ typedef struct Game {
 
   Player player;
   PhysState physicsState;
+
+  // profiling
+  float profTimeCharacters;
+  float profTimePhysics;
 } Game;
 
 #endif /* !_GAMETYPES_H_ */

@@ -24,7 +24,7 @@ ModelProperties modelTypesProperties[] = {
      /* centroidOffset */ {0.0, 0.0, 0.0}},
     /* GooseModel */
     {/* mass */ 200, /* radius */ 25.0,
-     /* centroidOffset */ {0.0, 19.0, 0.0}},
+     /* centroidOffset */ {0.0, 15.0, 0.0}},
     /* BookItemModel */
     {/* mass */ 10, /* radius */ 9.0,
      /* centroidOffset */ {0.0, 0.0, 0.0}},

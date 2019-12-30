@@ -14,6 +14,7 @@ Vec3d* Vec3d_init(Vec3d* self, float x, float y, float z);
 Vec3d* Vec3d_origin(Vec3d* self);
 Vec3d* Vec3d_copyFrom(Vec3d* self, Vec3d* other);
 float Vec3d_distanceTo(Vec3d* self, Vec3d* other);
+float Vec3d_distanceToSq(Vec3d* self, Vec3d* other);
 Vec3d* Vec3d_directionTo(Vec3d* self, Vec3d* other, Vec3d* result);
 
 Vec3d* Vec3d_add(Vec3d* self, Vec3d* other);
@@ -33,6 +34,11 @@ void Vec3d_cross(Vec3d* self, Vec3d* other, Vec3d* result);
 #ifndef __N64__
 char* Vec3d_toString(Vec3d* self, char* buffer);
 void Vec3d_print(Vec3d* self);
+
+#ifdef __cplusplus
+#include <string>
+std::string Vec3d_toStdString(Vec3d* self);
+#endif
 #endif
 
 #endif /* !VEC3D_H */

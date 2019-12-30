@@ -16,9 +16,23 @@
 #endif
 
 #ifdef __N64__
+#include "gu.h"
+#ifndef RAND
 #define RAND(x) (guRandom() % x) /* random number between 0 to x */
+#endif
 #else
 #define RAND(x) (rand() % x) /* random number between 0 to x */
+#endif
+
+#ifdef __N64__
+#define CUR_TIME_MS() OS_CYCLES_TO_USEC(osGetTime()) / 1000.0
+#else
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+#define CUR_TIME_MS() glutGet(GLUT_ELAPSED_TIME)
 #endif
 
 #define MEM_HEAP_BYTES 524288
@@ -50,7 +64,7 @@
 
 #ifdef __N64__
 // hard coded arch-dependent values for n64
-
+#include "mathdef.h"
 #ifndef FLT_EPSILON
 #define FLT_EPSILON 0.0000001192
 #endif
@@ -58,6 +72,7 @@
 #ifndef FLT_MAX
 #define FLT_MAX 3.402823e+38
 #endif
+
 #endif
 
 #endif /* CONSTANTS_H */

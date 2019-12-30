@@ -1,11 +1,16 @@
 #include <assert.h>
 #include <math.h>
+
 #ifndef __N64__
 #include <stdio.h>
 #endif
-#ifndef __N64__
-#include <float.h>
+
+#ifdef __N64__
+#include "mathdef.h"
+#else
+#include "float.h"
 #endif
+
 #include <stdlib.h>
 // game
 #include "character.h"
@@ -41,7 +46,9 @@ void Game_initGameObjectPhysBody(PhysBody* body, GameObject* obj) {
   obj->physBody = body;
 }
 
-void Game_init(GameObject* worldObjects, int worldObjectsCount) {
+void Game_init(GameObject* worldObjects,
+               int worldObjectsCount,
+               PhysWorldData* physWorldData) {
   int i, itemsCount, physicsBodiesCount, charactersCount;
   GameObject* goose;
   GameObject* obj;
@@ -67,7 +74,7 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount) {
   assert(goose != NULL);
 
   Player_init(&game.player, goose);
-  PhysState_init(&game.physicsState, /* viscosity */ 0.5);
+  PhysState_init(&game.physicsState, /* viscosity */ 0.5, physWorldData);
 
   // setup camera
   Vec3d_copyFrom(&game.viewTarget, &game.player.goose->position);
@@ -115,6 +122,9 @@ void Game_init(GameObject* worldObjects, int worldObjectsCount) {
   game.charactersCount = charactersCount;
   game.physicsBodies = physicsBodies;
   game.physicsBodiesCount = physicsBodiesCount;
+
+  game.profTimeCharacters = 0;
+  game.profTimePhysics = 0;
 }
 
 Game* Game_get() {
@@ -242,19 +252,24 @@ void Game_updatePhysics(Game* game) {
 void Game_update(Input* input) {
   Game* game;
   int i;
+  float profStartPhysics, profStartCharacters;
 
   game = Game_get();
 
   if (!game->paused) {
     game->tick++;
 
+    profStartCharacters = CUR_TIME_MS();
     for (i = 0; i < NUM_CHARACTERS; ++i) {
       Character_update(&characters[i], game);
     }
+    game->profTimeCharacters += (CUR_TIME_MS() - profStartCharacters);
 
     Player_update(&game->player, input, game);
 
+    profStartPhysics = CUR_TIME_MS();
     Game_updatePhysics(game);
+    game->profTimePhysics += (CUR_TIME_MS() - profStartPhysics);
 
     Game_updateCamera(game, input);
   }

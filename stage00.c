@@ -32,11 +32,12 @@
 #include "university_floor.h"
 // map
 #include "university_map.h"
+#include "university_map_collision.h"
 // anim data
 #include "character_anim.h"
 #include "goose_anim.h"
 
-#define CONSOLE_VIEW_DEBUG 0
+#define CONSOLE_VIEW_DEBUG 1
 #define CONSOLE_DEBUG 1
 
 typedef enum RenderMode {
@@ -54,6 +55,15 @@ static Input input;
 static u16 perspNorm;
 static u32 nearPlane; /* Near Plane */
 static u32 farPlane;  /* Far Plane */
+
+/* frame counter */
+float frameCounterLastTime;
+int frameCounterCurFrames;
+int frameCounterLastFrames;
+
+/* profiling */
+float profTimeCharacters;
+float profTimePhysics;
 
 static float cycleMode;
 static RenderMode renderModeSetting;
@@ -81,6 +91,14 @@ void initStage00() {
   GameObject* obj;
   GameObject* loadObj;
   int i;
+  PhysWorldData physWorldData = {university_map_collision_collision_mesh,
+                                 UNIVERSITY_MAP_COLLISION_LENGTH,
+                                 /*gravity*/ -98.0};
+
+  frameCounterLastTime = 0;
+  frameCounterCurFrames = 0;
+  profTimeCharacters = 0;
+  profTimePhysics = 0;
 
   cycleMode = 1.0;
   renderModeSetting = TextureAndLightingRenderMode;
@@ -90,7 +108,7 @@ void initStage00() {
   Vec3d_init(&viewRot, 0.0F, 0.0F, 0.0F);
   Input_init(&input);
 
-  Game_init(university_map_data, UNIVERSITY_MAP_COUNT);
+  Game_init(university_map_data, UNIVERSITY_MAP_COUNT, &physWorldData);
   assert(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
 
   game = Game_get();
@@ -102,30 +120,37 @@ void initStage00() {
   }
 }
 
-int debugPrintVec3d(int x, int y, char* label, Vec3d* vec) {
+void debugPrintVec3d(int x, int y, char* label, Vec3d* vec) {
   char conbuf[50];
-  nuDebConTextPos(0, x, y++);
-  sprintf(conbuf, "%s", label);
+  nuDebConTextPos(0, x, y);
+  sprintf(conbuf, "%s {%5.0f,%5.0f,%5.0f}", label, vec->x, vec->y, vec->z);
   nuDebConCPuts(0, conbuf);
-  nuDebConTextPos(0, x, y++);
-  sprintf(conbuf, "{x=%5.1f", vec->x);
+}
+
+void debugPrintFloat(int x, int y, char* format, float value) {
+  char conbuf[100];
+  nuDebConTextPos(0, x, y);
+  sprintf(conbuf, format, value);
   nuDebConCPuts(0, conbuf);
-  nuDebConTextPos(0, x, y++);
-  sprintf(conbuf, "y=%5.1f", vec->y);
-  nuDebConCPuts(0, conbuf);
-  nuDebConTextPos(0, x, y++);
-  sprintf(conbuf, "z=%5.1f}", vec->z);
-  nuDebConCPuts(0, conbuf);
-  return y;
 }
 
 /* Make the display list and activate the task */
 void makeDL00() {
   Game* game;
   Dynamic* dynamicp;
-  char conbuf[50];
+  char conbuf[100];
   int consoleOffset;
+  float frameCounterCurTime;
+
   consoleOffset = 20;
+
+  frameCounterCurTime = CUR_TIME_MS();
+  frameCounterCurFrames++;
+  if (frameCounterCurTime - frameCounterLastTime >= 1000.0) {
+    frameCounterLastFrames = frameCounterCurFrames;
+    frameCounterCurFrames = 0;
+    frameCounterLastTime += 1000.0;
+  }
 
   game = Game_get();
 
@@ -173,28 +198,33 @@ void makeDL00() {
 // debug text overlay
 #if CONSOLE_VIEW_DEBUG
   if (contPattern & 0x1) {
+    consoleOffset = 20;
+
+    debugPrintFloat(4, consoleOffset++, "%3.2fms",
+                    1000.0 / frameCounterLastFrames);
+
     if (game->freeView) {
-      consoleOffset = 23;
-      nuDebConTextPos(0, 12, consoleOffset++);
-      sprintf(conbuf, "viewPos.x=%5.1f", viewPos.x);
-      nuDebConCPuts(0, conbuf);
-
-      nuDebConTextPos(0, 12, consoleOffset++);
-      sprintf(conbuf, "viewPos.y=%5.1f", viewPos.y);
-      nuDebConCPuts(0, conbuf);
-
-      nuDebConTextPos(0, 12, consoleOffset++);
-      sprintf(conbuf, "viewPos.z=%5.1f", viewPos.z);
-      nuDebConCPuts(0, conbuf);
+      debugPrintFloat(12, consoleOffset++, "viewPos.x=%5.1f", viewPos.x);
+      debugPrintFloat(12, consoleOffset++, "viewPos.y=%5.1f", viewPos.y);
+      debugPrintFloat(12, consoleOffset++, "viewPos.z=%5.1f", viewPos.z);
     } else {
-      consoleOffset = 20;
-      consoleOffset =
-          debugPrintVec3d(4, consoleOffset, "viewPos", &game->viewPos);
-      consoleOffset =
-          debugPrintVec3d(4, consoleOffset, "viewTarget", &game->viewTarget);
-      nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "retrace=%d", nuScRetraceCounter);
-      nuDebConCPuts(0, conbuf);
+      debugPrintVec3d(4, consoleOffset++, "pos", &game->player.goose->position);
+#if CONSOLE_SHOW_PROFILING
+      if (game->tick % 60 == 0) {
+        profTimeCharacters = game->profTimeCharacters / 60.0f;
+        game->profTimeCharacters = 0.0f;
+        profTimePhysics = game->profTimePhysics / 60.0f;
+        game->profTimePhysics = 0.0f;
+      }
+      debugPrintFloat(4, consoleOffset++, "char=%3.2fms", profTimeCharacters);
+      debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profTimePhysics);
+#endif
+
+      // debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
+      // debugPrintVec3d(4, consoleOffset++, "viewTarget", &game->viewTarget);
+      // nuDebConTextPos(0, 4, consoleOffset++);
+      // sprintf(conbuf, "retrace=%d", nuScRetraceCounter);
+      // nuDebConCPuts(0, conbuf);
     }
   } else {
     nuDebConTextPos(0, 9, 24);
@@ -396,8 +426,6 @@ Gfx* getModelDisplayList(ModelType modelType) {
       return Wtx_university_floor;
     case FlagpoleModel:
       return Wtx_flagpole;
-    case GroundskeeperCharacterModel:
-      return Wtx_person;
     default:
       return Wtx_testingCube;
   }

@@ -5,6 +5,12 @@
 #include "collision.h"
 #include "vec3d.h"
 
+#ifdef __N64__
+#include "mathdef.h"
+#else
+#include "float.h"
+#endif
+
 void Triangle_getCentroid(Triangle* triangle, Vec3d* result) {
   *result = triangle->a;
   Vec3d_add(result, &triangle->b);
@@ -20,8 +26,61 @@ void Triangle_getNormal(Triangle* triangle, Vec3d* result) {
   Vec3d_sub(&edgeAC, &triangle->a);
 
   Vec3d_cross(&edgeAB, &edgeAC, result);
+  Vec3d_normalise(result);
 }
 
+// if result > 0: point is in front of triangle
+// if result = 0: point is coplanar with triangle
+// if result < 0: point is behind triangle
+float Triangle_comparePoint(Triangle* triangle, Vec3d* point) {
+  Vec3d normal, toPoint;
+
+  // normal . (point - triangleVert)
+  Triangle_getNormal(triangle, &normal);
+  toPoint = *point;
+  Vec3d_sub(&toPoint, &triangle->a);
+  return Vec3d_dot(&normal, &toPoint);
+}
+
+// not tested
+int Collision_intersectRayTriangle(Vec3d* pt,
+                                   Vec3d* dir,
+                                   Triangle* tri,
+                                   Vec3d* out) {
+  Vec3d edge1, edge2, tvec, pvec, qvec;
+  float det, u, v, t;
+
+  edge1 = tri->b;
+
+  Vec3d_sub(&edge1, &tri->a);
+  edge2 = tri->c;
+  Vec3d_sub(&edge2, &tri->a);
+
+  Vec3d_cross(dir, &edge2, &pvec);
+  det = Vec3d_dot(&edge1, &pvec);
+
+  if (det < FLT_EPSILON)
+    return FALSE;
+
+  tvec = *pt;
+  Vec3d_sub(&tvec, &tri->a);
+  u = Vec3d_dot(&tvec, &pvec);
+  if (u < 0 || u > det)
+    return FALSE;
+  Vec3d_cross(&tvec, &edge1, &qvec);
+  v = Vec3d_dot(dir, &qvec);
+  if (v < 0 || u + v > det)
+    return FALSE;
+
+  t = Vec3d_dot(&edge2, &qvec) / det;
+  out->x = pt->x + t * dir->x;
+  out->y = pt->y + t * dir->y;
+  out->z = pt->z + t * dir->z;
+
+  return TRUE;
+}
+
+// http://realtimecollisiondetection.net/blog/?p=103
 int Collision_sphereTriangleIsSeparated(Triangle* triangle,
                                         Vec3d* P,
                                         double r) {
@@ -36,6 +95,7 @@ int Collision_sphereTriangleIsSeparated(Triangle* triangle,
   Vec3d QA;
   Vec3d Q3, CAd3;
   Vec3d QB;
+  // Translate problem so sphere is centered at origin
   // A = A - P
   A = triangle->a;
   Vec3d_sub(&A, P);
@@ -48,111 +108,138 @@ int Collision_sphereTriangleIsSeparated(Triangle* triangle,
 
   rr = r * r;
 
-  // V = (B - A).cross(C - A)
-  Vec3d_copyFrom(&BSubA, &B);
-  Vec3d_sub(&BSubA, &A);
-  Vec3d_copyFrom(&CSubA, &C);
-  Vec3d_sub(&CSubA, &A);
-  Vec3d_cross(&BSubA, &CSubA, &V);
+  // Testing if sphere lies outside the triangle plane
+  {
+    // Compute a vector normal to triangle plane (V), normalize it
+    // V = (B - A).cross(C - A)
+    BSubA = B;
+    Vec3d_sub(&BSubA, &A);
+    CSubA = C;
+    Vec3d_sub(&CSubA, &A);
+    Vec3d_cross(&BSubA, &CSubA, &V);
+    // Compute distance d of sphere center to triangle plane
+    d = Vec3d_dot(&A, &V);
+    e = Vec3d_dot(&V, &V);
+    // d > r
+    sep1 = d * d > rr * e;
 
-  d = Vec3d_dot(&A, &V);
-  e = Vec3d_dot(&V, &V);
-  sep1 = d * d > rr * e;
+    if (sep1)
+      return TRUE;
+  }
+  // Testing if sphere lies outside a triangle vertex
+  {
+    // for triangle vertex A
 
-  if (sep1)
-    return TRUE;
+    // Compute distance between sphere center and vertex A
+    aa = Vec3d_dot(&A, &A);
+    ab = Vec3d_dot(&A, &B);
+    ac = Vec3d_dot(&A, &C);
 
-  aa = Vec3d_dot(&A, &A);
-  ab = Vec3d_dot(&A, &B);
-  ac = Vec3d_dot(&A, &C);
-  sep2 = (aa > rr) & (ab > aa) & (ac > aa);
+    sep2 =
+        // The plane through A with normal A ("A - P") separates sphere if:
+        // (1) A lies outside the sphere, and
+        (aa > rr) &
+        // (2) if B and C lie on the opposite side of the plane w.r.t. the
+        // sphere center
+        (ab > aa) & (ac > aa);
 
-  if (sep2)
-    return TRUE;
+    if (sep2)
+      return TRUE;
+  }
+  {
+    // for triangle vertex B
+    bb = Vec3d_dot(&B, &B);
+    bc = Vec3d_dot(&B, &C);
+    sep3 = (bb > rr) & (ab > bb) & (bc > bb);
 
-  bb = Vec3d_dot(&B, &B);
-  bc = Vec3d_dot(&B, &C);
-  sep3 = (bb > rr) & (ab > bb) & (bc > bb);
+    if (sep3)
+      return TRUE;
+  }
+  {
+    // for triangle vertex C
+    cc = Vec3d_dot(&C, &C);
+    sep4 = (cc > rr) & (ac > cc) & (bc > cc);
 
-  if (sep3)
-    return TRUE;
+    if (sep4)
+      return TRUE;
+  }
 
-  cc = Vec3d_dot(&C, &C);
-  sep4 = (cc > rr) & (ac > cc) & (bc > cc);
+  // Testing if sphere lies outside a triangle edge
+  {
+    // AB = B - A
+    AB = B;
+    Vec3d_sub(&AB, &A);
 
-  if (sep4)
-    return TRUE;
+    d1 = ab - aa;
+    e1 = Vec3d_dot(&AB, &AB);
 
-  // AB = B - A
-  // BC = C - B
-  // CA = A - C
-  Vec3d_copyFrom(&AB, &B);
-  Vec3d_sub(&AB, &A);
-  Vec3d_copyFrom(&BC, &C);
-  Vec3d_sub(&BC, &B);
-  Vec3d_copyFrom(&CA, &A);
-  Vec3d_sub(&CA, &C);
+    // Q1 = A * e1 - AB * d1
+    Q1 = A;
+    Vec3d_mulScalar(&Q1, e1);
+    ABd1 = AB;
+    Vec3d_mulScalar(&ABd1, d1);
+    Vec3d_sub(&Q1, &ABd1);
 
-  d1 = ab - aa;
-  e1 = Vec3d_dot(&AB, &AB);
+    // QC = C * e1 - Q1
+    QC = C;
+    Vec3d_mulScalar(&QC, e1);
+    Vec3d_sub(&QC, &Q1);
 
-  // Q1 = A * e1 - AB * d1
-  Vec3d_copyFrom(&Q1, &A);
-  Vec3d_mulScalar(&Q1, e1);
-  Vec3d_copyFrom(&ABd1, &AB);
-  Vec3d_mulScalar(&ABd1, d1);
-  Vec3d_sub(&Q1, &ABd1);
+    sep5 = (Vec3d_dot(&Q1, &Q1) > rr * e1 * e1) & (Vec3d_dot(&Q1, &QC) > 0);
 
-  // QC = C * e1 - Q1
-  Vec3d_copyFrom(&QC, &C);
-  Vec3d_mulScalar(&QC, e1);
-  Vec3d_sub(&QC, &Q1);
+    if (sep5)
+      return TRUE;
+  }
+  {
+    // BC = C - B
+    BC = C;
+    Vec3d_sub(&BC, &B);
 
-  sep5 = (Vec3d_dot(&Q1, &Q1) > rr * e1 * e1) & (Vec3d_dot(&Q1, &QC) > 0);
+    d2 = bc - bb;
+    e2 = Vec3d_dot(&BC, &BC);
 
-  if (sep5)
-    return TRUE;
+    // Q2 = B * e2 - BC * d2
+    Q2 = B;
+    Vec3d_mulScalar(&Q2, e2);
+    BCd2 = BC;
+    Vec3d_mulScalar(&BCd2, d2);
+    Vec3d_sub(&Q2, &BCd2);
 
-  d2 = bc - bb;
-  e2 = Vec3d_dot(&BC, &BC);
+    // QA = A * e2 - Q2
+    QA = A;
+    Vec3d_mulScalar(&QA, e2);
+    Vec3d_sub(&QA, &Q2);
 
-  // Q2 = B * e2 - BC * d2
-  Vec3d_copyFrom(&Q2, &B);
-  Vec3d_mulScalar(&Q2, e2);
-  Vec3d_copyFrom(&BCd2, &BC);
-  Vec3d_mulScalar(&BCd2, d2);
-  Vec3d_sub(&Q2, &BCd2);
+    sep6 = (Vec3d_dot(&Q2, &Q2) > rr * e2 * e2) & (Vec3d_dot(&Q2, &QA) > 0);
 
-  // QA = A * e2 - Q2
-  Vec3d_copyFrom(&QA, &A);
-  Vec3d_mulScalar(&QA, e2);
-  Vec3d_sub(&QA, &Q2);
+    if (sep6)
+      return TRUE;
+  }
+  {
+    // CA = A - C
+    CA = A;
+    Vec3d_sub(&CA, &C);
 
-  sep6 = (Vec3d_dot(&Q2, &Q2) > rr * e2 * e2) & (Vec3d_dot(&Q2, &QA) > 0);
+    d3 = ac - cc;
+    e3 = Vec3d_dot(&CA, &CA);
 
-  if (sep6)
-    return TRUE;
+    // Q3 = C * e3 - CA * d3
+    Q3 = C;
+    Vec3d_mulScalar(&Q3, e3);
+    CAd3 = CA;
+    Vec3d_mulScalar(&CAd3, d3);
+    Vec3d_sub(&Q3, &CAd3);
 
-  d3 = ac - cc;
-  e3 = Vec3d_dot(&CA, &CA);
+    // QB = B * e3 - Q3
+    QB = B;
+    Vec3d_mulScalar(&QB, e3);
+    Vec3d_sub(&QB, &Q3);
 
-  // Q3 = C * e3 - CA * d3
-  Vec3d_copyFrom(&Q3, &C);
-  Vec3d_mulScalar(&Q3, e3);
-  Vec3d_copyFrom(&CAd3, &CA);
-  Vec3d_mulScalar(&CAd3, d3);
-  Vec3d_sub(&Q3, &CAd3);
+    sep7 = (Vec3d_dot(&Q3, &Q3) > rr * e3 * e3) & (Vec3d_dot(&Q3, &QB) > 0);
 
-  // QB = B * e3 - Q3
-  Vec3d_copyFrom(&QB, &B);
-  Vec3d_mulScalar(&QB, e3);
-  Vec3d_sub(&QB, &Q3);
-
-  sep7 = (Vec3d_dot(&Q3, &Q3) > rr * e3 * e3) & (Vec3d_dot(&Q3, &QB) > 0);
-
-  if (sep7)
-    return TRUE;
-
+    if (sep7)
+      return TRUE;
+  }
   return FALSE;
 }
 
@@ -370,11 +457,13 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
   Triangle* tri;
   Vec3d closestPointOnTriangle;
 
-  float closestHitDist;
-  float hitDist;
+  float closestHitDistSq;
+  float hitDistSq;
+  float objRadiusSq;
   int hit, closestHitTriangleIndex;
-  closestHitDist = 3.402823e+38;  // FLT_MAX;
+  closestHitDistSq = FLT_MAX;
   closestHitTriangleIndex = -1;
+  objRadiusSq = objRadius * objRadius;
 
 #ifndef __N64__
 #ifdef __cplusplus
@@ -402,26 +491,30 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
       // Vec3d_print(&closestPointOnTriangle);
       // printf(" \n");
 
-      hitDist = Vec3d_distanceTo(objCenter, &closestPointOnTriangle);
+      hitDistSq = Vec3d_distanceToSq(objCenter, &closestPointOnTriangle);
+      if (hitDistSq > objRadiusSq) {
+        // not really a collision, separating axis test fucked up
+        continue;
+      }
 
 #ifndef __N64__
 #ifdef __cplusplus
       if (testCollisionTrace) {
-        SphereTriangleCollision debugResult = {i, hitDist,
+        SphereTriangleCollision debugResult = {i, hitDistSq,
                                                closestPointOnTriangle, tri};
         testCollisionResults.insert(
             std::pair<int, SphereTriangleCollision>(i, debugResult));
       }
-      // printf("hit dist: %f\n", hitDist);
+      // printf("hit dist: %f\n", hitDistSq);
 #endif
 #endif
 
-      if (hitDist < closestHitDist) {
-        closestHitDist = hitDist;
+      if (hitDistSq < closestHitDistSq) {
+        closestHitDistSq = hitDistSq;
         closestHitTriangleIndex = i;
 
         result->index = i;
-        result->distance = closestHitDist;
+        result->distance = sqrtf(closestHitDistSq);
         result->triangle = tri;
         result->posInTriangle = closestPointOnTriangle;
       }
