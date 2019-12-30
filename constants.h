@@ -65,6 +65,7 @@
 #ifdef __N64__
 // hard coded arch-dependent values for n64
 #include "mathdef.h"
+
 #ifndef FLT_EPSILON
 #define FLT_EPSILON 0.0000001192
 #endif

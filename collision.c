@@ -5,10 +5,9 @@
 #include "collision.h"
 #include "vec3d.h"
 
-#ifdef __N64__
-#include "mathdef.h"
-#else
+#ifndef __N64__
 #include "float.h"
+// otherwise this stuff is in constants.h
 #endif
 
 void Triangle_getCentroid(Triangle* triangle, Vec3d* result) {
@@ -424,7 +423,7 @@ void Collision_distancePointTriangleExact(Vec3d* point,
   if (closest->x != closest->x) {
 #ifndef __N64__
     printf("got NAN\n");
-    Collision_distancePointTriangleExact(point, triangle, closest);
+    // Collision_distancePointTriangleExact(point, triangle, closest);
 #endif
     Vec3d_origin(closest);
   }

@@ -268,7 +268,7 @@ void Game_update(Input* input) {
     Player_update(&game->player, input, game);
 
     profStartPhysics = CUR_TIME_MS();
-    Game_updatePhysics(game);
+    // Game_updatePhysics(game);
     game->profTimePhysics += (CUR_TIME_MS() - profStartPhysics);
 
     Game_updateCamera(game, input);

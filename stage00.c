@@ -39,6 +39,7 @@
 
 #define CONSOLE_VIEW_DEBUG 1
 #define CONSOLE_DEBUG 1
+#define CONSOLE_SHOW_PROFILING 1
 
 typedef enum RenderMode {
   TextureAndLightingRenderMode,
@@ -121,7 +122,7 @@ void initStage00() {
 }
 
 void debugPrintVec3d(int x, int y, char* label, Vec3d* vec) {
-  char conbuf[50];
+  char conbuf[100];
   nuDebConTextPos(0, x, y);
   sprintf(conbuf, "%s {%5.0f,%5.0f,%5.0f}", label, vec->x, vec->y, vec->z);
   nuDebConCPuts(0, conbuf);
@@ -222,9 +223,9 @@ void makeDL00() {
 
       // debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
       // debugPrintVec3d(4, consoleOffset++, "viewTarget", &game->viewTarget);
-      // nuDebConTextPos(0, 4, consoleOffset++);
-      // sprintf(conbuf, "retrace=%d", nuScRetraceCounter);
-      // nuDebConCPuts(0, conbuf);
+      nuDebConTextPos(0, 4, consoleOffset++);
+      sprintf(conbuf, "retrace=%d", nuScRetraceCounter);
+      nuDebConCPuts(0, conbuf);
     }
   } else {
     nuDebConTextPos(0, 9, 24);
