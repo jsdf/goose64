@@ -45,14 +45,14 @@
 #define FREEVIEW_SPEED 0.2f
 
 #define DEBUG_LOG_RENDER 0
-#define DEBUG_OBJECTS 0
+#define DEBUG_OBJECTS 1
 #define DEBUG_RAYCASTING 0
 #define DEBUG_MODELS 0
 #define DEBUG_ANIMATION 0
 #define DEBUG_ANIMATION_MORE 0
 #define DEBUG_ATTACHMENT 0
-#define DEBUG_PHYSICS 0
-#define DEBUG_COLLISION_MESH 0
+#define DEBUG_PHYSICS 1
+#define DEBUG_COLLISION_MESH 1
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
 
@@ -651,7 +651,7 @@ void drawCollisionMesh() {
   glDisable(GL_LIGHTING);
 
   // draw on top of everything else
-  // glDisable(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
 
   glPushMatrix();
   float triColor;
@@ -659,9 +659,26 @@ void drawCollisionMesh() {
        i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
     triColor = (i / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
     glColor3f(0.0f, triColor, 1.0f - triColor);
-    if (testCollisionResults.count(i) > 0) {
-      if (testCollisionResult == i) {
-        glColor3f(0.5f, 0.0f, 0.0f);
+    glBegin(GL_LINES);
+    glVertex3f(tri->a.x, tri->a.y, tri->a.z);
+    glVertex3f(tri->b.x, tri->b.y, tri->b.z);
+    glVertex3f(tri->c.x, tri->c.y, tri->c.z);
+    glEnd();
+  }
+
+  if (testCollisionResults.size()) {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    std::map<int, SphereTriangleCollision>::iterator collIter =
+        testCollisionResults.begin();
+
+    while (collIter != testCollisionResults.end()) {
+      tri = university_map_collision_collision_mesh + collIter->first;
+
+      if (testCollisionResult == collIter->first) {
+        glColor4f(1.0f, 0.0f, 0.0f, 0.3);
+      } else {
+        glColor4f(1.0f, 1.0f, 0.0f, 0.3);
       }
       glBegin(GL_TRIANGLES);
       glVertex3f(tri->a.x, tri->a.y, tri->a.z);
@@ -669,13 +686,9 @@ void drawCollisionMesh() {
       glVertex3f(tri->c.x, tri->c.y, tri->c.z);
       glEnd();
 
-    } else {
-      glBegin(GL_LINES);
-      glVertex3f(tri->a.x, tri->a.y, tri->a.z);
-      glVertex3f(tri->b.x, tri->b.y, tri->b.z);
-      glVertex3f(tri->c.x, tri->c.y, tri->c.z);
-      glEnd();
+      collIter++;
     }
+    glDisable(GL_BLEND);
   }
 
   for (i = 0, tri = university_map_collision_collision_mesh;
@@ -1056,16 +1069,20 @@ void processMouse(int button, int state, int x, int y) {
 }
 
 void testCollision() {
-  Game* game = Game_get();
-  Vec3d gooseCenter;
-  Game_getObjCenter(game->player.goose, &gooseCenter);
-  float gooseRadius = Game_getObjRadius(game->player.goose);
-  SphereTriangleCollision result;
-  testCollisionTrace = TRUE;
-  Collision_testMeshSphereCollision(university_map_collision_collision_mesh,
-                                    UNIVERSITY_MAP_COLLISION_LENGTH,
-                                    &gooseCenter, gooseRadius, &result);
-  testCollisionTrace = FALSE;
+  if (selectedObject) {
+    Vec3d objCenter;
+    Game_getObjCenter(selectedObject, &objCenter);
+    float objRadius = Game_getObjRadius(selectedObject);
+    SphereTriangleCollision result;
+    testCollisionTrace = TRUE;
+    Collision_testMeshSphereCollision(university_map_collision_collision_mesh,
+                                      UNIVERSITY_MAP_COLLISION_LENGTH,
+                                      &objCenter, objRadius, &result);
+    testCollisionTrace = FALSE;
+  } else {
+    testCollisionResult = -1;
+    testCollisionResults.clear();
+  }
 }
 
 void updateAndRender() {
