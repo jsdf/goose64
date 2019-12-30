@@ -19,6 +19,7 @@
 #define CHARACTER_SPEED 4.1F
 #endif
 
+#define CHARACTER_ENABLED 1
 #define CHARACTER_MAX_TURN_SPEED 4.0f
 #define CHARACTER_FLEE_DIST 1200.0f
 #define CHARACTER_NEAR_OBJ_DROP_DIST 100.0f
@@ -232,7 +233,9 @@ void Character_update(Character* self, Game* game) {
   } else {
     Character_setVisibleItemAttachment(self, NoneModel);
   }
+#if CHARACTER_ENABLED
   Character_updateState(self, game);
+#endif
 
   resultantMovementSpeed =
       Vec3d_distanceTo(&startPos, &self->obj->position) / 100.0f;
