@@ -236,6 +236,7 @@ void Game_updatePhysics(Game* game) {
   // simulate physics
   PhysState_step(&game->physicsState, game->physicsBodies,
                  game->physicsBodiesCount, (float)game->tick / 60.0f * 1000.0f);
+
   // ...and copy its position back again
   for (i = 0, body = game->physicsBodies; i < game->physicsBodiesCount;
        ++i, body++) {
@@ -268,7 +269,7 @@ void Game_update(Input* input) {
     Player_update(&game->player, input, game);
 
     profStartPhysics = CUR_TIME_MS();
-    // Game_updatePhysics(game);
+    Game_updatePhysics(game);
     game->profTimePhysics += (CUR_TIME_MS() - profStartPhysics);
 
     Game_updateCamera(game, input);

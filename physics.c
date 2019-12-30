@@ -100,40 +100,6 @@ int PhysBehavior_worldCollisionResponseStep(PhysBody* body,
   // Vec3d_mulScalar(&response, responseDistance * body->mass);
   // PhysBody_applyForce(body, &response);
 
-  //
-
-  //     if (distanceToIntersect < 0.001) {
-  //       Triangle_getNormal(collision.triangle, &response);
-  //     } else {
-  //       if (bodyInFrontOfTriangle >= 0) {
-  //         Vec3d_directionTo(&collision.posInTriangle, &body->position,
-  //         &response);
-  //       } else {
-  //         Vec3d_directionTo(&body->position, &collision.posInTriangle,
-  //         &response);
-  //       }
-  //     }
-
-  //     responseDistance = 0;
-
-  //     if (bodyInFrontOfTriangle >= 0) {
-  //       // center of body is in front of or on face
-  //       responseDistance = body->radius - distanceToIntersect;
-  //     } else {
-  //       // center of body is behind face
-  //       responseDistance = body->radius + distanceToIntersect;
-  //     }
-
-  //     if (Vec3d_mag(&response) > 1) {
-  //       printf("response is not a unit vector\n");
-  //     }
-
-  //     Vec3d_mulScalar(&response, responseDistance);
-
-  //     if (Vec3d_mag(&response) > body->radius + 0.0001) {
-  //       printf("moving further than radius\n");
-  //     }
-
 #ifdef __cplusplus
   printf(
       "PhysBody id=%d hasCollision tri=%d distanceToIntersect=%f beforePos=%s "
@@ -149,23 +115,6 @@ int PhysBehavior_worldCollisionResponseStep(PhysBody* body,
 
   );
 #endif
-  // PhysBody_translateWithoutForce(body, &response);
-  // Vec3d_sub(&response, &body->position);
-
-  // Vec3d_mulScalar(&response, body->mass);
-  // PhysBody_applyForce(body, &response);
-
-#ifdef __cplusplus
-  printf("newpos=%s\n", Vec3d_toStdString(&body->position).c_str());
-#endif
-
-  // bounce response
-  // response = collision.posInTriangle;
-  // Vec3d_sub(&response, &body->position);
-  // Vec3d_add(&body->acceleration, &response);
-
-  // printf("PhysBody id=%d hasCollision, response={%f %f %f}\n", body->id,
-  //        response.x, response.y, response.z);
 
   return TRUE;
 }

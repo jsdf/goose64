@@ -17,6 +17,7 @@
 #include "input.h"
 #include "main.h"
 #include "modeltype.h"
+#include "physics.h"
 #include "renderer.h"
 #include "vec2d.h"
 #include "vec3d.h"
@@ -69,6 +70,9 @@ float profTimePhysics;
 static float cycleMode;
 static RenderMode renderModeSetting;
 static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
+PhysWorldData physWorldData = {university_map_collision_collision_mesh,
+                               UNIVERSITY_MAP_COLLISION_LENGTH,
+                               /*gravity*/ -98.0};
 
 void drawWorldObjects(Dynamic* dynamicp);
 
@@ -92,9 +96,6 @@ void initStage00() {
   GameObject* obj;
   GameObject* loadObj;
   int i;
-  PhysWorldData physWorldData = {university_map_collision_collision_mesh,
-                                 UNIVERSITY_MAP_COLLISION_LENGTH,
-                                 /*gravity*/ -98.0};
 
   frameCounterLastTime = 0;
   frameCounterCurFrames = 0;
@@ -201,15 +202,12 @@ void makeDL00() {
   if (contPattern & 0x1) {
     consoleOffset = 20;
 
-    debugPrintFloat(4, consoleOffset++, "%3.2fms",
+    debugPrintFloat(4, consoleOffset++, "frame=%3.2fms",
                     1000.0 / frameCounterLastFrames);
 
     if (game->freeView) {
-      debugPrintFloat(12, consoleOffset++, "viewPos.x=%5.1f", viewPos.x);
-      debugPrintFloat(12, consoleOffset++, "viewPos.y=%5.1f", viewPos.y);
-      debugPrintFloat(12, consoleOffset++, "viewPos.z=%5.1f", viewPos.z);
+      debugPrintVec3d(4, consoleOffset++, "viewPos", &viewPos);
     } else {
-      debugPrintVec3d(4, consoleOffset++, "pos", &game->player.goose->position);
 #if CONSOLE_SHOW_PROFILING
       if (game->tick % 60 == 0) {
         profTimeCharacters = game->profTimeCharacters / 60.0f;
@@ -227,6 +225,7 @@ void makeDL00() {
       sprintf(conbuf, "retrace=%d", nuScRetraceCounter);
       nuDebConCPuts(0, conbuf);
     }
+    debugPrintVec3d(4, consoleOffset++, "pos", &game->player.goose->position);
   } else {
     nuDebConTextPos(0, 9, 24);
     nuDebConCPuts(0, "Controller1 not connect");
