@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <math.h>
 
 #include "constants.h"
@@ -447,10 +448,14 @@ std::map<int, SphereTriangleCollision> testCollisionResults;
 #endif
 #endif
 
+#define COLLISION_SPATIAL_HASH_MAX_RESULTS 100
+#define COLLISION_SPATIAL_HASH_PRUNING_ENABLED 1
+
 int Collision_testMeshSphereCollision(Triangle* triangles,
                                       int trianglesLength,
                                       Vec3d* objCenter,
                                       float objRadius,
+                                      SpatialHash* spatialHash,
                                       SphereTriangleCollision* result) {
   int i;
   Triangle* tri;
@@ -459,7 +464,8 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
   float closestHitDistSq;
   float hitDistSq;
   float objRadiusSq;
-  int hit, closestHitTriangleIndex;
+  int hit, closestHitTriangleIndex, spatialHashResultsCount;
+  int spatialHashResults[COLLISION_SPATIAL_HASH_MAX_RESULTS];
   closestHitDistSq = FLT_MAX;
   closestHitTriangleIndex = -1;
   objRadiusSq = objRadius * objRadius;
@@ -472,7 +478,16 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 #endif
 #endif
 
+  spatialHashResultsCount = SpatialHash_getTriangles(
+      objCenter, objRadius, spatialHash, spatialHashResults,
+      COLLISION_SPATIAL_HASH_MAX_RESULTS);
+
+#if COLLISION_SPATIAL_HASH_PRUNING_ENABLED
+  for (i = 0; i < spatialHashResultsCount; i++) {
+    tri = triangles + spatialHashResults[i];
+#else
   for (i = 0, tri = triangles; i < trianglesLength; i++, tri++) {
+#endif
     hit = !Collision_sphereTriangleIsSeparated(tri, objCenter, objRadius);
 
     if (hit) {
@@ -529,4 +544,109 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 #endif
 
   return closestHitTriangleIndex > -1;
+}
+
+int SpatialHash_getBucketIndex(int cellX, int cellY, int cellsInDimension) {
+  // layout is rows then columns (row-major)
+  // (x, y) is a cell pos, not unit pos
+  return cellY * cellsInDimension + cellX;
+}
+
+int SpatialHash_unitsToGridForDimension(float unitsPos,
+                                        float gridCellSz,
+                                        int cellOffsetInDimension) {
+  return (int)(unitsPos / gridCellSz) + cellOffsetInDimension;
+}
+
+SpatialHashBucket* SpatialHash_getBucket(float x,
+                                         float y,
+                                         SpatialHash* spatialHash) {
+  int bucketIndex, cellX, cellY;
+
+  cellX = SpatialHash_unitsToGridForDimension(
+      x, spatialHash->gridCellSize, spatialHash->cellOffsetInDimension);
+  cellY = SpatialHash_unitsToGridForDimension(
+      y, spatialHash->gridCellSize, spatialHash->cellOffsetInDimension);
+  bucketIndex =
+      SpatialHash_getBucketIndex(cellX, cellY, spatialHash->cellsInDimension);
+
+  assert(bucketIndex < spatialHash->numBuckets);
+
+  return *(spatialHash->data + bucketIndex);
+}
+
+int SpatialHash_getTriangles(Vec3d* position,
+                             float radius,
+                             SpatialHash* spatialHash,
+                             int* results,
+                             int maxResults) {
+  int bucketIndex, minCellX, minCellY, maxCellX, maxCellY, cellX, cellY,
+      bucketItemIndex, resultIndex, resultsFound;
+
+  SpatialHashBucket* bucket;
+  int *bucketItem, *currentResult;
+
+  minCellX = SpatialHash_unitsToGridForDimension(
+      position->x - radius, spatialHash->gridCellSize,
+      spatialHash->cellOffsetInDimension);
+  minCellY = SpatialHash_unitsToGridForDimension(
+      -position->z - radius, spatialHash->gridCellSize,
+      spatialHash->cellOffsetInDimension);
+  maxCellX = SpatialHash_unitsToGridForDimension(
+                 position->x + radius, spatialHash->gridCellSize,
+                 spatialHash->cellOffsetInDimension) +
+             1;
+  maxCellY = SpatialHash_unitsToGridForDimension(
+                 -position->z + radius, spatialHash->gridCellSize,
+                 spatialHash->cellOffsetInDimension) +
+             1;
+
+  // walk range of overlapping buckets and collect (unique) set of triangles
+  resultsFound = 0;
+  for (cellX = minCellX; cellX < maxCellX; ++cellX) {
+    for (cellY = minCellY; cellY < maxCellY; ++cellY) {
+      bucketIndex = SpatialHash_getBucketIndex(cellX, cellY,
+                                               spatialHash->cellsInDimension);
+
+      assert(bucketIndex < spatialHash->numBuckets);
+
+      bucket = *(spatialHash->data + bucketIndex);
+      if (!bucket) {
+        // nothing in this bucket
+        continue;
+      }
+      // collect results from this bucket
+      for (bucketItemIndex = 0; bucketItemIndex < bucket->size;
+           ++bucketItemIndex) {
+        bucketItem = bucket->data + bucketItemIndex;
+
+        // look through results and add if not duplicate
+        for (resultIndex = 0; resultIndex < maxResults; ++resultIndex) {
+          currentResult = results + resultIndex;
+          if (resultIndex < resultsFound) {
+            if (*currentResult == *bucketItem) {
+              // already have this triangle in the results
+              break;
+            } else {
+              continue;
+            }
+          } else {
+            // at end of found results and this result is not already in the
+            // list
+            *currentResult = *bucketItem;
+            resultsFound++;
+            break;  // continue to next item in bucket
+          }
+        }
+      }
+    }
+  }
+
+#ifndef __N64__
+  if (resultsFound == maxResults) {
+    printf("possibly ran out of space in results array\n");
+  }
+#endif
+
+  return resultsFound;
 }

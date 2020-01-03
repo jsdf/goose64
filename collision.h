@@ -17,6 +17,19 @@ typedef struct SphereTriangleCollision {
   Triangle* triangle;
 } SphereTriangleCollision;
 
+typedef struct SpatialHashBucket {
+  int size;
+  int* data;
+} SpatialHashBucket;
+
+typedef struct SpatialHash {
+  int numBuckets;
+  float gridCellSize;
+  int cellsInDimension;
+  int cellOffsetInDimension;
+  SpatialHashBucket** data;
+} SpatialHash;
+
 #ifndef __N64__
 #ifdef __cplusplus
 
@@ -44,6 +57,16 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
                                       int trianglesLength,
                                       Vec3d* objCenter,
                                       float objRadius,
+                                      SpatialHash* spatialHash,
                                       SphereTriangleCollision* result);
 
+SpatialHashBucket* SpatialHash_getBucket(float x,
+                                         float y,
+                                         SpatialHash* spatialHash);
+
+int SpatialHash_getTriangles(Vec3d* position,
+                             float radius,
+                             SpatialHash* spatialHash,
+                             int* results,
+                             int maxResults);
 #endif /* !_COLLISION_H_ */

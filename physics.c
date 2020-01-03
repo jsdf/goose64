@@ -66,7 +66,7 @@ int PhysBehavior_worldCollisionResponseStep(PhysBody* body,
 
   hasCollision = Collision_testMeshSphereCollision(
       world->worldMeshTris, world->worldMeshTrisLength, &body->position,
-      body->radius, &collision);
+      body->radius, world->worldMeshSpatialHash, &collision);
 
   if (!hasCollision) {
     return FALSE;

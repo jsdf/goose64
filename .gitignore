@@ -84,3 +84,5 @@ DerivedData/
 *.blend1
 
 imgui.ini
+
+*.pyc

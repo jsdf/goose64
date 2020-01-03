@@ -13,6 +13,7 @@
 typedef struct PhysWorldData {
   Triangle* worldMeshTris;
   int worldMeshTrisLength;
+  SpatialHash* worldMeshSpatialHash;
   float gravity;
 } PhysWorldData;
 

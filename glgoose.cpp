@@ -53,6 +53,7 @@
 #define DEBUG_ATTACHMENT 0
 #define DEBUG_PHYSICS 1
 #define DEBUG_COLLISION_MESH 1
+#define DEBUG_COLLISION_SPATIAL_HASH 1
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
 
@@ -72,6 +73,7 @@ GameObject* selectedObject = NULL;
 
 PhysWorldData physWorldData = {university_map_collision_collision_mesh,
                                UNIVERSITY_MAP_COLLISION_LENGTH,
+                               &university_map_collision_collision_mesh_hash,
                                /*gravity*/ -98.0};
 
 // crap for gluProject/gluUnProject
@@ -188,6 +190,22 @@ void drawGUI() {
   ImGui::Text("colliding tris=%s", collKeys.c_str());
 
   if (obj) {
+    int spatialHashResults[100];
+    Vec3d objCenter;
+    Game_getObjCenter(obj, &objCenter);
+
+    int spatialHashResultsCount =
+        SpatialHash_getTriangles(&objCenter, Game_getObjRadius(obj),
+                                 &university_map_collision_collision_mesh_hash,
+                                 spatialHashResults, /*maxResults*/ 100);
+
+    std::string bucketKeys;
+    int i;
+    for (i = 0; i < spatialHashResultsCount; i++) {
+      bucketKeys += std::to_string(spatialHashResults[i]) + ",";
+    }
+    ImGui::Text("current bucket tris=%s", bucketKeys.c_str());
+
     ImGui::InputFloat3("Position", (float*)&obj->position, "%.3f", inputFlags);
     ImGui::InputFloat3("Rotation", (float*)&obj->rotation, "%.3f", inputFlags);
 
@@ -666,6 +684,7 @@ void drawCollisionMesh() {
     glEnd();
   }
 
+#if !DEBUG_COLLISION_SPATIAL_HASH
   if (testCollisionResults.size()) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -690,6 +709,41 @@ void drawCollisionMesh() {
     }
     glDisable(GL_BLEND);
   }
+#endif
+
+#if DEBUG_COLLISION_SPATIAL_HASH
+  if (selectedObject) {
+    int spatialHashResults[100];
+    Vec3d objCenter;
+    Game_getObjCenter(selectedObject, &objCenter);
+
+    int spatialHashResultsCount =
+        SpatialHash_getTriangles(&objCenter, Game_getObjRadius(selectedObject),
+                                 &university_map_collision_collision_mesh_hash,
+                                 spatialHashResults, /*maxResults*/ 100);
+
+    std::string bucketKeys;
+    int i;
+    for (i = 0; i < spatialHashResultsCount; i++) {
+      bucketKeys += std::to_string(spatialHashResults[i]) + ",";
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      for (i = 0; i < spatialHashResultsCount; i++) {
+        tri = university_map_collision_collision_mesh + spatialHashResults[i];
+        triColor =
+            (spatialHashResults[i] / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
+
+        glColor4f(0.0f, triColor * 0.8, (1.0f - triColor) * 0.8, 0.3);
+        glBegin(GL_TRIANGLES);
+        glVertex3f(tri->a.x, tri->a.y, tri->a.z);
+        glVertex3f(tri->b.x, tri->b.y, tri->b.z);
+        glVertex3f(tri->c.x, tri->c.y, tri->c.z);
+        glEnd();
+      }
+      glDisable(GL_BLEND);
+    }
+  }
+#endif
 
   for (i = 0, tri = university_map_collision_collision_mesh;
        i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
@@ -1075,9 +1129,10 @@ void testCollision() {
     float objRadius = Game_getObjRadius(selectedObject);
     SphereTriangleCollision result;
     testCollisionTrace = TRUE;
-    Collision_testMeshSphereCollision(university_map_collision_collision_mesh,
-                                      UNIVERSITY_MAP_COLLISION_LENGTH,
-                                      &objCenter, objRadius, &result);
+    Collision_testMeshSphereCollision(
+        university_map_collision_collision_mesh,
+        UNIVERSITY_MAP_COLLISION_LENGTH, &objCenter, objRadius,
+        &university_map_collision_collision_mesh_hash, &result);
     testCollisionTrace = FALSE;
   } else {
     testCollisionResult = -1;
