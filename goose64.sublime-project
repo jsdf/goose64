@@ -19,6 +19,10 @@
         "args": "-Wall -fsyntax-only -fno-caret-diagnostics -Wno-deprecated-declarations -Wno-comment",
         "I": ["${folder}", "${file_path}"]
       }
+    },
+    "SublimeLinter":
+    {
+        "@python": 3.6
     }
   },
 
