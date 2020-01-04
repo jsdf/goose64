@@ -10,11 +10,17 @@ typedef struct Triangle {
   Vec3d c;
 } Triangle;
 
+typedef struct AABB {
+  Vec3d min;
+  Vec3d max;
+} AABB;
+
 typedef struct SphereTriangleCollision {
   int index;
   float distance;
   Vec3d posInTriangle;
   Triangle* triangle;
+  AABB triangleAABB;
 } SphereTriangleCollision;
 
 typedef struct SpatialHashBucket {
@@ -45,6 +51,8 @@ void Triangle_getCentroid(Triangle* triangle, Vec3d* result);
 void Triangle_getNormal(Triangle* triangle, Vec3d* result);
 float Triangle_comparePoint(Triangle* triangle, Vec3d* point);
 
+void AABB_fromTriangle(Triangle* triangle, AABB* result);
+
 int Collision_sphereTriangleIsSeparated(Triangle* triangle,
                                         Vec3d* sphereCenter,
                                         double sphereRadius);
@@ -60,6 +68,9 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
                                       SpatialHash* spatialHash,
                                       SphereTriangleCollision* result);
 
+int SpatialHash_unitsToGridForDimension(float unitsPos,
+                                        float gridCellSz,
+                                        int cellOffsetInDimension);
 SpatialHashBucket* SpatialHash_getBucket(float x,
                                          float y,
                                          SpatialHash* spatialHash);

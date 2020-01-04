@@ -42,6 +42,47 @@ float Triangle_comparePoint(Triangle* triangle, Vec3d* point) {
   return Vec3d_dot(&normal, &toPoint);
 }
 
+void AABB_fromSphere(Vec3d* sphereCenter, float sphereRadius, AABB* result) {
+  result->min = *sphereCenter;
+  result->min.x -= sphereRadius;
+  result->min.y -= sphereRadius;
+  result->min.z -= sphereRadius;
+
+  result->max = *sphereCenter;
+  result->max.x += sphereRadius;
+  result->max.y += sphereRadius;
+  result->max.z += sphereRadius;
+}
+
+void AABB_fromTriangle(Triangle* triangle, AABB* result) {
+  result->min = triangle->a;
+  result->min.x = MIN(result->min.x, triangle->b.x);
+  result->min.x = MIN(result->min.x, triangle->c.x);
+  result->min.y = MIN(result->min.y, triangle->b.y);
+  result->min.y = MIN(result->min.y, triangle->c.y);
+  result->min.z = MIN(result->min.z, triangle->b.z);
+  result->min.z = MIN(result->min.z, triangle->c.z);
+
+  result->max = triangle->a;
+  result->max.x = MAX(result->max.x, triangle->b.x);
+  result->max.x = MAX(result->max.x, triangle->c.x);
+  result->max.y = MAX(result->max.y, triangle->b.y);
+  result->max.y = MAX(result->max.y, triangle->c.y);
+  result->max.z = MAX(result->max.z, triangle->b.z);
+  result->max.z = MAX(result->max.z, triangle->c.z);
+}
+
+int Collision_intersectAABBAABB(AABB* a, AABB* b) {
+  // Exit with no intersection if separated along an axis
+  if (a->max.x < b->min.x || a->min.x > b->max.x)
+    return FALSE;
+  if (a->max.y < b->min.y || a->min.y > b->max.y)
+    return FALSE;
+  if (a->max.z < b->min.z || a->min.z > b->max.z)
+    return FALSE;  // Overlapping on all axes means AABBs are intersecting
+  return TRUE;
+}
+
 // not tested
 int Collision_intersectRayTriangle(Vec3d* pt,
                                    Vec3d* dir,
@@ -451,24 +492,76 @@ std::map<int, SphereTriangleCollision> testCollisionResults;
 #define COLLISION_SPATIAL_HASH_MAX_RESULTS 100
 #define COLLISION_SPATIAL_HASH_PRUNING_ENABLED 1
 
+float Collision_sqDistancePointAABB(Vec3d* p, AABB* b) {
+  float v, dist;
+  float sqDist = 0.0f;
+  // For each axis count any excess distance outside box extents
+  v = p->x;
+  if (v < b->min.x) {
+    dist = (b->min.x - v);
+    sqDist += dist * dist;
+  }
+  if (v > b->max.x) {
+    dist = (v - b->max.x);
+    sqDist += dist * dist;
+  }
+
+  v = p->y;
+  if (v < b->min.y) {
+    dist = (b->min.y - v);
+    sqDist += dist * dist;
+  }
+  if (v > b->max.y) {
+    dist = (v - b->max.y);
+    sqDist += dist * dist;
+  }
+
+  v = p->z;
+  if (v < b->min.z) {
+    dist = (b->min.z - v);
+    sqDist += dist * dist;
+  }
+  if (v > b->max.z) {
+    dist = (v - b->max.z);
+    sqDist += dist * dist;
+  }
+  return sqDist;
+}
+
+// Returns true if sphere intersects AABB, false otherwise
+int Collision_testSphereAABBCollision(Vec3d* sphereCenter,
+                                      float sphereRadius,
+                                      AABB* aabb) {
+  // Compute squared distance between sphere center and AABB
+  float sqDist = Collision_sqDistancePointAABB(sphereCenter, aabb);
+  // Sphere and AABB intersect if the (squared) distance
+  // between them is less
+  // than the (squared) sphere radius
+  return sqDist <= sphereRadius * sphereRadius;
+}
+
 int Collision_testMeshSphereCollision(Triangle* triangles,
                                       int trianglesLength,
                                       Vec3d* objCenter,
                                       float objRadius,
                                       SpatialHash* spatialHash,
                                       SphereTriangleCollision* result) {
-  int i;
+  int i, k;
   Triangle* tri;
   Vec3d closestPointOnTriangle;
 
   float closestHitDistSq;
   float hitDistSq;
   float objRadiusSq;
+  AABB triangleAABB;
+  // AABB sphereAABB;
   int hit, closestHitTriangleIndex, spatialHashResultsCount;
   int spatialHashResults[COLLISION_SPATIAL_HASH_MAX_RESULTS];
   closestHitDistSq = FLT_MAX;
   closestHitTriangleIndex = -1;
   objRadiusSq = objRadius * objRadius;
+
+  // AABB_fromSphere(objCenter, objRadius, &sphereAABB);
 
 #ifndef __N64__
 #ifdef __cplusplus
@@ -483,27 +576,29 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
       COLLISION_SPATIAL_HASH_MAX_RESULTS);
 
 #if COLLISION_SPATIAL_HASH_PRUNING_ENABLED
-  for (i = 0; i < spatialHashResultsCount; i++) {
-    tri = triangles + spatialHashResults[i];
+  for (k = 0; k < spatialHashResultsCount; k++) {
+    i = spatialHashResults[k];
+    tri = triangles + i;
 #else
   for (i = 0, tri = triangles; i < trianglesLength; i++, tri++) {
 #endif
-    hit = !Collision_sphereTriangleIsSeparated(tri, objCenter, objRadius);
+    // as an optimization, first test AABB overlap
+    AABB_fromTriangle(tri, &triangleAABB);
+    if (!Collision_testSphereAABBCollision(objCenter, objRadius,
+                                           &triangleAABB)) {
+      continue;
+    }
+    // if (!Collision_intersectAABBAABB(&sphereAABB, &triangleAABB)) {
+    //   continue;
+    // }
+
+    // then test triangle intersection
+    // hit = !Collision_sphereTriangleIsSeparated(tri, objCenter, objRadius);
+    hit = TRUE;
 
     if (hit) {
-      // printf("collided with: %d ", i);
-      // Vec3d_print(&tri->a);
-      // Vec3d_print(&tri->b);
-      // Vec3d_print(&tri->c);
-      // printf("\n");
-
       Collision_distancePointTriangleExact(objCenter, tri,
                                            &closestPointOnTriangle);
-      // printf("objCenter:");
-      // Vec3d_print(objCenter);
-      // printf("closestPointOnTriangle:");
-      // Vec3d_print(&closestPointOnTriangle);
-      // printf(" \n");
 
       hitDistSq = Vec3d_distanceToSq(objCenter, &closestPointOnTriangle);
       if (hitDistSq > objRadiusSq) {
@@ -514,12 +609,11 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 #ifndef __N64__
 #ifdef __cplusplus
       if (testCollisionTrace) {
-        SphereTriangleCollision debugResult = {i, hitDistSq,
-                                               closestPointOnTriangle, tri};
+        SphereTriangleCollision debugResult = {
+            i, hitDistSq, closestPointOnTriangle, tri, triangleAABB};
         testCollisionResults.insert(
             std::pair<int, SphereTriangleCollision>(i, debugResult));
       }
-      // printf("hit dist: %f\n", hitDistSq);
 #endif
 #endif
 
@@ -531,6 +625,7 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
         result->distance = sqrtf(closestHitDistSq);
         result->triangle = tri;
         result->posInTriangle = closestPointOnTriangle;
+        result->triangleAABB = triangleAABB;
       }
     }
   }
@@ -555,7 +650,7 @@ int SpatialHash_getBucketIndex(int cellX, int cellY, int cellsInDimension) {
 int SpatialHash_unitsToGridForDimension(float unitsPos,
                                         float gridCellSz,
                                         int cellOffsetInDimension) {
-  return (int)(unitsPos / gridCellSz) + cellOffsetInDimension;
+  return floorf(unitsPos / gridCellSz) + cellOffsetInDimension;
 }
 
 SpatialHashBucket* SpatialHash_getBucket(float x,

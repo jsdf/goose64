@@ -79,6 +79,11 @@ class Vec2d:
         self.y *= scalar
         return self
 
+    def divScalar(self, scalar):
+        self.x /= scalar
+        self.y /= scalar
+        return self
+
     def update(self, updater):
         self.x = updater(self.x)
         self.y = updater(self.y)
@@ -392,6 +397,13 @@ def test(filepath):
             for tri_index in bucket:
                 ctx.pencolor((randcolor(), randcolor(), randcolor()))
                 draw_triangle(triangles[tri_index])
+            ctx.pencolor("black")
+            for tri_index in bucket:
+                draw_label(triangles[tri_index], tri_index)
+
+        ctx.goto(window_width / 2 - 130, window_height / 2 - 30)
+        style = ("Courier", 20)
+        ctx.write("x=%d y=%d" % (gridX, gridY), font=style, align="center")
         turtle.update()
 
     def draw_grid():
@@ -413,6 +425,16 @@ def test(filepath):
                 Vec2d(y=sh.gridToUnits(gridY), x=left),
                 Vec2d(y=sh.gridToUnits(gridY), x=right),
             )
+
+    def triangle_center(tri):
+        return tri[0].add(tri[1]).add(tri[2]).divScalar(3)
+
+    def draw_label(tri, tri_index):
+        center = triangle_center([vert_to_vec2d(vert) for vert in tri])
+        ctx.penup()
+        ctx.goto(center.x * state["zoom"], center.y * state["zoom"])
+        style = ("Lucida Grande", 11)
+        ctx.write(str(tri_index), font=style, align="center")
 
     def zoomIn():
         state["zoom"] *= 2

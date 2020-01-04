@@ -58,7 +58,7 @@ for index, obj in enumerate(collision_objects):
         ), "you need to triangulate the collision mesh before exporting it"
         tri_verts = []
         for vert_idx in poly.vertices:
-            vert = mesh.vertices[vert_idx].co
+            vert = obj.matrix_world @ mesh.vertices[vert_idx].co
             # convert into game coord space
             # we rotate the position from z-up (blender) to y-up (opengl)
             # and scale by n64 scale factor
@@ -71,13 +71,6 @@ for index, obj in enumerate(collision_objects):
             )
         triangles.append(tri_verts)
 
-
-import sys
-import os
-
-blend_dir = os.path.basename(bpy.data.filepath)
-if blend_dir not in sys.path:
-    sys.path.append(blend_dir)
 
 spatial_hash_data = spatial_hash.create_spatial_hash(triangles, 4 * N64_SCALE_FACTOR)
 

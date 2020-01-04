@@ -54,6 +54,7 @@
 #define DEBUG_PHYSICS 1
 #define DEBUG_COLLISION_MESH 1
 #define DEBUG_COLLISION_SPATIAL_HASH 1
+#define DEBUG_COLLISION_MESH_AABB 0
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
 
@@ -333,17 +334,30 @@ void drawMotionVectorLine(Vec3d* from, Vec3d* to) {
 }
 
 void drawTriNormal(Vec3d* normal, Vec3d* position) {
-  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
-               GL_DEPTH_BUFFER_BIT);
-  glPushMatrix();
-
   Vec3d from, to;
 
   from = *position;
   to = *normal;
   Vec3d_mulScalar(&to, 20.0);
   Vec3d_add(&to, position);
-  drawMotionVectorLine(&from, &to);
+
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
+               GL_DEPTH_BUFFER_BIT);
+  glPushMatrix();
+
+  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_DEPTH_TEST);
+
+  glBegin(GL_LINES);
+  glColor3f(0.0f, 0.0f, 1.0f);
+  glVertex3f(from.x, from.y, from.z);
+  glColor3f(1.0f, 1.0f, 0.0f);
+  glVertex3f(to.x, to.y, to.z);
+  glEnd();
+
+  glPopAttrib();
+  glPopMatrix();
 }
 
 void drawRaycastLine(RaycastTraceEvent raycast) {
@@ -656,6 +670,40 @@ void drawGameObject(GameObject* obj) {
   glPopMatrix();
 }
 
+void drawAABB(AABB* aabb) {
+  // top
+  glBegin(GL_LINE_LOOP);
+  glVertex3f(aabb->min.x, aabb->min.y, aabb->min.z);
+  glVertex3f(aabb->min.x, aabb->min.y, aabb->max.z);
+  glVertex3f(aabb->max.x, aabb->min.y, aabb->max.z);
+  glVertex3f(aabb->max.x, aabb->min.y, aabb->min.z);
+  glEnd();
+
+  // bottom
+  glBegin(GL_LINE_LOOP);
+  glVertex3f(aabb->max.x, aabb->max.y, aabb->max.z);
+  glVertex3f(aabb->max.x, aabb->max.y, aabb->min.z);
+  glVertex3f(aabb->min.x, aabb->max.y, aabb->min.z);
+  glVertex3f(aabb->min.x, aabb->max.y, aabb->max.z);
+  glEnd();
+
+  // sides
+  glBegin(GL_LINES);
+  // 1
+  glVertex3f(aabb->min.x, aabb->min.y, aabb->min.z);
+  glVertex3f(aabb->min.x, aabb->max.y, aabb->min.z);
+  // 2
+  glVertex3f(aabb->min.x, aabb->min.y, aabb->max.z);
+  glVertex3f(aabb->min.x, aabb->max.y, aabb->max.z);
+  // 3
+  glVertex3f(aabb->min.x, aabb->min.y, aabb->min.z);
+  glVertex3f(aabb->min.x, aabb->min.y, aabb->min.z);
+  // 4
+  glVertex3f(aabb->max.x, aabb->min.y, aabb->min.z);
+  glVertex3f(aabb->max.x, aabb->max.y, aabb->min.z);
+  glEnd();
+}
+
 void drawCollisionMesh() {
   int i;
 
@@ -672,19 +720,65 @@ void drawCollisionMesh() {
   glDisable(GL_DEPTH_TEST);
 
   glPushMatrix();
+
+  // draw all tris wireframes
   float triColor;
   for (i = 0, tri = university_map_collision_collision_mesh;
        i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
     triColor = (i / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
     glColor3f(0.0f, triColor, 1.0f - triColor);
-    glBegin(GL_LINES);
+    glBegin(GL_LINE_LOOP);
     glVertex3f(tri->a.x, tri->a.y, tri->a.z);
     glVertex3f(tri->b.x, tri->b.y, tri->b.z);
     glVertex3f(tri->c.x, tri->c.y, tri->c.z);
     glEnd();
   }
 
-#if !DEBUG_COLLISION_SPATIAL_HASH
+// draw spatial hash matching tris
+#if DEBUG_COLLISION_SPATIAL_HASH
+  if (selectedObject) {
+    int spatialHashResults[100];
+    Vec3d objCenter;
+    Game_getObjCenter(selectedObject, &objCenter);
+
+    int spatialHashResultsCount =
+        SpatialHash_getTriangles(&objCenter, Game_getObjRadius(selectedObject),
+                                 &university_map_collision_collision_mesh_hash,
+                                 spatialHashResults, /*maxResults*/ 100);
+
+    int i;
+    for (i = 0; i < spatialHashResultsCount; i++) {
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      for (i = 0; i < spatialHashResultsCount; i++) {
+        tri = university_map_collision_collision_mesh + spatialHashResults[i];
+        triColor =
+            (spatialHashResults[i] / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
+
+        glColor4f(0.0f, triColor * 0.8, (1.0f - triColor) * 0.8, 0.3);
+        glBegin(GL_TRIANGLES);
+        glVertex3f(tri->a.x, tri->a.y, tri->a.z);
+        glVertex3f(tri->b.x, tri->b.y, tri->b.z);
+        glVertex3f(tri->c.x, tri->c.y, tri->c.z);
+        glEnd();
+      }
+      glDisable(GL_BLEND);
+    }
+#if DEBUG_COLLISION_MESH_AABB
+    for (i = 0; i < spatialHashResultsCount; i++) {
+      for (i = 0; i < spatialHashResultsCount; i++) {
+        tri = university_map_collision_collision_mesh + spatialHashResults[i];
+        AABB triangleAABB;
+        AABB_fromTriangle(tri, &triangleAABB);
+        glColor3f(1.0, 1.0, 0.0);
+        drawAABB(&triangleAABB);
+      }
+    }
+#endif
+  }
+#endif
+
+  // draw collided tris
   if (testCollisionResults.size()) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -709,42 +803,8 @@ void drawCollisionMesh() {
     }
     glDisable(GL_BLEND);
   }
-#endif
 
-#if DEBUG_COLLISION_SPATIAL_HASH
-  if (selectedObject) {
-    int spatialHashResults[100];
-    Vec3d objCenter;
-    Game_getObjCenter(selectedObject, &objCenter);
-
-    int spatialHashResultsCount =
-        SpatialHash_getTriangles(&objCenter, Game_getObjRadius(selectedObject),
-                                 &university_map_collision_collision_mesh_hash,
-                                 spatialHashResults, /*maxResults*/ 100);
-
-    std::string bucketKeys;
-    int i;
-    for (i = 0; i < spatialHashResultsCount; i++) {
-      bucketKeys += std::to_string(spatialHashResults[i]) + ",";
-      glEnable(GL_BLEND);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      for (i = 0; i < spatialHashResultsCount; i++) {
-        tri = university_map_collision_collision_mesh + spatialHashResults[i];
-        triColor =
-            (spatialHashResults[i] / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
-
-        glColor4f(0.0f, triColor * 0.8, (1.0f - triColor) * 0.8, 0.3);
-        glBegin(GL_TRIANGLES);
-        glVertex3f(tri->a.x, tri->a.y, tri->a.z);
-        glVertex3f(tri->b.x, tri->b.y, tri->b.z);
-        glVertex3f(tri->c.x, tri->c.y, tri->c.z);
-        glEnd();
-      }
-      glDisable(GL_BLEND);
-    }
-  }
-#endif
-
+  // draw tri labels
   for (i = 0, tri = university_map_collision_collision_mesh;
        i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
     triColor = (i / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
@@ -770,7 +830,7 @@ void drawCollisionMesh() {
 
         // text label
         triCollisionDistance = collisionTestResult.distance;
-        sprintf(triIndexText, "%d: %f %s", i, triCollisionDistance,
+        sprintf(triIndexText, "%d: %.2f %s", i, triCollisionDistance,
                 i == testCollisionResult ? "[closest]" : "");
         drawStringAtPoint(triIndexText, &triCentroid, TRUE);
       } catch (const std::out_of_range& oor) {
