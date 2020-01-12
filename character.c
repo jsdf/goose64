@@ -200,6 +200,9 @@ void Character_moveTowards(Character* self,
   float destAngle;
   Vec3d_directionTo(&self->obj->position, &target, &movement);
 
+  movement.y = 0;  // remove vertical component to stop character trying to fly
+  Vec3d_normalise(&movement);
+
   Vec3d_mulScalar(&movement, CHARACTER_SPEED * speedMultiplier);
 
   Vec3d_add(&self->obj->position, &movement);
