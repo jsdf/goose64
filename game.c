@@ -74,7 +74,7 @@ void Game_init(GameObject* worldObjects,
   assert(goose != NULL);
 
   Player_init(&game.player, goose);
-  PhysState_init(&game.physicsState, /* viscosity */ 0.5, physWorldData);
+  PhysState_init(&game.physicsState, physWorldData);
 
   // setup camera
   Vec3d_copyFrom(&game.viewTarget, &game.player.goose->position);

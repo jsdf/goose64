@@ -45,15 +45,16 @@
 #define FREEVIEW_SPEED 0.2f
 
 #define DEBUG_LOG_RENDER 0
-#define DEBUG_OBJECTS 1
+#define DEBUG_OBJECTS 0
 #define DEBUG_RAYCASTING 0
 #define DEBUG_MODELS 0
 #define DEBUG_ANIMATION 0
 #define DEBUG_ANIMATION_MORE 0
 #define DEBUG_ATTACHMENT 0
 #define DEBUG_PHYSICS 1
-#define DEBUG_COLLISION_MESH 1
-#define DEBUG_COLLISION_SPATIAL_HASH 1
+#define DEBUG_COLLISION_MESH 0
+#define DEBUG_COLLISION_MESH_MORE 0
+#define DEBUG_COLLISION_SPATIAL_HASH 0
 #define DEBUG_COLLISION_MESH_AABB 0
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
@@ -72,10 +73,10 @@ bool keysDown[127];
 Input input;
 GameObject* selectedObject = NULL;
 
-PhysWorldData physWorldData = {university_map_collision_collision_mesh,
-                               UNIVERSITY_MAP_COLLISION_LENGTH,
-                               &university_map_collision_collision_mesh_hash,
-                               /*gravity*/ -98.0};
+PhysWorldData physWorldData = {
+    university_map_collision_collision_mesh, UNIVERSITY_MAP_COLLISION_LENGTH,
+    &university_map_collision_collision_mesh_hash,
+    /*gravity*/ -9.8 * N64_SCALE_FACTOR, /*viscosity*/ 0.05};
 
 // crap for gluProject/gluUnProject
 GLdouble lastModelView[16];
@@ -173,27 +174,61 @@ void drawGUI() {
   ImGui::Text("Selected object: %d (%s)", obj ? obj->id : -1,
               obj ? ModelTypeStrings[obj->modelType] : "none");
 
-  ImGui::Text("collision");
-  ImGui::InputInt("testCollisionResult", (int*)&testCollisionResult, 0, 1,
-                  inputFlags);
-
-  std::string collKeys;
-  if (testCollisionResults.size()) {
-    std::map<int, SphereTriangleCollision>::iterator collIter =
-        testCollisionResults.begin();
-
-    while (collIter != testCollisionResults.end()) {
-      collKeys += std::to_string(collIter->first) + ",";
-
-      collIter++;
-    }
-  }
-  ImGui::Text("colliding tris=%s", collKeys.c_str());
-
   if (obj) {
     int spatialHashResults[100];
     Vec3d objCenter;
     Game_getObjCenter(obj, &objCenter);
+
+    ImGui::Text("Object");
+    ImGui::InputFloat3("Position", (float*)&obj->position, "%.3f", inputFlags);
+    ImGui::InputFloat3("Rotation", (float*)&obj->rotation, "%.3f", inputFlags);
+    ImGui::InputFloat3(
+        "centroidOffset",
+        (float*)&modelTypesProperties[obj->modelType].centroidOffset, "%.3f",
+        inputFlags);
+
+    ImGui::InputFloat("radius",
+                      (float*)&modelTypesProperties[obj->modelType].radius, 0.1,
+                      1.0, "%.3f", inputFlags);
+
+    ImGui::Text("Physics");
+    if (obj->physBody) {
+      ImGui::InputInt("physBody", (int*)&obj->physBody->id, 0, 1,
+                      ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat3("phys Velocity",
+                         (float*)&obj->physBody->nonIntegralVelocity, "%.3f",
+                         ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat3("phys Acceleration",
+                         (float*)&obj->physBody->nonIntegralAcceleration,
+                         "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+      ImGui::InputFloat3("phys position", (float*)&obj->physBody->position,
+                         "%.3f", ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat3("phys prevPosition",
+                         (float*)&obj->physBody->prevPosition, "%.3f",
+                         ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputInt("phys enabled", (int*)&obj->physBody->enabled, 0, 1,
+                      ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputInt("phys controlled", (int*)&obj->physBody->controlled, 0, 1,
+                      ImGuiInputTextFlags_ReadOnly);
+    }
+
+    ImGui::Text("Collision");
+    ImGui::InputInt("testCollisionResult", (int*)&testCollisionResult, 0, 1,
+                    inputFlags);
+
+    std::string collKeys;
+    if (testCollisionResults.size()) {
+      std::map<int, SphereTriangleCollision>::iterator collIter =
+          testCollisionResults.begin();
+
+      while (collIter != testCollisionResults.end()) {
+        collKeys += std::to_string(collIter->first) + ",";
+
+        collIter++;
+      }
+    }
+    ImGui::Text("colliding tris=%s", collKeys.c_str());
 
     int spatialHashResultsCount =
         SpatialHash_getTriangles(&objCenter, Game_getObjRadius(obj),
@@ -206,32 +241,6 @@ void drawGUI() {
       bucketKeys += std::to_string(spatialHashResults[i]) + ",";
     }
     ImGui::Text("current bucket tris=%s", bucketKeys.c_str());
-
-    ImGui::InputFloat3("Position", (float*)&obj->position, "%.3f", inputFlags);
-    ImGui::InputFloat3("Rotation", (float*)&obj->rotation, "%.3f", inputFlags);
-
-    if (obj->physBody) {
-      ImGui::InputInt("physBody", (int*)&obj->physBody->id, 0, 1,
-                      ImGuiInputTextFlags_ReadOnly);
-      ImGui::InputFloat3("phys Velocity",
-                         (float*)&obj->physBody->nonIntegralVelocity, "%.3f",
-                         ImGuiInputTextFlags_ReadOnly);
-
-      ImGui::InputFloat3("phys position", (float*)&obj->physBody->position,
-                         "%.3f", ImGuiInputTextFlags_ReadOnly);
-      ImGui::InputFloat3("phys prevPosition",
-                         (float*)&obj->physBody->prevPosition, "%.3f",
-                         ImGuiInputTextFlags_ReadOnly);
-    }
-
-    ImGui::InputFloat3(
-        "centroidOffset",
-        (float*)&modelTypesProperties[obj->modelType].centroidOffset, "%.3f",
-        inputFlags);
-
-    ImGui::InputFloat("radius",
-                      (float*)&modelTypesProperties[obj->modelType].radius, 0.1,
-                      1.0, "%.3f", inputFlags);
   }
 
   ImGui::InputFloat("physWorldData.gravity", (float*)&physWorldData.gravity,
@@ -804,7 +813,8 @@ void drawCollisionMesh() {
     glDisable(GL_BLEND);
   }
 
-  // draw tri labels
+// draw tri labels & normals
+#if DEBUG_COLLISION_MESH_MORE
   for (i = 0, tri = university_map_collision_collision_mesh;
        i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
     triColor = (i / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
@@ -844,6 +854,7 @@ void drawCollisionMesh() {
 
     drawTriNormal(&triNormal, &triCentroid);
   }
+#endif
 
   glPopMatrix();
   glPopAttrib();
@@ -953,12 +964,21 @@ void renderScene(void) {
 
       glPushMatrix();
       glTranslatef(objCenter.x, objCenter.y, objCenter.z);
-      obj == selectedObject ? drawMarker(1.0, 0.5, 0.0, Game_getObjRadius(obj))
-                            : drawMarker(0.2, 0.2, 0.2, Game_getObjRadius(obj));
+      drawMarker(0.2, 0.2, 0.2, Game_getObjRadius(obj));
       glPopMatrix();
     }
   }
 #endif
+
+  if (selectedObject) {
+    Vec3d selObjCenter;
+    Game_getObjCenter(selectedObject, &selObjCenter);
+
+    glPushMatrix();
+    glTranslatef(selObjCenter.x, selObjCenter.y, selObjCenter.z);
+    drawMarker(1.0, 0.5, 0.0, Game_getObjRadius(selectedObject));
+    glPopMatrix();
+  }
 
   char debugtext[80];
   Vec3d_toString(&game->player.goose->position, debugtext);

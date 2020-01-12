@@ -15,6 +15,7 @@ typedef struct PhysWorldData {
   int worldMeshTrisLength;
   SpatialHash* worldMeshSpatialHash;
   float gravity;
+  float viscosity;
 } PhysWorldData;
 
 typedef struct PhysState {
@@ -35,15 +36,27 @@ typedef struct PhysBody {
   float radiusSquared;
   float restitution;
   int enabled;
+  int controlled;  // controlled bodies have no inertia
+  // in verlet, this is used to derive the velocity (pos - prevPos) so changing
+  // pos explicitly without changing prevPos will result in acceleration when
+  // velocity is derived
   Vec3d prevPosition;
   Vec3d position;
+  // in verlet this is derived.
+  // after integration, it represents the velocity for dt
   Vec3d velocity;
+  // after integration, this represents the velocity for 1 second
   Vec3d nonIntegralVelocity;
+  // this is really force (eg. in newtons) until after integration, when it
+  // becomes acceleration
   Vec3d acceleration;
+  // after integration, this represents the acceleration for 1 second
+  Vec3d nonIntegralAcceleration;
+  // this is the resultant acceleration from the 2x previous timestep
   Vec3d prevAcceleration;
 } PhysBody;
 
-void PhysState_init(PhysState* self, float viscosity, PhysWorldData* worldData);
+void PhysState_init(PhysState* self, PhysWorldData* worldData);
 
 void PhysState_step(PhysState* physics,
                     PhysBody* bodies,

@@ -70,10 +70,10 @@ float profTimePhysics;
 static float cycleMode;
 static RenderMode renderModeSetting;
 static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
-PhysWorldData physWorldData = {university_map_collision_collision_mesh,
-                               UNIVERSITY_MAP_COLLISION_LENGTH,
-                               &university_map_collision_collision_mesh_hash,
-                               /*gravity*/ -98.0};
+PhysWorldData physWorldData = {
+    university_map_collision_collision_mesh, UNIVERSITY_MAP_COLLISION_LENGTH,
+    &university_map_collision_collision_mesh_hash,
+    /*gravity*/ -9.8 * N64_SCALE_FACTOR, /*viscosity*/ 0.05};
 
 void drawWorldObjects(Dynamic* dynamicp);
 
