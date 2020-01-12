@@ -14,6 +14,7 @@ char* ModelTypeStrings[] = {
     "BushModel",                    //
     "FlagpoleModel",                //
     "GroundskeeperCharacterModel",  //
+    "WallModel",                    //
     "MAX_MODEL_TYPE",               //
 };
 #endif
@@ -49,6 +50,9 @@ ModelProperties modelTypesProperties[] = {
     /* GroundskeeperCharacterModel */
     {/* mass */ 2000, /* radius */ 25.0,
      /* centroidOffset */ {0.0, 22.0, 0.0}},
+    /* WallModel */
+    {/* mass */ 100, /* radius */ 50.0,
+     /* centroidOffset */ {0.0, 0.0, 0.0}},
     /* MAX_MODEL_TYPE */
     {/* mass */ 100, /* radius */ 50.0,
      /* centroidOffset */ {0.0, 0.0, 0.0}},

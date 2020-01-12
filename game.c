@@ -32,7 +32,7 @@ static Game game;
 
 #define NUM_CHARACTERS 1
 Character characters[NUM_CHARACTERS];
-#define NUM_ITEMS 2
+#define NUM_ITEMS 5
 Item items[NUM_ITEMS];
 #define NUM_PHYS_BODIES 10
 PhysBody physicsBodies[NUM_PHYS_BODIES];
@@ -81,7 +81,11 @@ void Game_init(GameObject* worldObjects,
 
   itemsCount = 2;
   Item_init(&items[0], Game_findObjectByType(BookItemModel), &game);
-  Item_init(&items[1], Game_findObjectByType(HomeworkItemModel), &game);
+  for (i = 0; i < 3; ++i) {
+    obj = Game_findObjectNByType(HomeworkItemModel, i);
+    assert(obj);
+    Item_init(&items[1 + i], obj, &game);
+  }
 
   charactersCount = 1;
   Character_init(&characters[0],
@@ -104,12 +108,16 @@ void Game_init(GameObject* worldObjects,
   assert(physicsBodiesCount <= NUM_PHYS_BODIES);
   for (i = 0; i < NUM_CHARACTERS; ++i) {
     obj = characters[i].obj;
+    if (!obj)
+      break;
     Game_initGameObjectPhysBody(&physicsBodies[physicsBodiesCount], obj);
     physicsBodiesCount++;
     assert(physicsBodiesCount <= NUM_PHYS_BODIES);
   }
   for (i = 0; i < NUM_ITEMS; ++i) {
     obj = items[i].obj;
+    if (!obj)
+      break;
     Game_initGameObjectPhysBody(&physicsBodies[physicsBodiesCount], obj);
     physicsBodiesCount++;
     assert(physicsBodiesCount <= NUM_PHYS_BODIES);

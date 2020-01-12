@@ -1324,6 +1324,7 @@ int main(int argc, char** argv) {
   loadModel(GroundskeeperCharacterModel, "characterrig.obj", "person.bmp");
   loadModel(BookItemModel, "book.obj", "book.bmp");
   loadModel(HomeworkItemModel, "testingCube.obj", "testCubeTex.bmp");
+  loadModel(WallModel, "wall.obj", "wall.bmp");
 
   // enter GLUT event processing cycle
   glutMainLoop();
