@@ -39,6 +39,9 @@
 #include "character_anim.h"
 #include "goose_anim.h"
 
+#include "ed64io_everdrive.h"
+#include "ed64io_usb.h"
+
 #define CONSOLE_VIEW_DEBUG 1
 #define CONSOLE_DEBUG 1
 #define CONSOLE_SHOW_PROFILING 1
@@ -68,6 +71,9 @@ int frameCounterLastFrames;
 float profTimeCharacters;
 float profTimePhysics;
 float profTimeDraw;
+
+static int usbEnabled;
+static int usbState;
 
 static float cycleMode;
 static RenderMode renderModeSetting;
@@ -100,6 +106,9 @@ void initStage00() {
   GameObject* loadObj;
   int i;
 
+  usbEnabled = FALSE;
+  usbState = 0;
+
   frameCounterLastTime = 0;
   frameCounterCurFrames = 0;
   profTimeCharacters = 0;
@@ -123,6 +132,8 @@ void initStage00() {
        i++, obj++) {
     sortedObjects[i] = obj;
   }
+
+  evd_init();
 }
 
 void debugPrintVec3d(int x, int y, char* label, Vec3d* vec) {
@@ -233,6 +244,10 @@ void makeDL00() {
       nuDebConTextPos(0, 4, consoleOffset++);
       sprintf(conbuf, "retrace=%d", nuScRetraceCounter);
       nuDebConCPuts(0, conbuf);
+
+      nuDebConTextPos(0, 4, consoleOffset++);
+      sprintf(conbuf, "usb=%d,state=%d", usbEnabled, usbState);
+      nuDebConCPuts(0, conbuf);
     }
     debugPrintVec3d(4, consoleOffset++, "pos", &game->player.goose->position);
   } else {
@@ -296,6 +311,7 @@ void checkDebugControls(Game* game) {
 /* The game progressing process for stage 0 */
 void updateGame00(void) {
   Game* game;
+  char logmsg[100];
 
   game = Game_get();
 
@@ -345,6 +361,17 @@ void updateGame00(void) {
   }
 
   Game_update(&input);
+
+  if (contdata[0].trigger & R_CBUTTONS) {
+    usbEnabled = !usbEnabled;
+  }
+
+  if (usbEnabled) {
+    sprintf(logmsg, "log: %d\n", nuScRetraceCounter);
+    usbLoggerLog(logmsg);
+
+    usbState = usbLoggerFlush();
+  }
 }
 
 typedef enum LightingType {

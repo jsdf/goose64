@@ -6,24 +6,30 @@
     }
   ],
   "settings": {
+
     "ClangFormat": {
       "style": "Chromium",
-      "format_on_save": true
+      "format_on_save": true,
     },
-    "linters": {
-      "clang": {
-        "args": "-Wall -fsyntax-only -fno-caret-diagnostics -std=c89 -pedantic -Wall -Wno-deprecated-declarations -Wno-comment",
-        "I": ["${folder}", "${file_path}"]
-      },
-      "clang++": {
-        "args": "-Wall -fsyntax-only -fno-caret-diagnostics -Wno-deprecated-declarations -Wno-comment",
-        "I": ["${folder}", "${file_path}"]
-      }
-    },
-    "SublimeLinter":
-    {
-        "@python": 3.6
-    }
+ 
+
+    "SublimeLinter.linters.clang.args": "-Wall -fsyntax-only -fno-caret-diagnostics -std=c89 -pedantic  -Wno-missing-braces -Wno-deprecated-declarations -Wno-comment -Wno-constant-conversion -D_LANGUAGE_C=1 -D_MIPS_SZLONG=64 -include ultra64.h -include \"PR/gbi.h\"",
+    "SublimeLinter.linters.clang.I": [
+      "${folder}",
+      "${file_path}",
+      "/Users/jfriend/.wine/drive_c/nintendo/n64kit/nustd/include",
+      "/Users/jfriend/.wine/drive_c/nintendo/n64kit/nusys/include",
+      "/Users/jfriend/.wine/drive_c/ultra/usr/include"
+    ],
+ 
+    "SublimeLinter.linters.clang++.args":  "-Wall -fsyntax-only -fno-caret-diagnostics  -Wno-missing-braces -Wno-deprecated-declarations -Wno-comment  -D_LANGUAGE_C=1 -D_MIPS_SZLONG=64 -include ultra64.h -include \"PR/gbi.h\"",
+    "SublimeLinter.linters.clang++.I": [
+      "${folder}",
+      "${file_path}",
+      "/Users/jfriend/.wine/drive_c/nintendo/n64kit/nustd/include",
+      "/Users/jfriend/.wine/drive_c/nintendo/n64kit/nusys/include",
+      "/Users/jfriend/.wine/drive_c/ultra/usr/include"
+    ]
   },
 
   "build_systems": [
