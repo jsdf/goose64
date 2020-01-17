@@ -31,6 +31,7 @@
 #include "testingCube.h"
 #include "university_bldg.h"
 #include "university_floor.h"
+#include "wall.h"
 // map
 #include "university_map.h"
 #include "university_map_collision.h"
@@ -66,6 +67,7 @@ int frameCounterLastFrames;
 /* profiling */
 float profTimeCharacters;
 float profTimePhysics;
+float profTimeDraw;
 
 static float cycleMode;
 static RenderMode renderModeSetting;
@@ -144,7 +146,9 @@ void makeDL00() {
   char conbuf[100];
   int consoleOffset;
   float frameCounterCurTime;
+  float profStartDraw;
 
+  profStartDraw = CUR_TIME_MS();
   consoleOffset = 20;
 
   frameCounterCurTime = CUR_TIME_MS();
@@ -186,6 +190,7 @@ void makeDL00() {
   }
 
   drawWorldObjects(dynamicp);
+  game->profTimeDraw += (CUR_TIME_MS() - profStartDraw);
 
   gDPFullSync(glistp++);
   gSPEndDisplayList(glistp++);
@@ -215,9 +220,12 @@ void makeDL00() {
         game->profTimeCharacters = 0.0f;
         profTimePhysics = game->profTimePhysics / 60.0f;
         game->profTimePhysics = 0.0f;
+        profTimeDraw = game->profTimeDraw / 60.0f;
+        game->profTimeDraw = 0.0f;
       }
       debugPrintFloat(4, consoleOffset++, "char=%3.2fms", profTimeCharacters);
       debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profTimePhysics);
+      debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profTimeDraw);
 #endif
 
       // debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
@@ -427,6 +435,8 @@ Gfx* getModelDisplayList(ModelType modelType) {
       return Wtx_university_floor;
     case FlagpoleModel:
       return Wtx_flagpole;
+    case WallModel:
+      return Wtx_wall;
     default:
       return Wtx_testingCube;
   }

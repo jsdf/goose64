@@ -86,6 +86,7 @@ GLint lastViewport[4];
 // profiling
 float profTimeCharacters = 0;
 float profTimePhysics = 0;
+float profTimeDraw = 0;
 
 ObjModel models[MAX_MODEL_TYPE];
 
@@ -252,8 +253,8 @@ void drawGUI() {
   ImGui::Text("Frametime %.3f ms (%.1f FPS)",
               1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-  ImGui::Text("Phys=%.3fms, Characters=%.3f ms", profTimePhysics,
-              profTimeCharacters);
+  ImGui::Text("Phys=%.3fms, Characters=%.3f ms, Draw=%.3f ms", profTimePhysics,
+              profTimeCharacters, profTimeDraw);
 
   ImGui::End();
 }
@@ -864,6 +865,8 @@ void renderScene(void) {
   int i;
   Game* game;
 
+  float profStartDraw = CUR_TIME_MS();
+
   // Start the Dear ImGui frame
   ImGui_ImplOpenGL2_NewFrame();
   ImGui_ImplGLUT_NewFrame();
@@ -1007,6 +1010,7 @@ void renderScene(void) {
   ImGuiIO& io = ImGui::GetIO();
   ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
+  game->profTimeDraw += (CUR_TIME_MS() - profStartDraw);
   glutSwapBuffers();
 }
 
@@ -1234,6 +1238,8 @@ void updateAndRender() {
       game->profTimeCharacters = 0.0f;
       profTimePhysics = game->profTimePhysics / 60.0f;
       game->profTimePhysics = 0.0f;
+      profTimeDraw = game->profTimeDraw / 60.0f;
+      game->profTimeDraw = 0.0f;
     }
 
 #if DEBUG_COLLISION_MESH
@@ -1245,6 +1251,7 @@ void updateAndRender() {
   if (game->freeView) {
     game->viewPos = viewPos;
   }
+
   renderScene();
 }
 

@@ -79,6 +79,7 @@ typedef struct Game {
   // profiling
   float profTimeCharacters;
   float profTimePhysics;
+  float profTimeDraw;
 } Game;
 
 #endif /* !_GAMETYPES_H_ */
