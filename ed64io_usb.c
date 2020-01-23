@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <string.h>
 
 #include "ed64io_everdrive.h"
@@ -28,7 +29,9 @@ int usbLoggerOffset = 0;
 int usbLoggerFlushing = FALSE;
 int usbLoggerOverflow = FALSE;
 
-int usbLoggerLog(char* str) {
+extern void _Printf(void (*)(void*), int, const char*, va_list);
+
+int usbLoggerLog(const char* str) {
   char* emptySpaceStart = usbLoggerData;
   int lengthToWrite;
   if (usbLoggerOverflow) {
@@ -88,6 +91,28 @@ u8 usbLogger(char* str, int newTransfer) {
     return fifoWriteState.state;
 
   return 0;
+}
+
+static void* _usb_printf_s(void* str,
+                           register const char* buf,
+                           register int n) {
+  char tocopy[USB_LOGGER_BUFFER_SIZE_BYTES];
+
+  memcpy(tocopy, buf, MIN(USB_LOGGER_BUFFER_SIZE_BYTES, n));
+  if (n < USB_LOGGER_BUFFER_SIZE_BYTES) {
+    tocopy[n] = '\0';
+  }
+
+  usbLoggerLog(tocopy);
+  return ((void*)1);
+}
+
+void ed64Printf(const char* fmt, ...) {
+  va_list ap;
+
+  va_start(ap, fmt);
+  _Printf((void (*)(void*))_usb_printf_s, 0, fmt, ap);
+  va_end(ap);
 }
 
 u8 usbListener(int userData) {

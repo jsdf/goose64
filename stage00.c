@@ -367,8 +367,8 @@ void updateGame00(void) {
   }
 
   if (usbEnabled) {
-    sprintf(logmsg, "log: %d\n", nuScRetraceCounter);
-    usbLoggerLog(logmsg);
+    strcpy(logmsg, "(string formatting works)");
+    ed64Printf("usblogger log %s retrace=%d\n", logmsg, nuScRetraceCounter);
 
     usbState = usbLoggerFlush();
   }
