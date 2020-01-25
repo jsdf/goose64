@@ -16,7 +16,7 @@ MAKEROM = mild
 LCDEFS =	-DNU_DEBUG -DF3DEX_GBI_2 -D__N64__
 LCINCS =	-I. -nostdinc -I- -I$(NUSTDINCDIR) -I$(NUSYSINCDIR) -I$(ROOT)/usr/include/PR
 LCOPTS =	-G 0
-LDFLAGS = $(MKDEPOPT) -L$(LIB)  -L$(NUSYSLIBDIR) -L$(NUSTDLIBDIR)  -lnusys_d -lnustd -lgultra_d -L$(GCCDIR)/mipse/lib -lkmc
+LDFLAGS = $(MKDEPOPT) -L$(LIB)  -L$(NUSYSLIBDIR) -L$(NUSTDLIBDIR)  -lnusys_d -lnustd_d -lgultra_d -L$(GCCDIR)/mipse/lib -lkmc
 
 OPTIMIZER =	-g
 
@@ -28,7 +28,7 @@ HFILES =	main.h graphic.h testingCube.h vec3d.h vec2d.h gameobject.h game.h mode
 
 ED64CODEFILES = ed64io_usb.c ed64io_sys.c ed64io_everdrive.c
 
-CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c om_mem_heap.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c university_map_collision.c $(ED64CODEFILES)
+CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c om_mem_heap.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c university_map_collision.c $(ED64CODEFILES)
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
 

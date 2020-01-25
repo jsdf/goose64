@@ -33,6 +33,7 @@ function retry {
 # upload rom
 retry loader64 -v --write --file "$romfile"
 
+sleep 1;
 # boot rom that was uploaded
 retry loader64 -v --pifboot
 

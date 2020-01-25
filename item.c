@@ -15,12 +15,10 @@
 #define ITEM_PICKUP_COOLDOWN 60
 #define ITEM_STEAL_COOLDOWN 120
 
-#ifndef __N64__
 char* ItemHolderTypeStrings[] = {
     "PlayerItemHolder",
     "CharacterItemHolder",
 };
-#endif
 
 void Item_init(Item* self, GameObject* obj, Game* game) {
   self->obj = obj;
@@ -40,16 +38,12 @@ void Item_take(Item* self, ItemHolder* newHolder) {
           // too frequently
           : Game_get()->tick > self->lastPickedUpTick + ITEM_STEAL_COOLDOWN) {
     if (self->holder) {
-#ifndef __N64__
-      printf("item taken from %s by %s\n",
-             ItemHolderTypeStrings[self->holder->itemHolderType],
-             ItemHolderTypeStrings[newHolder->itemHolderType]);
-#endif
+      debugPrintf("item taken from %s by %s\n",
+                  ItemHolderTypeStrings[self->holder->itemHolderType],
+                  ItemHolderTypeStrings[newHolder->itemHolderType]);
     } else {
-#ifndef __N64__
-      printf("item picked up by %s\n",
-             ItemHolderTypeStrings[newHolder->itemHolderType]);
-#endif
+      debugPrintf("item picked up by %s\n",
+                  ItemHolderTypeStrings[newHolder->itemHolderType]);
     }
 
     originalHolder = self->holder;
@@ -88,10 +82,8 @@ void Item_take(Item* self, ItemHolder* newHolder) {
 void Item_drop(Item* self) {
   assert(self->holder != NULL);
 
-#ifndef __N64__
-  printf("item dropped by %s\n",
-         ItemHolderTypeStrings[self->holder->itemHolderType]);
-#endif
+  debugPrintf("item dropped by %s\n",
+              ItemHolderTypeStrings[self->holder->itemHolderType]);
   // clear back reference
   self->holder->heldItem = NULL;
   // no longer held

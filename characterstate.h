@@ -12,8 +12,6 @@ typedef enum CharacterState {
   MAX_CHARACTER_STATE
 } CharacterState;
 
-#ifndef __N64__
 extern char* CharacterStateStrings[];
-#endif
 
 #endif /* !CHARACTERSTATE_H */

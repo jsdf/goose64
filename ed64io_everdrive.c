@@ -1,12 +1,10 @@
 
 #include "ed64io_everdrive.h"
 #include "ed64io_types.h"
-// #include <libdragon.h>
+
 #include <stdio.h>
 #include "ed64io_errors.h"
 #include "ed64io_sys.h"
-// #include "rom.h"
-// #include "disk.h"
 
 #define CMD0 0x40   // software reset
 #define CMD1 0x41   // brings card out of idle state

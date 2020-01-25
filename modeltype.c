@@ -1,8 +1,6 @@
 
 #include "modeltype.h"
 
-#ifndef __N64__
-
 char* ModelTypeStrings[] = {
     "NoneModel",                    //
     "GooseModel",                   //
@@ -17,7 +15,6 @@ char* ModelTypeStrings[] = {
     "WallModel",                    //
     "MAX_MODEL_TYPE",               //
 };
-#endif
 
 ModelProperties modelTypesProperties[] = {
     /* NoneModel */

@@ -76,4 +76,10 @@
 
 #endif
 
+#ifdef __N64__
+#define debugPrintf ed64Printf
+#else
+#define debugPrintf printf
+#endif
+
 #endif /* CONSTANTS_H */

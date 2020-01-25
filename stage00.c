@@ -106,7 +106,7 @@ void initStage00() {
   GameObject* loadObj;
   int i;
 
-  usbEnabled = FALSE;
+  usbEnabled = TRUE;
   usbState = 0;
 
   frameCounterLastTime = 0;
@@ -217,7 +217,7 @@ void makeDL00() {
 // debug text overlay
 #if CONSOLE_VIEW_DEBUG
   if (contPattern & 0x1) {
-    consoleOffset = 20;
+    consoleOffset = 21;
 
     debugPrintFloat(4, consoleOffset++, "frame=%3.2fms",
                     1000.0 / frameCounterLastFrames);
@@ -245,9 +245,9 @@ void makeDL00() {
       sprintf(conbuf, "retrace=%d", nuScRetraceCounter);
       nuDebConCPuts(0, conbuf);
 
-      nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "usb=%d,state=%d", usbEnabled, usbState);
-      nuDebConCPuts(0, conbuf);
+      // nuDebConTextPos(0, 4, consoleOffset++);
+      // sprintf(conbuf, "usb=%d,state=%d", usbEnabled, usbState);
+      // nuDebConCPuts(0, conbuf);
     }
     debugPrintVec3d(4, consoleOffset++, "pos", &game->player.goose->position);
   } else {
@@ -367,8 +367,8 @@ void updateGame00(void) {
   }
 
   if (usbEnabled) {
-    strcpy(logmsg, "(string formatting works)");
-    ed64Printf("usblogger log %s retrace=%d\n", logmsg, nuScRetraceCounter);
+    // strcpy(logmsg, "(string formatting works)");
+    // ed64Printf("usblogger log %s retrace=%d\n", logmsg, nuScRetraceCounter);
 
     usbState = usbLoggerFlush();
   }

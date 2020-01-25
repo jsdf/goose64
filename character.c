@@ -49,11 +49,6 @@ void Character_print(Character* self) {
       self->target ? ModelTypeStrings[self->target->obj->modelType] : "none");
 }
 
-void Character_printStateTransition(Character* self, CharacterState nextState) {
-  printf("%s: %s -> %s\n", ModelTypeStrings[self->obj->modelType],
-         CharacterStateStrings[self->state], CharacterStateStrings[nextState]);
-}
-
 void Character_toString(Character* self, char* buffer) {
   char pos[60];
   char rot[60];
@@ -71,6 +66,12 @@ void Character_toString(Character* self, char* buffer) {
       pos, rot, angleToPlayer);
 }
 #endif
+
+void Character_printStateTransition(Character* self, CharacterState nextState) {
+  debugPrintf("%s: %s -> %s\n", ModelTypeStrings[self->obj->modelType],
+              CharacterStateStrings[self->state],
+              CharacterStateStrings[nextState]);
+}
 
 void Character_init(Character* self,
                     GameObject* obj,
@@ -272,8 +273,8 @@ void Character_transitionToState(Character* self, CharacterState nextState) {
   if (nextState == SeekingItemState) {
     printf("starting SeekingItemState\n");
   }
-  Character_printStateTransition(self, nextState);
 #endif
+  Character_printStateTransition(self, nextState);
   self->enteredStateTick = Game_get()->tick;
   self->state = nextState;
 }

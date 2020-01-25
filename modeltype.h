@@ -28,9 +28,6 @@ typedef struct ModelProperties {
 
 extern ModelProperties modelTypesProperties[];
 
-#ifndef __N64__
-
 extern char* ModelTypeStrings[];
-#endif
 
 #endif /* !MODELTYPE_H */
