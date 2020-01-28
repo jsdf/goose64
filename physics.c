@@ -5,6 +5,7 @@
 #include "collision.h"
 #include "physics.h"
 
+#define PHYS_DEBUG 0
 #define PHYS_MIN_MOVEMENT 0.5
 #define PHYS_COLLISION_MIN_SEPARATION 0.001
 #define PHYSICS_MOTION_DAMPENING 0
@@ -75,11 +76,11 @@ int PhysBehavior_worldCollisionResponseStep(PhysBody* body,
     return FALSE;
   }
 
-#ifndef __N64__
+#ifndef PHYS_DEBUG
   // if (body->id == 2) {
   //   printf("player collided\n");
   // }
-  printf("body %d collided\n", body->id);
+  debugPrintf("body %d collided\n", body->id);
 #endif
   distanceToIntersect = collision.distance;
 
@@ -239,12 +240,12 @@ void PhysBehavior_collisionResponse(PhysWorldData* world,
       break;
     }
   }
-#ifndef __N64__
+#ifndef PHYS_DEBUG
   if (i > 0) {
-    printf("collision response took %d iters\n", i);
+    debugPrintf("collision response took %d iters\n", i);
   }
   if (hasAnyCollision) {
-    printf(
+    debugPrintf(
         "hit PHYS_MAX_COLLISION_ITERATIONS and ended collision response with "
         "collisions remaining\n");
   }
@@ -442,8 +443,9 @@ void PhysState_step(PhysState* physics,
     if (physics->accumulatedTime < 1.0) {
       physics->accumulatedTime = physics->accumulatedTime + delta;
     } else {
-#ifndef __N64__
-      printf("Physics: accumulated too much time, not accumulating any more\n");
+#ifndef PHYS_DEBUG
+      debugPrintf(
+          "Physics: accumulated too much time, not accumulating any more\n");
 #endif
     };
     /* Integrate until the accumulatedTime is empty or until the */
@@ -461,8 +463,8 @@ void PhysState_step(PhysState* physics,
       // step is probably wrong, as forces are reset after each step
       break;
     }
-#ifndef __N64__
-    printf("Physics: ran %d timesteps\n", i + 1);
+#ifndef PHYS_DEBUG
+    debugPrintf("Physics: ran %d timesteps\n", i + 1);
 #endif
   }
 }

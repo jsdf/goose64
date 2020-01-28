@@ -45,6 +45,7 @@
 #define FREEVIEW_SPEED 0.2f
 
 #define DEBUG_LOG_RENDER 0
+#define DEBUG_TEXT_BASIC 0
 #define DEBUG_OBJECTS 0
 #define DEBUG_RAYCASTING 0
 #define DEBUG_MODELS 0
@@ -926,7 +927,8 @@ void renderScene(void) {
     }
   }
 
-#if DEBUG_COLLISION_MESH
+#if DEBUG_COLLISION_MESH || DEBUG_COLLISION_MESH_MORE || \
+    DEBUG_COLLISION_SPATIAL_HASH
   drawCollisionMesh();
 #endif
 
@@ -983,15 +985,16 @@ void renderScene(void) {
     glPopMatrix();
   }
 
-  char debugtext[80];
-  Vec3d_toString(&game->player.goose->position, debugtext);
-  drawString(debugtext, 20, 20);
-
   char pausedtext[80];
   if (game->paused) {
     strcpy(pausedtext, "paused");
     drawString(pausedtext, w / 2 - strlen(pausedtext) / 2, h / 2);
   }
+
+#if DEBUG_TEXT_BASIC
+  char debugtext[80];
+  Vec3d_toString(&game->player.goose->position, debugtext);
+  drawString(debugtext, 20, 20);
 
   char characterString[120];
   Character* character;
@@ -1003,6 +1006,7 @@ void renderScene(void) {
   i++;
   Player_toString(&game->player, characterString);
   drawString(characterString, 20, glutGet(GLUT_WINDOW_HEIGHT) - 40 * (i + 1));
+#endif
 
   // Imgui Rendering
   drawGUI();

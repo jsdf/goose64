@@ -86,3 +86,4 @@ DerivedData/
 imgui.ini
 
 *.pyc
+*_collision.json
