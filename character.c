@@ -20,8 +20,10 @@
 #endif
 
 #define CHARACTER_ENABLED 1
+#define DEBUG_CHARACTER 1
 #define CHARACTER_MAX_TURN_SPEED 4.0f
 #define CHARACTER_FLEE_DIST 1200.0f
+#define CHARACTER_NEAR_TARGET_DIST 100.0f
 #define CHARACTER_NEAR_OBJ_DROP_DIST 100.0f
 #define CHARACTER_NEAR_OBJ_TAKE_DIST 100.0f
 #define CHARACTER_ITEM_NEAR_HOME_DIST 100.0f
@@ -89,6 +91,9 @@ void Character_init(Character* self,
   self->animState.attachment.offset.y = -10;  // back
   self->animState.attachment.rotation.x = 90;
   self->animState.attachment.rotation.z = 90;
+
+  Vec3d_origin(&self->targetLocation);
+  self->targetType = NoneCharacterTarget;
 
   self->target = NULL;
   self->defaultActivityItem = defaultActivityItem;
@@ -287,7 +292,12 @@ void Character_maybeTransitionToHigherPriorityState(Character* self,
     return;
   }
   // TODO: start fleeing
-  // TODO: heard sound
+  if (self->state < SeekingSoundSourceState) {
+    if (self->targetType == HonkCharacterTarget) {
+      Character_transitionToState(self, SeekingSoundSourceState);
+      return;
+    }
+  }
   if (self->state < SeekingItemState) {
     // has item been stolen?
     if (Vec3d_distanceTo(&possibleTarget->obj->position,
@@ -299,6 +309,12 @@ void Character_maybeTransitionToHigherPriorityState(Character* self,
         Character_canSeeItem(self, possibleTarget, game);
         return;
       }
+    }
+  }
+  if (self->state < SeekingLastSeenState) {
+    if (self->targetType == ItemCharacterTarget) {
+      Character_transitionToState(self, SeekingLastSeenState);
+      return;
     }
   }
 }
@@ -314,15 +330,21 @@ void Character_updateConfusionState(Character* self, Game* game) {
   Character_transitionToState(self, IdleState);
 }
 
+int Character_isCloseToAndFacing(Character* self,
+                                 Vec3d* target,
+                                 float targetDist) {
+  return !(
+      // not close enough
+      Vec3d_distanceTo(&self->obj->position, target) > targetDist ||
+      // not facing towards enough
+      Character_topDownAngleToPos(self, target) >
+          CHARACTER_FACING_OBJECT_ANGLE);
+}
+
 // in this state the charcter is trying to go to a 'default activity' and do it
 void Character_updateDefaultActivityState(Character* self, Game* game) {
-  if (
-      // not close enough
-      Vec3d_distanceTo(&self->obj->position, &self->defaultActivityLocation) >
-          CHARACTER_NEAR_OBJ_DROP_DIST ||
-      // not facing towards enough
-      Character_topDownAngleToPos(self, &self->defaultActivityLocation) >
-          CHARACTER_FACING_OBJECT_ANGLE) {
+  if (!Character_isCloseToAndFacing(self, &self->defaultActivityLocation,
+                                    CHARACTER_NEAR_OBJ_DROP_DIST)) {
     // go there
     Character_moveTowards(self, self->defaultActivityLocation,
                           CHARACTER_SPEED_MULTIPLIER_WALK);
@@ -349,8 +371,14 @@ void Character_updateDefaultActivityState(Character* self, Game* game) {
 }
 
 void Character_haveItemTaken(Character* self) {
+  Game* game;
   // let nature take its course
   self->state = ConfusionState;
+
+  // make sure that the character can find the player after having item stolen
+  self->targetType = ItemCharacterTarget;
+  game = Game_get();
+  self->targetLocation = game->player.goose->position;
 }
 
 void Character_updateSeekingItemState(Character* self, Game* game) {
@@ -380,12 +408,16 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
     if (!Character_canSeeItem(self, self->target, game)) {
       // nope, give up
       self->target = NULL;
-#ifndef __N64__
-      printf("can't see the item anymore, giving up\n");
+#ifndef DEBUG_CHARACTER
+      debugPrintf("can't see the item anymore, giving up\n");
 #endif
       Character_transitionToState(self, IdleState);
       return;
     }
+
+    // keep last seen location in case it goes out of view
+    self->targetType = ItemCharacterTarget;
+    self->targetLocation = self->target->obj->position;
 
     someoneElseIsHoldingItem =
         self->target->holder && self->target->holder != &self->itemHolder;
@@ -394,11 +426,12 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
     if (Vec3d_distanceTo(&self->obj->position, &self->target->obj->position) <
         CHARACTER_NEAR_OBJ_TAKE_DIST) {
       if (someoneElseIsHoldingItem) {
-#ifndef __N64__
-        printf("stealing item back\n");
+#ifndef DEBUG_CHARACTER
+        debugPrintf("stealing item back\n");
 #endif
       }
       Item_take(self->target, &self->itemHolder);
+      self->targetType = NoneCharacterTarget;
 
     } else {
       // no, move towards
@@ -409,8 +442,31 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
     }
   }
 }
-void Character_updateSeekingSoundSourceState(Character* self, Game* game) {
-  // TODO
+void Character_updateSeekingTargetState(Character* self, Game* game) {
+  // if character is close enough from target, give up
+  if (Character_isCloseToAndFacing(self, &self->targetLocation,
+                                   CHARACTER_NEAR_TARGET_DIST)) {
+#ifndef DEBUG_CHARACTER
+    debugPrintf("close enough to target, giving up\n");
+#endif
+
+    self->targetType = NoneCharacterTarget;
+    Character_transitionToState(self, IdleState);
+    return;
+  } else if (self->targetType == HonkCharacterTarget) {
+    if (Character_canSeePlayer(self, game)) {
+#ifndef DEBUG_CHARACTER
+      debugPrintf("can see player that honked, giving up\n");
+#endif
+      self->targetType = NoneCharacterTarget;
+      Character_transitionToState(self, IdleState);
+      return;
+    }
+  } else {
+    // continue advancing towards target
+    Character_moveTowards(self, self->targetLocation,
+                          CHARACTER_SPEED_MULTIPLIER_WALK);
+  }
 }
 void Character_updateFleeingState(Character* self, Game* game) {
   Vec3d movement;
@@ -434,15 +490,17 @@ void Character_updateState(Character* self, Game* game) {
     case ConfusionState:
       Character_updateConfusionState(self, game);
       break;
-
     case DefaultActivityState:
       Character_updateDefaultActivityState(self, game);
+      break;
+    case SeekingLastSeenState:
+      Character_updateSeekingTargetState(self, game);
       break;
     case SeekingItemState:
       Character_updateSeekingItemState(self, game);
       break;
     case SeekingSoundSourceState:
-      Character_updateSeekingSoundSourceState(self, game);
+      Character_updateSeekingTargetState(self, game);
       break;
     case FleeingState:
       Character_updateFleeingState(self, game);

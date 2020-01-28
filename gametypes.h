@@ -41,6 +41,8 @@ typedef struct Character {
   struct ItemStruct* target;
   struct ItemStruct* defaultActivityItem;
   Vec3d defaultActivityLocation;
+  Vec3d targetLocation;
+  CharacterTarget targetType;
   CharacterState state;
 
   unsigned int enteredStateTick;
