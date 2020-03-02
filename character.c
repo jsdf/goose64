@@ -35,6 +35,7 @@
 #define CHARACTER_EYE_OFFSET_Y 120.0
 #define CHARACTER_VIEW_ANGLE_HALF 90.0
 #define CHARACTER_FACING_OBJECT_ANGLE 30.0
+#define CHARACTER_FACING_MOVEMENT_TARGET_ANGLE 45.0
 #define CHARACTER_DEBUG_ANIMATION 0
 #define CHARACTER_WALK_ANIM_MOVEMENT_DIVISOR 1.6
 #define CHARACTER_SPEED_MULTIPLIER_RUN 1.0
@@ -211,7 +212,12 @@ void Character_moveTowards(Character* self,
 
   Vec3d_mulScalar(&movement, CHARACTER_SPEED * speedMultiplier);
 
-  Vec3d_add(&self->obj->position, &movement);
+  if (
+      // facing towards
+      Character_topDownAngleToPos(self, &target) <=
+      CHARACTER_FACING_MOVEMENT_TARGET_ANGLE) {
+    Vec3d_add(&self->obj->position, &movement);
+  }
 
   // rotate towards target, but with a speed limit
   Vec2d_init(&movement2d, movement.x, movement.z);
@@ -226,9 +232,13 @@ void Character_setVisibleItemAttachment(Character* self, ModelType modelType) {
 
 void Character_update(Character* self, Game* game) {
   Vec3d startPos;
-  float resultantMovementSpeed;
+  float startRot;
+  float animationMovementSpeed;
+  int isTurning;
+  int isWalking;
 
   Vec3d_copyFrom(&startPos, &self->obj->position);
+  startRot = self->obj->rotation.y;
   if (self->itemHolder.heldItem) {
     // bring item with you
     self->itemHolder.heldItem->obj->position = self->obj->position;
@@ -246,15 +256,22 @@ void Character_update(Character* self, Game* game) {
   Character_updateState(self, game);
 #endif
 
-  resultantMovementSpeed =
+  isTurning = fabsf(self->obj->rotation.y - startRot) > 0.001;
+  animationMovementSpeed =
       Vec3d_distanceTo(&startPos, &self->obj->position) / 100.0f;
+  isWalking = animationMovementSpeed > 0.0001;
+  if (!isWalking && isTurning) {
+    // for now when turning, just play back walk anim at constant speed
+    animationMovementSpeed = 0.03;
+  }
 
 #if CHARACTER_DEBUG_ANIMATION
-  resultantMovementSpeed = 0.001;
+  animationMovementSpeed = 0.001;
 #endif
 
   // update animation
-  if (resultantMovementSpeed > 0.0001) {
+  if (isWalking || isTurning  // TODO: turn in place anim
+  ) {
     if (self->animState.state != character_walk_anim) {
       // enter walk anim
       self->animState.progress = 0.0;
@@ -262,7 +279,7 @@ void Character_update(Character* self, Game* game) {
       // advance walk anim
       self->animState.progress = fmodf(
           self->animState.progress +
-              (resultantMovementSpeed / CHARACTER_WALK_ANIM_MOVEMENT_DIVISOR),
+              (animationMovementSpeed / CHARACTER_WALK_ANIM_MOVEMENT_DIVISOR),
           1.0);
     }
     self->animState.state = character_walk_anim;
