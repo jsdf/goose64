@@ -82,6 +82,7 @@ typedef struct Game {
   float profTimeCharacters;
   float profTimePhysics;
   float profTimeDraw;
+  float profTimePath;
 } Game;
 
 #endif /* !_GAMETYPES_H_ */

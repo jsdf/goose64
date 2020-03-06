@@ -27,12 +27,8 @@
 #ifdef __N64__
 #define CUR_TIME_MS() OS_CYCLES_TO_USEC(osGetTime()) / 1000.0
 #else
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-#define CUR_TIME_MS() glutGet(GLUT_ELAPSED_TIME)
+#include "compat.h"
+#define CUR_TIME_MS() getElapsedTimeMS()
 #endif
 
 #define MEM_HEAP_BYTES 524288

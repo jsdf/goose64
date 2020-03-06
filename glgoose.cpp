@@ -60,6 +60,7 @@
 #define DEBUG_COLLISION_MESH_AABB 0
 #define DEBUG_PATHFINDING_GRAPH 1
 #define DEBUG_PATHFINDING 1
+#define DEBUG_PROFILING 1
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
 
@@ -91,9 +92,10 @@ GLdouble lastProjection[16];
 GLint lastViewport[4];
 
 // profiling
-float profTimeCharacters = 0;
-float profTimePhysics = 0;
-float profTimeDraw = 0;
+float profAvgCharacters = 0;
+float profAvgPhysics = 0;
+float profAvgDraw = 0;
+float profAvgPath = 0;
 
 ObjModel models[MAX_MODEL_TYPE];
 
@@ -313,8 +315,10 @@ void drawGUI() {
   ImGui::Text("Frametime %.3f ms (%.1f FPS)",
               1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-  ImGui::Text("Phys=%.3fms, Characters=%.3f ms, Draw=%.3f ms", profTimePhysics,
-              profTimeCharacters, profTimeDraw);
+#if DEBUG_PROFILING
+  ImGui::Text("Phys=%.3fms, Char=%.3f ms, Draw=%.3f ms, Path=%.3f ms",
+              profAvgPhysics, profAvgCharacters, profAvgDraw, profAvgPath);
+#endif
 
 #if DEBUG_PATHFINDING
 
@@ -939,6 +943,9 @@ void drawCollisionMesh() {
 }
 
 void doPathfinding(int printResult) {
+  float profStartPath = CUR_TIME_MS();
+  printf("pathfinding start %f\n", CUR_TIME_MS());
+
   Path_initState(&testGraph,                                          // graph
                  &pathfindingState,                                   // state
                  Path_getNodeByID(&testGraph, debugPathfindingFrom),  // start
@@ -948,11 +955,18 @@ void doPathfinding(int printResult) {
                  pathfindingResult             // results array
 
   );
+
   int result = Path_findAStar(&testGraph, &pathfindingState);
+  float profTimePath = (CUR_TIME_MS() - profStartPath);
+
+  printf("pathfinding end %f\n", CUR_TIME_MS());
+  Game_get()->profTimePath += profTimePath;
+
   if (printResult) {
     printf("finding path from %d to %d\n", pathfindingState.start->id,
            pathfindingState.end->id);
     printf("pathfinding result %s\n", result ? "found" : "not found");
+    printf("pathfinding took %f\n", profTimePath);
     if (result) {
       printf("pathfinding result length %d\n", pathfindingState.resultSize);
 
@@ -1038,6 +1052,8 @@ void drawPathfindingGraph() {
 void renderScene(void) {
   int i;
   Game* game;
+
+  printf("CUR_TIME_MS() %f\n", CUR_TIME_MS());
 
   float profStartDraw = CUR_TIME_MS();
 
@@ -1417,19 +1433,21 @@ void updateAndRender() {
     updateInputs();
 
     if (game->tick % 60 == 0) {
-      profTimeCharacters = game->profTimeCharacters / 60.0f;
+      profAvgCharacters = game->profTimeCharacters / 60.0f;
       game->profTimeCharacters = 0.0f;
-      profTimePhysics = game->profTimePhysics / 60.0f;
+      profAvgPhysics = game->profTimePhysics / 60.0f;
       game->profTimePhysics = 0.0f;
-      profTimeDraw = game->profTimeDraw / 60.0f;
+      profAvgDraw = game->profTimeDraw / 60.0f;
       game->profTimeDraw = 0.0f;
+      profAvgPath = game->profTimePath / 60.0f;
+      game->profTimePath = 0.0f;
     }
 
 #if DEBUG_COLLISION_MESH
     testCollision();
 #endif
 #if DEBUG_PATHFINDING
-    doPathfinding(FALSE);
+    doPathfinding(TRUE);
 #endif
 
     Game_update(&input);

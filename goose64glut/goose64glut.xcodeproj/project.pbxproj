@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		732EC52A2412219800CCCA81 /* compat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 732EC5282412219700CCCA81 /* compat.cpp */; };
 		733266C8235EAA7600907B30 /* glgoose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266C7235EAA7600907B30 /* glgoose.cpp */; };
 		733266E4235EAB8200907B30 /* vec3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266D5235EAB8100907B30 /* vec3d.cpp */; };
 		733266E6235EAB8200907B30 /* gameobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266D7235EAB8100907B30 /* gameobject.cpp */; };
@@ -53,6 +54,8 @@
 /* Begin PBXFileReference section */
 		7300A9AA23A9F79C00CD6A5B /* characteranimtypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = characteranimtypes.h; path = ../characteranimtypes.h; sourceTree = "<group>"; };
 		7300A9AB23A9F7A900CD6A5B /* character_anim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = character_anim.h; path = ../character_anim.h; sourceTree = "<group>"; };
+		732EC5282412219700CCCA81 /* compat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = compat.cpp; path = ../compat.cpp; sourceTree = "<group>"; };
+		732EC5292412219800CCCA81 /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compat.h; path = ../compat.h; sourceTree = "<group>"; };
 		733266BE235CFB2C00907B30 /* renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = renderer.h; path = ../renderer.h; sourceTree = "<group>"; };
 		733266C4235D0C2B00907B30 /* input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = input.h; path = ../input.h; sourceTree = "<group>"; };
 		733266C7235EAA7600907B30 /* glgoose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glgoose.cpp; path = ../glgoose.cpp; sourceTree = "<group>"; };
@@ -141,6 +144,8 @@
 				733266DB235EAB8100907B30 /* input.h */,
 				733266EF235EC53400907B30 /* character.cpp */,
 				73D1784D23BF173700AC253C /* university_map_collision.cpp */,
+				732EC5282412219700CCCA81 /* compat.cpp */,
+				732EC5292412219800CCCA81 /* compat.h */,
 				73E1067123B483A300DE8673 /* collision.cpp */,
 				73D9004E2411DEFF00F96350 /* pathfinding.cpp */,
 				73E1067223B483A400DE8673 /* collision.h */,
@@ -263,6 +268,7 @@
 				73E1067023B014A600DE8673 /* imgui_draw.cpp in Sources */,
 				73735E58235FE9C40048C9EC /* player.cpp in Sources */,
 				733266E6235EAB8200907B30 /* gameobject.cpp in Sources */,
+				732EC52A2412219800CCCA81 /* compat.cpp in Sources */,
 				73D9004F2411DEFF00F96350 /* pathfinding.cpp in Sources */,
 				73735E5A235FE9E80048C9EC /* gameutils.cpp in Sources */,
 				733266F0235EC53400907B30 /* character.cpp in Sources */,
