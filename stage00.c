@@ -17,6 +17,7 @@
 #include "input.h"
 #include "main.h"
 #include "modeltype.h"
+#include "pathfinding.h"
 #include "physics.h"
 #include "renderer.h"
 #include "vec2d.h"
@@ -35,6 +36,7 @@
 // map
 #include "university_map.h"
 #include "university_map_collision.h"
+#include "university_map_graph.h"
 // anim data
 #include "character_anim.h"
 #include "goose_anim.h"
@@ -71,6 +73,7 @@ int frameCounterLastFrames;
 float profTimeCharacters;
 float profTimePhysics;
 float profTimeDraw;
+float profTimePath;
 
 static int usbEnabled;
 static int usbState;
@@ -233,10 +236,13 @@ void makeDL00() {
         game->profTimePhysics = 0.0f;
         profTimeDraw = game->profTimeDraw / 60.0f;
         game->profTimeDraw = 0.0f;
+        profTimePath = game->profTimePath / 60.0f;
+        game->profTimePath = 0.0f;
       }
       debugPrintFloat(4, consoleOffset++, "char=%3.2fms", profTimeCharacters);
       debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profTimePhysics);
       debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profTimeDraw);
+      debugPrintFloat(4, consoleOffset++, "path=%3.2fms", profTimePath);
 #endif
 
       // debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
@@ -308,6 +314,33 @@ void checkDebugControls(Game* game) {
     viewPos.x += 30.0;
 }
 
+int debugPathfindingFrom = 3;
+int debugPathfindingTo = 8;
+int pathfindingGraphSize = UNIVERSITY_MAP_GRAPH_SIZE;
+Graph* pathfindingGraph = &university_map_graph;
+PathfindingState* pathfindingState = &university_map_graph_pathfinding_state;
+NodeState* pathfindingNodeStates = university_map_graph_pathfinding_node_states;
+int* pathfindingResult = university_map_graph_pathfinding_result;
+
+void doTestPathfinding() {
+  float profStartPath = CUR_TIME_MS();
+
+  Path_initState(
+      pathfindingGraph,                                          // graph
+      pathfindingState,                                          // state
+      Path_getNodeByID(pathfindingGraph, debugPathfindingFrom),  // start
+      Path_getNodeByID(pathfindingGraph, debugPathfindingTo),    // end
+      pathfindingNodeStates,  // nodeStates array
+      pathfindingGraphSize,   // nodeStateSize
+      pathfindingResult       // results array
+
+  );
+
+  Path_findAStar(pathfindingGraph, pathfindingState);
+
+  Game_get()->profTimePath += (CUR_TIME_MS() - profStartPath);
+}
+
 /* The game progressing process for stage 0 */
 void updateGame00(void) {
   Game* game;
@@ -316,6 +349,9 @@ void updateGame00(void) {
   game = Game_get();
 
   Vec2d_origin(&input.direction);
+
+  doTestPathfinding();
+  doTestPathfinding();
 
   /* Data reading of controller 1 */
   nuContDataGetEx(contdata, 0);

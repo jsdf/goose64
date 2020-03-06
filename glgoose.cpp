@@ -38,6 +38,7 @@
 #include "renderer.h"
 #include "university_map.h"
 #include "university_map_collision.h"
+#include "university_map_graph.h"
 #include "vec3d.h"
 
 #include "character_anim.h"
@@ -77,9 +78,6 @@ float cameraAngle = 180.0f;
 bool keysDown[127];
 Input input;
 GameObject* selectedObject = NULL;
-
-int debugPathfindingFrom = 3;
-int debugPathfindingTo = 4;
 
 PhysWorldData physWorldData = {
     university_map_collision_collision_mesh, UNIVERSITY_MAP_COLLISION_LENGTH,
@@ -128,58 +126,13 @@ char* CharacterMeshTypeStrings[] = {
 // TODO: allocate this in map header file with correct size
 static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 
-#define PATHFINDING_TEST_GRAPH_SIZE 11
-
-Node testGraphNodes[] = {
-    {0, {10, 10, 100}},
-    {1, {0, 10, 300}},
-    {2, {300, 10, 300}},
-    {3, {600, 10, 300}},
-    {4, {-395.667, 10.001, -302.618}},
-    {5, {-598.629, 10.001, -585.013}},
-    {6, {-939.587, 10.001, -556.057}},
-    {7, {-1291.417, 10.001, -625.138}},
-    {8, {-1296.933, 10.001, -792.504}},
-    {9, {-947.610, 10.001, -820.081}},
-    {10, {-632.436, 10.001, -775.958}},
-};
-
-int testGraphEdgesNode0[] = {1, 2, 4};
-int testGraphEdgesNode1[] = {0, 2};
-int testGraphEdgesNode2[] = {0, 1, 3};
-int testGraphEdgesNode3[] = {2};
-int testGraphEdgesNode4[] = {0, 5};
-int testGraphEdgesNode5[] = {4, 6, 10};
-int testGraphEdgesNode6[] = {5, 7};
-int testGraphEdgesNode7[] = {6, 8};
-int testGraphEdgesNode8[] = {7, 9};
-int testGraphEdgesNode9[] = {8, 10};
-int testGraphEdgesNode10[] = {9, 5};
-
-EdgeList testGraphEdges[] = {
-    {/*size*/ 3, testGraphEdgesNode0},   //
-    {/*size*/ 2, testGraphEdgesNode1},   //
-    {/*size*/ 3, testGraphEdgesNode2},   //
-    {/*size*/ 1, testGraphEdgesNode3},   //
-    {/*size*/ 2, testGraphEdgesNode4},   //
-    {/*size*/ 3, testGraphEdgesNode5},   //
-    {/*size*/ 2, testGraphEdgesNode6},   //
-    {/*size*/ 2, testGraphEdgesNode7},   //
-    {/*size*/ 2, testGraphEdgesNode8},   //
-    {/*size*/ 2, testGraphEdgesNode9},   //
-    {/*size*/ 2, testGraphEdgesNode10},  //
-};
-
-Graph testGraph = {
-    PATHFINDING_TEST_GRAPH_SIZE,  // int size;
-    testGraphNodes,               // Node* nodes;
-    testGraphEdges,               // EdgeList* edges;
-};
-
-PathfindingState pathfindingState;
-
-NodeState pathfindingNodeStates[PATHFINDING_TEST_GRAPH_SIZE];
-int pathfindingResult[PATHFINDING_TEST_GRAPH_SIZE];
+int debugPathfindingFrom = 3;
+int debugPathfindingTo = 8;
+int pathfindingGraphSize = UNIVERSITY_MAP_GRAPH_SIZE;
+Graph* pathfindingGraph = &university_map_graph;
+PathfindingState* pathfindingState = &university_map_graph_pathfinding_state;
+NodeState* pathfindingNodeStates = university_map_graph_pathfinding_node_states;
+int* pathfindingResult = university_map_graph_pathfinding_result;
 
 void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   // the map exporter scales the world up by this much, so we scale up the
@@ -325,11 +278,10 @@ void drawGUI() {
   ImGui::InputInt("debugPathfindingFrom", (int*)&debugPathfindingFrom, 1, 10,
                   inputFlags);
   debugPathfindingFrom =
-      CLAMP(debugPathfindingFrom, 0, PATHFINDING_TEST_GRAPH_SIZE - 1);
+      CLAMP(debugPathfindingFrom, 0, pathfindingGraphSize - 1);
   ImGui::InputInt("debugPathfindingTo", (int*)&debugPathfindingTo, 1, 10,
                   inputFlags);
-  debugPathfindingTo =
-      CLAMP(debugPathfindingTo, 0, PATHFINDING_TEST_GRAPH_SIZE - 1);
+  debugPathfindingTo = CLAMP(debugPathfindingTo, 0, pathfindingGraphSize - 1);
 
   if (ImGui::Button("print pos")) {
     Vec3d* goosePos = &Game_get()->player.goose->position;
@@ -944,35 +896,34 @@ void drawCollisionMesh() {
 
 void doPathfinding(int printResult) {
   float profStartPath = CUR_TIME_MS();
-  printf("pathfinding start %f\n", CUR_TIME_MS());
 
-  Path_initState(&testGraph,                                          // graph
-                 &pathfindingState,                                   // state
-                 Path_getNodeByID(&testGraph, debugPathfindingFrom),  // start
-                 Path_getNodeByID(&testGraph, debugPathfindingTo),    // end
-                 pathfindingNodeStates,        // nodeStates array
-                 PATHFINDING_TEST_GRAPH_SIZE,  // nodeStateSize
-                 pathfindingResult             // results array
+  Path_initState(
+      pathfindingGraph,                                          // graph
+      pathfindingState,                                          // state
+      Path_getNodeByID(pathfindingGraph, debugPathfindingFrom),  // start
+      Path_getNodeByID(pathfindingGraph, debugPathfindingTo),    // end
+      pathfindingNodeStates,  // nodeStates array
+      pathfindingGraphSize,   // nodeStateSize
+      pathfindingResult       // results array
 
   );
 
-  int result = Path_findAStar(&testGraph, &pathfindingState);
-  float profTimePath = (CUR_TIME_MS() - profStartPath);
+  int result = Path_findAStar(pathfindingGraph, pathfindingState);
 
-  printf("pathfinding end %f\n", CUR_TIME_MS());
+  float profTimePath = (CUR_TIME_MS() - profStartPath);
   Game_get()->profTimePath += profTimePath;
 
   if (printResult) {
-    printf("finding path from %d to %d\n", pathfindingState.start->id,
-           pathfindingState.end->id);
+    printf("finding path from %d to %d\n", pathfindingState->start->id,
+           pathfindingState->end->id);
     printf("pathfinding result %s\n", result ? "found" : "not found");
     printf("pathfinding took %f\n", profTimePath);
     if (result) {
-      printf("pathfinding result length %d\n", pathfindingState.resultSize);
+      printf("pathfinding result length %d\n", pathfindingState->resultSize);
 
       // pathfinding result path
-      for (int i = 0; i < pathfindingState.resultSize; i++) {
-        printf("%d: %d\n", i, *(pathfindingState.result + i));
+      for (int i = 0; i < pathfindingState->resultSize; i++) {
+        printf("%d: %d\n", i, *(pathfindingState->result + i));
       }
     }
   }
@@ -986,8 +937,8 @@ void drawPathfindingGraph() {
 
   Node* node;
   Node* endNode;
-  Graph* graph = &testGraph;
-  PathfindingState* state = &pathfindingState;
+  Graph* graph = pathfindingGraph;
+  PathfindingState* state = pathfindingState;
   int i, k;
   int* reachedViaNodeID;
 
@@ -1052,8 +1003,6 @@ void drawPathfindingGraph() {
 void renderScene(void) {
   int i;
   Game* game;
-
-  printf("CUR_TIME_MS() %f\n", CUR_TIME_MS());
 
   float profStartDraw = CUR_TIME_MS();
 
@@ -1447,7 +1396,7 @@ void updateAndRender() {
     testCollision();
 #endif
 #if DEBUG_PATHFINDING
-    doPathfinding(TRUE);
+    doPathfinding(FALSE);
 #endif
 
     Game_update(&input);
@@ -1537,7 +1486,7 @@ int main(int argc, char** argv) {
   loadModel(HomeworkItemModel, "testingCube.obj", "testCubeTex.bmp");
   loadModel(WallModel, "wall.obj", "wall.bmp");
 
-  doPathfinding(TRUE);
+  doPathfinding(DEBUG_PATHFINDING);
 
   // enter GLUT event processing cycle
   glutMainLoop();

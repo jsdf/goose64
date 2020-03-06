@@ -24,11 +24,11 @@ APP =		goose64.out
 
 TARGETS =	goose64.n64
 
-HFILES =	main.h graphic.h testingCube.h vec3d.h vec2d.h gameobject.h game.h modeltype.h renderer.h input.h character.h player.h gameutils.h gametypes.h item.h animation.h physics.h rotation.h collision.h university_map_collision.h
+HFILES =	main.h graphic.h testingCube.h vec3d.h vec2d.h gameobject.h game.h modeltype.h renderer.h input.h character.h player.h gameutils.h gametypes.h item.h animation.h physics.h rotation.h collision.h university_map_collision.h pathfinding.h university_map_graph.h
 
 ED64CODEFILES = ed64io_usb.c ed64io_sys.c ed64io_everdrive.c
 
-CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c om_mem_heap.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c university_map_collision.c $(ED64CODEFILES)
+CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c om_mem_heap.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c university_map_collision.c pathfinding.c university_map_graph.c $(ED64CODEFILES)
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
 

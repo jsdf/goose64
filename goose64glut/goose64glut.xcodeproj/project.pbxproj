@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		732EC52A2412219800CCCA81 /* compat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 732EC5282412219700CCCA81 /* compat.cpp */; };
+		732EC52D2412275D00CCCA81 /* university_map_graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 732EC52B2412275D00CCCA81 /* university_map_graph.cpp */; };
 		733266C8235EAA7600907B30 /* glgoose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266C7235EAA7600907B30 /* glgoose.cpp */; };
 		733266E4235EAB8200907B30 /* vec3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266D5235EAB8100907B30 /* vec3d.cpp */; };
 		733266E6235EAB8200907B30 /* gameobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266D7235EAB8100907B30 /* gameobject.cpp */; };
@@ -56,6 +57,8 @@
 		7300A9AB23A9F7A900CD6A5B /* character_anim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = character_anim.h; path = ../character_anim.h; sourceTree = "<group>"; };
 		732EC5282412219700CCCA81 /* compat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = compat.cpp; path = ../compat.cpp; sourceTree = "<group>"; };
 		732EC5292412219800CCCA81 /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compat.h; path = ../compat.h; sourceTree = "<group>"; };
+		732EC52B2412275D00CCCA81 /* university_map_graph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = university_map_graph.cpp; path = ../university_map_graph.cpp; sourceTree = "<group>"; };
+		732EC52C2412275D00CCCA81 /* university_map_graph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = university_map_graph.h; path = ../university_map_graph.h; sourceTree = "<group>"; };
 		733266BE235CFB2C00907B30 /* renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = renderer.h; path = ../renderer.h; sourceTree = "<group>"; };
 		733266C4235D0C2B00907B30 /* input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = input.h; path = ../input.h; sourceTree = "<group>"; };
 		733266C7235EAA7600907B30 /* glgoose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glgoose.cpp; path = ../glgoose.cpp; sourceTree = "<group>"; };
@@ -146,6 +149,8 @@
 				73D1784D23BF173700AC253C /* university_map_collision.cpp */,
 				732EC5282412219700CCCA81 /* compat.cpp */,
 				732EC5292412219800CCCA81 /* compat.h */,
+				732EC52B2412275D00CCCA81 /* university_map_graph.cpp */,
+				732EC52C2412275D00CCCA81 /* university_map_graph.h */,
 				73E1067123B483A300DE8673 /* collision.cpp */,
 				73D9004E2411DEFF00F96350 /* pathfinding.cpp */,
 				73E1067223B483A400DE8673 /* collision.h */,
@@ -281,6 +286,7 @@
 				733266E7235EAB8200907B30 /* objloader.cpp in Sources */,
 				73735E5E23600F730048C9EC /* characterstate.cpp in Sources */,
 				73E1067323B483A400DE8673 /* collision.cpp in Sources */,
+				732EC52D2412275D00CCCA81 /* university_map_graph.cpp in Sources */,
 				73735E6023600FD00048C9EC /* item.cpp in Sources */,
 				733266E8235EAB8200907B30 /* vec2d.cpp in Sources */,
 				73E9049923944EE700CF5D2F /* rotation.cpp in Sources */,
