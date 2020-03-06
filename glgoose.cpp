@@ -33,6 +33,7 @@
 #include "gl/objloader.hpp"
 #include "gl/texture.hpp"
 #include "input.h"
+#include "pathfinding.h"
 #include "player.h"
 #include "renderer.h"
 #include "university_map.h"
@@ -57,6 +58,8 @@
 #define DEBUG_COLLISION_MESH_MORE 0
 #define DEBUG_COLLISION_SPATIAL_HASH 0
 #define DEBUG_COLLISION_MESH_AABB 0
+#define DEBUG_PATHFINDING_GRAPH 1
+#define DEBUG_PATHFINDING 1
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
 
@@ -73,6 +76,9 @@ float cameraAngle = 180.0f;
 bool keysDown[127];
 Input input;
 GameObject* selectedObject = NULL;
+
+int debugPathfindingFrom = 3;
+int debugPathfindingTo = 4;
 
 PhysWorldData physWorldData = {
     university_map_collision_collision_mesh, UNIVERSITY_MAP_COLLISION_LENGTH,
@@ -119,6 +125,59 @@ char* CharacterMeshTypeStrings[] = {
 
 // TODO: allocate this in map header file with correct size
 static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
+
+#define PATHFINDING_TEST_GRAPH_SIZE 11
+
+Node testGraphNodes[] = {
+    {0, {10, 10, 100}},
+    {1, {0, 10, 300}},
+    {2, {300, 10, 300}},
+    {3, {600, 10, 300}},
+    {4, {-395.667, 10.001, -302.618}},
+    {5, {-598.629, 10.001, -585.013}},
+    {6, {-939.587, 10.001, -556.057}},
+    {7, {-1291.417, 10.001, -625.138}},
+    {8, {-1296.933, 10.001, -792.504}},
+    {9, {-947.610, 10.001, -820.081}},
+    {10, {-632.436, 10.001, -775.958}},
+};
+
+int testGraphEdgesNode0[] = {1, 2, 4};
+int testGraphEdgesNode1[] = {0, 2};
+int testGraphEdgesNode2[] = {0, 1, 3};
+int testGraphEdgesNode3[] = {2};
+int testGraphEdgesNode4[] = {0, 5};
+int testGraphEdgesNode5[] = {4, 6, 10};
+int testGraphEdgesNode6[] = {5, 7};
+int testGraphEdgesNode7[] = {6, 8};
+int testGraphEdgesNode8[] = {7, 9};
+int testGraphEdgesNode9[] = {8, 10};
+int testGraphEdgesNode10[] = {9, 5};
+
+EdgeList testGraphEdges[] = {
+    {/*size*/ 3, testGraphEdgesNode0},   //
+    {/*size*/ 2, testGraphEdgesNode1},   //
+    {/*size*/ 3, testGraphEdgesNode2},   //
+    {/*size*/ 1, testGraphEdgesNode3},   //
+    {/*size*/ 2, testGraphEdgesNode4},   //
+    {/*size*/ 3, testGraphEdgesNode5},   //
+    {/*size*/ 2, testGraphEdgesNode6},   //
+    {/*size*/ 2, testGraphEdgesNode7},   //
+    {/*size*/ 2, testGraphEdgesNode8},   //
+    {/*size*/ 2, testGraphEdgesNode9},   //
+    {/*size*/ 2, testGraphEdgesNode10},  //
+};
+
+Graph testGraph = {
+    PATHFINDING_TEST_GRAPH_SIZE,  // int size;
+    testGraphNodes,               // Node* nodes;
+    testGraphEdges,               // EdgeList* edges;
+};
+
+PathfindingState pathfindingState;
+
+NodeState pathfindingNodeStates[PATHFINDING_TEST_GRAPH_SIZE];
+int pathfindingResult[PATHFINDING_TEST_GRAPH_SIZE];
 
 void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   // the map exporter scales the world up by this much, so we scale up the
@@ -256,6 +315,23 @@ void drawGUI() {
 
   ImGui::Text("Phys=%.3fms, Characters=%.3f ms, Draw=%.3f ms", profTimePhysics,
               profTimeCharacters, profTimeDraw);
+
+#if DEBUG_PATHFINDING
+
+  ImGui::InputInt("debugPathfindingFrom", (int*)&debugPathfindingFrom, 1, 10,
+                  inputFlags);
+  debugPathfindingFrom =
+      CLAMP(debugPathfindingFrom, 0, PATHFINDING_TEST_GRAPH_SIZE - 1);
+  ImGui::InputInt("debugPathfindingTo", (int*)&debugPathfindingTo, 1, 10,
+                  inputFlags);
+  debugPathfindingTo =
+      CLAMP(debugPathfindingTo, 0, PATHFINDING_TEST_GRAPH_SIZE - 1);
+
+  if (ImGui::Button("print pos")) {
+    Vec3d* goosePos = &Game_get()->player.goose->position;
+    printf("{%.3f, %.3f, %.3f}\n", goosePos->x, goosePos->y, goosePos->z);
+  }
+#endif
 
   ImGui::End();
 }
@@ -862,6 +938,103 @@ void drawCollisionMesh() {
   glPopAttrib();
 }
 
+void doPathfinding(int printResult) {
+  Path_initState(&testGraph,                                          // graph
+                 &pathfindingState,                                   // state
+                 Path_getNodeByID(&testGraph, debugPathfindingFrom),  // start
+                 Path_getNodeByID(&testGraph, debugPathfindingTo),    // end
+                 pathfindingNodeStates,        // nodeStates array
+                 PATHFINDING_TEST_GRAPH_SIZE,  // nodeStateSize
+                 pathfindingResult             // results array
+
+  );
+  int result = Path_findAStar(&testGraph, &pathfindingState);
+  if (printResult) {
+    printf("finding path from %d to %d\n", pathfindingState.start->id,
+           pathfindingState.end->id);
+    printf("pathfinding result %s\n", result ? "found" : "not found");
+    if (result) {
+      printf("pathfinding result length %d\n", pathfindingState.resultSize);
+
+      // pathfinding result path
+      for (int i = 0; i < pathfindingState.resultSize; i++) {
+        printf("%d: %d\n", i, *(pathfindingState.result + i));
+      }
+    }
+  }
+}
+
+void drawPathfindingGraph() {
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+
+  Node* node;
+  Node* endNode;
+  Graph* graph = &testGraph;
+  PathfindingState* state = &pathfindingState;
+  int i, k;
+  int* reachedViaNodeID;
+
+  // draw graph edges
+  for (i = 0, node = graph->nodes;  //
+       i < graph->size;             //
+       i++, node++                  //
+  ) {
+    EdgeList* edges = Path_getNodeEdgesByID(graph, i);
+
+    // Loop through each edge in turn.
+    for (                                           //
+        k = 0, reachedViaNodeID = edges->elements;  //
+        k < edges->size;                            //
+        k++, reachedViaNodeID++                     //
+    ) {
+      endNode = Path_getNodeByID(graph, *reachedViaNodeID);
+      glColor3f(0.5f, 0.5f, 0.5f);  // grey
+      drawLine(&node->position, &endNode->position);
+    }
+  }
+
+  // draw pathfinding result path
+  for (i = 0;                      //
+       i < state->resultSize - 1;  //
+       i++                         //
+  ) {
+    node = Path_getNodeByID(graph, *(state->result + i));
+    endNode = Path_getNodeByID(graph, *(state->result + i + 1));
+
+    glColor3f(1.0f, 0.0f, 0.0f);  // red
+    drawLine(&node->position, &endNode->position);
+  }
+
+  // draw graph nodes
+  for (i = 0, node = graph->nodes;  //
+       i < graph->size;             //
+       i++, node++                  //
+  ) {
+    glPushMatrix();
+    glTranslatef(node->position.x, node->position.y, node->position.z);
+    glColor3f(1.0f, 0.7f, 0.0f);  // orange
+    glutSolidCube(10);
+    glPopMatrix();
+  }
+
+  for (i = 0, node = graph->nodes;  //
+       i < graph->size;             //
+       i++, node++                  //
+  ) {
+    char nodedebugtext[300];
+    strcpy(nodedebugtext, "");
+
+    sprintf(nodedebugtext, "%d", i);
+
+    drawStringAtPoint(nodedebugtext, &node->position, TRUE);
+  }
+
+  glPopAttrib();
+}
+
 void renderScene(void) {
   int i;
   Game* game;
@@ -950,6 +1123,12 @@ void renderScene(void) {
   }
 
   gameRaycastTrace.clear();
+#endif
+
+#if DEBUG_PATHFINDING_GRAPH
+
+  drawPathfindingGraph();
+
 #endif
 
 #if DEBUG_OBJECTS
@@ -1249,6 +1428,9 @@ void updateAndRender() {
 #if DEBUG_COLLISION_MESH
     testCollision();
 #endif
+#if DEBUG_PATHFINDING
+    doPathfinding(FALSE);
+#endif
 
     Game_update(&input);
   }
@@ -1336,6 +1518,8 @@ int main(int argc, char** argv) {
   loadModel(BookItemModel, "book.obj", "book.bmp");
   loadModel(HomeworkItemModel, "testingCube.obj", "testCubeTex.bmp");
   loadModel(WallModel, "wall.obj", "wall.bmp");
+
+  doPathfinding(TRUE);
 
   // enter GLUT event processing cycle
   glutMainLoop();
