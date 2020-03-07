@@ -1552,6 +1552,7 @@ int main(int argc, char** argv) {
   loadModel(BookItemModel, "book.obj", "book.bmp");
   loadModel(HomeworkItemModel, "testingCube.obj", "testCubeTex.bmp");
   loadModel(WallModel, "wall.obj", "wall.bmp");
+  loadModel(PlanterModel, "planter.obj", "planter.bmp");
 
   doPathfinding(DEBUG_PATHFINDING);
   nodeGraph.load(pathfindingGraph);

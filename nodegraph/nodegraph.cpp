@@ -240,7 +240,7 @@ void drawNodeGraphGUI(NodeGraph& nodeGraph,
       i++;
     }
 
-    ImGui::Text("All Nodes deges");
+    ImGui::Text("All Nodes edges");
   }
 
   i = 0;

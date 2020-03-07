@@ -4,7 +4,7 @@
 #include "constants.h"
 #include "pathfinding.h"
 
-#define UNIVERSITY_MAP_GRAPH_SIZE 11
+#define UNIVERSITY_MAP_GRAPH_SIZE 16
 
 extern Graph university_map_graph;
 extern PathfindingState university_map_graph_pathfinding_state;
