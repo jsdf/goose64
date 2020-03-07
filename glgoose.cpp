@@ -52,18 +52,24 @@
 #define DEBUG_OBJECTS 0
 #define DEBUG_RAYCASTING 0
 #define DEBUG_MODELS 0
+
 #define DEBUG_ANIMATION 0
 #define DEBUG_ANIMATION_MORE 0
 #define DEBUG_ATTACHMENT 0
+
 #define DEBUG_PHYSICS 1
+
 #define DEBUG_COLLISION_MESH 0
 #define DEBUG_COLLISION_MESH_MORE 0
 #define DEBUG_COLLISION_SPATIAL_HASH 0
 #define DEBUG_COLLISION_MESH_AABB 0
+
 #define DEBUG_PATHFINDING_GRAPH 1
 #define DEBUG_PATHFINDING 1
 #define DEBUG_PATHFINDING_AUTO 1
+
 #define DEBUG_PROFILING 1
+
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
 #define ENABLE_NODEGRAPH_EDITOR 0
@@ -910,7 +916,6 @@ void doPathfinding(int printResult) {
 
 #if DEBUG_PATHFINDING_AUTO
   Vec3d* goosePos = &Game_get()->player.goose->position;
-#define DEBUG_PATHFINDING_AUTO 1
   Vec3d* characterPos = &Game_get()->characters->obj->position;
   debugPathfindingTo = Path_quantizePosition(pathfindingGraph, goosePos);
   debugPathfindingFrom = Path_quantizePosition(pathfindingGraph, characterPos);
@@ -1151,7 +1156,6 @@ void renderScene(void) {
 
 #if DEBUG_PATHFINDING_GRAPH
   drawPathfindingGraph();
-#define DEBUG_PATHFINDING_AUTO 1
 #endif
 #if ENABLE_NODEGRAPH_EDITOR
   drawNodeGraph();
@@ -1474,7 +1478,6 @@ void updateAndRender() {
 #endif
 #if DEBUG_PATHFINDING
     doPathfinding(FALSE);
-#define DEBUG_PATHFINDING_AUTO 1
 #endif
 
     Game_update(&input);

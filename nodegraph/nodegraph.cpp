@@ -158,8 +158,10 @@ bool NodeGraph::save(std::string path, std::string name) {
   nodesEdges.resize(nodes.size());
 
   for (auto edge = edges.begin(); edge != edges.end(); ++edge) {
-    nodesEdges[edge->from].insert(edge->to);
-    nodesEdges[edge->to].insert(edge->from);
+    if (edge->from != edge->to) {
+      nodesEdges[edge->from].insert(edge->to);
+      nodesEdges[edge->to].insert(edge->from);
+    }
   }
 
   nodeID = 0;
@@ -282,10 +284,19 @@ void drawNodeGraphGUI(NodeGraph& nodeGraph,
   }
 
   ImGui::Text("Edges");
-  if (ImGui::Button("Add Edge")) {
-    if (nodeGraph.nodes.size() >= 2) {
-      // edge between last 2 nodes created
-      nodeGraph.addEdge(nodeGraph.nodes.size() - 2, nodeGraph.nodes.size() - 1);
+  if (hasValidSelection) {
+    if (ImGui::Button("Add Edge to selected Node")) {
+      if (nodeGraph.nodes.size() >= 2) {
+        nodeGraph.addEdge(selectedNode, nodeGraph.nodes.size() - 1);
+      }
+    }
+  } else {
+    if (ImGui::Button("Add Edge")) {
+      if (nodeGraph.nodes.size() >= 2) {
+        // edge between last 2 nodes created
+        nodeGraph.addEdge(nodeGraph.nodes.size() - 2,
+                          nodeGraph.nodes.size() - 1);
+      }
     }
   }
   if (ImGui::Button("Delete last Edge")) {
