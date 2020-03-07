@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "ClangFormat": {
+      "style": "Chromium",
+      "format_on_save": true,
+    },
+
+
+ 
+    "SublimeLinter.linters.clang++.args":  "-std=c++11",
+    "SublimeLinter.linters.clang++.I": [
+      "${folder}",
+      "${folder}/imgui/",
+      "${file_path}",
+    ]
+  },
+
+}

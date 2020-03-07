@@ -33,6 +33,7 @@
 #include "gl/objloader.hpp"
 #include "gl/texture.hpp"
 #include "input.h"
+#include "nodegraph/nodegraph.hpp"
 #include "pathfinding.h"
 #include "player.h"
 #include "renderer.h"
@@ -59,11 +60,12 @@
 #define DEBUG_COLLISION_MESH_MORE 0
 #define DEBUG_COLLISION_SPATIAL_HASH 0
 #define DEBUG_COLLISION_MESH_AABB 0
-#define DEBUG_PATHFINDING_GRAPH 1
-#define DEBUG_PATHFINDING 1
+#define DEBUG_PATHFINDING_GRAPH 0
+#define DEBUG_PATHFINDING 0
 #define DEBUG_PROFILING 1
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
+#define ENABLE_NODEGRAPH_EDITOR 1
 
 int glgooseFrame = 0;
 int updateSkipRate = 1;
@@ -133,6 +135,8 @@ Graph* pathfindingGraph = &university_map_graph;
 PathfindingState* pathfindingState = &university_map_graph_pathfinding_state;
 NodeState* pathfindingNodeStates = university_map_graph_pathfinding_node_states;
 int* pathfindingResult = university_map_graph_pathfinding_result;
+
+static NodeGraph nodeGraph = NodeGraph();
 
 void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   // the map exporter scales the world up by this much, so we scale up the
@@ -273,8 +277,8 @@ void drawGUI() {
               profAvgPhysics, profAvgCharacters, profAvgDraw, profAvgPath);
 #endif
 
+  Vec3d* goosePos = &Game_get()->player.goose->position;
 #if DEBUG_PATHFINDING
-
   ImGui::InputInt("debugPathfindingFrom", (int*)&debugPathfindingFrom, 1, 10,
                   inputFlags);
   debugPathfindingFrom =
@@ -284,17 +288,22 @@ void drawGUI() {
   debugPathfindingTo = CLAMP(debugPathfindingTo, 0, pathfindingGraphSize - 1);
 
   if (ImGui::Button("print pos")) {
-    Vec3d* goosePos = &Game_get()->player.goose->position;
     printf("{%.3f, %.3f, %.3f}\n", goosePos->x, goosePos->y, goosePos->z);
   }
+
+#endif
+
+#if ENABLE_NODEGRAPH_EDITOR
+  drawNodeGraphGUI(nodeGraph, goosePos, "university_map_graph",
+                   "university_map_graph");
 #endif
 
   ImGui::End();
 }
 
-void drawString(char* string, int x, int y) {
+void drawString(const char* string, int x, int y) {
   int w, h;
-  char* c;
+  const char* c;
   glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
 
   glMatrixMode(GL_PROJECTION);
@@ -324,7 +333,7 @@ void drawString(char* string, int x, int y) {
   glPopAttrib();
 }
 
-void drawStringAtPoint(char* string, Vec3d* pos, int centered) {
+void drawStringAtPoint(const char* string, Vec3d* pos, int centered) {
   Vec3d screen;  // x, y, zdepth
   worldCoordsToScreen(pos, &screen);
 
@@ -989,12 +998,48 @@ void drawPathfindingGraph() {
        i < graph->size;             //
        i++, node++                  //
   ) {
-    char nodedebugtext[300];
-    strcpy(nodedebugtext, "");
+    drawStringAtPoint(std::to_string(i).c_str(), &node->position, TRUE);
+  }
 
-    sprintf(nodedebugtext, "%d", i);
+  glPopAttrib();
+}
 
-    drawStringAtPoint(nodedebugtext, &node->position, TRUE);
+void drawNodeGraph() {
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+
+  Node* node;
+  Node* endNode;
+  int i;
+
+  // draw graph edges
+  for (auto edge = nodeGraph.edges.begin(); edge != nodeGraph.edges.end();
+       ++edge) {
+    node = &nodeGraph.nodes[edge->from];
+    endNode = &nodeGraph.nodes[edge->to];
+
+    glColor3f(0.5f, 0.5f, 0.5f);  // grey
+    drawLine(&node->position, &endNode->position);
+  }
+
+  // draw graph nodes
+  for (auto node = nodeGraph.nodes.begin(); node != nodeGraph.nodes.end();
+       ++node) {
+    glPushMatrix();
+    glTranslatef(node->position.x, node->position.y, node->position.z);
+    glColor3f(1.0f, 0.7f, 0.0f);  // orange
+    glutSolidCube(10);
+    glPopMatrix();
+  }
+
+  // draw graph node ids
+  i = 0;
+  for (auto node = nodeGraph.nodes.begin(); node != nodeGraph.nodes.end();
+       ++node) {
+    drawStringAtPoint(std::to_string(i).c_str(), &node->position, TRUE);
+    i++;
   }
 
   glPopAttrib();
@@ -1091,9 +1136,10 @@ void renderScene(void) {
 #endif
 
 #if DEBUG_PATHFINDING_GRAPH
-
   drawPathfindingGraph();
-
+#endif
+#if ENABLE_NODEGRAPH_EDITOR
+  drawNodeGraph();
 #endif
 
 #if DEBUG_OBJECTS
@@ -1487,6 +1533,7 @@ int main(int argc, char** argv) {
   loadModel(WallModel, "wall.obj", "wall.bmp");
 
   doPathfinding(DEBUG_PATHFINDING);
+  nodeGraph.load(pathfindingGraph);
 
   // enter GLUT event processing cycle
   glutMainLoop();
