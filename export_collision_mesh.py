@@ -53,9 +53,10 @@ for index, obj in enumerate(collision_objects):
     mesh = obj.data
 
     for poly in mesh.polygons:
-        assert (
-            len(poly.vertices) == 3
-        ), "you need to triangulate the collision mesh before exporting it"
+        assert len(poly.vertices) == 3, (
+            "you need to triangulate the collision mesh before exporting it (at %s)"
+            % obj.name
+        )
         tri_verts = []
         for vert_idx in poly.vertices:
             vert = obj.matrix_world @ mesh.vertices[vert_idx].co

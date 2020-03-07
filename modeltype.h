@@ -17,6 +17,7 @@ typedef enum ModelType {
   FlagpoleModel,
   GroundskeeperCharacterModel,
   WallModel,
+  PlanterModel,
   MAX_MODEL_TYPE
 } ModelType;
 

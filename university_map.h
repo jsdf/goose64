@@ -122,7 +122,7 @@ BushModel, // modelType
 GroundskeeperCharacterModel, // modelType
 },
 {23, // object id
-{-940.042820, 49.424500, -691.283340}, // position
+{-940.044022, 49.424400, -691.284027}, // position
 {0.000000, 0.000000, -0.000000}, // rotation
 WallModel, // modelType
 },
@@ -136,9 +136,24 @@ HomeworkItemModel, // modelType
 {90.000009, 0.000000, 0.000000}, // rotation
 HomeworkItemModel, // modelType
 },
+{26, // object id
+{-1533.462067, 49.424400, -691.284027}, // position
+{0.000000, 0.000000, -0.000000}, // rotation
+WallModel, // modelType
+},
+{27, // object id
+{-1390.277824, 28.706844, -404.714298}, // position
+{0.000000, 0.000000, -0.000000}, // rotation
+PlanterModel, // modelType
+},
+{28, // object id
+{-1390.277824, 28.706844, -127.979007}, // position
+{0.000000, 0.000000, -0.000000}, // rotation
+PlanterModel, // modelType
+},
 
 };
 
-#define UNIVERSITY_MAP_COUNT 26
+#define UNIVERSITY_MAP_COUNT 29
 
 #endif /* UNIVERSITY_MAP_H */

@@ -13,6 +13,7 @@ char* ModelTypeStrings[] = {
     "FlagpoleModel",                //
     "GroundskeeperCharacterModel",  //
     "WallModel",                    //
+    "PlanterModel",                 //
     "MAX_MODEL_TYPE",               //
 };
 
