@@ -60,12 +60,13 @@
 #define DEBUG_COLLISION_MESH_MORE 0
 #define DEBUG_COLLISION_SPATIAL_HASH 0
 #define DEBUG_COLLISION_MESH_AABB 0
-#define DEBUG_PATHFINDING_GRAPH 0
-#define DEBUG_PATHFINDING 0
+#define DEBUG_PATHFINDING_GRAPH 1
+#define DEBUG_PATHFINDING 1
+#define DEBUG_PATHFINDING_AUTO 1
 #define DEBUG_PROFILING 1
 #define USE_LIGHTING 1
 #define USE_ANIM_FRAME_LERP 1
-#define ENABLE_NODEGRAPH_EDITOR 1
+#define ENABLE_NODEGRAPH_EDITOR 0
 
 int glgooseFrame = 0;
 int updateSkipRate = 1;
@@ -907,6 +908,14 @@ void drawCollisionMesh() {
 void doPathfinding(int printResult) {
   float profStartPath = CUR_TIME_MS();
 
+#if DEBUG_PATHFINDING_AUTO
+  Vec3d* goosePos = &Game_get()->player.goose->position;
+#define DEBUG_PATHFINDING_AUTO 1
+  Vec3d* characterPos = &Game_get()->characters->obj->position;
+  debugPathfindingTo = Path_quantizePosition(pathfindingGraph, goosePos);
+  debugPathfindingFrom = Path_quantizePosition(pathfindingGraph, characterPos);
+#endif
+
   Path_initState(
       pathfindingGraph,                                          // graph
       pathfindingState,                                          // state
@@ -1142,6 +1151,7 @@ void renderScene(void) {
 
 #if DEBUG_PATHFINDING_GRAPH
   drawPathfindingGraph();
+#define DEBUG_PATHFINDING_AUTO 1
 #endif
 #if ENABLE_NODEGRAPH_EDITOR
   drawNodeGraph();
@@ -1464,6 +1474,7 @@ void updateAndRender() {
 #endif
 #if DEBUG_PATHFINDING
     doPathfinding(FALSE);
+#define DEBUG_PATHFINDING_AUTO 1
 #endif
 
     Game_update(&input);
@@ -1554,7 +1565,6 @@ int main(int argc, char** argv) {
   loadModel(WallModel, "wall.obj", "wall.bmp");
   loadModel(PlanterModel, "planter.obj", "planter.bmp");
 
-  doPathfinding(DEBUG_PATHFINDING);
   nodeGraph.load(pathfindingGraph);
 
   // enter GLUT event processing cycle

@@ -52,6 +52,8 @@ EdgeList* Path_getNodeEdgesByID(Graph* graph, int nodeID);
 
 Node* Path_getNodeByID(Graph* graph, int nodeID);
 
+int Path_quantizePosition(Graph* graph, Vec3d* position);
+
 int Path_findAStar(Graph* graph, PathfindingState* state);
 
 void Path_initState(Graph* graph,

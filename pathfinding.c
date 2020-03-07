@@ -89,6 +89,25 @@ NodeState* Path_getNodeState(PathfindingState* state, int nodeID) {
   return state->nodeStates + nodeID;  // offset into edges
 }
 
+int Path_quantizePosition(Graph* graph, Vec3d* position) {
+  int closestNode = 0;
+  float closestNodeDist = FLT_MAX;
+  float currentNodeDist;
+  int i;
+
+  // for now just find closest node to pos
+  // could be invalid, like on the other side of a wall :(
+  for (i = 0; i < graph->size; ++i) {
+    currentNodeDist =
+        Vec3d_distanceTo(position, &Path_getNodeByID(graph, i)->position);
+    if (currentNodeDist < closestNodeDist) {
+      closestNode = i;
+      closestNodeDist = currentNodeDist;
+    }
+  }
+  return closestNode;
+}
+
 // based on A* implementation from AI For Games
 int Path_findAStar(Graph* graph, PathfindingState* state) {
   // This structure is used to keep track of the
