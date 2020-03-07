@@ -12,7 +12,7 @@
 
 
  
-    "SublimeLinter.linters.clang++.args":  "-std=c++11",
+    "SublimeLinter.linters.clang++.args":  "-std=c++11  -Wno-deprecated-declarations -Wno-comment -Wno-constant-conversion ",
     "SublimeLinter.linters.clang++.I": [
       "${folder}",
       "${folder}/imgui/",

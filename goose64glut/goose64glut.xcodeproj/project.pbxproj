@@ -441,6 +441,12 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = (
+					"-Wno-missing-braces",
+					"-Wno-deprecated-declarations",
+					"-Wno-comment",
+					"-Wno-constant-conversion",
+				);
 			};
 			name = Debug;
 		};
@@ -456,6 +462,12 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = (
+					"-Wno-missing-braces",
+					"-Wno-deprecated-declarations",
+					"-Wno-comment",
+					"-Wno-constant-conversion",
+				);
 			};
 			name = Release;
 		};

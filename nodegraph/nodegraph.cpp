@@ -68,6 +68,37 @@ void NodeGraph::addNewNode(Vec3d* position) {
   nodes.push_back(newNode);
 }
 
+void NodeGraph::deleteNodeAndEdges(float nodeID) {
+  int i;
+
+  // remove node
+  nodes.erase(nodes.begin() + nodeID);
+
+  // fix shifted node ids
+  i = 0;
+  for (auto node = nodes.begin(); node != nodes.end(); ++node) {
+    node->id = i;
+    i++;
+  }
+
+  // remove invalid edges
+  edges.erase(std::remove_if(edges.begin(), edges.end(),
+                             [nodeID](NodeGraphEdge edge) {
+                               return edge.from == nodeID || edge.to == nodeID;
+                             }),
+              edges.end());
+
+  // fix shifted node ids of remaining edges
+  for (auto edge = edges.begin(); edge != edges.end(); ++edge) {
+    if (edge->from >= nodeID) {
+      edge->from -= 1;
+    }
+    if (edge->to >= nodeID) {
+      edge->to -= 1;
+    }
+  }
+}
+
 std::string NodeGraph::serializeNode(Node* node) {
   char buffer[150];
   sprintf(buffer, "{%d, {%.7f, %.7f, %.7f}}", node->id, node->position.x,
@@ -169,10 +200,23 @@ bool NodeGraph::save(std::string path, std::string name) {
 void drawNodeGraphGUI(NodeGraph& nodeGraph,
                       Vec3d* position,
                       std::string path,
-                      std::string name) {
+                      std::string name,
+                      int& selectedNode) {
   int i;
 
+  bool hasValidSelection =
+      selectedNode > -1 && selectedNode < nodeGraph.nodes.size();
+
   ImGui::Begin("NodeGraph Nodes");  // Create a window
+  if (hasValidSelection) {
+    ImGui::Text("Selected Node");
+    ImGui::InputFloat3((std::to_string(i) + "##selected").c_str(),
+                       (float*)&(nodeGraph.nodes[selectedNode].position),
+                       "%.3f");
+
+    ImGui::Text("All Nodes");
+  }
+
   i = 0;
   for (auto node = nodeGraph.nodes.begin(); node != nodeGraph.nodes.end();
        ++node) {
@@ -183,6 +227,22 @@ void drawNodeGraphGUI(NodeGraph& nodeGraph,
   ImGui::End();
 
   ImGui::Begin("NodeGraph Edges");  // Create a window
+
+  if (hasValidSelection) {
+    ImGui::Text("Selected Node's edges");
+    i = 0;
+    for (auto edge = nodeGraph.edges.begin(); edge != nodeGraph.edges.end();
+         ++edge) {
+      if (edge->from == selectedNode || edge->to == selectedNode) {
+        ImGui::InputInt2((std::to_string(i) + "##selected").c_str(),
+                         (int*)&(*edge));
+      }
+      i++;
+    }
+
+    ImGui::Text("All Nodes deges");
+  }
+
   i = 0;
   for (auto edge = nodeGraph.edges.begin(); edge != nodeGraph.edges.end();
        ++edge) {
@@ -210,9 +270,14 @@ void drawNodeGraphGUI(NodeGraph& nodeGraph,
       nodeGraph.addEdge(nodeGraph.nodes.size() - 2, nodeGraph.nodes.size() - 1);
     }
   }
-  if (ImGui::Button("Delete Last Node")) {
-    if (nodeGraph.nodes.size() > 0) {
-      nodeGraph.nodes.pop_back();
+  if (hasValidSelection) {
+    if (ImGui::Button("Delete selected Node and Edges")) {
+      nodeGraph.deleteNodeAndEdges(selectedNode);
+      selectedNode = -1;
+    }
+  } else {
+    if (ImGui::Button("Delete last Node")) {
+      nodeGraph.deleteNodeAndEdges(nodeGraph.nodes.size() - 1);
     }
   }
 
@@ -223,7 +288,7 @@ void drawNodeGraphGUI(NodeGraph& nodeGraph,
       nodeGraph.addEdge(nodeGraph.nodes.size() - 2, nodeGraph.nodes.size() - 1);
     }
   }
-  if (ImGui::Button("Delete Last Edge")) {
+  if (ImGui::Button("Delete last Edge")) {
     if (nodeGraph.edges.size() > 0) {
       nodeGraph.edges.pop_back();
     }

@@ -137,6 +137,7 @@ NodeState* pathfindingNodeStates = university_map_graph_pathfinding_node_states;
 int* pathfindingResult = university_map_graph_pathfinding_result;
 
 static NodeGraph nodeGraph = NodeGraph();
+static int selectedNode = -1;
 
 void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   // the map exporter scales the world up by this much, so we scale up the
@@ -295,7 +296,7 @@ void drawGUI() {
 
 #if ENABLE_NODEGRAPH_EDITOR
   drawNodeGraphGUI(nodeGraph, goosePos, "university_map_graph",
-                   "university_map_graph");
+                   "university_map_graph", selectedNode);
 #endif
 
   ImGui::End();
@@ -1029,7 +1030,11 @@ void drawNodeGraph() {
        ++node) {
     glPushMatrix();
     glTranslatef(node->position.x, node->position.y, node->position.z);
-    glColor3f(1.0f, 0.7f, 0.0f);  // orange
+    if (node->id == selectedNode) {
+      glColor3f(1.0f, 0.0f, 0.0f);  // red
+    } else {
+      glColor3f(1.0f, 0.7f, 0.0f);  // orange
+    }
     glutSolidCube(10);
     glPopMatrix();
   }
@@ -1196,6 +1201,10 @@ void renderScene(void) {
   i++;
   Player_toString(&game->player, characterString);
   drawString(characterString, 20, glutGet(GLUT_WINDOW_HEIGHT) - 40 * (i + 1));
+#endif
+
+#if ENABLE_NODEGRAPH_EDITOR
+  drawString("NodeGraph Editor Mode", 20, glutGet(GLUT_WINDOW_HEIGHT) - 20);
 #endif
 
   // Imgui Rendering
@@ -1386,7 +1395,19 @@ void selectObjectAtScreenPos(int x, int y) {
   // ray direction
   Vec3d_directionTo(&raySource, &rayTarget, &rayDirection);
 
+#if ENABLE_NODEGRAPH_EDITOR
+  selectedNode = -1;
+  for (auto node = nodeGraph.nodes.begin(); node != nodeGraph.nodes.end();
+       ++node) {
+    if (Game_rayIntersectsSphere(&raySource, &rayDirection, &node->position,
+                                 10)) {
+      selectedNode = node->id;
+      break;
+    }
+  }
+#else
   selectedObject = Game_getIntersectingObject(&raySource, &rayDirection);
+#endif
 }
 
 void processMouse(int button, int state, int x, int y) {

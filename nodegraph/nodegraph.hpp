@@ -32,6 +32,8 @@ class NodeGraph {
 
   void addNewNode(Vec3d* position);
 
+  void deleteNodeAndEdges(float nodeID);
+
   std::string serializeNode(Node* node);
 
   std::string serializeNodeEdges(std::set<int, std::less<int>> nodeEdges);
@@ -40,5 +42,6 @@ class NodeGraph {
 void drawNodeGraphGUI(NodeGraph& nodeGraph,
                       Vec3d* position,
                       std::string path,
-                      std::string name);
+                      std::string name,
+                      int& selectedNode);
 #endif /* !NODEGRAPH */
