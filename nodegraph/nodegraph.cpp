@@ -128,6 +128,7 @@ bool NodeGraph::save(std::string path, std::string name) {
   int nodeID = 0;
   std::ofstream fout_h(path + ".h");
 
+  // header file
   fout_h << "#ifndef " << nameUpper << "_H \n";
   fout_h << "#define " << nameUpper << "_H 1\n\n";
   fout_h << "#include \"constants.h\"\n";
@@ -146,14 +147,26 @@ bool NodeGraph::save(std::string path, std::string name) {
 
   std::ofstream fout_c(path + ".c");
 
+  // impl file
   fout_c << "#include \"" << name << ".h\"\n\n";
 
+  /*
+  Node university_map_graphNodes[] = {
+      {0, {10.0000000, 10.0000000, 100.0000000}},
+  ...
+  };
+   */
   fout_c << "Node " << name << "Nodes[] = {\n";
   for (auto node = nodes.begin(); node != nodes.end(); ++node) {
     fout_c << "    " << serializeNode(&(*node)) << ",\n";
   }
   fout_c << "};\n\n";
 
+  /*
+  int university_map_graph_edges_node0[] = {1, 2, 4, 21};
+  int university_map_graph_edges_node1[] = {0, 2};
+  ...
+   */
   std::vector<std::set<int, std::less<int>>> nodesEdges;
   nodesEdges.resize(nodes.size());
 
@@ -173,6 +186,13 @@ bool NodeGraph::save(std::string path, std::string name) {
   }
   fout_c << "\n";
 
+  /*
+  EdgeList university_map_graphEdges[] = {
+      {/ *size* / 4, university_map_graph_edges_node0},
+      {/ *size* / 2, university_map_graph_edges_node1},
+    ...
+  };
+   */
   fout_c << "EdgeList " << name << "Edges[] = {\n";
   nodeID = 0;
   for (auto nodeEdges = nodesEdges.begin(); nodeEdges != nodesEdges.end();
@@ -183,17 +203,49 @@ bool NodeGraph::save(std::string path, std::string name) {
   }
   fout_c << "};\n\n";
 
+  /*
+  Graph university_map_graph = {
+      UNIVERSITY_MAP_GRAPH_SIZE,  // int size;
+      university_map_graphNodes,  // Node* nodes;
+      university_map_graphEdges,  // EdgeList* edges;
+  };
+   */
   fout_c << "Graph " << name << " = {\n";
   fout_c << "    " << nameUpper << "_SIZE,  // int size;\n";
   fout_c << "    " << name << "Nodes,  // Node* nodes;\n";
   fout_c << "    " << name << "Edges,  // EdgeList* edges;\n";
   fout_c << "};\n\n";
 
-  fout_c << "PathfindingState " << name << "_pathfinding_state;\n\n";
+  /*
+  NodeState
+      university_map_graph_pathfinding_node_states[UNIVERSITY_MAP_GRAPH_SIZE];
+  int university_map_graph_pathfinding_result[UNIVERSITY_MAP_GRAPH_SIZE];
+   */
   fout_c << "NodeState " << name << "_pathfinding_node_states[" << nameUpper
          << "_SIZE];\n";
   fout_c << "int " << name << "_pathfinding_result[" << nameUpper
-         << "_SIZE];\n";
+         << "_SIZE];\n\n";
+
+  /*
+  PathfindingState university_map_graph_pathfinding_state = {
+      NULL,                                          // Node* start;
+      NULL,                                          // Node* end;
+      university_map_graph_pathfinding_node_states,  // NodeState* nodeStates;
+      UNIVERSITY_MAP_GRAPH_SIZE,                     // int nodeStateSize;
+      0,                                             // int open;
+      university_map_graph_pathfinding_result,       // int* result;
+      UNIVERSITY_MAP_GRAPH_SIZE,                     // int resultSize;
+  };
+   */
+  fout_c << "PathfindingState " << name << "_pathfinding_state = {\n";
+  fout_c << "    NULL, // Node* start;\n";
+  fout_c << "    NULL, // Node* end;\n";
+  fout_c << "    " << name << "_pathfinding_node_states,\n";
+  fout_c << "    " << nameUpper << "_SIZE, // int nodeStateSize;\n";
+  fout_c << "    0, // int open;\n";
+  fout_c << "    " << name << "_pathfinding_result, // int* result;\n";
+  fout_c << "    0, // int resultSize;\n";
+  fout_c << "};\n\n";
   fout_c.close();
 
   return true;

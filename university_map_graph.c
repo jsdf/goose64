@@ -82,7 +82,16 @@ Graph university_map_graph = {
     university_map_graphEdges,  // EdgeList* edges;
 };
 
-PathfindingState university_map_graph_pathfinding_state;
-
 NodeState university_map_graph_pathfinding_node_states[UNIVERSITY_MAP_GRAPH_SIZE];
 int university_map_graph_pathfinding_result[UNIVERSITY_MAP_GRAPH_SIZE];
+
+PathfindingState university_map_graph_pathfinding_state = {
+    NULL, // Node* start;
+    NULL, // Node* end;
+    university_map_graph_pathfinding_node_states,
+    UNIVERSITY_MAP_GRAPH_SIZE, // int nodeStateSize;
+    0, // int open;
+    university_map_graph_pathfinding_result, // int* result;
+    0, // int resultSize;
+};
+
