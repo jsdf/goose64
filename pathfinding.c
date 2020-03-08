@@ -108,6 +108,21 @@ int Path_quantizePosition(Graph* graph, Vec3d* position) {
   return closestNode;
 }
 
+void Path_reverse(PathfindingState* state) {
+  int temp;
+  int start;
+  int end;
+  start = 0;
+  end = state->resultSize - 1;
+  while (start < end) {
+    temp = state->result[start];
+    state->result[start] = state->result[end];
+    state->result[end] = temp;
+    start++;
+    end--;
+  }
+}
+
 // based on A* implementation from AI For Games
 int Path_findAStar(Graph* graph, PathfindingState* state) {
   // This structure is used to keep track of the
@@ -229,7 +244,9 @@ int Path_findAStar(Graph* graph, PathfindingState* state) {
       result++;
     }
 
-    // path (in reverse) is in state->result
+    Path_reverse(state);
+
+    // path is in state->result
     return TRUE;
   }
 }

@@ -20,6 +20,7 @@
 #endif
 
 #define CHARACTER_ENABLED 1
+#define CHARACTER_FOLLOW_PLAYER 1
 #define DEBUG_CHARACTER 1
 #define CHARACTER_MAX_TURN_SPEED 4.0f
 #define CHARACTER_FLEE_DIST 1200.0f
@@ -104,6 +105,8 @@ void Character_init(Character* self,
 
   self->enteredStateTick = 0;
   self->startedActivityTick = 0;
+
+  self->pathfindingResult = NULL;
 }
 
 // find smallest angle delta, discarding sign
@@ -111,7 +114,7 @@ float Character_angleDeltaMag(float a1, float a2) {
   return fabsf(180.0F - fabsf(fabsf(fmodf(a1 - a2, 360.0f)) - 180.0F));
 }
 
-float Character_topDownAngleToPos(Character* self, Vec3d* position) {
+float Character_topDownAngleDeltaToPos(Character* self, Vec3d* position) {
   Vec3d toPos;
   Vec2d toPos2d;
   float angleToPos;
@@ -124,9 +127,19 @@ float Character_topDownAngleToPos(Character* self, Vec3d* position) {
   return Character_angleDeltaMag(self->obj->rotation.y, angleToPos);
 }
 
+void Character_directionFromTopDownAngle(float angle, Vec3d* result) {
+  Vec2d direction2d;
+
+  Vec2d_fromAngle(&direction2d, angle);
+
+  result->x = direction2d.x;
+  result->z = -direction2d.y;
+}
+
 float Character_topDownAngleMagToObj(Character* self, GameObject* obj) {
   float angleFromHeadingToPos;
-  angleFromHeadingToPos = Character_topDownAngleToPos(self, &obj->position);
+  angleFromHeadingToPos =
+      Character_topDownAngleDeltaToPos(self, &obj->position);
   return fabsf(fmodf(angleFromHeadingToPos, 360.0f));
 }
 
@@ -140,7 +153,7 @@ int Character_posIsInViewArc(Character* self, Vec3d* position) {
   }
 
   // within arc
-  angleFromHeadingToPos = Character_topDownAngleToPos(self, position);
+  angleFromHeadingToPos = Character_topDownAngleDeltaToPos(self, position);
   if (fabsf(fmodf(angleFromHeadingToPos, 360.0f)) > CHARACTER_VIEW_ANGLE_HALF) {
     return FALSE;
   }
@@ -202,32 +215,124 @@ int Character_canSeePlayer(Character* self, Game* game) {
 void Character_moveTowards(Character* self,
                            Vec3d target,
                            float speedMultiplier) {
+  Vec3d targetDirection;
+  Vec2d targetDirection2d;
+  Vec3d headingDirection;
   Vec3d movement;
-  Vec2d movement2d;
-  float destAngle;
-  Vec3d_directionTo(&self->obj->position, &target, &movement);
+  float targetAngle;
+  Vec3d_directionTo(&self->obj->position, &target, &targetDirection);
 
-  movement.y = 0;  // remove vertical component to stop character trying to fly
-  Vec3d_normalise(&movement);
-
-  Vec3d_mulScalar(&movement, CHARACTER_SPEED * speedMultiplier);
-
-  if (
-      // facing towards
-      Character_topDownAngleToPos(self, &target) <=
-      CHARACTER_FACING_MOVEMENT_TARGET_ANGLE) {
-    Vec3d_add(&self->obj->position, &movement);
-  }
+  targetDirection.y =
+      0;  // remove vertical component to stop character trying to fly
+  Vec3d_normalise(&targetDirection);  // renormalize with y=0
 
   // rotate towards target, but with a speed limit
-  Vec2d_init(&movement2d, movement.x, movement.z);
-  destAngle = 360.0 - radToDeg(Vec2d_angle(&movement2d));
+  Vec2d_init(&targetDirection2d, targetDirection.x, targetDirection.z);
+  targetAngle = 360.0 - radToDeg(Vec2d_angle(&targetDirection2d));
   self->obj->rotation.y = GameUtils_rotateTowardsClamped(
-      self->obj->rotation.y, destAngle, CHARACTER_MAX_TURN_SPEED);
+      self->obj->rotation.y, targetAngle, CHARACTER_MAX_TURN_SPEED);
+
+  // resulting heading
+
+  if (
+      // is facing towards target enough to move forward?
+      Character_topDownAngleDeltaToPos(self, &target) <=
+      CHARACTER_FACING_MOVEMENT_TARGET_ANGLE) {
+    Character_directionFromTopDownAngle(degToRad(self->obj->rotation.y),
+                                        &headingDirection);
+
+    Vec3d_copyFrom(&movement, &headingDirection);
+    Vec3d_mulScalar(&movement, CHARACTER_SPEED * speedMultiplier);
+    Vec3d_add(&self->obj->position, &movement);
+  }
 }
 
 void Character_setVisibleItemAttachment(Character* self, ModelType modelType) {
   self->animState.attachment.modelType = modelType;
+}
+
+int Character_isNextPathNodeDestination(Character* self) {
+  return self->pathfindingResult->resultSize - 1 == self->pathProgress;
+}
+Node* Character_getNextPathNode(Character* self, Game* game) {
+  Graph* pathfindingGraph;
+  int* pathNodeID;
+  Node* nextNode;
+  pathfindingGraph = game->pathfindingGraph;
+  pathNodeID = self->pathfindingResult->result + self->pathProgress;
+  nextNode = Path_getNodeByID(pathfindingGraph, *pathNodeID);
+  return nextNode;
+}
+
+void Character_followPlayer(Character* self, Game* game) {
+  int from;
+  int to;
+  float profStartPath;
+  Graph* pathfindingGraph;
+  PathfindingState* pathfindingState;
+  int* pathNodeID;
+  Node* nextNode;
+  Vec3d target;
+  float distanceToTarget;
+
+  distanceToTarget =
+      Vec3d_distanceTo(&self->obj->position, &self->obj->position);
+  target = game->player.goose->position;
+  pathfindingGraph = game->pathfindingGraph;
+  pathfindingState = game->pathfindingState;
+
+  to = Path_quantizePosition(pathfindingGraph, &target);
+
+  // check that the goal is still the closest node to the destination
+  if (self->pathfindingResult && self->pathfindingResult->end->id != to) {
+    // needs new pathfinding result
+    self->pathfindingResult = NULL;
+  }
+
+  // find a path if we need one
+  if (!self->pathfindingResult) {
+    profStartPath = CUR_TIME_MS();
+
+    from = Path_quantizePosition(pathfindingGraph, &self->obj->position);
+
+    Path_initState(pathfindingGraph,                          // graph
+                   pathfindingState,                          // state
+                   Path_getNodeByID(pathfindingGraph, from),  // start
+                   Path_getNodeByID(pathfindingGraph, to),    // end
+                   pathfindingState->nodeStates,     // nodeStates array
+                   pathfindingState->nodeStateSize,  // nodeStateSize
+                   pathfindingState->result          // results array
+    );
+
+    if (Path_findAStar(pathfindingGraph, pathfindingState)) {
+      // pathfinding complete
+      self->pathfindingResult = pathfindingState;
+      self->pathProgress = 0;
+    } else {
+      debugPrintf("character: pathfinding failed\n");
+    }
+
+    game->profTimePath += (CUR_TIME_MS() - profStartPath);
+  }
+
+  // TODO: implement path smoothing (raycast to see if we can cut corners)
+
+  if (self->pathfindingResult &&
+      // TODO: use path smoothing instead of just cutting off last waypoint
+      !Character_isNextPathNodeDestination(self)) {
+    nextNode = Character_getNextPathNode(self, game);
+    // near enough to waypoint
+    if (Vec3d_distanceTo(&self->obj->position, &nextNode->position) < 10) {
+      self->pathProgress++;
+    } else {
+      // head towards waypoint
+      Character_moveTowards(self, nextNode->position,
+                            CHARACTER_SPEED_MULTIPLIER_WALK);
+    }
+  } else {
+    // no path or at end of path, just head towards target
+    Character_moveTowards(self, target, CHARACTER_SPEED_MULTIPLIER_WALK);
+  }
 }
 
 void Character_update(Character* self, Game* game) {
@@ -252,8 +357,13 @@ void Character_update(Character* self, Game* game) {
   } else {
     Character_setVisibleItemAttachment(self, NoneModel);
   }
+
+#if CHARACTER_FOLLOW_PLAYER
+  Character_followPlayer(self, game);
+#else
 #if CHARACTER_ENABLED
   Character_updateState(self, game);
+#endif
 #endif
 
   isTurning = fabsf(self->obj->rotation.y - startRot) > 0.001;
@@ -354,7 +464,7 @@ int Character_isCloseToAndFacing(Character* self,
       // not close enough
       Vec3d_distanceTo(&self->obj->position, target) > targetDist ||
       // not facing towards enough
-      Character_topDownAngleToPos(self, target) >
+      Character_topDownAngleDeltaToPos(self, target) >
           CHARACTER_FACING_OBJECT_ANGLE);
 }
 

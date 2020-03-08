@@ -127,6 +127,12 @@ float Vec2d_angle(Vec2d* self) {
   return angle;
 }
 
+// in radians
+void Vec2d_fromAngle(Vec2d* self, float angle) {
+  self->x = cosf(angle);
+  self->y = sinf(angle);
+}
+
 int Vec2d_equals(Vec2d* self, Vec2d* other) {
   return self->x == other->x && self->y == other->y;
 }

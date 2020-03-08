@@ -10,13 +10,15 @@
 #define degToRad(angleInDegrees) ((angleInDegrees)*CONST_PI / 180.0)
 #define radToDeg(angleInRadians) ((angleInRadians)*180.0 / CONST_PI)
 
-#ifndef __N64__
 // dumb
+#ifdef __N64__
+#include "ed64io_usb.h"
+#else
 #include <stdio.h>
 #endif
 
 #ifdef __N64__
-#include "gu.h"
+#include <PR/gu.h>
 #ifndef RAND
 #define RAND(x) (guRandom() % x) /* random number between 0 to x */
 #endif

@@ -131,6 +131,9 @@ void Game_init(GameObject* worldObjects,
   game.physicsBodies = physicsBodies;
   game.physicsBodiesCount = physicsBodiesCount;
 
+  game.pathfindingGraph = NULL;
+  game.pathfindingState = NULL;
+
   game.profTimeCharacters = 0;
   game.profTimePhysics = 0;
 }
@@ -180,7 +183,8 @@ void Game_updateCamera(Game* game, Input* input) {
   float desiredZoom, desiredZoomDist;
 
   // spring to desired zoom level
-  desiredZoom = input->zoomIn ? 3.0 : input->zoomOut ? 1.0 : 2.0;
+  // desiredZoom = input->zoomIn ? 3.0 : input->zoomOut ? 1.0 : 2.0;
+  desiredZoom = 1.0;
   // desiredZoom = 1.0;
   desiredZoomDist = game->viewZoom - desiredZoom;
   game->viewZoom -= desiredZoomDist * 0.1;

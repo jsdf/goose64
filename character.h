@@ -17,6 +17,8 @@ void Character_haveItemTaken(Character* self);
 
 float Character_topDownAngleMagToObj(Character* self, GameObject* obj);
 
+void Character_directionFromTopDownAngle(float angle, Vec3d* result);
+
 #ifndef __N64__
 void Character_print(Character* self);
 void Character_toString(Character* self, char* buffer);

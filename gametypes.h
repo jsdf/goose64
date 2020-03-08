@@ -5,6 +5,7 @@
 #include "animation.h"
 #include "characterstate.h"
 #include "gameobject.h"
+#include "pathfinding.h"
 #include "physics.h"
 
 typedef enum ItemHolderType {
@@ -44,6 +45,8 @@ typedef struct Character {
   Vec3d targetLocation;
   CharacterTarget targetType;
   CharacterState state;
+  PathfindingState* pathfindingResult;
+  int pathProgress;
 
   unsigned int enteredStateTick;
   unsigned int startedActivityTick;
@@ -77,6 +80,8 @@ typedef struct Game {
 
   Player player;
   PhysState physicsState;
+  Graph* pathfindingGraph;
+  PathfindingState* pathfindingState;
 
   // profiling
   float profTimeCharacters;
