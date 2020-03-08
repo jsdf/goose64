@@ -137,11 +137,8 @@ static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 
 int debugPathfindingFrom = 3;
 int debugPathfindingTo = 8;
-int pathfindingGraphSize = UNIVERSITY_MAP_GRAPH_SIZE;
 Graph* pathfindingGraph = &university_map_graph;
 PathfindingState* pathfindingState = &university_map_graph_pathfinding_state;
-NodeState* pathfindingNodeStates = university_map_graph_pathfinding_node_states;
-int* pathfindingResult = university_map_graph_pathfinding_result;
 
 static NodeGraph nodeGraph = NodeGraph();
 static int selectedNode = -1;
@@ -192,6 +189,8 @@ std::string formatEuler(EulerDegrees* self) {
 
 void drawGUI() {
   GameObject* obj = selectedObject;
+  Character* selectedCharacter =
+      obj == Game_get()->characters->obj ? Game_get()->characters : NULL;
   ImGuiInputTextFlags inputFlags =
       ImGuiInputTextFlags_EnterReturnsTrue;  // only update on blur
 
@@ -207,99 +206,131 @@ void drawGUI() {
     Vec3d objCenter;
     Game_getObjCenter(obj, &objCenter);
 
-    ImGui::Text("Object");
-    ImGui::InputFloat3("Position", (float*)&obj->position, "%.3f", inputFlags);
-    ImGui::InputFloat3("Rotation", (float*)&obj->rotation, "%.3f", inputFlags);
-    ImGui::InputFloat3(
-        "centroidOffset",
-        (float*)&modelTypesProperties[obj->modelType].centroidOffset, "%.3f",
-        inputFlags);
+    if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
+      ImGui::InputFloat3("Position", (float*)&obj->position, "%.3f",
+                         inputFlags);
+      ImGui::InputFloat3("Rotation", (float*)&obj->rotation, "%.3f",
+                         inputFlags);
+      ImGui::InputFloat3(
+          "centroidOffset",
+          (float*)&modelTypesProperties[obj->modelType].centroidOffset, "%.3f",
+          inputFlags);
 
-    ImGui::InputFloat("radius",
-                      (float*)&modelTypesProperties[obj->modelType].radius, 0.1,
-                      1.0, "%.3f", inputFlags);
-
-    ImGui::Text("Physics");
-    if (obj->physBody) {
-      ImGui::InputInt("physBody", (int*)&obj->physBody->id, 0, 1,
-                      ImGuiInputTextFlags_ReadOnly);
-      ImGui::InputFloat3("phys Velocity",
-                         (float*)&obj->physBody->nonIntegralVelocity, "%.3f",
-                         ImGuiInputTextFlags_ReadOnly);
-      ImGui::InputFloat3("phys Acceleration",
-                         (float*)&obj->physBody->nonIntegralAcceleration,
-                         "%.3f", ImGuiInputTextFlags_ReadOnly);
-
-      ImGui::InputFloat3("phys position", (float*)&obj->physBody->position,
-                         "%.3f", ImGuiInputTextFlags_ReadOnly);
-      ImGui::InputFloat3("phys prevPosition",
-                         (float*)&obj->physBody->prevPosition, "%.3f",
-                         ImGuiInputTextFlags_ReadOnly);
-      ImGui::InputInt("phys enabled", (int*)&obj->physBody->enabled, 0, 1,
-                      ImGuiInputTextFlags_ReadOnly);
-      ImGui::InputInt("phys controlled", (int*)&obj->physBody->controlled, 0, 1,
-                      ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat("radius",
+                        (float*)&modelTypesProperties[obj->modelType].radius,
+                        0.1, 1.0, "%.3f", inputFlags);
     }
+    if (obj->physBody) {
+      if (ImGui::CollapsingHeader("Physics", ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::InputInt("physBody", (int*)&obj->physBody->id, 0, 1,
+                        ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputFloat3("phys Velocity",
+                           (float*)&obj->physBody->nonIntegralVelocity, "%.3f",
+                           ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputFloat3("phys Acceleration",
+                           (float*)&obj->physBody->nonIntegralAcceleration,
+                           "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-    ImGui::Text("Collision");
-    ImGui::InputInt("testCollisionResult", (int*)&testCollisionResult, 0, 1,
-                    inputFlags);
-
-    std::string collKeys;
-    if (testCollisionResults.size()) {
-      std::map<int, SphereTriangleCollision>::iterator collIter =
-          testCollisionResults.begin();
-
-      while (collIter != testCollisionResults.end()) {
-        collKeys += std::to_string(collIter->first) + ",";
-
-        collIter++;
+        ImGui::InputFloat3("phys position", (float*)&obj->physBody->position,
+                           "%.3f", ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputFloat3("phys prevPosition",
+                           (float*)&obj->physBody->prevPosition, "%.3f",
+                           ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputInt("phys enabled", (int*)&obj->physBody->enabled, 0, 1,
+                        ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputInt("phys controlled", (int*)&obj->physBody->controlled, 0,
+                        1, ImGuiInputTextFlags_ReadOnly);
       }
     }
-    ImGui::Text("colliding tris=%s", collKeys.c_str());
+    if (selectedCharacter) {
+      if (ImGui::CollapsingHeader("Character",
+                                  ImGuiTreeNodeFlags_DefaultOpen)) {
+        Vec3d heading;
+        Character_directionFromTopDownAngle(obj->rotation.y, &heading);
+        ImGui::InputFloat3("heading", (float*)&heading, "%.3f",
+                           ImGuiInputTextFlags_ReadOnly);
+        ImGui::Text("state: %s",
+                    CharacterStateStrings[selectedCharacter->state]);
+        ImGui::InputInt("pathProgress", (int*)&selectedCharacter->pathProgress,
+                        0, 1, ImGuiInputTextFlags_ReadOnly);
+        if (selectedCharacter->pathfindingResult) {
+          ImGui::Text("path:");
+          int i;
+          int* pathNodeID;
 
-    int spatialHashResultsCount =
-        SpatialHash_getTriangles(&objCenter, Game_getObjRadius(obj),
-                                 &university_map_collision_collision_mesh_hash,
-                                 spatialHashResults, /*maxResults*/ 100);
-
-    std::string bucketKeys;
-    int i;
-    for (i = 0; i < spatialHashResultsCount; i++) {
-      bucketKeys += std::to_string(spatialHashResults[i]) + ",";
+          for (i = 0,
+              pathNodeID = selectedCharacter->pathfindingResult->result;  //
+               i < selectedCharacter->pathfindingResult->resultSize;      //
+               i++, pathNodeID++) {
+            ImGui::Text("%d: %d", i, *pathNodeID);
+          }
+        }
+      }
     }
-    ImGui::Text("current bucket tris=%s", bucketKeys.c_str());
+
+    if (ImGui::CollapsingHeader("Collision")) {
+      ImGui::InputInt("testCollisionResult", (int*)&testCollisionResult, 0, 1,
+                      inputFlags);
+
+      std::string collKeys;
+      if (testCollisionResults.size()) {
+        std::map<int, SphereTriangleCollision>::iterator collIter =
+            testCollisionResults.begin();
+
+        while (collIter != testCollisionResults.end()) {
+          collKeys += std::to_string(collIter->first) + ",";
+
+          collIter++;
+        }
+      }
+      ImGui::Text("colliding tris=%s", collKeys.c_str());
+
+      int spatialHashResultsCount = SpatialHash_getTriangles(
+          &objCenter, Game_getObjRadius(obj),
+          &university_map_collision_collision_mesh_hash, spatialHashResults,
+          /*maxResults*/ 100);
+
+      std::string bucketKeys;
+      int i;
+      for (i = 0; i < spatialHashResultsCount; i++) {
+        bucketKeys += std::to_string(spatialHashResults[i]) + ",";
+      }
+      ImGui::Text("current bucket tris=%s", bucketKeys.c_str());
+    }
   }
 
-  ImGui::InputFloat("physWorldData.gravity", (float*)&physWorldData.gravity,
-                    1.0, 10.0, "%.3f", inputFlags);
+  if (ImGui::CollapsingHeader("Global", ImGuiTreeNodeFlags_DefaultOpen)) {
+    ImGui::InputFloat("physWorldData.gravity", (float*)&physWorldData.gravity,
+                      1.0, 10.0, "%.3f", inputFlags);
 
-  ImGui::InputInt("updateSkipRate", (int*)&updateSkipRate, 1, 10, inputFlags);
-  updateSkipRate = MAX(updateSkipRate, 1);
+    ImGui::InputInt("updateSkipRate", (int*)&updateSkipRate, 1, 10, inputFlags);
+    updateSkipRate = MAX(updateSkipRate, 1);
+  }
 
-  ImGui::Text("Frametime %.3f ms (%.1f FPS)",
-              1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+  if (ImGui::CollapsingHeader("Profiling", ImGuiTreeNodeFlags_DefaultOpen)) {
+    ImGui::Text("Frametime %.3f ms (%.1f FPS)",
+                1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 #if DEBUG_PROFILING
-  ImGui::Text("Phys=%.3fms, Char=%.3f ms, Draw=%.3f ms, Path=%.3f ms",
-              profAvgPhysics, profAvgCharacters, profAvgDraw, profAvgPath);
+    ImGui::Text("Phys=%.3fms, Char=%.3f ms, Draw=%.3f ms, Path=%.3f ms",
+                profAvgPhysics, profAvgCharacters, profAvgDraw, profAvgPath);
 #endif
-
-  Vec3d* goosePos = &Game_get()->player.goose->position;
-#if DEBUG_PATHFINDING
-  ImGui::InputInt("debugPathfindingFrom", (int*)&debugPathfindingFrom, 1, 10,
-                  inputFlags);
-  debugPathfindingFrom =
-      CLAMP(debugPathfindingFrom, 0, pathfindingGraphSize - 1);
-  ImGui::InputInt("debugPathfindingTo", (int*)&debugPathfindingTo, 1, 10,
-                  inputFlags);
-  debugPathfindingTo = CLAMP(debugPathfindingTo, 0, pathfindingGraphSize - 1);
-
-  if (ImGui::Button("print pos")) {
-    printf("{%.3f, %.3f, %.3f}\n", goosePos->x, goosePos->y, goosePos->z);
   }
 
+  if (ImGui::CollapsingHeader("Pathfinding")) {
+    Vec3d* goosePos = &Game_get()->player.goose->position;
+#if DEBUG_PATHFINDING
+    ImGui::InputInt("debugPathfindingFrom", (int*)&debugPathfindingFrom, 1, 10,
+                    inputFlags);
+    ImGui::InputInt("debugPathfindingTo", (int*)&debugPathfindingTo, 1, 10,
+                    inputFlags);
+
+    if (ImGui::Button("print pos")) {
+      printf("{%.3f, %.3f, %.3f}\n", goosePos->x, goosePos->y, goosePos->z);
+    }
+
 #endif
+  }
 
 #if ENABLE_NODEGRAPH_EDITOR
   drawNodeGraphGUI(nodeGraph, goosePos, "university_map_graph",
@@ -801,10 +832,10 @@ void drawCollisionMesh() {
     Vec3d objCenter;
     Game_getObjCenter(selectedObject, &objCenter);
 
-    int spatialHashResultsCount =
-        SpatialHash_getTriangles(&objCenter, Game_getObjRadius(selectedObject),
-                                 &university_map_collision_collision_mesh_hash,
-                                 spatialHashResults, /*maxResults*/ 100);
+    int spatialHashResultsCount = SpatialHash_getTriangles(
+        &objCenter, Game_getObjRadius(selectedObject),
+        &university_map_collision_collision_mesh_hash, spatialHashResults,
+        /*maxResults*/ 100);
 
     int i;
     for (i = 0; i < spatialHashResultsCount; i++) {
@@ -919,6 +950,10 @@ void doPathfinding(int printResult) {
   Vec3d* characterPos = &Game_get()->characters->obj->position;
   debugPathfindingTo = Path_quantizePosition(pathfindingGraph, goosePos);
   debugPathfindingFrom = Path_quantizePosition(pathfindingGraph, characterPos);
+#else
+  debugPathfindingTo = CLAMP(debugPathfindingTo, 0, pathfindingGraph->size - 1);
+  debugPathfindingFrom =
+      CLAMP(debugPathfindingFrom, 0, pathfindingGraph->size - 1);
 #endif
 
   Path_initState(
@@ -926,10 +961,9 @@ void doPathfinding(int printResult) {
       pathfindingState,                                          // state
       Path_getNodeByID(pathfindingGraph, debugPathfindingFrom),  // start
       Path_getNodeByID(pathfindingGraph, debugPathfindingTo),    // end
-      pathfindingNodeStates,  // nodeStates array
-      pathfindingGraphSize,   // nodeStateSize
-      pathfindingResult       // results array
-
+      pathfindingState->nodeStates,     // nodeStates array
+      pathfindingState->nodeStateSize,  // nodeStateSize
+      pathfindingState->result          // results array
   );
 
   int result = Path_findAStar(pathfindingGraph, pathfindingState);
@@ -1477,7 +1511,7 @@ void updateAndRender() {
     testCollision();
 #endif
 #if DEBUG_PATHFINDING
-    doPathfinding(FALSE);
+    // doPathfinding(FALSE);
 #endif
 
     Game_update(&input);
@@ -1496,7 +1530,10 @@ int main(int argc, char** argv) {
   GameObject* obj;
 
   Game_init(university_map_data, UNIVERSITY_MAP_COUNT, &physWorldData);
+
   game = Game_get();
+  game->pathfindingGraph = pathfindingGraph;
+  game->pathfindingState = pathfindingState;
 
   Input_init(&input);
 
@@ -1568,7 +1605,9 @@ int main(int argc, char** argv) {
   loadModel(WallModel, "wall.obj", "wall.bmp");
   loadModel(PlanterModel, "planter.obj", "planter.bmp");
 
+#if ENABLE_NODEGRAPH_EDITOR
   nodeGraph.load(pathfindingGraph);
+#endif
 
   // enter GLUT event processing cycle
   glutMainLoop();
