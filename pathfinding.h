@@ -64,4 +64,8 @@ void Path_initState(Graph* graph,
                     int nodeStateSize,
                     int* result);
 
+float Path_getClosestPointParameter(Vec3d* segmentPoint0,
+                                    Vec3d* segmentPoint1,
+                                    Vec3d* point);
+
 #endif /* !_PATHFINDING_H_ */

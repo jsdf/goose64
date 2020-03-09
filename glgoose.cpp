@@ -70,7 +70,8 @@
 
 #define DEBUG_PROFILING 1
 
-#define USE_LIGHTING 1
+#define USE_LIGHTING 0
+#define USE_FLAT_SHADING 1
 #define USE_ANIM_FRAME_LERP 1
 #define ENABLE_NODEGRAPH_EDITOR 0
 
@@ -249,10 +250,16 @@ void drawGUI() {
         Character_directionFromTopDownAngle(obj->rotation.y, &heading);
         ImGui::InputFloat3("heading", (float*)&heading, "%.3f",
                            ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputFloat3("targetLocation",
+                           (float*)&selectedCharacter->targetLocation, "%.3f",
+                           ImGuiInputTextFlags_ReadOnly);
         ImGui::Text("state: %s",
                     CharacterStateStrings[selectedCharacter->state]);
         ImGui::InputInt("pathProgress", (int*)&selectedCharacter->pathProgress,
                         0, 1, ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputFloat("pathSegmentProgress",
+                          (float*)&selectedCharacter->pathSegmentProgress, 0.1,
+                          1.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
         if (selectedCharacter->pathfindingResult) {
           ImGui::Text("path:");
           int i;
@@ -317,8 +324,8 @@ void drawGUI() {
 #endif
   }
 
+  Vec3d* goosePos = &Game_get()->player.goose->position;
   if (ImGui::CollapsingHeader("Pathfinding")) {
-    Vec3d* goosePos = &Game_get()->player.goose->position;
 #if DEBUG_PATHFINDING
     ImGui::InputInt("debugPathfindingFrom", (int*)&debugPathfindingFrom, 1, 10,
                     inputFlags);
@@ -1146,6 +1153,11 @@ void renderScene(void) {
   enableLighting();
 #endif
 
+#if USE_FLAT_SHADING
+  glShadeModel(GL_FLAT);
+
+#endif
+
 #if DEBUG_LOG_RENDER
   printf("draw start\n");
 #endif
@@ -1162,6 +1174,7 @@ void renderScene(void) {
       drawGameObject(sortedObjects[i]);
     }
   }
+  glShadeModel(GL_SMOOTH);
 
 #if DEBUG_COLLISION_MESH || DEBUG_COLLISION_MESH_MORE || \
     DEBUG_COLLISION_SPATIAL_HASH

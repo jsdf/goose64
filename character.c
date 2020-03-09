@@ -36,7 +36,7 @@
 #define CHARACTER_EYE_OFFSET_Y 120.0
 #define CHARACTER_VIEW_ANGLE_HALF 90.0
 #define CHARACTER_FACING_OBJECT_ANGLE 30.0
-#define CHARACTER_FACING_MOVEMENT_TARGET_ANGLE 45.0
+#define CHARACTER_FACING_MOVEMENT_TARGET_ANGLE 75.0
 #define CHARACTER_DEBUG_ANIMATION 0
 #define CHARACTER_WALK_ANIM_MOVEMENT_DIVISOR 1.6
 #define CHARACTER_SPEED_MULTIPLIER_RUN 1.0
@@ -254,14 +254,11 @@ void Character_setVisibleItemAttachment(Character* self, ModelType modelType) {
 int Character_isNextPathNodeDestination(Character* self) {
   return self->pathfindingResult->resultSize - 1 == self->pathProgress;
 }
-Node* Character_getNextPathNode(Character* self, Game* game) {
-  Graph* pathfindingGraph;
+
+Node* Character_getPathNode(Character* self, Game* game, int pathNodeIndex) {
   int* pathNodeID;
-  Node* nextNode;
-  pathfindingGraph = game->pathfindingGraph;
-  pathNodeID = self->pathfindingResult->result + self->pathProgress;
-  nextNode = Path_getNodeByID(pathfindingGraph, *pathNodeID);
-  return nextNode;
+  pathNodeID = self->pathfindingResult->result + pathNodeIndex;
+  return Path_getNodeByID(game->pathfindingGraph, *pathNodeID);
 }
 
 void Character_followPlayer(Character* self, Game* game) {
@@ -273,6 +270,9 @@ void Character_followPlayer(Character* self, Game* game) {
   int* pathNodeID;
   Node* nextNode;
   Vec3d target;
+  Vec3d* pathSegmentP0;
+  Vec3d* pathSegmentP1;
+  Vec3d movementTarget;
   float distanceToTarget;
 
   distanceToTarget =
@@ -308,6 +308,7 @@ void Character_followPlayer(Character* self, Game* game) {
       // pathfinding complete
       self->pathfindingResult = pathfindingState;
       self->pathProgress = 0;
+      self->pathSegmentProgress = 0;
     } else {
       debugPrintf("character: pathfinding failed\n");
     }
@@ -320,14 +321,37 @@ void Character_followPlayer(Character* self, Game* game) {
   if (self->pathfindingResult &&
       // TODO: use path smoothing instead of just cutting off last waypoint
       !Character_isNextPathNodeDestination(self)) {
-    nextNode = Character_getNextPathNode(self, game);
+    nextNode = Character_getPathNode(self, game, self->pathProgress);
+
     // near enough to waypoint
-    if (Vec3d_distanceTo(&self->obj->position, &nextNode->position) < 10) {
+    if (Vec3d_distanceTo(&self->obj->position, &nextNode->position) < 40) {
       self->pathProgress++;
     } else {
+      pathSegmentP0 =
+          &Character_getPathNode(self, game, self->pathProgress)->position;
+      pathSegmentP1 =
+          &Character_getPathNode(self, game,
+                                 MIN(self->pathfindingResult->resultSize - 1,
+                                     self->pathProgress + 1))
+               ->position;
+      movementTarget = *pathSegmentP0;
+
+      self->pathSegmentProgress = Path_getClosestPointParameter(
+          pathSegmentP0, pathSegmentP1, &self->obj->position);
+      // get position along line to next point
+      Vec3d_lerp(&movementTarget, pathSegmentP1,
+                 // lead target point a little bit
+                 MIN(1.0f, self->pathSegmentProgress + 0.1));
+
+      self->targetLocation = movementTarget;
+
       // head towards waypoint
-      Character_moveTowards(self, nextNode->position,
+      Character_moveTowards(self, movementTarget,
                             CHARACTER_SPEED_MULTIPLIER_WALK);
+
+      if (self->pathSegmentProgress > 0.999) {
+        self->pathProgress++;
+      }
     }
   } else {
     // no path or at end of path, just head towards target

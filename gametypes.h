@@ -47,6 +47,7 @@ typedef struct Character {
   CharacterState state;
   PathfindingState* pathfindingResult;
   int pathProgress;
+  float pathSegmentProgress;
 
   unsigned int enteredStateTick;
   unsigned int startedActivityTick;

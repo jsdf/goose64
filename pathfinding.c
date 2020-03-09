@@ -123,6 +123,54 @@ void Path_reverse(PathfindingState* state) {
   }
 }
 
+// based on https://www.geometrictools.com/GTE/Mathematics/DistPointSegment.h
+float Path_getClosestPointParameter(Vec3d* segmentPoint0,
+                                    Vec3d* segmentPoint1,
+                                    Vec3d* point) {
+  float resultSegmentParameter;
+  float sqrLength;
+  float t;
+  Vec3d diff;
+  Vec3d direction;
+
+  // The direction vector is not unit length.  The normalization is
+  // deferred until it is needed.
+  direction = *segmentPoint1;
+  Vec3d_sub(&direction, segmentPoint0);
+  diff = *point;
+  Vec3d_sub(&diff, segmentPoint1);
+
+  t = Vec3d_dot(&direction, &diff);
+  if (t >= (float)0) {
+    resultSegmentParameter = 1;
+    // resultSegmentClosest = segmentPoint1;
+  } else {
+    diff = *point;
+    Vec3d_sub(&diff, segmentPoint0);
+    t = Vec3d_dot(&direction, &diff);
+    if (t <= (float)0) {
+      resultSegmentParameter = (float)0;
+      // resultSegmentClosest = segmentPoint0;
+    } else {
+      sqrLength = Vec3d_dot(&direction, &direction);
+      if (sqrLength > (float)0) {
+        t /= sqrLength;
+        resultSegmentParameter = t;
+        // resultSegmentClosest = segmentPoint0 + t * direction;
+      } else {
+        resultSegmentParameter = (float)0;
+        // resultSegmentClosest = segmentPoint0;
+      }
+    }
+  }
+
+  // diff = point - resultSegmentClosest;
+  // result.sqrDistance = Dot(diff, diff);
+  // result.distance = sqrtf(result.sqrDistance);
+
+  return resultSegmentParameter;
+}
+
 // based on A* implementation from AI For Games
 int Path_findAStar(Graph* graph, PathfindingState* state) {
   // This structure is used to keep track of the
