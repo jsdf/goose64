@@ -7,7 +7,7 @@
 
 extern Triangle university_map_collision_collision_mesh[];
 
-#define UNIVERSITY_MAP_COLLISION_LENGTH 581
+#define UNIVERSITY_MAP_COLLISION_LENGTH 525
 
 extern SpatialHash university_map_collision_collision_mesh_hash;
 

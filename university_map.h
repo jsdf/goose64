@@ -42,12 +42,12 @@ BushModel, // modelType
 BushModel, // modelType
 },
 {7, // object id
-{-2178.357468, 171.918898, -0.000000}, // position
+{-1813.247681, 171.918898, 164.581404}, // position
 {0.000000, 0.000000, -0.000000}, // rotation
 UniBldgModel, // modelType
 },
 {8, // object id
-{-2178.357468, 171.918898, -1338.117714}, // position
+{-2110.473404, 171.918883, -1103.297653}, // position
 {0.000000, 0.000000, -0.000000}, // rotation
 UniBldgModel, // modelType
 },
@@ -62,7 +62,7 @@ UniBldgModel, // modelType
 UniBldgModel, // modelType
 },
 {11, // object id
-{-1231.426163, 171.918898, 3616.849594}, // position
+{-1217.017479, 171.919012, 293.420219}, // position
 {0.000000, 90.000003, -0.000000}, // rotation
 UniBldgModel, // modelType
 },
@@ -151,9 +151,34 @@ PlanterModel, // modelType
 {0.000000, 0.000000, -0.000000}, // rotation
 PlanterModel, // modelType
 },
+{29, // object id
+{-1239.636612, 49.424400, -879.493389}, // position
+{0.000000, 0.000000, -0.000000}, // rotation
+WallModel, // modelType
+},
+{30, // object id
+{-1712.740517, 49.424400, -879.493389}, // position
+{0.000000, 0.000000, -0.000000}, // rotation
+WallModel, // modelType
+},
+{31, // object id
+{-1931.657639, 11.748433, -464.240742}, // position
+{0.000000, 0.000000, -0.000000}, // rotation
+BushModel, // modelType
+},
+{32, // object id
+{-434.772606, 28.706844, -639.281502}, // position
+{0.000000, 0.000000, -0.000000}, // rotation
+PlanterModel, // modelType
+},
+{33, // object id
+{-766.230011, 49.424400, -879.493389}, // position
+{0.000000, 0.000000, -0.000000}, // rotation
+WallModel, // modelType
+},
 
 };
 
-#define UNIVERSITY_MAP_COUNT 29
+#define UNIVERSITY_MAP_COUNT 34
 
 #endif /* UNIVERSITY_MAP_H */
