@@ -128,9 +128,13 @@ void initStage00() {
   Input_init(&input);
 
   Game_init(university_map_data, UNIVERSITY_MAP_COUNT, &physWorldData);
+
   assert(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
 
   game = Game_get();
+
+  game->pathfindingGraph = &university_map_graph;
+  game->pathfindingState = &university_map_graph_pathfinding_state;
 
   // init sortedObjects pointer array, used for painter's algorithm rendering
   for (i = 0, obj = game->worldObjects; i < game->worldObjectsCount;
@@ -316,29 +320,6 @@ void checkDebugControls(Game* game) {
     viewPos.x += 30.0;
 }
 
-int debugPathfindingFrom = 3;
-int debugPathfindingTo = 8;
-Graph* pathfindingGraph = &university_map_graph;
-PathfindingState* pathfindingState = &university_map_graph_pathfinding_state;
-
-void doTestPathfinding() {
-  float profStartPath = CUR_TIME_MS();
-
-  Path_initState(
-      pathfindingGraph,                                          // graph
-      pathfindingState,                                          // state
-      Path_getNodeByID(pathfindingGraph, debugPathfindingFrom),  // start
-      Path_getNodeByID(pathfindingGraph, debugPathfindingTo),    // end
-      pathfindingState->nodeStates,     // nodeStates array
-      pathfindingState->nodeStateSize,  // nodeStateSize
-      pathfindingState->result          // results array
-  );
-
-  Path_findAStar(pathfindingGraph, pathfindingState);
-
-  Game_get()->profTimePath += (CUR_TIME_MS() - profStartPath);
-}
-
 /* The game progressing process for stage 0 */
 void updateGame00(void) {
   Game* game;
@@ -346,9 +327,6 @@ void updateGame00(void) {
   game = Game_get();
 
   Vec2d_origin(&input.direction);
-
-  doTestPathfinding();
-  doTestPathfinding();
 
   /* Data reading of controller 1 */
   nuContDataGetEx(contdata, 0);
@@ -557,7 +535,6 @@ void drawWorldObjects(Dynamic* dynamicp) {
       case ToonFlatShadingRenderMode:
         if (Renderer_isLitGameObject(obj)) {
           gSPSetGeometryMode(glistp++, G_SHADE | G_LIGHTING | G_CULL_BACK);
-
         } else {
           gSPSetGeometryMode(glistp++, G_SHADE | G_CULL_BACK);
         }

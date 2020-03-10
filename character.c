@@ -107,6 +107,9 @@ void Character_init(Character* self,
   self->startedActivityTick = 0;
 
   self->pathfindingResult = NULL;
+
+  self->pathProgress = 0;
+  self->pathSegmentProgress = 0.0f;
 }
 
 // find smallest angle delta, discarding sign
@@ -133,6 +136,7 @@ void Character_directionFromTopDownAngle(float angle, Vec3d* result) {
   Vec2d_fromAngle(&direction2d, angle);
 
   result->x = direction2d.x;
+  result->y = 0;
   result->z = -direction2d.y;
 }
 
@@ -220,6 +224,7 @@ void Character_moveTowards(Character* self,
   Vec3d headingDirection;
   Vec3d movement;
   float targetAngle;
+
   Vec3d_directionTo(&self->obj->position, &target, &targetDirection);
 
   targetDirection.y =
