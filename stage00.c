@@ -29,6 +29,7 @@
 #include "characterrig.h"
 #include "flagpole.h"
 #include "gooserig.h"
+#include "planter.h"
 #include "testingCube.h"
 #include "university_bldg.h"
 #include "university_floor.h"
@@ -49,6 +50,7 @@
 #define CONSOLE_SHOW_PROFILING 1
 
 typedef enum RenderMode {
+  ToonFlatShadingRenderMode,
   TextureAndLightingRenderMode,
   TextureNoLightingRenderMode,
   NoTextureNoLightingRenderMode,
@@ -118,7 +120,7 @@ void initStage00() {
   profTimePhysics = 0;
 
   cycleMode = 1.0;
-  renderModeSetting = TextureAndLightingRenderMode;
+  renderModeSetting = ToonFlatShadingRenderMode;
   nearPlane = 10;
   farPlane = 10000;
   Vec3d_init(&viewPos, 0.0F, 0.0F, -400.0F);
@@ -316,11 +318,8 @@ void checkDebugControls(Game* game) {
 
 int debugPathfindingFrom = 3;
 int debugPathfindingTo = 8;
-int pathfindingGraphSize = UNIVERSITY_MAP_GRAPH_SIZE;
 Graph* pathfindingGraph = &university_map_graph;
 PathfindingState* pathfindingState = &university_map_graph_pathfinding_state;
-NodeState* pathfindingNodeStates = university_map_graph_pathfinding_node_states;
-int* pathfindingResult = university_map_graph_pathfinding_result;
 
 void doTestPathfinding() {
   float profStartPath = CUR_TIME_MS();
@@ -330,10 +329,9 @@ void doTestPathfinding() {
       pathfindingState,                                          // state
       Path_getNodeByID(pathfindingGraph, debugPathfindingFrom),  // start
       Path_getNodeByID(pathfindingGraph, debugPathfindingTo),    // end
-      pathfindingNodeStates,  // nodeStates array
-      pathfindingGraphSize,   // nodeStateSize
-      pathfindingResult       // results array
-
+      pathfindingState->nodeStates,     // nodeStates array
+      pathfindingState->nodeStateSize,  // nodeStateSize
+      pathfindingState->result          // results array
   );
 
   Path_findAStar(pathfindingGraph, pathfindingState);
@@ -344,7 +342,6 @@ void doTestPathfinding() {
 /* The game progressing process for stage 0 */
 void updateGame00(void) {
   Game* game;
-  char logmsg[100];
 
   game = Game_get();
 
@@ -403,9 +400,6 @@ void updateGame00(void) {
   }
 
   if (usbEnabled) {
-    // strcpy(logmsg, "(string formatting works)");
-    // ed64Printf("usblogger log %s retrace=%d\n", logmsg, nuScRetraceCounter);
-
     usbState = usbLoggerFlush();
   }
 }
@@ -500,6 +494,8 @@ Gfx* getModelDisplayList(ModelType modelType) {
       return Wtx_flagpole;
     case WallModel:
       return Wtx_wall;
+    case PlanterModel:
+      return Wtx_planter;
     default:
       return Wtx_testingCube;
   }
@@ -521,27 +517,28 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
   Renderer_sortWorldObjects(sortedObjects, game->worldObjectsCount);
 
+  gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
+  gDPSetCycleType(glistp++, cycleMode > 0.0F ? G_CYC_1CYCLE : G_CYC_2CYCLE);
+  useZBuffering = Renderer_isZBufferedGameObject(obj);
+  if (useZBuffering) {
+    gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+    gSPSetGeometryMode(glistp++, G_ZBUFFER);
+  } else {
+    gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
+    gSPClearGeometryMode(glistp++, G_ZBUFFER);
+  }
+
+  // setup view
+  gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
+            G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
+  gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->camera)),
+            G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
+
   // render world objects
   for (i = 0; i < game->worldObjectsCount; i++) {
     obj = sortedObjects[i];
     if (obj->modelType == NoneModel || !obj->visible) {
       continue;
-    }
-    // setup view
-    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
-              G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
-    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->camera)),
-              G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
-
-    gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-    gDPSetCycleType(glistp++, cycleMode > 0.0F ? G_CYC_1CYCLE : G_CYC_2CYCLE);
-    useZBuffering = Renderer_isZBufferedGameObject(obj);
-    if (useZBuffering) {
-      gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
-      gSPSetGeometryMode(glistp++, G_ZBUFFER);
-    } else {
-      gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
-      gSPClearGeometryMode(glistp++, G_ZBUFFER);
     }
 
     // render textured models
@@ -556,22 +553,35 @@ void drawWorldObjects(Dynamic* dynamicp) {
       gSPSetLights1(glistp++, sun_light);
     }
 
-    if (renderModeSetting == TextureNoLightingRenderMode) {
-      gSPSetGeometryMode(glistp++, G_SHADE | G_SHADING_SMOOTH | G_CULL_BACK);
-      gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
-    } else if (renderModeSetting == TextureAndLightingRenderMode) {
-      gSPSetGeometryMode(glistp++,
-                         G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_CULL_BACK);
-      gDPSetCombineMode(glistp++, G_CC_MODULATERGB, G_CC_MODULATERGB);
-    } else if (renderModeSetting == LightingNoTextureRenderMode) {
-      gSPSetGeometryMode(glistp++,
-                         G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_CULL_BACK);
-      gDPSetCombineMode(glistp++, G_CC_SHADE, G_CC_SHADE);
-    } else {  // NoTextureNoLightingRenderMode
-      gDPSetPrimColor(glistp++, 0, 0, /*r*/ 180, /*g*/ 180, /*b*/ 180,
-                      /*a*/ 255);
-      gSPSetGeometryMode(glistp++, G_CULL_BACK);
-      gDPSetCombineMode(glistp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+    switch (renderModeSetting) {
+      case ToonFlatShadingRenderMode:
+        if (Renderer_isLitGameObject(obj)) {
+          gSPSetGeometryMode(glistp++, G_SHADE | G_LIGHTING | G_CULL_BACK);
+
+        } else {
+          gSPSetGeometryMode(glistp++, G_SHADE | G_CULL_BACK);
+        }
+        gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
+        break;
+      case TextureNoLightingRenderMode:
+        gSPSetGeometryMode(glistp++, G_SHADE | G_SHADING_SMOOTH | G_CULL_BACK);
+        gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
+        break;
+      case TextureAndLightingRenderMode:
+        gSPSetGeometryMode(
+            glistp++, G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_CULL_BACK);
+        gDPSetCombineMode(glistp++, G_CC_MODULATERGB, G_CC_MODULATERGB);
+        break;
+      case LightingNoTextureRenderMode:
+        gSPSetGeometryMode(
+            glistp++, G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_CULL_BACK);
+        gDPSetCombineMode(glistp++, G_CC_SHADE, G_CC_SHADE);
+        break;
+      default:  // NoTextureNoLightingRenderMode
+        gDPSetPrimColor(glistp++, 0, 0, /*r*/ 180, /*g*/ 180, /*b*/ 180,
+                        /*a*/ 255);
+        gSPSetGeometryMode(glistp++, G_CULL_BACK);
+        gDPSetCombineMode(glistp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
     }
 
     // set the transform in world space for the gameobject to render
@@ -584,11 +594,11 @@ void drawWorldObjects(Dynamic* dynamicp) {
                obj->position.y,  // pos y
                obj->position.z   // pos z
     );
-    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(obj->objTransform)),
-              G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
+    gSPMatrix(
+        glistp++, OS_K0_TO_PHYSICAL(&(obj->objTransform)),
+        G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);  // gameobject mtx start
 
-    if (obj->modelType == GooseModel ||
-        obj->modelType == GroundskeeperCharacterModel) {
+    if (Renderer_isAnimatedGameObject(obj)) {
       // case for multi-part objects using rigid body animation
 
       modelMeshParts = getAnimationNumModelMeshParts(obj->modelType);
@@ -661,6 +671,8 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
       gSPDisplayList(glistp++, modelDisplayList);
     }
+
+    gSPPopMatrix(glistp++, G_MTX_MODELVIEW);  // gameobject mtx end
 
     gDPPipeSync(glistp++);
   }

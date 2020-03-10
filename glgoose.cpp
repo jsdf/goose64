@@ -571,8 +571,7 @@ void drawModel(GameObject* obj) {
 
   ObjModel& model = models[obj->modelType];
 
-  if (obj->modelType == GooseModel ||
-      obj->modelType == GroundskeeperCharacterModel) {
+  if (Renderer_isAnimatedGameObject(obj)) {
     // case for multi-part objects using rigid body animation
     // TODO: generalize this for other model types using other skeletons with
     // retargetable animations

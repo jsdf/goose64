@@ -11,19 +11,30 @@
 
 int Renderer_isZBufferedGameObject(GameObject* obj) {
   switch (obj->modelType) {
-    case UniFloorModel:
-    case UniBldgModel:
-      return FALSE;
+    // case UniFloorModel:
+    // case UniBldgModel:
+    //   return FALSE;
     default:
       return TRUE;
   }
 }
+
 int Renderer_isLitGameObject(GameObject* obj) {
   switch (obj->modelType) {
     case UniFloorModel:
     case UniBldgModel:
     case WallModel:
     case PlanterModel:
+      return TRUE;
+    default:
+      return FALSE;
+  }
+}
+
+int Renderer_isAnimatedGameObject(GameObject* obj) {
+  switch (obj->modelType) {
+    case GooseModel:
+    case GroundskeeperCharacterModel:
       return TRUE;
     default:
       return FALSE;

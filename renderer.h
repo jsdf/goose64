@@ -6,6 +6,7 @@
 
 int Renderer_isZBufferedGameObject(GameObject* obj);
 int Renderer_isLitGameObject(GameObject* obj);
+int Renderer_isAnimatedGameObject(GameObject* obj);
 float Renderer_gameobjectSortDist(GameObject* obj);
 int Renderer_gameobjectDistComparatorFn(const void* a, const void* b);
 void Renderer_sortWorldObjects(GameObject** sortedObjects,
