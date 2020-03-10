@@ -226,6 +226,7 @@ void makeDL00() {
 // debug text overlay
 #if CONSOLE_VIEW_DEBUG
   if (contPattern & 0x1) {
+    nuDebConClear(0);
     consoleOffset = 21;
 
     debugPrintFloat(4, consoleOffset++, "frame=%3.2fms",
