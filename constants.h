@@ -12,7 +12,9 @@
 
 // dumb
 #ifdef __N64__
+#ifdef __cplusplus  // only for clang linter
 #include "ed64io_usb.h"
+#endif
 #else
 #include <stdio.h>
 #endif

@@ -8,7 +8,7 @@
 #include "vec2d.h"
 
 #ifdef __N64__
-#include <gu.h>
+#include <PR/gu.h>
 #endif
 
 #define VEC2D_M_PI 3.14159265358979323846
