@@ -267,7 +267,6 @@ void Character_followPlayer(Character* self, Game* game) {
   float profStartPath;
   Graph* pathfindingGraph;
   PathfindingState* pathfindingState;
-  int* pathNodeID;
   Node* nextNode;
   Vec3d target;
   Vec3d* pathSegmentP0;
@@ -323,35 +322,34 @@ void Character_followPlayer(Character* self, Game* game) {
       !Character_isNextPathNodeDestination(self)) {
     nextNode = Character_getPathNode(self, game, self->pathProgress);
 
+    pathSegmentP0 =
+        &Character_getPathNode(self, game, self->pathProgress)->position;
+    pathSegmentP1 =
+        &Character_getPathNode(self, game,
+                               MIN(self->pathfindingResult->resultSize - 1,
+                                   self->pathProgress + 1))
+             ->position;
+    movementTarget = *pathSegmentP0;
+
+    self->pathSegmentProgress = Path_getClosestPointParameter(
+        pathSegmentP0, pathSegmentP1, &self->obj->position);
+    // get position along line to next point
+    Vec3d_lerp(&movementTarget, pathSegmentP1,
+               // lead target point a little bit
+               MIN(1.0f, self->pathSegmentProgress + 0.1));
+
+    self->targetLocation = movementTarget;
+
+    // head towards waypoint
+    Character_moveTowards(self, movementTarget,
+                          CHARACTER_SPEED_MULTIPLIER_WALK);
+
+    if (self->pathSegmentProgress > 0.999) {
+      self->pathProgress++;
+    }
     // near enough to waypoint
     if (Vec3d_distanceTo(&self->obj->position, &nextNode->position) < 40) {
       self->pathProgress++;
-    } else {
-      pathSegmentP0 =
-          &Character_getPathNode(self, game, self->pathProgress)->position;
-      pathSegmentP1 =
-          &Character_getPathNode(self, game,
-                                 MIN(self->pathfindingResult->resultSize - 1,
-                                     self->pathProgress + 1))
-               ->position;
-      movementTarget = *pathSegmentP0;
-
-      self->pathSegmentProgress = Path_getClosestPointParameter(
-          pathSegmentP0, pathSegmentP1, &self->obj->position);
-      // get position along line to next point
-      Vec3d_lerp(&movementTarget, pathSegmentP1,
-                 // lead target point a little bit
-                 MIN(1.0f, self->pathSegmentProgress + 0.1));
-
-      self->targetLocation = movementTarget;
-
-      // head towards waypoint
-      Character_moveTowards(self, movementTarget,
-                            CHARACTER_SPEED_MULTIPLIER_WALK);
-
-      if (self->pathSegmentProgress > 0.999) {
-        self->pathProgress++;
-      }
     }
   } else {
     // no path or at end of path, just head towards target
