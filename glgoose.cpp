@@ -70,7 +70,8 @@
 
 #define DEBUG_PROFILING 1
 
-#define USE_LIGHTING 0
+#define USE_LIGHTING 1
+#define USE_LIGHTING_STATIC_ONLY 1
 #define USE_FLAT_SHADING 1
 #define USE_ANIM_FRAME_LERP 1
 #define ENABLE_NODEGRAPH_EDITOR 0
@@ -760,9 +761,15 @@ void drawGameObject(GameObject* obj) {
     if (Renderer_isZBufferedGameObject(obj)) {
       glEnable(GL_DEPTH_TEST);
     } else {
-      // glDisable(GL_DEPTH_TEST);
       glEnable(GL_DEPTH_TEST);
     }
+#if USE_LIGHTING_STATIC_ONLY
+    if (Renderer_isLitGameObject(obj)) {
+      glEnable(GL_LIGHTING);
+    } else {
+      glDisable(GL_LIGHTING);
+    }
+#endif
     drawModel(obj);
   }
   glPopMatrix();
@@ -1155,7 +1162,6 @@ void renderScene(void) {
 
 #if USE_FLAT_SHADING
   glShadeModel(GL_FLAT);
-
 #endif
 
 #if DEBUG_LOG_RENDER
@@ -1174,7 +1180,13 @@ void renderScene(void) {
       drawGameObject(sortedObjects[i]);
     }
   }
+
+#if USE_LIGHTING
+  glEnable(GL_LIGHTING);
+#endif
+#if USE_FLAT_SHADING
   glShadeModel(GL_SMOOTH);
+#endif
 
 #if DEBUG_COLLISION_MESH || DEBUG_COLLISION_MESH_MORE || \
     DEBUG_COLLISION_SPATIAL_HASH
