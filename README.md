@@ -7,10 +7,7 @@ brew install glm lua
 ```
 
 ## build for macOS
-
-``
-./glbuild.sh
-``
+open the goose64glut project with xcode, build and run
 
 ## build for emulator/console
 
@@ -35,7 +32,7 @@ then build the rom with
 ./build.sh
 ```
 
-which produces the rom file nu1.n64
+which produces the rom file goose64.n64
 
 
 ## generate n64 header files from the OBJ models
@@ -46,6 +43,6 @@ which produces the rom file nu1.n64
 ## export map object data
 
 - open blender (or use `./blender.sh` to see console output)
-- in the blender text editor editor, open export_positions.py
-- run script
-- see header file is created
+- in the blender text editor editor, open and run export_positions.py then open and run export_collision_mesh.py
+- see header files are created
+
