@@ -59,9 +59,10 @@
 
 #define DEBUG_PHYSICS 1
 
-#define DEBUG_COLLISION_MESH 0
-#define DEBUG_COLLISION_MESH_MORE 0
+#define DEBUG_COLLISION_MESH 1
+#define DEBUG_COLLISION_MESH_MORE 1
 #define DEBUG_COLLISION_SPATIAL_HASH 0
+#define DEBUG_COLLISION_SPATIAL_HASH_TRIS 0
 #define DEBUG_COLLISION_MESH_AABB 0
 
 #define DEBUG_PATHFINDING_GRAPH 1
@@ -295,7 +296,7 @@ void drawGUI() {
 
       int spatialHashResultsCount = SpatialHash_getTriangles(
           &objCenter, Game_getObjRadius(obj),
-          &university_map_collision_collision_mesh_hash, spatialHashResults,
+          physWorldData.worldMeshSpatialHash, spatialHashResults,
           /*maxResults*/ 100);
 
       std::string bucketKeys;
@@ -303,6 +304,13 @@ void drawGUI() {
       for (i = 0; i < spatialHashResultsCount; i++) {
         bucketKeys += std::to_string(spatialHashResults[i]) + ",";
       }
+
+      ImGui::Text("grid pos x=%f, y=%f",
+                  SpatialHash_unitsToGridFloatForDimension(
+                      objCenter.x, physWorldData.worldMeshSpatialHash),
+                  SpatialHash_unitsToGridFloatForDimension(
+                      objCenter.z, physWorldData.worldMeshSpatialHash));
+
       ImGui::Text("current bucket tris=%s", bucketKeys.c_str());
     }
   }
@@ -808,6 +816,26 @@ void drawAABB(AABB* aabb) {
   glEnd();
 }
 
+void drawSpatialHashCell(int cellBaseX, int cellBaseY) {
+  AABB cellAABB;
+  cellAABB.min.x = SpatialHash_gridToUnitsForDimension(
+      cellBaseX, physWorldData.worldMeshSpatialHash);
+  cellAABB.min.y = 0;
+  cellAABB.min.z = -SpatialHash_gridToUnitsForDimension(
+      cellBaseY, physWorldData.worldMeshSpatialHash);
+  cellAABB.max.x = SpatialHash_gridToUnitsForDimension(
+      cellBaseX + 1, physWorldData.worldMeshSpatialHash);
+  cellAABB.max.y = 0;
+  cellAABB.max.z = -SpatialHash_gridToUnitsForDimension(
+      cellBaseY + 1, physWorldData.worldMeshSpatialHash);
+  glColor3f(1.0, 1.0, 0.0);
+  drawAABB(&cellAABB);
+}
+
+void spatialHashTraversalVisitor(int x, int y, void* traversalState) {
+  drawSpatialHashCell(x, y);
+}
+
 void drawCollisionMesh() {
   int i;
 
@@ -842,14 +870,43 @@ void drawCollisionMesh() {
 #if DEBUG_COLLISION_SPATIAL_HASH
   if (selectedObject) {
     int spatialHashResults[100];
-    Vec3d objCenter;
-    Game_getObjCenter(selectedObject, &objCenter);
+    Vec3d selectedObjCenter;
+    Game_getObjCenter(selectedObject, &selectedObjCenter);
+
+    Vec3d testRayEnd = {0, 25, 0};
+    Character_directionFromTopDownAngle(degToRad(selectedObject->rotation.y),
+                                        &testRayEnd);
+    Vec3d_mulScalar(&testRayEnd, 600);
+    Vec3d_add(&testRayEnd, &selectedObjCenter);
 
     int spatialHashResultsCount = SpatialHash_getTriangles(
-        &objCenter, Game_getObjRadius(selectedObject),
-        &university_map_collision_collision_mesh_hash, spatialHashResults,
+        &selectedObjCenter, Game_getObjRadius(selectedObject),
+        physWorldData.worldMeshSpatialHash, spatialHashResults,
         /*maxResults*/ 100);
 
+    glColor3f(1.0f, 0.0f, 0.0f);  // red
+    drawLine(&selectedObjCenter, &testRayEnd);
+
+    // draw raycast in front of selected object
+    spatialHashResultsCount = SpatialHash_getTrianglesForRaycast(
+        &selectedObjCenter, &testRayEnd, physWorldData.worldMeshSpatialHash,
+        spatialHashResults,
+        /*maxResults*/ 1000);
+
+    // draw current cell
+    float cellBaseX = SpatialHash_unitsToGridFloatForDimension(
+        selectedObjCenter.x, physWorldData.worldMeshSpatialHash);
+    float cellBaseY = SpatialHash_unitsToGridFloatForDimension(
+        -selectedObjCenter.z, physWorldData.worldMeshSpatialHash);
+    // drawSpatialHashCell(cellBaseX, cellBaseY);
+    SpatialHash_raycast(cellBaseX, cellBaseY,
+                        SpatialHash_unitsToGridFloatForDimension(
+                            testRayEnd.x, physWorldData.worldMeshSpatialHash),
+                        SpatialHash_unitsToGridFloatForDimension(
+                            -testRayEnd.z, physWorldData.worldMeshSpatialHash),
+                        &spatialHashTraversalVisitor, (void*)NULL);
+
+#if DEBUG_COLLISION_SPATIAL_HASH_TRIS
     int i;
     for (i = 0; i < spatialHashResultsCount; i++) {
       glEnable(GL_BLEND);
@@ -868,15 +925,43 @@ void drawCollisionMesh() {
       }
       glDisable(GL_BLEND);
     }
+#endif
+
+    // draw cells selected object is in
+    int minCellX = SpatialHash_unitsToGridForDimension(
+        selectedObjCenter.x - Game_getObjRadius(selectedObject),
+        physWorldData.worldMeshSpatialHash);
+    int minCellY = SpatialHash_unitsToGridForDimension(
+        -selectedObjCenter.z - Game_getObjRadius(selectedObject),
+        physWorldData.worldMeshSpatialHash);
+    int maxCellX = SpatialHash_unitsToGridForDimension(
+                       selectedObjCenter.x + Game_getObjRadius(selectedObject),
+                       physWorldData.worldMeshSpatialHash) +
+                   1;
+    int maxCellY = SpatialHash_unitsToGridForDimension(
+                       -selectedObjCenter.z + Game_getObjRadius(selectedObject),
+                       physWorldData.worldMeshSpatialHash) +
+                   1;
+
+    // draw overlapping cells
+    for (int cellX = minCellX; cellX < maxCellX; ++cellX) {
+      for (int cellY = minCellY; cellY < maxCellY; ++cellY) {
+        drawSpatialHashCell(cellX, cellY);
+      }
+    }
+
 #if DEBUG_COLLISION_MESH_AABB
     for (i = 0; i < spatialHashResultsCount; i++) {
-      for (i = 0; i < spatialHashResultsCount; i++) {
-        tri = university_map_collision_collision_mesh + spatialHashResults[i];
-        AABB triangleAABB;
-        AABB_fromTriangle(tri, &triangleAABB);
+      tri = university_map_collision_collision_mesh + spatialHashResults[i];
+      AABB triangleAABB;
+      AABB_fromTriangle(tri, &triangleAABB);
+      if (Collision_testSegmentAABBCollision(&selectedObjCenter, &testRayEnd,
+                                             &triangleAABB)) {
+        glColor3f(1.0, 0.0, 0.0);  // collision
+      } else {
         glColor3f(1.0, 1.0, 0.0);
-        drawAABB(&triangleAABB);
       }
+      drawAABB(&triangleAABB);
     }
 #endif
   }
@@ -1061,6 +1146,18 @@ void drawPathfindingGraph() {
        i++, node++                  //
   ) {
     drawStringAtPoint(std::to_string(i).c_str(), &node->position, TRUE);
+  }
+
+  Character* selectedCharacter = selectedObject == Game_get()->characters->obj
+                                     ? Game_get()->characters
+                                     : NULL;
+  if (selectedCharacter) {
+    glTranslatef(selectedCharacter->targetLocation.x,
+                 selectedCharacter->targetLocation.y,
+                 selectedCharacter->targetLocation.z);
+    glColor3f(1.0f, 1.0f, 0.0f);  // yellow
+    glutSolidCube(10);
+    glPopMatrix();
   }
 
   glPopAttrib();
@@ -1503,7 +1600,7 @@ void testCollision() {
     Collision_testMeshSphereCollision(
         university_map_collision_collision_mesh,
         UNIVERSITY_MAP_COLLISION_LENGTH, &objCenter, objRadius,
-        &university_map_collision_collision_mesh_hash, &result);
+        physWorldData.worldMeshSpatialHash, &result);
     testCollisionTrace = FALSE;
   } else {
     testCollisionResult = -1;

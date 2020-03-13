@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include "constants.h"
 
@@ -464,7 +465,7 @@ void Collision_distancePointTriangleExact(Vec3d* point,
 
   if (closest->x != closest->x) {
 #ifndef __N64__
-    printf("got NAN\n");
+    debugPrintf("got NAN\n");
     // Collision_distancePointTriangleExact(point, triangle, closest);
 #endif
     Vec3d_origin(closest);
@@ -641,16 +642,155 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
   return closestHitTriangleIndex > -1;
 }
 
+// Test if segment specified by points p0 and p1 intersects AABB b
+// from Real Time Collision Detection ch5.3
+int Collision_testSegmentAABBCollision(Vec3d* p0, Vec3d* p1, AABB* b) {
+  Vec3d c;
+  Vec3d e;
+  Vec3d m;
+  Vec3d d;
+  float adx;
+  float ady;
+  float adz;
+
+  // Box center-point
+  // c = (b->min + b->max) * 0.5f;
+  c = b->min;
+  Vec3d_add(&c, &b->max);
+  Vec3d_mulScalar(&c, 0.5f);
+
+  // Box halflength extents
+  // e = b->max - c;
+  e = b->max;
+  Vec3d_sub(&e, &c);
+
+  // Segment midpoint
+  // (p0 + p1) * 0.5f;
+  m = *p0;
+  Vec3d_add(&m, p1);
+  Vec3d_mulScalar(&m, 0.5f);
+
+  // Segment halflength vector
+  // d = p1 - m;
+  d = *p1;
+  Vec3d_sub(&d, &m);
+
+  // Translate box and segment to origin
+  // m = m - c;
+  Vec3d_sub(&m, &c);
+
+  // Try world coordinate axes as separating axes
+  adx = fabsf(d.x);
+  if (fabsf(m.x) > e.x + adx)
+    return FALSE;
+  ady = fabsf(d.y);
+  if (fabsf(m.y) > e.y + ady)
+    return FALSE;
+  adz = fabsf(d.z);
+  if (fabsf(m.z) > e.z + adz)
+    return FALSE;
+  // Add in an epsilon term to counteract arithmetic errors when segment is
+  // (near) parallel to a coordinate axis (see text for detail)
+  adx += FLT_EPSILON;
+  ady += FLT_EPSILON;
+  adz += FLT_EPSILON;
+  // Try cross products of segment direction vector with coordinate axes
+  if (fabsf(m.y * d.z - m.z * d.y) > e.y * adz + e.z * ady)
+    return FALSE;
+  if (fabsf(m.z * d.x - m.x * d.z) > e.x * adz + e.z * adx)
+    return FALSE;
+  if (fabsf(m.x * d.y - m.y * d.x) > e.x * ady + e.y * adx)
+    return FALSE;  // No separating axis found; segment must be overlapping AABB
+  return TRUE;
+}
+
 int SpatialHash_getBucketIndex(int cellX, int cellY, int cellsInDimension) {
   // layout is rows then columns (row-major)
   // (x, y) is a cell pos, not unit pos
   return cellY * cellsInDimension + cellX;
 }
 
+// quantize world pos to containing grid cell
 int SpatialHash_unitsToGridForDimension(float unitsPos,
-                                        float gridCellSz,
-                                        int cellOffsetInDimension) {
-  return floorf(unitsPos / gridCellSz) + cellOffsetInDimension;
+                                        SpatialHash* spatialHash) {
+  return floorf(unitsPos / spatialHash->gridCellSize) +
+         spatialHash->cellOffsetInDimension;
+}
+
+// convert world pos to integral pos in grid cell
+float SpatialHash_unitsToGridFloatForDimension(float unitsPos,
+                                               SpatialHash* spatialHash) {
+  return unitsPos / spatialHash->gridCellSize +
+         spatialHash->cellOffsetInDimension;
+}
+
+// localize grid cell to world pos of bottom of cell
+float SpatialHash_gridToUnitsForDimension(float gridCell,
+                                          SpatialHash* spatialHash) {
+  return (gridCell - spatialHash->cellOffsetInDimension) *
+         spatialHash->gridCellSize;
+}
+
+void SpatialHash_raycast(float x0,
+                         float y0,
+                         float x1,
+                         float y1,
+                         SpatialHashRaycastCallback traversalVisitor,
+                         void* traversalState) {
+  float dx;
+  float dy;
+  int x;
+  int y;
+  int n;
+  int x_inc, y_inc;
+  float error;
+
+  dx = fabs(x1 - x0);
+  dy = fabs(y1 - y0);
+
+  x = (int)(floor(x0));
+  y = (int)(floor(y0));
+
+  n = 1;
+
+  if (dx == 0) {
+    x_inc = 0;
+    error = FLT_MAX;
+  } else if (x1 > x0) {
+    x_inc = 1;
+    n += (int)(floor(x1)) - x;
+    error = (floor(x0) + 1 - x0) * dy;
+  } else {
+    x_inc = -1;
+    n += x - (int)(floor(x1));
+    error = (x0 - floor(x0)) * dy;
+  }
+
+  if (dy == 0) {
+    y_inc = 0;
+    error -= FLT_MAX;
+  } else if (y1 > y0) {
+    y_inc = 1;
+    n += (int)(floor(y1)) - y;
+    error -= (floor(y0) + 1 - y0) * dx;
+  } else {
+    y_inc = -1;
+    n += y - (int)(floor(y1));
+    error -= (y0 - floor(y0)) * dx;
+  }
+
+  for (; n > 0; --n) {
+    // visit(x, y);
+    traversalVisitor(x, y, traversalState);
+
+    if (error > 0) {
+      y += y_inc;
+      error -= dx;
+    } else {
+      x += x_inc;
+      error += dy;
+    }
+  }
 }
 
 SpatialHashBucket* SpatialHash_getBucket(float x,
@@ -658,10 +798,8 @@ SpatialHashBucket* SpatialHash_getBucket(float x,
                                          SpatialHash* spatialHash) {
   int bucketIndex, cellX, cellY;
 
-  cellX = SpatialHash_unitsToGridForDimension(
-      x, spatialHash->gridCellSize, spatialHash->cellOffsetInDimension);
-  cellY = SpatialHash_unitsToGridForDimension(
-      y, spatialHash->gridCellSize, spatialHash->cellOffsetInDimension);
+  cellX = SpatialHash_unitsToGridForDimension(x, spatialHash);
+  cellY = SpatialHash_unitsToGridForDimension(y, spatialHash);
   bucketIndex =
       SpatialHash_getBucketIndex(cellX, cellY, spatialHash->cellsInDimension);
 
@@ -670,78 +808,120 @@ SpatialHashBucket* SpatialHash_getBucket(float x,
   return *(spatialHash->data + bucketIndex);
 }
 
+typedef struct GetTrianglesVisitBucketState {
+  SpatialHash* spatialHash;
+  int* results;
+  int maxResults;
+  int resultsFound;
+} GetTrianglesVisitBucketState;
+
+void SpatialHash_getTrianglesVisitBucket(int cellX,
+                                         int cellY,
+                                         GetTrianglesVisitBucketState* state) {
+  int bucketIndex, bucketItemIndex, resultIndex;
+  SpatialHashBucket* bucket;
+  int *bucketItem, *currentResult;
+
+  bucketIndex = SpatialHash_getBucketIndex(
+      cellX, cellY, state->spatialHash->cellsInDimension);
+
+  assert(bucketIndex < state->spatialHash->numBuckets);
+
+  bucket = *(state->spatialHash->data + bucketIndex);
+  if (!bucket) {
+    // nothing in this bucket
+    return;
+  }
+  // collect results from this bucket
+  for (bucketItemIndex = 0; bucketItemIndex < bucket->size; ++bucketItemIndex) {
+    bucketItem = bucket->data + bucketItemIndex;
+
+    // look through results and add if not duplicate
+    // TODO: optimize this, as it's currently O(n^2)
+    // could qsort then remove duplicates to get to O(n log n)
+    for (resultIndex = 0; resultIndex < state->maxResults; ++resultIndex) {
+      currentResult = state->results + resultIndex;
+      if (resultIndex < state->resultsFound) {
+        if (*currentResult == *bucketItem) {
+          // already have this triangle in the results
+          break;
+        } else {
+          continue;
+        }
+      } else {
+        // at end of found results and this result is not already in the
+        // list
+        *currentResult = *bucketItem;
+        state->resultsFound++;
+        break;  // continue to next item in bucket
+      }
+    }
+  }
+}
+
+int SpatialHash_getTrianglesForRaycast(Vec3d* rayStart,
+                                       Vec3d* rayEnd,
+                                       SpatialHash* spatialHash,
+                                       int* results,
+                                       int maxResults) {
+  GetTrianglesVisitBucketState traversalState;
+  traversalState.spatialHash = spatialHash;
+  traversalState.results = results;
+  traversalState.maxResults = maxResults;
+  traversalState.resultsFound = 0;
+  SpatialHash_raycast(
+      SpatialHash_unitsToGridFloatForDimension(rayStart->x, spatialHash),
+      SpatialHash_unitsToGridFloatForDimension(-rayStart->z, spatialHash),
+      SpatialHash_unitsToGridFloatForDimension(rayEnd->x, spatialHash),
+      SpatialHash_unitsToGridFloatForDimension(-rayEnd->z, spatialHash),
+      (SpatialHashRaycastCallback)&SpatialHash_getTrianglesVisitBucket,
+      (void*)&traversalState);
+
+#ifndef __N64__
+  if (traversalState.resultsFound == maxResults) {
+    debugPrintf("possibly ran out of space in results array\n");
+  }
+#endif
+
+  return traversalState.resultsFound;
+}
+
 int SpatialHash_getTriangles(Vec3d* position,
                              float radius,
                              SpatialHash* spatialHash,
                              int* results,
                              int maxResults) {
-  int bucketIndex, minCellX, minCellY, maxCellX, maxCellY, cellX, cellY,
-      bucketItemIndex, resultIndex, resultsFound;
+  int minCellX, minCellY, maxCellX, maxCellY, cellX, cellY;
 
-  SpatialHashBucket* bucket;
-  int *bucketItem, *currentResult;
+  GetTrianglesVisitBucketState traversalState;
+  traversalState.spatialHash = spatialHash;
+  traversalState.results = results;
+  traversalState.maxResults = maxResults;
+  traversalState.resultsFound = 0;
 
-  minCellX = SpatialHash_unitsToGridForDimension(
-      position->x - radius, spatialHash->gridCellSize,
-      spatialHash->cellOffsetInDimension);
-  minCellY = SpatialHash_unitsToGridForDimension(
-      -position->z - radius, spatialHash->gridCellSize,
-      spatialHash->cellOffsetInDimension);
-  maxCellX = SpatialHash_unitsToGridForDimension(
-                 position->x + radius, spatialHash->gridCellSize,
-                 spatialHash->cellOffsetInDimension) +
-             1;
-  maxCellY = SpatialHash_unitsToGridForDimension(
-                 -position->z + radius, spatialHash->gridCellSize,
-                 spatialHash->cellOffsetInDimension) +
-             1;
+  minCellX =
+      SpatialHash_unitsToGridForDimension(position->x - radius, spatialHash);
+  minCellY =
+      SpatialHash_unitsToGridForDimension(-position->z - radius, spatialHash);
+  maxCellX =
+      SpatialHash_unitsToGridForDimension(position->x + radius, spatialHash) +
+      1;
+  maxCellY =
+      SpatialHash_unitsToGridForDimension(-position->z + radius, spatialHash) +
+      1;
 
   // walk range of overlapping buckets and collect (unique) set of triangles
-  resultsFound = 0;
   for (cellX = minCellX; cellX < maxCellX; ++cellX) {
     for (cellY = minCellY; cellY < maxCellY; ++cellY) {
-      bucketIndex = SpatialHash_getBucketIndex(cellX, cellY,
-                                               spatialHash->cellsInDimension);
-
-      assert(bucketIndex < spatialHash->numBuckets);
-
-      bucket = *(spatialHash->data + bucketIndex);
-      if (!bucket) {
-        // nothing in this bucket
-        continue;
-      }
-      // collect results from this bucket
-      for (bucketItemIndex = 0; bucketItemIndex < bucket->size;
-           ++bucketItemIndex) {
-        bucketItem = bucket->data + bucketItemIndex;
-
-        // look through results and add if not duplicate
-        for (resultIndex = 0; resultIndex < maxResults; ++resultIndex) {
-          currentResult = results + resultIndex;
-          if (resultIndex < resultsFound) {
-            if (*currentResult == *bucketItem) {
-              // already have this triangle in the results
-              break;
-            } else {
-              continue;
-            }
-          } else {
-            // at end of found results and this result is not already in the
-            // list
-            *currentResult = *bucketItem;
-            resultsFound++;
-            break;  // continue to next item in bucket
-          }
-        }
-      }
+      SpatialHash_getTrianglesVisitBucket(cellX, cellY, &traversalState);
     }
   }
 
 #ifndef __N64__
-  if (resultsFound == maxResults) {
-    printf("possibly ran out of space in results array\n");
+  if (traversalState.resultsFound == maxResults) {
+    debugPrintf("possibly ran out of space in results array\n");
   }
 #endif
 
-  return resultsFound;
+  return traversalState.resultsFound;
 }

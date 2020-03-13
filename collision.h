@@ -68,16 +68,38 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
                                       SpatialHash* spatialHash,
                                       SphereTriangleCollision* result);
 
+int Collision_testSegmentAABBCollision(Vec3d* p0, Vec3d* p1, AABB* b);
+
 int SpatialHash_unitsToGridForDimension(float unitsPos,
-                                        float gridCellSz,
-                                        int cellOffsetInDimension);
+                                        SpatialHash* spatialHash);
+
+float SpatialHash_unitsToGridFloatForDimension(float unitsPos,
+                                               SpatialHash* spatialHash);
+float SpatialHash_gridToUnitsForDimension(float unitsPos,
+                                          SpatialHash* spatialHash);
+
 SpatialHashBucket* SpatialHash_getBucket(float x,
                                          float y,
                                          SpatialHash* spatialHash);
+
+typedef void (*SpatialHashRaycastCallback)(int, int, void*);
+
+void SpatialHash_raycast(float x0,
+                         float y0,
+                         float x1,
+                         float y1,
+                         SpatialHashRaycastCallback traversalVisitor,
+                         void* traversalState);
 
 int SpatialHash_getTriangles(Vec3d* position,
                              float radius,
                              SpatialHash* spatialHash,
                              int* results,
                              int maxResults);
+
+int SpatialHash_getTrianglesForRaycast(Vec3d* rayStart,
+                                       Vec3d* rayEnd,
+                                       SpatialHash* spatialHash,
+                                       int* results,
+                                       int maxResults);
 #endif /* !_COLLISION_H_ */

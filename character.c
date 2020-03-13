@@ -36,11 +36,13 @@
 #define CHARACTER_EYE_OFFSET_Y 120.0
 #define CHARACTER_VIEW_ANGLE_HALF 90.0
 #define CHARACTER_FACING_OBJECT_ANGLE 30.0
-#define CHARACTER_FACING_MOVEMENT_TARGET_ANGLE 75.0
+#define CHARACTER_FACING_MOVEMENT_TARGET_ANGLE 45.0
 #define CHARACTER_DEBUG_ANIMATION 0
 #define CHARACTER_WALK_ANIM_MOVEMENT_DIVISOR 1.6
 #define CHARACTER_SPEED_MULTIPLIER_RUN 1.0
 #define CHARACTER_SPEED_MULTIPLIER_WALK 0.5
+#define CHARACTER_TARGET_PATH_PARAM 0
+#define DEBUG_CHARACTER_PATH_SMOOTHING 0
 
 static Vec3d characterItemOffset = {0.0F, 60.0F, 0.0F};
 
@@ -266,21 +268,41 @@ Node* Character_getPathNode(Character* self, Game* game, int pathNodeIndex) {
   return Path_getNodeByID(game->pathfindingGraph, *pathNodeID);
 }
 
+float Character_getDistanceTopDown(Vec3d* from, Vec3d* to) {
+  Vec2d from2d, to2d;
+  Vec2d_init(&from2d, from->x, -from->z);
+  Vec2d_init(&to2d, to->x, -to->z);
+  return Vec2d_distanceTo(&from2d, &to2d);
+}
+
 void Character_followPlayer(Character* self, Game* game) {
   int from;
   int to;
   float profStartPath;
   Graph* pathfindingGraph;
   PathfindingState* pathfindingState;
-  Node* nextNode;
+  Vec3d* nextNodePos;
   Vec3d target;
+#if CHARACTER_TARGET_PATH_PARAM
   Vec3d* pathSegmentP0;
   Vec3d* pathSegmentP1;
+#endif
   Vec3d movementTarget;
-  float distanceToTarget;
+  Vec3d objCenter;
+  float objRadius;
 
-  distanceToTarget =
-      Vec3d_distanceTo(&self->obj->position, &self->obj->position);
+  int spatialHashResults[100];
+  int spatialHashResultsCount;
+  int spatialHashMaxResults;
+  int pathToNextNodeUnobstructed;
+  int i;
+  AABB triangleAABB;
+
+  spatialHashMaxResults = 100;
+
+  Game_getObjCenter(self->obj, &objCenter);
+  objRadius = Game_getObjRadius(self->obj);
+
   target = game->player.goose->position;
   pathfindingGraph = game->pathfindingGraph;
   pathfindingState = game->pathfindingState;
@@ -320,13 +342,86 @@ void Character_followPlayer(Character* self, Game* game) {
     game->profTimePath += (CUR_TIME_MS() - profStartPath);
   }
 
-  // TODO: implement path smoothing (raycast to see if we can cut corners)
+  if (self->pathfindingResult) {
+    // path smoothing
+    // raycasts to find if there is any obstacle to going straight to next node
+    // in path, and if not, skips ahead
+    while (TRUE) {
+#ifndef __N64__
+      assert(self->pathProgress <= self->pathfindingResult->resultSize);
+#endif
+      if (self->pathProgress == self->pathfindingResult->resultSize)
+        break;
+      pathToNextNodeUnobstructed = TRUE;
 
-  if (self->pathfindingResult &&
-      // TODO: use path smoothing instead of just cutting off last waypoint
-      !Character_isNextPathNodeDestination(self)) {
-    nextNode = Character_getPathNode(self, game, self->pathProgress);
+      // is cast ray unobstructed from where we are to the n+1 node?
 
+      nextNodePos =
+          self->pathProgress < self->pathfindingResult->resultSize - 1
+              ? &Character_getPathNode(self, game, self->pathProgress + 1)
+                     ->position  // path node
+              : &target;         // final target
+
+      // find triangles to raycast
+      spatialHashResultsCount = SpatialHash_getTrianglesForRaycast(
+          &objCenter, nextNodePos,
+          game->physicsState.worldData->worldMeshSpatialHash,
+          spatialHashResults, spatialHashMaxResults);
+
+      // actually do raycast
+      for (i = 0; i < spatialHashResultsCount; i++) {
+        AABB_fromTriangle(
+            /*tri*/ game->physicsState.worldData->worldMeshTris +
+                spatialHashResults[i],
+            &triangleAABB);
+
+        triangleAABB.min.x -= objRadius;
+        triangleAABB.min.z -= objRadius;
+
+        triangleAABB.max.x += objRadius;
+        triangleAABB.max.z += objRadius;
+        if (Collision_testSegmentAABBCollision(&objCenter, nextNodePos,
+                                               &triangleAABB)) {
+          pathToNextNodeUnobstructed = FALSE;
+#if DEBUG_CHARACTER_PATH_SMOOTHING
+          printf("hit tri %d\n", spatialHashResults[i]);
+#endif
+          break;
+        }
+      }
+
+      if (pathToNextNodeUnobstructed) {
+#if DEBUG_CHARACTER_PATH_SMOOTHING
+        printf("skipping path node %d: %d (pathLength=%d)\n",
+               self->pathProgress,
+               Character_getPathNode(self, game, self->pathProgress)->id,
+               self->pathfindingResult->resultSize);
+
+        printf("no collision with tris: ");
+        for (i = 0; i < spatialHashResultsCount; i++) {
+          printf("%d, ", spatialHashResults[i]);
+        }
+        printf("\n");
+
+        printf(
+            "advancing due to no collisions with this segment "
+            "pathProgress=%d\n",
+            self->pathProgress);
+#endif
+
+        // no obstacles between character and next node
+        // we can go straight there
+        self->pathProgress++;
+#ifndef __N64__
+        assert(self->pathProgress <= self->pathfindingResult->resultSize);
+#endif
+      } else {
+        break;
+      }
+    }
+
+    // this combined with path smoothing results in invalid corner cutting
+#if CHARACTER_TARGET_PATH_PARAM
     pathSegmentP0 =
         &Character_getPathNode(self, game, self->pathProgress)->position;
     pathSegmentP1 =
@@ -334,7 +429,6 @@ void Character_followPlayer(Character* self, Game* game) {
                                MIN(self->pathfindingResult->resultSize - 1,
                                    self->pathProgress + 1))
              ->position;
-    movementTarget = *pathSegmentP0;
 
     self->pathSegmentProgress = Path_getClosestPointParameter(
         pathSegmentP0, pathSegmentP1, &self->obj->position);
@@ -342,6 +436,17 @@ void Character_followPlayer(Character* self, Game* game) {
     Vec3d_lerp(&movementTarget, pathSegmentP1,
                // lead target point a little bit
                MIN(1.0f, self->pathSegmentProgress + 0.1));
+    movementTarget = *pathSegmentP0;
+#else
+
+    movementTarget =
+        *(nextNodePos =
+              self->pathProgress < self->pathfindingResult->resultSize - 1
+                  ? &Character_getPathNode(self, game, self->pathProgress)
+                         ->position  // path node
+                  : &target          // final target
+        );
+#endif
 
     self->targetLocation = movementTarget;
 
@@ -349,11 +454,24 @@ void Character_followPlayer(Character* self, Game* game) {
     Character_moveTowards(self, movementTarget,
                           CHARACTER_SPEED_MULTIPLIER_WALK);
 
-    if (self->pathSegmentProgress > 0.999) {
+#if CHARACTER_TARGET_PATH_PARAM
+    nextNodePos = pathSegmentP1;
+#else
+    nextNodePos = &movementTarget;
+#endif
+
+    if (self->pathProgress < self->pathfindingResult->resultSize - 1 &&
+        self->pathSegmentProgress > 0.999) {
+      // printf("advancing due to self->pathSegmentProgress pathProgress=%d\n",
+      //        self->pathProgress);
       self->pathProgress++;
-    }
-    // near enough to waypoint
-    if (Vec3d_distanceTo(&self->obj->position, &nextNode->position) < 40) {
+
+    } else if (self->pathProgress < self->pathfindingResult->resultSize - 1 &&
+               Character_getDistanceTopDown(&self->obj->position, nextNodePos) <
+                   40) {
+      // printf("advancing due to near enough to waypoint pathProgress=%d\n",
+      //        self->pathProgress);
+      // near enough to waypoint
       self->pathProgress++;
     }
   } else {
