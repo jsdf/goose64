@@ -143,6 +143,8 @@ void initStage00() {
   }
 
   evd_init();
+
+  debugPrintf("good morning\n");
 }
 
 void debugPrintVec3d(int x, int y, char* label, Vec3d* vec) {
@@ -374,9 +376,9 @@ void updateGame00(void) {
 
   Game_update(&input);
 
-  if (contdata[0].trigger & R_CBUTTONS) {
-    usbEnabled = !usbEnabled;
-  }
+  // if (contdata[0].trigger & R_CBUTTONS) {
+  //   usbEnabled = !usbEnabled;
+  // }
 
   if (usbEnabled) {
     usbState = usbLoggerFlush();
@@ -534,11 +536,13 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
     switch (renderModeSetting) {
       case ToonFlatShadingRenderMode:
-        if (Renderer_isLitGameObject(obj)) {
-          gSPSetGeometryMode(glistp++, G_SHADE | G_LIGHTING | G_CULL_BACK);
-        } else {
-          gSPSetGeometryMode(glistp++, G_SHADE | G_CULL_BACK);
-        }
+        // if (Renderer_isLitGameObject(obj)) {
+        //   gSPSetGeometryMode(glistp++, G_SHADE | G_LIGHTING | G_CULL_BACK);
+        // } else {
+        //   gSPSetGeometryMode(glistp++, G_SHADE | G_CULL_BACK);
+        // }
+
+        gSPSetGeometryMode(glistp++, G_SHADE | G_CULL_BACK);
         gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
         break;
       case TextureNoLightingRenderMode:
