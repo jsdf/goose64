@@ -12,22 +12,22 @@ GameObject university_map_data[] = {
 UniFloorModel, // modelType
 },
 {1, // object id
-{-115.841489, 11.748462, 280.581837}, // position
+{-1060.743942, 11.748462, -52.583785}, // position
 {0.000000, 0.000000, -0.000000}, // rotation
 BushModel, // modelType
 },
 {2, // object id
-{-308.799963, 0.000000, -785.141888}, // position
+{-1351.392174, 0.000000, -528.789082}, // position
 {90.000009, 0.000000, 0.000000}, // rotation
 GooseModel, // modelType
 },
 {3, // object id
-{-27.783580, 11.748465, 240.390844}, // position
+{-994.538498, 11.748465, -18.517456}, // position
 {0.000000, 0.000000, -0.000000}, // rotation
 BushModel, // modelType
 },
 {4, // object id
-{0.000000, 11.748462, -0.000000}, // position
+{-1028.484192, 11.748462, -134.772263}, // position
 {0.000000, 0.000000, -0.000000}, // rotation
 BushModel, // modelType
 },
@@ -97,7 +97,7 @@ UniBldgModel, // modelType
 FlagpoleModel, // modelType
 },
 {18, // object id
-{409.576292, 30.365109, -424.185505}, // position
+{-773.815556, 30.365109, -147.124629}, // position
 {90.000009, 0.000000, 0.000000}, // rotation
 BookItemModel, // modelType
 },
@@ -117,7 +117,7 @@ BushModel, // modelType
 BushModel, // modelType
 },
 {22, // object id
-{0.000000, 0.000000, -809.365597}, // position
+{-1042.592239, 0.000000, -553.012791}, // position
 {0.000000, 0.000000, -0.000000}, // rotation
 GroundskeeperCharacterModel, // modelType
 },

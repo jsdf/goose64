@@ -70,7 +70,7 @@ unsigned short Text_wall_wall_diff[] = {
 	0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,0x9a0b,
 };
 
-Vtx_tn Vtx_wall_mesh01_0[14] = {
+Vtx_tn Vtx_wall_mesh01_0[12] = {
 	{ -237,    18,    15, 0,      0,   1237,  -128,     0,     0, 0},
 	{ -237,   -55,   -16, 0,    495,    742,  -128,     0,     0, 0},
 	{ -237,   -55,    15, 0,      0,    742,  -128,     0,     0, 0},
@@ -80,21 +80,18 @@ Vtx_tn Vtx_wall_mesh01_0[14] = {
 	{  236,   -55,    15, 0,   1485,    742,   128,     0,     0, 0},
 	{  236,    18,    15, 0,   1485,   1237,     0,     0,   128, 0},
 	{ -237,   -55,    15, 0,   1980,    742,     0,     0,   128, 0},
-	{ -237,   -55,    15, 0,   1485,    247,     0,  -128,     0, 0},
-	{ -237,   -55,   -16, 0,    990,    247,     0,  -128,     0, 0},
 	{ -237,    18,   -16, 0,    990,   1732,     0,   128,     0, 0},
 	{ -237,    18,    15, 0,   1980,   1237,     0,     0,   128, 0},
 	{ -237,    18,    15, 0,   1485,   1732,     0,   128,     0, 0},
 };
 
 Gfx Vtx_wall_mesh01_dl[] = {
-	gsSPVertex(&Vtx_wall_mesh01_0[0], 14, 0),
+	gsSPVertex(&Vtx_wall_mesh01_0[0], 12, 0),
 	gsSP2Triangles(0,1,2,0,3,4,1,0),
 	gsSP2Triangles(5,6,4,0,7,8,6,0),
-	gsSP2Triangles(4,9,10,0,11,7,5,0),
-	gsSP2Triangles(0,3,1,0,3,5,4,0),
-	gsSP2Triangles(5,7,6,0,7,12,8,0),
-	gsSP2Triangles(4,6,9,0,11,13,7,0),
+	gsSP2Triangles(9,7,5,0,0,3,1,0),
+	gsSP2Triangles(3,5,4,0,5,7,6,0),
+	gsSP2Triangles(7,10,8,0,9,11,7,0),
 	gsSPEndDisplayList(),
 };
 
