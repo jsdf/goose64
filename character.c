@@ -275,14 +275,16 @@ float Character_getDistanceTopDown(Vec3d* from, Vec3d* to) {
   return Vec2d_distanceTo(&from2d, &to2d);
 }
 
-void Character_followPlayer(Character* self, Game* game) {
+void Character_goToTarget(Character* self,
+                          Game* game,
+                          Vec3d* target,
+                          float speedMultiplier) {
   int from;
   int to;
   float profStartPath;
   Graph* pathfindingGraph;
   PathfindingState* pathfindingState;
   Vec3d* nextNodePos;
-  Vec3d target;
 #if CHARACTER_TARGET_PATH_PARAM
   Vec3d* pathSegmentP0;
   Vec3d* pathSegmentP1;
@@ -303,11 +305,10 @@ void Character_followPlayer(Character* self, Game* game) {
   Game_getObjCenter(self->obj, &objCenter);
   objRadius = Game_getObjRadius(self->obj);
 
-  target = game->player.goose->position;
   pathfindingGraph = game->pathfindingGraph;
   pathfindingState = game->pathfindingState;
 
-  to = Path_quantizePosition(pathfindingGraph, &target);
+  to = Path_quantizePosition(pathfindingGraph, target);
 
   // check that the goal is still the closest node to the destination
   if (self->pathfindingResult && self->pathfindingResult->end->id != to) {
@@ -360,7 +361,7 @@ void Character_followPlayer(Character* self, Game* game) {
           self->pathProgress < self->pathfindingResult->resultSize - 1
               ? &Character_getPathNode(self, game, self->pathProgress + 1)
                      ->position  // path node
-              : &target;         // final target
+              : target;          // final target
 
       // find triangles to raycast
       spatialHashResultsCount = SpatialHash_getTrianglesForRaycast(
@@ -444,15 +445,14 @@ void Character_followPlayer(Character* self, Game* game) {
               self->pathProgress < self->pathfindingResult->resultSize - 1
                   ? &Character_getPathNode(self, game, self->pathProgress)
                          ->position  // path node
-                  : &target          // final target
+                  : target           // final target
         );
 #endif
 
     self->targetLocation = movementTarget;
 
     // head towards waypoint
-    Character_moveTowards(self, movementTarget,
-                          CHARACTER_SPEED_MULTIPLIER_WALK);
+    Character_moveTowards(self, movementTarget, speedMultiplier);
 
 #if CHARACTER_TARGET_PATH_PARAM
     nextNodePos = pathSegmentP1;
@@ -476,7 +476,7 @@ void Character_followPlayer(Character* self, Game* game) {
     }
   } else {
     // no path or at end of path, just head towards target
-    Character_moveTowards(self, target, CHARACTER_SPEED_MULTIPLIER_WALK);
+    Character_moveTowards(self, *target, speedMultiplier);
   }
 }
 
@@ -503,12 +503,8 @@ void Character_update(Character* self, Game* game) {
     Character_setVisibleItemAttachment(self, NoneModel);
   }
 
-#if CHARACTER_FOLLOW_PLAYER
-  Character_followPlayer(self, game);
-#else
 #if CHARACTER_ENABLED
   Character_updateState(self, game);
-#endif
 #endif
 
   isTurning = fabsf(self->obj->rotation.y - startRot) > 0.001;
@@ -618,8 +614,8 @@ void Character_updateDefaultActivityState(Character* self, Game* game) {
   if (!Character_isCloseToAndFacing(self, &self->defaultActivityLocation,
                                     CHARACTER_NEAR_OBJ_DROP_DIST)) {
     // go there
-    Character_moveTowards(self, self->defaultActivityLocation,
-                          CHARACTER_SPEED_MULTIPLIER_WALK);
+    Character_goToTarget(self, game, &self->defaultActivityLocation,
+                         CHARACTER_SPEED_MULTIPLIER_WALK);
   } else {
     // do default activity
     if (self->startedActivityTick) {
@@ -671,8 +667,8 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
       Character_transitionToState(self, IdleState);
     } else {
       // bringing item back to initial location
-      Character_moveTowards(self, self->target->initialLocation,
-                            CHARACTER_SPEED_MULTIPLIER_WALK);
+      Character_goToTarget(self, game, &self->target->initialLocation,
+                           CHARACTER_SPEED_MULTIPLIER_WALK);
     }
   } else {
     // can we still see the item?
@@ -707,10 +703,10 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
 
     } else {
       // no, move towards
-      Character_moveTowards(self, self->target->obj->position,
-                            someoneElseIsHoldingItem
-                                ? CHARACTER_SPEED_MULTIPLIER_RUN
-                                : CHARACTER_SPEED_MULTIPLIER_WALK);
+      Character_goToTarget(self, game, &self->target->obj->position,
+                           someoneElseIsHoldingItem
+                               ? CHARACTER_SPEED_MULTIPLIER_RUN
+                               : CHARACTER_SPEED_MULTIPLIER_WALK);
     }
   }
 }
