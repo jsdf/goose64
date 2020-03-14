@@ -257,6 +257,10 @@ void drawGUI() {
                            ImGuiInputTextFlags_ReadOnly);
         ImGui::Text("state: %s",
                     CharacterStateStrings[selectedCharacter->state]);
+
+        ImGui::InputFloat("speedScaleForHeading",
+                          (float*)&selectedCharacter->speedScaleForHeading, 0.1,
+                          1.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
         ImGui::InputInt("pathProgress", (int*)&selectedCharacter->pathProgress,
                         0, 1, ImGuiInputTextFlags_ReadOnly);
         ImGui::InputFloat("pathSegmentProgress",
@@ -1152,10 +1156,18 @@ void drawPathfindingGraph() {
                                      ? Game_get()->characters
                                      : NULL;
   if (selectedCharacter) {
+    glPushMatrix();
     glTranslatef(selectedCharacter->targetLocation.x,
                  selectedCharacter->targetLocation.y,
                  selectedCharacter->targetLocation.z);
-    glColor3f(1.0f, 1.0f, 0.0f);  // yellow
+    glColor3f(0.0f, 0.0f, 1.0f);  // blue
+    glutSolidCube(10);
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(selectedCharacter->movementTarget.x,
+                 selectedCharacter->movementTarget.y,
+                 selectedCharacter->movementTarget.z);
+    glColor3f(1.0f, 0.0f, 0.0f);  // red
     glutSolidCube(10);
     glPopMatrix();
   }

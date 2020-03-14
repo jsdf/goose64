@@ -42,12 +42,15 @@ typedef struct Character {
   struct ItemStruct* target;
   struct ItemStruct* defaultActivityItem;
   Vec3d defaultActivityLocation;
-  Vec3d targetLocation;
+  Vec3d movementTarget;  // immediate goal for local movement/steering
+  Vec3d targetLocation;  // high level movement goal (eg. last seen/heard loc)
   CharacterTarget targetType;
   CharacterState state;
   PathfindingState* pathfindingResult;
+  // index of target node in path, or pathlength+1 for final target
   int pathProgress;
-  float pathSegmentProgress;
+  float pathSegmentProgress;  // param between segments, used by path smoothing
+  float speedScaleForHeading;
 
   unsigned int enteredStateTick;
   unsigned int startedActivityTick;

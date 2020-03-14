@@ -20,9 +20,9 @@
 #endif
 
 #define CHARACTER_ENABLED 1
-#define CHARACTER_FOLLOW_PLAYER 1
+#define CHARACTER_FOLLOW_PLAYER 0
 #define DEBUG_CHARACTER 1
-#define CHARACTER_MAX_TURN_SPEED 4.0f
+#define CHARACTER_MAX_TURN_SPEED 10.0f
 #define CHARACTER_FLEE_DIST 1200.0f
 #define CHARACTER_NEAR_TARGET_DIST 100.0f
 #define CHARACTER_NEAR_OBJ_DROP_DIST 100.0f
@@ -36,7 +36,7 @@
 #define CHARACTER_EYE_OFFSET_Y 120.0
 #define CHARACTER_VIEW_ANGLE_HALF 90.0
 #define CHARACTER_FACING_OBJECT_ANGLE 30.0
-#define CHARACTER_FACING_MOVEMENT_TARGET_ANGLE 45.0
+#define CHARACTER_FACING_MOVEMENT_TARGET_ANGLE 30.0
 #define CHARACTER_DEBUG_ANIMATION 0
 #define CHARACTER_WALK_ANIM_MOVEMENT_DIVISOR 1.6
 #define CHARACTER_SPEED_MULTIPLIER_RUN 1.0
@@ -226,6 +226,7 @@ void Character_moveTowards(Character* self,
   Vec3d headingDirection;
   Vec3d movement;
   float targetAngle;
+  float speedScaleForHeading;
 
   Vec3d_directionTo(&self->obj->position, &target, &targetDirection);
 
@@ -237,19 +238,30 @@ void Character_moveTowards(Character* self,
   Vec2d_init(&targetDirection2d, targetDirection.x, targetDirection.z);
   targetAngle = 360.0 - radToDeg(Vec2d_angle(&targetDirection2d));
   self->obj->rotation.y = GameUtils_rotateTowardsClamped(
-      self->obj->rotation.y, targetAngle, CHARACTER_MAX_TURN_SPEED);
+      self->obj->rotation.y, targetAngle,
+      CHARACTER_MAX_TURN_SPEED * speedMultiplier);
 
   // resulting heading
-
-  if (
+  speedScaleForHeading = MIN(
+      1.0, 1.0 - MAX(0.0f, (Character_topDownAngleDeltaToPos(self, &target) -
+                            CHARACTER_FACING_MOVEMENT_TARGET_ANGLE)) /
+                     90.0f);
+  self->speedScaleForHeading = speedScaleForHeading;
+  printf("angle beyond threshold=%f\n",
+         Character_topDownAngleDeltaToPos(self, &target) -
+             CHARACTER_FACING_MOVEMENT_TARGET_ANGLE);
+  printf("speedScaleForHeading=%f\n", speedScaleForHeading);
+  if (TRUE
       // is facing towards target enough to move forward?
-      Character_topDownAngleDeltaToPos(self, &target) <=
-      CHARACTER_FACING_MOVEMENT_TARGET_ANGLE) {
+      // Character_topDownAngleDeltaToPos(self, &target) <=
+      // CHARACTER_FACING_MOVEMENT_TARGET_ANGLE
+  ) {
     Character_directionFromTopDownAngle(degToRad(self->obj->rotation.y),
                                         &headingDirection);
 
     Vec3d_copyFrom(&movement, &headingDirection);
-    Vec3d_mulScalar(&movement, CHARACTER_SPEED * speedMultiplier);
+    Vec3d_mulScalar(&movement,
+                    CHARACTER_SPEED * speedMultiplier * speedScaleForHeading);
     Vec3d_add(&self->obj->position, &movement);
   }
 }
@@ -449,7 +461,7 @@ void Character_goToTarget(Character* self,
         );
 #endif
 
-    self->targetLocation = movementTarget;
+    self->movementTarget = movementTarget;
 
     // head towards waypoint
     Character_moveTowards(self, movementTarget, speedMultiplier);
@@ -503,7 +515,11 @@ void Character_update(Character* self, Game* game) {
     Character_setVisibleItemAttachment(self, NoneModel);
   }
 
-#if CHARACTER_ENABLED
+#if CHARACTER_FOLLOW_PLAYER
+  self->targetLocation = game->player.goose->position;
+  Character_goToTarget(self, game, &self->targetLocation,
+                       CHARACTER_SPEED_MULTIPLIER_WALK);
+#elif CHARACTER_ENABLED
   Character_updateState(self, game);
 #endif
 
@@ -705,7 +721,7 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
       // no, move towards
       Character_goToTarget(self, game, &self->target->obj->position,
                            someoneElseIsHoldingItem
-                               ? CHARACTER_SPEED_MULTIPLIER_RUN
+                               ? CHARACTER_SPEED_MULTIPLIER_WALK
                                : CHARACTER_SPEED_MULTIPLIER_WALK);
     }
   }
