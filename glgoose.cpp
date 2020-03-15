@@ -59,11 +59,12 @@
 
 #define DEBUG_PHYSICS 1
 
-#define DEBUG_COLLISION_MESH 1
-#define DEBUG_COLLISION_MESH_MORE 1
+#define DEBUG_COLLISION_MESH 0
+#define DEBUG_COLLISION_MESH_MORE 0
 #define DEBUG_COLLISION_SPATIAL_HASH 0
+#define DEBUG_COLLISION_SPATIAL_HASH_RAYCAST 0
 #define DEBUG_COLLISION_SPATIAL_HASH_TRIS 0
-#define DEBUG_COLLISION_MESH_AABB 0
+#define DEBUG_COLLISION_MESH_AABB 1
 
 #define DEBUG_PATHFINDING_GRAPH 1
 #define DEBUG_PATHFINDING 1
@@ -812,8 +813,8 @@ void drawAABB(AABB* aabb) {
   glVertex3f(aabb->min.x, aabb->min.y, aabb->max.z);
   glVertex3f(aabb->min.x, aabb->max.y, aabb->max.z);
   // 3
-  glVertex3f(aabb->min.x, aabb->min.y, aabb->min.z);
-  glVertex3f(aabb->min.x, aabb->min.y, aabb->min.z);
+  glVertex3f(aabb->max.x, aabb->min.y, aabb->max.z);
+  glVertex3f(aabb->max.x, aabb->max.y, aabb->max.z);
   // 4
   glVertex3f(aabb->max.x, aabb->min.y, aabb->min.z);
   glVertex3f(aabb->max.x, aabb->max.y, aabb->min.z);
@@ -870,23 +871,24 @@ void drawCollisionMesh() {
     glEnd();
   }
 
-// draw spatial hash matching tris
-#if DEBUG_COLLISION_SPATIAL_HASH
+  // draw spatial hash matching tris
   if (selectedObject) {
     int spatialHashResults[100];
+    int spatialHashResultsCount;
     Vec3d selectedObjCenter;
     Game_getObjCenter(selectedObject, &selectedObjCenter);
 
+    spatialHashResultsCount = SpatialHash_getTriangles(
+        &selectedObjCenter, Game_getObjRadius(selectedObject),
+        physWorldData.worldMeshSpatialHash, spatialHashResults,
+        /*maxResults*/ 100);
+
+#if DEBUG_COLLISION_SPATIAL_HASH_RAYCAST
     Vec3d testRayEnd = {0, 25, 0};
     Character_directionFromTopDownAngle(degToRad(selectedObject->rotation.y),
                                         &testRayEnd);
     Vec3d_mulScalar(&testRayEnd, 600);
     Vec3d_add(&testRayEnd, &selectedObjCenter);
-
-    int spatialHashResultsCount = SpatialHash_getTriangles(
-        &selectedObjCenter, Game_getObjRadius(selectedObject),
-        physWorldData.worldMeshSpatialHash, spatialHashResults,
-        /*maxResults*/ 100);
 
     glColor3f(1.0f, 0.0f, 0.0f);  // red
     drawLine(&selectedObjCenter, &testRayEnd);
@@ -909,6 +911,7 @@ void drawCollisionMesh() {
                         SpatialHash_unitsToGridFloatForDimension(
                             -testRayEnd.z, physWorldData.worldMeshSpatialHash),
                         &spatialHashTraversalVisitor, (void*)NULL);
+#endif
 
 #if DEBUG_COLLISION_SPATIAL_HASH_TRIS
     int i;
@@ -954,22 +957,23 @@ void drawCollisionMesh() {
       }
     }
 
-#if DEBUG_COLLISION_MESH_AABB
+#if DEBUG_COLLISION_MESH_AABB || DEBUG_COLLISION_SPATIAL_HASH_RAYCAST
     for (i = 0; i < spatialHashResultsCount; i++) {
       tri = university_map_collision_collision_mesh + spatialHashResults[i];
       AABB triangleAABB;
       AABB_fromTriangle(tri, &triangleAABB);
+
+      glColor3f(1.0, 1.0, 0.0);  // yellow
+#if DEBUG_COLLISION_SPATIAL_HASH_RAYCAST
       if (Collision_testSegmentAABBCollision(&selectedObjCenter, &testRayEnd,
                                              &triangleAABB)) {
-        glColor3f(1.0, 0.0, 0.0);  // collision
-      } else {
-        glColor3f(1.0, 1.0, 0.0);
+        glColor3f(1.0, 0.0, 0.0);  // red, collision
       }
+#endif
       drawAABB(&triangleAABB);
     }
 #endif
   }
-#endif
 
   // draw collided tris
   if (testCollisionResults.size()) {
@@ -1297,7 +1301,7 @@ void renderScene(void) {
 #endif
 
 #if DEBUG_COLLISION_MESH || DEBUG_COLLISION_MESH_MORE || \
-    DEBUG_COLLISION_SPATIAL_HASH
+    DEBUG_COLLISION_SPATIAL_HASH || DEBUG_COLLISION_MESH_AABB
   drawCollisionMesh();
 #endif
 
@@ -1318,8 +1322,8 @@ void renderScene(void) {
     drawRaycastLine(gameRaycastTrace[i]);
   }
 
-  gameRaycastTrace.clear();
 #endif
+  gameRaycastTrace.clear();
 
 #if DEBUG_PATHFINDING_GRAPH
   drawPathfindingGraph();
