@@ -55,10 +55,10 @@ void Item_take(Item* self, ItemHolder* newHolder) {
       // shitty dynamic dispatch
       switch (originalHolder->itemHolderType) {
         case PlayerItemHolder:
-          Player_haveItemTaken((Player*)originalHolder->owner);
+          Player_haveItemTaken((Player*)originalHolder->owner, self);
           break;
         case CharacterItemHolder:
-          Character_haveItemTaken((Character*)originalHolder->owner);
+          Character_haveItemTaken((Character*)originalHolder->owner, self);
           break;
       }
     }

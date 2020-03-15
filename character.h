@@ -11,9 +11,8 @@ void Character_init(Character* self,
                     Game* game);
 void Character_update(Character* self, Game* game);
 void Character_updateState(Character* self, Game* game);
-void Character_setTarget(Character* self, Item* target);
 
-void Character_haveItemTaken(Character* self);
+void Character_haveItemTaken(Character* self, Item* item);
 
 float Character_topDownAngleMagToObj(Character* self, GameObject* obj);
 

@@ -39,7 +39,7 @@ typedef struct Character {
   GameObject* obj;
   AnimationState animState;
 
-  struct ItemStruct* target;
+  struct ItemStruct* targetItem;
   struct ItemStruct* defaultActivityItem;
   Vec3d defaultActivityLocation;
   Vec3d movementTarget;  // immediate goal for local movement/steering

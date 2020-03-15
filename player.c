@@ -147,7 +147,7 @@ void Player_update(Player* self, Input* input, Game* game) {
   }
 }
 
-void Player_haveItemTaken(Player* self) {
+void Player_haveItemTaken(Player* self, Item* item) {
   // react to item being taken
 }
 

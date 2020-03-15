@@ -24,10 +24,11 @@
 #define DEBUG_CHARACTER 1
 #define CHARACTER_MAX_TURN_SPEED 10.0f
 #define CHARACTER_FLEE_DIST 1200.0f
-#define CHARACTER_NEAR_TARGET_DIST 100.0f
-#define CHARACTER_NEAR_OBJ_DROP_DIST 100.0f
-#define CHARACTER_NEAR_OBJ_TAKE_DIST 100.0f
-#define CHARACTER_ITEM_NEAR_HOME_DIST 100.0f
+#define CHARACTER_NEAR_TARGET_DIST 60.0f
+#define CHARACTER_NEAR_OBJ_DROP_DIST 60.0f
+#define CHARACTER_NEAR_OBJ_PICKUP_DIST 40.0f
+#define CHARACTER_NEAR_OBJ_STEAL_DIST 60.0f
+#define CHARACTER_ITEM_NEAR_HOME_DIST 60.0f
 #define CHARACTER_SIGHT_RANGE 800.0f
 #define CHARACTER_PICKUP_COOLDOWN 120
 #define CHARACTER_MIN_IDLE_TIME 120
@@ -49,10 +50,10 @@ static Vec3d characterItemOffset = {0.0F, 60.0F, 0.0F};
 #ifndef __N64__
 #include <stdio.h>
 void Character_print(Character* self) {
-  printf(
-      "Character target=%s pos=",
+  printf("Character target=%s pos=",
 
-      self->target ? ModelTypeStrings[self->target->obj->modelType] : "none");
+         self->targetItem ? ModelTypeStrings[self->targetItem->obj->modelType]
+                          : "none");
 }
 
 void Character_toString(Character* self, char* buffer) {
@@ -65,11 +66,11 @@ void Character_toString(Character* self, char* buffer) {
 
   Vec3d_toString(&self->obj->position, pos);
   Vec3d_toString((Vec3d*)&self->obj->rotation, rot);
-  sprintf(
-      buffer, "Character state=%s target=%s pos=%s rot=%s angleToPlayer=%f",
-      CharacterStateStrings[self->state],
-      self->target ? ModelTypeStrings[self->target->obj->modelType] : "none",
-      pos, rot, angleToPlayer);
+  sprintf(buffer, "Character state=%s target=%s pos=%s rot=%s angleToPlayer=%f",
+          CharacterStateStrings[self->state],
+          self->targetItem ? ModelTypeStrings[self->targetItem->obj->modelType]
+                           : "none",
+          pos, rot, angleToPlayer);
 }
 #endif
 
@@ -99,7 +100,7 @@ void Character_init(Character* self,
   Vec3d_origin(&self->targetLocation);
   self->targetType = NoneCharacterTarget;
 
-  self->target = NULL;
+  self->targetItem = NULL;
   self->defaultActivityItem = defaultActivityItem;
 
   self->defaultActivityLocation = obj->position;
@@ -247,23 +248,13 @@ void Character_moveTowards(Character* self,
                             CHARACTER_FACING_MOVEMENT_TARGET_ANGLE)) /
                      90.0f);
   self->speedScaleForHeading = speedScaleForHeading;
-  printf("angle beyond threshold=%f\n",
-         Character_topDownAngleDeltaToPos(self, &target) -
-             CHARACTER_FACING_MOVEMENT_TARGET_ANGLE);
-  printf("speedScaleForHeading=%f\n", speedScaleForHeading);
-  if (TRUE
-      // is facing towards target enough to move forward?
-      // Character_topDownAngleDeltaToPos(self, &target) <=
-      // CHARACTER_FACING_MOVEMENT_TARGET_ANGLE
-  ) {
-    Character_directionFromTopDownAngle(degToRad(self->obj->rotation.y),
-                                        &headingDirection);
+  Character_directionFromTopDownAngle(degToRad(self->obj->rotation.y),
+                                      &headingDirection);
 
-    Vec3d_copyFrom(&movement, &headingDirection);
-    Vec3d_mulScalar(&movement,
-                    CHARACTER_SPEED * speedMultiplier * speedScaleForHeading);
-    Vec3d_add(&self->obj->position, &movement);
-  }
+  Vec3d_copyFrom(&movement, &headingDirection);
+  Vec3d_mulScalar(&movement,
+                  CHARACTER_SPEED * speedMultiplier * speedScaleForHeading);
+  Vec3d_add(&self->obj->position, &movement);
 }
 
 void Character_setVisibleItemAttachment(Character* self, ModelType modelType) {
@@ -558,7 +549,7 @@ void Character_update(Character* self, Game* game) {
 }
 
 void Character_transitionToState(Character* self, CharacterState nextState) {
-#ifndef __N64__
+#ifndef DEBUG_CHARACTER
   if (nextState == SeekingItemState) {
     printf("starting SeekingItemState\n");
   }
@@ -578,27 +569,29 @@ void Character_maybeTransitionToHigherPriorityState(Character* self,
   // TODO: start fleeing
   if (self->state < SeekingSoundSourceState) {
     if (self->targetType == HonkCharacterTarget) {
+#ifndef DEBUG_CHARACTER
+      printf(
+          "transitioning to higher priority state: SeekingSoundSourceState\n");
+#endif
       Character_transitionToState(self, SeekingSoundSourceState);
       return;
     }
   }
   if (self->state < SeekingItemState) {
     // has item been stolen?
-    if (Vec3d_distanceTo(&possibleTarget->obj->position,
-                         &possibleTarget->initialLocation) >
+    if (Character_getDistanceTopDown(&possibleTarget->obj->position,
+                                     &possibleTarget->initialLocation) >
         CHARACTER_ITEM_NEAR_HOME_DIST) {
       // and can we see it?
       if (Character_canSeeItem(self, possibleTarget, game)) {
+#ifndef DEBUG_CHARACTER
+        printf(
+            "saw stolen item. transitioning to higher priority state: "
+            "SeekingItemState\n");
+#endif
         Character_transitionToState(self, SeekingItemState);
-        Character_canSeeItem(self, possibleTarget, game);
         return;
       }
-    }
-  }
-  if (self->state < SeekingLastSeenState) {
-    if (self->targetType == ItemCharacterTarget) {
-      Character_transitionToState(self, SeekingLastSeenState);
-      return;
     }
   }
 }
@@ -619,7 +612,7 @@ int Character_isCloseToAndFacing(Character* self,
                                  float targetDist) {
   return !(
       // not close enough
-      Vec3d_distanceTo(&self->obj->position, target) > targetDist ||
+      Character_getDistanceTopDown(&self->obj->position, target) > targetDist ||
       // not facing towards enough
       Character_topDownAngleDeltaToPos(self, target) >
           CHARACTER_FACING_OBJECT_ANGLE);
@@ -647,89 +640,102 @@ void Character_updateDefaultActivityState(Character* self, Game* game) {
     } else {
       self->startedActivityTick = game->tick;
 
-#ifndef __N64__
+#ifndef DEBUG_CHARACTER
       printf("started default activity\n");
 #endif
     }
   }
 }
 
-void Character_haveItemTaken(Character* self) {
+void Character_haveItemTaken(Character* self, Item* item) {
   Game* game;
   // let nature take its course
   self->state = ConfusionState;
 
   // make sure that the character can find the player after having item stolen
   self->targetType = ItemCharacterTarget;
+  self->targetItem = item;
   game = Game_get();
   self->targetLocation = game->player.goose->position;
+
+  Character_transitionToState(self, SeekingItemState);
+}
+
+int Character_isSomeoneElseIsHoldingItem(Character* self) {
+  return self->targetItem->holder &&
+         self->targetItem->holder != &self->itemHolder;
 }
 
 void Character_updateSeekingItemState(Character* self, Game* game) {
-  int someoneElseIsHoldingItem;
-  self->target = self->defaultActivityItem;
+  self->targetItem = self->defaultActivityItem;
 
   if (self->itemHolder.heldItem) {
     // are we near enough to drop item?
-    if (Vec3d_distanceTo(&self->obj->position, &self->target->initialLocation) <
+    if (Vec3d_distanceTo(&self->obj->position,
+                         &self->targetItem->initialLocation) <
         CHARACTER_NEAR_OBJ_DROP_DIST) {
       // close enough to return item
 
       Vec3d_copyFrom(&self->itemHolder.heldItem->obj->position,
-                     &self->target->initialLocation);
+                     &self->targetItem->initialLocation);
 
       Item_drop(self->itemHolder.heldItem);
-      self->target = NULL;
+      self->targetItem = NULL;
       Character_transitionToState(self, IdleState);
     } else {
       // bringing item back to initial location
-      Character_goToTarget(self, game, &self->target->initialLocation,
+      Character_goToTarget(self, game, &self->targetItem->initialLocation,
                            CHARACTER_SPEED_MULTIPLIER_WALK);
     }
   } else {
     // can we still see the item?
 
-    if (!Character_canSeeItem(self, self->target, game)) {
-      // nope, give up
-      self->target = NULL;
+    if (!Character_canSeeItem(self, self->targetItem, game)) {
 #ifndef DEBUG_CHARACTER
-      debugPrintf("can't see the item anymore, giving up\n");
+      debugPrintf(
+          "can't see the item anymore, looking in last seen location\n");
 #endif
-      Character_transitionToState(self, IdleState);
+      Character_transitionToState(self, SeekingLastSeenState);
       return;
     }
 
     // keep last seen location in case it goes out of view
     self->targetType = ItemCharacterTarget;
-    self->targetLocation = self->target->obj->position;
-
-    someoneElseIsHoldingItem =
-        self->target->holder && self->target->holder != &self->itemHolder;
+    self->targetLocation = self->targetItem->obj->position;
 
     // are we near enough to pick up item?
-    if (Vec3d_distanceTo(&self->obj->position, &self->target->obj->position) <
-        CHARACTER_NEAR_OBJ_TAKE_DIST) {
-      if (someoneElseIsHoldingItem) {
+    if (Character_getDistanceTopDown(&self->obj->position,
+                                     &self->targetItem->obj->position) <
+        (Character_isSomeoneElseIsHoldingItem(self)
+             ? CHARACTER_NEAR_OBJ_STEAL_DIST
+             : CHARACTER_NEAR_OBJ_PICKUP_DIST)) {
+      if (Character_isSomeoneElseIsHoldingItem(self)) {
 #ifndef DEBUG_CHARACTER
         debugPrintf("stealing item back\n");
 #endif
       }
-      Item_take(self->target, &self->itemHolder);
+      Item_take(self->targetItem, &self->itemHolder);
       self->targetType = NoneCharacterTarget;
 
     } else {
       // no, move towards
-      Character_goToTarget(self, game, &self->target->obj->position,
-                           someoneElseIsHoldingItem
+      Character_goToTarget(self, game, &self->targetItem->obj->position,
+                           Character_isSomeoneElseIsHoldingItem(self)
                                ? CHARACTER_SPEED_MULTIPLIER_WALK
                                : CHARACTER_SPEED_MULTIPLIER_WALK);
     }
   }
 }
 void Character_updateSeekingTargetState(Character* self, Game* game) {
+#ifndef __N64__
+  if (self->targetType == ItemCharacterTarget) {
+    assert(self->targetType);
+  }
+#endif
   // if character is close enough from target, give up
   if (Character_isCloseToAndFacing(self, &self->targetLocation,
                                    CHARACTER_NEAR_TARGET_DIST)) {
+    // maybe we should check line of sight too
 #ifndef DEBUG_CHARACTER
     debugPrintf("close enough to target, giving up\n");
 #endif
@@ -747,9 +753,13 @@ void Character_updateSeekingTargetState(Character* self, Game* game) {
       return;
     }
   } else {
+    // TODO: this is pretty sketchy, instead perhaps this should be incorporated
+    // into SeekingItemState
     // continue advancing towards target
-    Character_moveTowards(self, self->targetLocation,
-                          CHARACTER_SPEED_MULTIPLIER_WALK);
+    Character_goToTarget(self, game, &self->targetLocation,
+                         Character_isSomeoneElseIsHoldingItem(self)
+                             ? CHARACTER_SPEED_MULTIPLIER_WALK
+                             : CHARACTER_SPEED_MULTIPLIER_WALK);
   }
 }
 void Character_updateFleeingState(Character* self, Game* game) {
@@ -792,8 +802,4 @@ void Character_updateState(Character* self, Game* game) {
     default:
       break;
   }
-}
-
-void Character_setTarget(Character* self, Item* target) {
-  self->target = target;
 }
