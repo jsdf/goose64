@@ -503,30 +503,30 @@ Triangle university_map_collision_collision_mesh[] = {
 {{-529.709358, 67.734926, -863.887024},{-1002.747345, 67.734926, -863.887024},{-1002.747345, -4.964755, -863.887024},},
 {{-529.709358, -4.964755, -895.098267},{-529.709358, -4.964755, -863.887024},{-1002.747345, -4.964755, -863.887024},},
 {{-1002.747345, 67.734926, -895.098267},{-1002.747345, 67.734926, -863.887024},{-529.709358, 67.734926, -863.887024},},
-{{-1463.671875, 101.334915, -59.369538},{-1463.671875, -6.860545, -207.546501},{-1463.671875, -6.860545, -59.369538},},
-{{-1463.671875, 101.334915, -207.546501},{-1315.494919, -6.860545, -207.546501},{-1463.671875, -6.860545, -207.546501},},
-{{-1315.494919, 101.334915, -207.546501},{-1315.494919, -6.860545, -59.369538},{-1315.494919, -6.860545, -207.546501},},
-{{-1315.494919, 101.334915, -59.369538},{-1463.671875, -6.860545, -59.369538},{-1315.494919, -6.860545, -59.369538},},
-{{-1463.671875, 101.334915, -59.369538},{-1463.671875, 101.334915, -207.546501},{-1463.671875, -6.860545, -207.546501},},
-{{-1463.671875, 101.334915, -207.546501},{-1315.494919, 101.334915, -207.546501},{-1315.494919, -6.860545, -207.546501},},
-{{-1315.494919, 101.334915, -207.546501},{-1315.494919, 101.334915, -59.369538},{-1315.494919, -6.860545, -59.369538},},
-{{-1315.494919, 101.334915, -59.369538},{-1463.671875, 101.334915, -59.369538},{-1463.671875, -6.860545, -59.369538},},
-{{-507.741222, 101.334922, -566.831818},{-507.741222, -6.860538, -715.008774},{-507.741222, -6.860538, -566.831818},},
-{{-507.741222, 101.334922, -715.008774},{-359.564266, -6.860538, -715.008774},{-507.741222, -6.860538, -715.008774},},
-{{-359.564266, 101.334922, -715.008774},{-359.564266, -6.860538, -566.831818},{-359.564266, -6.860538, -715.008774},},
-{{-359.564266, 101.334922, -566.831818},{-507.741222, -6.860538, -566.831818},{-359.564266, -6.860538, -566.831818},},
-{{-507.741222, 101.334922, -566.831818},{-507.741222, 101.334922, -715.008774},{-507.741222, -6.860538, -715.008774},},
-{{-507.741222, 101.334922, -715.008774},{-359.564266, 101.334922, -715.008774},{-359.564266, -6.860538, -715.008774},},
-{{-359.564266, 101.334922, -715.008774},{-359.564266, 101.334922, -566.831818},{-359.564266, -6.860538, -566.831818},},
-{{-359.564266, 101.334922, -566.831818},{-507.741222, 101.334922, -566.831818},{-507.741222, -6.860538, -566.831818},},
-{{-1463.671875, 101.334915, -332.231083},{-1463.671875, -6.860545, -480.408039},{-1463.671875, -6.860545, -332.231083},},
-{{-1463.671875, 101.334915, -480.408039},{-1315.494919, -6.860545, -480.408039},{-1463.671875, -6.860545, -480.408039},},
-{{-1315.494919, 101.334915, -480.408039},{-1315.494919, -6.860545, -332.231083},{-1315.494919, -6.860545, -480.408039},},
-{{-1315.494919, 101.334915, -332.231083},{-1463.671875, -6.860545, -332.231083},{-1315.494919, -6.860545, -332.231083},},
-{{-1463.671875, 101.334915, -332.231083},{-1463.671875, 101.334915, -480.408039},{-1463.671875, -6.860545, -480.408039},},
-{{-1463.671875, 101.334915, -480.408039},{-1315.494919, 101.334915, -480.408039},{-1315.494919, -6.860545, -480.408039},},
-{{-1315.494919, 101.334915, -480.408039},{-1315.494919, 101.334915, -332.231083},{-1315.494919, -6.860545, -332.231083},},
-{{-1315.494919, 101.334915, -332.231083},{-1463.671875, 101.334915, -332.231083},{-1463.671875, -6.860545, -332.231083},},
+{{-1466.104431, 61.387954, -52.878599},{-1466.104431, -6.860545, -202.791109},{-1466.104431, -6.860545, -52.878599},},
+{{-1466.104431, 61.387954, -202.791109},{-1315.494919, -6.860545, -202.791109},{-1466.104431, -6.860545, -202.791109},},
+{{-1315.494919, 61.387954, -202.791109},{-1315.494919, -6.860545, -52.878599},{-1315.494919, -6.860545, -202.791109},},
+{{-1315.494919, 61.387954, -52.878599},{-1466.104431, -6.860545, -52.878599},{-1315.494919, -6.860545, -52.878599},},
+{{-1466.104431, 61.387954, -52.878599},{-1466.104431, 61.387954, -202.791109},{-1466.104431, -6.860545, -202.791109},},
+{{-1466.104431, 61.387954, -202.791109},{-1315.494919, 61.387954, -202.791109},{-1315.494919, -6.860545, -202.791109},},
+{{-1315.494919, 61.387954, -202.791109},{-1315.494919, 61.387954, -52.878599},{-1315.494919, -6.860545, -52.878599},},
+{{-1315.494919, 61.387954, -52.878599},{-1466.104431, 61.387954, -52.878599},{-1466.104431, -6.860545, -52.878599},},
+{{-510.173893, 61.387961, -565.148392},{-510.173893, -6.860538, -713.759193},{-510.173893, -6.860538, -565.148392},},
+{{-510.173893, 61.387961, -713.759193},{-359.564266, -6.860538, -713.759193},{-510.173893, -6.860538, -713.759193},},
+{{-359.564266, 61.387961, -713.759193},{-359.564266, -6.860538, -565.148392},{-359.564266, -6.860538, -713.759193},},
+{{-359.564266, 61.387961, -565.148392},{-510.173893, -6.860538, -565.148392},{-359.564266, -6.860538, -565.148392},},
+{{-510.173893, 61.387961, -565.148392},{-510.173893, 61.387961, -713.759193},{-510.173893, -6.860538, -713.759193},},
+{{-510.173893, 61.387961, -713.759193},{-359.564266, 61.387961, -713.759193},{-359.564266, -6.860538, -713.759193},},
+{{-359.564266, 61.387961, -713.759193},{-359.564266, 61.387961, -565.148392},{-359.564266, -6.860538, -565.148392},},
+{{-359.564266, 61.387961, -565.148392},{-510.173893, 61.387961, -565.148392},{-510.173893, -6.860538, -565.148392},},
+{{-1466.104431, 61.387954, -330.547628},{-1466.104431, -6.860545, -478.724585},{-1466.104431, -6.860545, -330.547628},},
+{{-1466.104431, 61.387954, -479.158459},{-1315.494919, -6.860545, -479.158459},{-1466.104431, -6.860545, -478.724585},},
+{{-1315.494919, 61.387954, -479.158459},{-1315.494919, -6.860545, -330.547628},{-1315.494919, -6.860545, -479.158459},},
+{{-1315.494919, 61.387954, -330.547628},{-1466.104431, -6.860545, -330.547628},{-1315.494919, -6.860545, -330.547628},},
+{{-1466.104431, 61.387954, -330.547628},{-1466.104431, 61.387954, -479.158459},{-1466.104431, -6.860545, -478.724585},},
+{{-1466.104431, 61.387954, -479.158459},{-1315.494919, 61.387954, -479.158459},{-1315.494919, -6.860545, -479.158459},},
+{{-1315.494919, 61.387954, -479.158459},{-1315.494919, 61.387954, -330.547628},{-1315.494919, -6.860545, -330.547628},},
+{{-1315.494919, 61.387954, -330.547628},{-1466.104431, 61.387954, -330.547628},{-1466.104431, -6.860545, -330.547628},},
 
 };
 int university_map_collision_collision_mesh_hash_bucket_799_data[] = {368, 370, 371, 372, 379, 380};
@@ -1755,9 +1755,9 @@ int university_map_collision_collision_mesh_hash_bucket_3805_data[] = {103, 104,
 int university_map_collision_collision_mesh_hash_bucket_3806_data[] = {104, 149, 150, 217, 273, 276, 277, 278, 281, 282, 283, 286, 287, 290};
 int university_map_collision_collision_mesh_hash_bucket_3807_data[] = {104, 150, 217, 273, 276, 277, 286};
 int university_map_collision_collision_mesh_hash_bucket_3808_data[] = {104, 150, 217, 273, 275, 276, 277, 285, 286};
-int university_map_collision_collision_mesh_hash_bucket_3809_data[] = {104, 150, 517, 521};
-int university_map_collision_collision_mesh_hash_bucket_3810_data[] = {41, 104, 150, 151, 218};
-int university_map_collision_collision_mesh_hash_bucket_3811_data[] = {151, 218, 519, 523};
+int university_map_collision_collision_mesh_hash_bucket_3809_data[] = {104, 150, 517, 518, 521, 522};
+int university_map_collision_collision_mesh_hash_bucket_3810_data[] = {41, 104, 150, 151, 218, 518, 522};
+int university_map_collision_collision_mesh_hash_bucket_3811_data[] = {151, 218, 518, 519, 522, 523};
 int university_map_collision_collision_mesh_hash_bucket_3812_data[] = {151, 218};
 int university_map_collision_collision_mesh_hash_bucket_3813_data[] = {151, 218};
 int university_map_collision_collision_mesh_hash_bucket_3814_data[] = {151, 218};
@@ -1795,9 +1795,9 @@ int university_map_collision_collision_mesh_hash_bucket_3889_data[] = {103, 149,
 int university_map_collision_collision_mesh_hash_bucket_3890_data[] = {149, 150};
 int university_map_collision_collision_mesh_hash_bucket_3891_data[] = {150};
 int university_map_collision_collision_mesh_hash_bucket_3892_data[] = {150};
-int university_map_collision_collision_mesh_hash_bucket_3893_data[] = {41, 150, 517, 518, 521, 522};
-int university_map_collision_collision_mesh_hash_bucket_3894_data[] = {41, 150, 151, 518, 522};
-int university_map_collision_collision_mesh_hash_bucket_3895_data[] = {41, 151, 518, 519, 522, 523};
+int university_map_collision_collision_mesh_hash_bucket_3893_data[] = {41, 150};
+int university_map_collision_collision_mesh_hash_bucket_3894_data[] = {41, 150, 151};
+int university_map_collision_collision_mesh_hash_bucket_3895_data[] = {41, 151};
 int university_map_collision_collision_mesh_hash_bucket_3896_data[] = {151};
 int university_map_collision_collision_mesh_hash_bucket_3897_data[] = {151};
 int university_map_collision_collision_mesh_hash_bucket_3898_data[] = {151};
@@ -3965,9 +3965,9 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3805 = {12
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3806 = {14, (int *)university_map_collision_collision_mesh_hash_bucket_3806_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3807 = {7, (int *)university_map_collision_collision_mesh_hash_bucket_3807_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3808 = {9, (int *)university_map_collision_collision_mesh_hash_bucket_3808_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3809 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_3809_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3810 = {5, (int *)university_map_collision_collision_mesh_hash_bucket_3810_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3811 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_3811_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3809 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_3809_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3810 = {7, (int *)university_map_collision_collision_mesh_hash_bucket_3810_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3811 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_3811_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3812 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3812_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3813 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3813_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3814 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3814_data};
@@ -4005,9 +4005,9 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3889 = {9,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3890 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3890_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3891 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3891_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3892 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3892_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3893 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_3893_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3894 = {5, (int *)university_map_collision_collision_mesh_hash_bucket_3894_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3895 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_3895_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3893 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3893_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3894 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_3894_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3895 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3895_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3896 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3896_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3897 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3897_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3898 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3898_data};
