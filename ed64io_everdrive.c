@@ -263,9 +263,12 @@ u8 evd_fifoWr(void* buff, u16 blocks) {
 
 #define EVERDRIVE_CART_BLOCK_WRITE_SIZE 0x4000 /* cart write block size */
 
+static int evd_fifoWrNonblockMsgId = 0;
 void evd_fifoWrNonblockStateInit(evd_fifoWrNonblockState* state) {
   state->state = 0;
   state->done = FALSE;
+  state->id = evd_fifoWrNonblockMsgId++;
+  state->error = 0;
 }
 
 // start DMA to cart memory
@@ -283,8 +286,6 @@ void evd_fifoWrNonblock(void* buff,
   unsigned long pi_address = (0xb0000000 + ram_buff_addr * 1024 * 2);
   u32 rom_addr = pi_address;
   u32 size = len;
-  OSIoMesg dmaIoMesgBuf;
-  OSMesg dmaMesgBuf;
   int msgRet;
 
   // assert (size <= EVERDRIVE_CART_BLOCK_WRITE_SIZE);
@@ -294,11 +295,11 @@ void evd_fifoWrNonblock(void* buff,
       // write back CPU cache to RAM for consistency during DMA
       osWritebackDCache(buff, len);
       // Create message queue to track DMA-to-cart completion
-      osCreateMesgQueue(&state->dmaMesgQ, &dmaMesgBuf, 1);
+      osCreateMesgQueue(&state->dmaMesgQ, &state->dmaMesgBuf, 1);
       // DMA write to cart memory space
-      osPiStartDma(&dmaIoMesgBuf, OS_MESG_PRI_NORMAL, OS_WRITE, rom_addr,
+      osPiStartDma(&state->dmaIoMesgBuf, OS_MESG_PRI_NORMAL, OS_WRITE, rom_addr,
                    buf_ptr, size, &state->dmaMesgQ);
-      state->state = 1;
+      state->state++;
     case 1:
       // non-blocking check of DMA-to-cart message queue
       msgRet = osRecvMesg(&state->dmaMesgQ, NULL, OS_MESG_NOBLOCK);
@@ -306,7 +307,7 @@ void evd_fifoWrNonblock(void* buff,
         // message queue is empty, DMA not finished
         return;
       }
-      state->state = 2;
+      state->state++;
     case 2:
       if (evd_fifoTxe())
         return;
@@ -319,7 +320,7 @@ void evd_fifoWrNonblock(void* buff,
       val = regs_ptr[0];
       regs_ptr[REG_DMA_CFG] = DCFG_RAM_TO_FIFO;
 
-      state->state = 3;
+      state->state++;
       return;  // always wait a little for DMA
     case 3:
       // wait for DMA write to host
@@ -330,6 +331,7 @@ void evd_fifoWrNonblock(void* buff,
         // if DMA timed out, end in failure
         // return EVD_ERROR_FIFO_TIMEOUT;
         state->done = TRUE;
+        state->error = 1;
         return;
       }
   }

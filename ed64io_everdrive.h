@@ -67,6 +67,11 @@ u8 evd_fifoWr(void* buff, u16 blocks);
 typedef struct evd_fifoWrNonblockState {
   int state;
   int done;
+  int id;
+  int error;
+
+  OSIoMesg dmaIoMesgBuf;
+  OSMesg dmaMesgBuf;
   OSMesgQueue dmaMesgQ;
 } evd_fifoWrNonblockState;
 void evd_fifoWrNonblockStateInit(evd_fifoWrNonblockState* state);

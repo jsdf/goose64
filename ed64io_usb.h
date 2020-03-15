@@ -11,6 +11,20 @@
 #include "ed64io_types.h"
 int usbLoggerLog(const char* str);
 int usbLoggerFlush();
+
+typedef struct UsbLoggerState {
+  int fifoWriteState;
+  int msgID;
+  int usbLoggerOffset;
+  int usbLoggerFlushing;
+  int usbLoggerOverflow;
+  int msgQSize;
+  int countDone;
+  int writeError;
+} UsbLoggerState;
+
+void usbLoggerGetState(UsbLoggerState* res);
+
 void ed64Printf(const char* fmt, ...);
 
 #endif /* _FIFO_H */

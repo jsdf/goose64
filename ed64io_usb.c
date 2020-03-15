@@ -4,6 +4,7 @@
 #include "ed64io_everdrive.h"
 #include "ed64io_sys.h"
 #include "ed64io_types.h"
+#include "ed64io_usb.h"
 
 #define USB_BUFFER_SIZE 128
 #define USB_BUFFER_SIZE_BYTES 1024
@@ -22,6 +23,7 @@ char usbLoggerData[USB_LOGGER_BUFFER_SIZE_BYTES];
 int usbLoggerOffset = 0;
 int usbLoggerFlushing = FALSE;
 int usbLoggerOverflow = FALSE;
+int usbLoggerCountDone = 0;
 
 extern void _Printf(void (*)(void*), int, const char*, va_list);
 
@@ -48,6 +50,17 @@ int usbLoggerLog(const char* str) {
   return lengthToWrite;
 }
 
+void usbLoggerGetState(UsbLoggerState* res) {
+  res->fifoWriteState = fifoWriteState.state;
+  res->msgID = fifoWriteState.id;
+  res->usbLoggerOffset = usbLoggerOffset;
+  res->usbLoggerFlushing = usbLoggerFlushing;
+  res->usbLoggerOverflow = usbLoggerOverflow;
+  res->msgQSize = fifoWriteState.dmaMesgQ.validCount;
+  res->countDone = usbLoggerCountDone;
+  res->writeError = fifoWriteState.error;
+}
+
 int usbLoggerFlush() {
   if (!usbLoggerFlushing) {
     if (!usbLoggerOffset) {
@@ -62,6 +75,11 @@ int usbLoggerFlush() {
     evd_fifoWrNonblockStateInit(&fifoWriteState);
     usbLoggerFlushing = TRUE;
   }
+  if (usbLoggerFlushing) {
+    if (fifoWriteState.error != 0) {
+      return -2;
+    }
+  }
 
   // step IO state machine
   evd_fifoWrNonblock(usb_buff, 1, &fifoWriteState);
@@ -70,6 +88,7 @@ int usbLoggerFlush() {
   }
 
   usbLoggerFlushing = FALSE;
+  usbLoggerCountDone++;
   return 0;
 }
 
