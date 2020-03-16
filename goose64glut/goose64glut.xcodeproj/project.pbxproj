@@ -29,6 +29,7 @@
 		73735E5E23600F730048C9EC /* characterstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5D23600F730048C9EC /* characterstate.cpp */; };
 		73735E6023600FD00048C9EC /* item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5F23600FD00048C9EC /* item.cpp */; };
 		73A093502389088400C53E85 /* physics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73A0934E2389088400C53E85 /* physics.cpp */; };
+		73A6BA11241F37B100C67C12 /* trace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73A6BA0F241F37B100C67C12 /* trace.cpp */; };
 		73D1784E23BF173800AC253C /* university_map_collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73D1784D23BF173700AC253C /* university_map_collision.cpp */; };
 		73D9004F2411DEFF00F96350 /* pathfinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73D9004E2411DEFF00F96350 /* pathfinding.cpp */; };
 		73E1066A23B0146600DE8673 /* imgui_impl_glut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066623B0146600DE8673 /* imgui_impl_glut.cpp */; };
@@ -98,6 +99,8 @@
 		73A0934E2389088400C53E85 /* physics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = physics.cpp; path = ../physics.cpp; sourceTree = "<group>"; };
 		73A0934F2389088400C53E85 /* physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = physics.h; path = ../physics.h; sourceTree = "<group>"; };
 		73A2C3C42362720B0036BCCB /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		73A6BA0F241F37B100C67C12 /* trace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = trace.cpp; path = ../trace.cpp; sourceTree = "<group>"; };
+		73A6BA10241F37B100C67C12 /* trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trace.h; path = ../trace.h; sourceTree = "<group>"; };
 		73D1784D23BF173700AC253C /* university_map_collision.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = university_map_collision.cpp; path = ../university_map_collision.cpp; sourceTree = "<group>"; };
 		73D9004E2411DEFF00F96350 /* pathfinding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pathfinding.cpp; path = ../pathfinding.cpp; sourceTree = "<group>"; };
 		73E1066423B0146500DE8673 /* imgui_impl_glut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imgui_impl_glut.h; path = ../imgui/examples/imgui_impl_glut.h; sourceTree = "<group>"; };
@@ -163,6 +166,8 @@
 				733266DB235EAB8100907B30 /* input.h */,
 				733266EF235EC53400907B30 /* character.cpp */,
 				73D1784D23BF173700AC253C /* university_map_collision.cpp */,
+				73A6BA0F241F37B100C67C12 /* trace.cpp */,
+				73A6BA10241F37B100C67C12 /* trace.h */,
 				732EC5282412219700CCCA81 /* compat.cpp */,
 				732EC5292412219800CCCA81 /* compat.h */,
 				732EC52B2412275D00CCCA81 /* university_map_graph.cpp */,
@@ -291,6 +296,7 @@
 				73E1066A23B0146600DE8673 /* imgui_impl_glut.cpp in Sources */,
 				73E1067023B014A600DE8673 /* imgui_draw.cpp in Sources */,
 				73735E58235FE9C40048C9EC /* player.cpp in Sources */,
+				73A6BA11241F37B100C67C12 /* trace.cpp in Sources */,
 				733266E6235EAB8200907B30 /* gameobject.cpp in Sources */,
 				732EC52A2412219800CCCA81 /* compat.cpp in Sources */,
 				73D9004F2411DEFF00F96350 /* pathfinding.cpp in Sources */,

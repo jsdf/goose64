@@ -87,3 +87,8 @@ imgui.ini
 
 *.pyc
 *_collision.json
+
+
+trace.log
+trace.json
+trace.html

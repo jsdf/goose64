@@ -92,6 +92,8 @@ typedef struct Game {
   float profTimePhysics;
   float profTimeDraw;
   float profTimePath;
+  float* trace;
+  float* traceEventStarts;
 } Game;
 
 #endif /* !_GAMETYPES_H_ */

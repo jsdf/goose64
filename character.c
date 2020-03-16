@@ -4,6 +4,7 @@
 #include "game.h"
 #include "item.h"
 #include "modeltype.h"
+#include "trace.h"
 #include "vec2d.h"
 #include "vec3d.h"
 
@@ -21,7 +22,7 @@
 
 #define CHARACTER_ENABLED 1
 #define CHARACTER_FOLLOW_PLAYER 0
-#define DEBUG_CHARACTER 1
+#define DEBUG_CHARACTER 0
 #define CHARACTER_MAX_TURN_SPEED 10.0f
 #define CHARACTER_FLEE_DIST 1200.0f
 #define CHARACTER_NEAR_TARGET_DIST 60.0f
@@ -284,7 +285,7 @@ void Character_goToTarget(Character* self,
                           float speedMultiplier) {
   int from;
   int to;
-  float profStartPath;
+  float profStartPathfinding;
   Graph* pathfindingGraph;
   PathfindingState* pathfindingState;
   Vec3d* nextNodePos;
@@ -321,7 +322,7 @@ void Character_goToTarget(Character* self,
 
   // find a path if we need one
   if (!self->pathfindingResult) {
-    profStartPath = CUR_TIME_MS();
+    profStartPathfinding = CUR_TIME_MS();
 
     from = Path_quantizePosition(pathfindingGraph, &self->obj->position);
 
@@ -342,8 +343,11 @@ void Character_goToTarget(Character* self,
     } else {
       debugPrintf("character: pathfinding failed\n");
     }
-
-    game->profTimePath += (CUR_TIME_MS() - profStartPath);
+    if (game->traceEventStarts[PathfindingTraceEvent] == 0) {
+      game->traceEventStarts[PathfindingTraceEvent] = profStartPathfinding;
+    }
+    game->trace[PathfindingTraceEvent] +=
+        (CUR_TIME_MS() - profStartPathfinding);
   }
 
   if (self->pathfindingResult) {

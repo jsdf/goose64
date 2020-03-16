@@ -3,7 +3,9 @@
 #include <stdlib.h>
 
 #include "collision.h"
+#include "constants.h"
 #include "physics.h"
+#include "trace.h"
 
 #define PHYS_DEBUG 0
 #define PHYS_MIN_MOVEMENT 0.5
@@ -384,12 +386,20 @@ void PhysBody_integrateBodies(PhysBody* bodies,
                               PhysState* physics) {
   PhysBody* body;
   int i;
+  float profStartObjCollision;
+  float profStartWorldCollision;
 
+  profStartObjCollision = CUR_TIME_MS();
   for (i = 0, body = bodies; i < numBodies; i++, body++) {
     if (body->enabled) {
       PhysBody_update(body, dt, drag, bodies, numBodies, physics);
     }
   }
+  if (traceEventStarts[PhysObjCollisionTraceEvent] == 0) {
+    traceEventStarts[PhysObjCollisionTraceEvent] = profStartObjCollision;
+  }
+  traceEventDurations[PhysObjCollisionTraceEvent] +=
+      (CUR_TIME_MS() - profStartObjCollision);
 
   for (i = 0, body = bodies; i < numBodies; i++, body++) {
     if (body->enabled /*&& !body->controlled*/) {
@@ -401,9 +411,15 @@ void PhysBody_integrateBodies(PhysBody* bodies,
     }
   }
 
+  profStartWorldCollision = CUR_TIME_MS();
   // do this after so we can fix any world penetration resulting from motion
   // integration
   PhysBehavior_collisionResponse(physics->worldData, bodies, numBodies);
+  if (traceEventStarts[PhysWorldCollisionTraceEvent] == 0) {
+    traceEventStarts[PhysWorldCollisionTraceEvent] = profStartWorldCollision;
+  }
+  traceEventDurations[PhysWorldCollisionTraceEvent] +=
+      (CUR_TIME_MS() - profStartWorldCollision);
 }
 
 void PhysState_step(PhysState* physics,

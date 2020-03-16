@@ -29,6 +29,8 @@
 #endif
 
 #ifdef __N64__
+// this include needs to be here or this macro will break sometimes
+#include <PR/os.h>
 #define CUR_TIME_MS() OS_CYCLES_TO_USEC(osGetTime()) / 1000.0
 #else
 #include "compat.h"

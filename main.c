@@ -4,6 +4,9 @@
 #include "main.h"
 #include "malloc.h"
 
+#include <PR/os_convert.h>
+#include "trace.h"
+
 /* The global variable  */
 NUContData contdata[1]; /* Read data of 1 controller  */
 u8 contPattern;         /* The pattern connected to the controller  */
@@ -49,10 +52,22 @@ void mainproc(void) {
   waiting for the process.
 -----------------------------------------------------------------------------*/
 void stage00(int pendingGfx) {
-  /* Provide the display process if 2 or less RCP tasks are processing or
+  int i;
+
+  // reset tracing for this frame
+  for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
+    traceEventDurations[i] = 0;
+    traceEventStarts[i] = 0;
+  }
+  /* Provide the display process if n or less RCP tasks are processing or
         waiting for the process.  */
-  if (pendingGfx < 3)
+  if (pendingGfx < 2) {  // TODO: sync with num tasks in stage00.c
     makeDL00();
+  } else {
+    traceEventStarts[SkippedGfxTaskTraceEvent] =
+        OS_CYCLES_TO_USEC(osGetTime()) / 1000.0;
+    traceEventDurations[SkippedGfxTaskTraceEvent] = 16;
+  }
 
   /* The process of game progress  */
   updateGame00();

@@ -20,6 +20,7 @@
 #include "pathfinding.h"
 #include "physics.h"
 #include "renderer.h"
+#include "trace.h"
 #include "vec2d.h"
 #include "vec3d.h"
 
@@ -34,6 +35,7 @@
 #include "university_bldg.h"
 #include "university_floor.h"
 #include "wall.h"
+
 // map
 #include "university_map.h"
 #include "university_map_collision.h"
@@ -45,9 +47,12 @@
 #include "ed64io_everdrive.h"
 #include "ed64io_usb.h"
 
-#define CONSOLE_VIEW_DEBUG 1
+#define CONSOLE 0
 #define CONSOLE_DEBUG 1
+#define CONSOLE_EVERDRIVE_DEBUG 0
 #define CONSOLE_SHOW_PROFILING 1
+#define NU_PERF_BAR 0
+#define LOG_TRACES 1
 
 typedef enum RenderMode {
   ToonFlatShadingRenderMode,
@@ -72,13 +77,15 @@ int frameCounterCurFrames;
 int frameCounterLastFrames;
 
 /* profiling */
-float profTimeCharacters;
-float profTimePhysics;
-float profTimeDraw;
-float profTimePath;
+float profAvgCharacters;
+float profAvgPhysics;
+float profAvgDraw;
+float profAvgPath;
+float lastFrameTime;
 
 static int usbEnabled;
-static int usbState;
+static int usbResult;
+static UsbLoggerState usbLoggerState;
 
 static float cycleMode;
 static RenderMode renderModeSetting;
@@ -108,16 +115,17 @@ Lights0 amb_light = gdSPDefLights0(200, 200, 200 /*  ambient light */);
 void initStage00() {
   Game* game;
   GameObject* obj;
-  GameObject* loadObj;
   int i;
 
   usbEnabled = TRUE;
-  usbState = 0;
+  usbResult = 0;
 
   frameCounterLastTime = 0;
   frameCounterCurFrames = 0;
-  profTimeCharacters = 0;
-  profTimePhysics = 0;
+  profAvgCharacters = 0;
+  profAvgPhysics = 0;
+  profAvgDraw = 0;
+  profAvgPath = 0;
 
   cycleMode = 1.0;
   renderModeSetting = ToonFlatShadingRenderMode;
@@ -142,6 +150,7 @@ void initStage00() {
     sortedObjects[i] = obj;
   }
 
+  lastFrameTime = CUR_TIME_MS();
   evd_init();
 
   debugPrintf("good morning\n");
@@ -161,27 +170,66 @@ void debugPrintFloat(int x, int y, char* format, float value) {
   nuDebConCPuts(0, conbuf);
 }
 
+void traceRCP() {
+  int i;
+  // s64 retraceTime;
+
+  // retraceTime = nuDebTaskPerfPtr->retraceTime;
+  // debugPrintf("rt=%f ", retraceTime / (1000000.0));
+  for (i = 0; i < nuDebTaskPerfPtr->gfxTaskCnt; i++) {
+    // debugPrintf(
+    //     "[t%d: st=%f rsp=%f,rdp=%f] ", i,
+    //     (nuDebTaskPerfPtr->gfxTaskTime[i].rspStart ) / 1000.0,
+    //     (nuDebTaskPerfPtr->gfxTaskTime[i].rspEnd -
+    //      nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
+    //         1000.0,
+    //     (nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd -
+    //      nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
+    //         1000.0);
+
+    traceEventStarts[RSPTasksTraceEvent] =
+        nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f;
+    traceEventDurations[RSPTasksTraceEvent] =
+        (nuDebTaskPerfPtr->gfxTaskTime[i].rspEnd -
+         nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
+        1000.0f;
+
+    traceEventStarts[RDPTasksTraceEvent] =
+        nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f;
+    traceEventDurations[RDPTasksTraceEvent] +=
+        (nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd -
+         nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
+        1000.0f;
+
+    break;  // ignore rest of tasks
+  }
+  // debugPrintf("\n");
+}
+
 /* Make the display list and activate the task */
 void makeDL00() {
   Game* game;
   Dynamic* dynamicp;
   char conbuf[100];
   int consoleOffset;
-  float frameCounterCurTime;
+  float curTime;
   float profStartDraw;
 
-  profStartDraw = CUR_TIME_MS();
+  game = Game_get();
   consoleOffset = 20;
 
-  frameCounterCurTime = CUR_TIME_MS();
+  curTime = CUR_TIME_MS();
   frameCounterCurFrames++;
-  if (frameCounterCurTime - frameCounterLastTime >= 1000.0) {
+
+  profStartDraw = curTime;
+
+  traceEventDurations[FrameTraceEvent] = 16;
+  traceEventStarts[FrameTraceEvent] = curTime;
+  if (curTime - frameCounterLastTime >= 1000.0) {
     frameCounterLastFrames = frameCounterCurFrames;
     frameCounterCurFrames = 0;
     frameCounterLastTime += 1000.0;
   }
-
-  game = Game_get();
 
   /* Specify the display list buffer */
   dynamicp = &gfx_dynamic[gfx_gtask_no];
@@ -212,21 +260,39 @@ void makeDL00() {
   }
 
   drawWorldObjects(dynamicp);
-  game->profTimeDraw += (CUR_TIME_MS() - profStartDraw);
 
   gDPFullSync(glistp++);
   gSPEndDisplayList(glistp++);
 
   assert((glistp - gfx_glist[gfx_gtask_no]) < GFX_GLIST_LEN);
 
+  traceEventDurations[DrawTraceEvent] = (CUR_TIME_MS() - profStartDraw);
+  traceEventStarts[DrawTraceEvent] = profStartDraw;
+  game->profTimeDraw += traceEventDurations[DrawTraceEvent];
+
   /* Activate the task and
      switch display buffers */
   nuGfxTaskStart(&gfx_glist[gfx_gtask_no][0],
                  (s32)(glistp - gfx_glist[gfx_gtask_no]) * sizeof(Gfx),
-                 NU_GFX_UCODE_F3DEX, NU_SC_NOSWAPBUFFER);
+                 NU_GFX_UCODE_F3DEX,
+#if NU_PERF_BAR || CONSOLE
+                 NU_SC_NOSWAPBUFFER
+#else
+                 NU_SC_SWAPBUFFER
+#endif
+  );
+
+  traceRCP();
+
+#if NU_PERF_BAR
+  nuDebTaskPerfBar1(1, 200, NU_SC_SWAPBUFFER);
+#endif
 
 // debug text overlay
-#if CONSOLE_VIEW_DEBUG
+#if CONSOLE
+#if NU_PERF_BAR
+#error "can't enable NU_PERF_BAR and CONSOLE at the same time"
+#endif
   if (contPattern & 0x1) {
     nuDebConClear(0);
     consoleOffset = 21;
@@ -239,40 +305,51 @@ void makeDL00() {
     } else {
 #if CONSOLE_SHOW_PROFILING
       if (game->tick % 60 == 0) {
-        profTimeCharacters = game->profTimeCharacters / 60.0f;
+        profAvgCharacters = game->profTimeCharacters / 60.0f;
         game->profTimeCharacters = 0.0f;
-        profTimePhysics = game->profTimePhysics / 60.0f;
+        profAvgPhysics = game->profTimePhysics / 60.0f;
         game->profTimePhysics = 0.0f;
-        profTimeDraw = game->profTimeDraw / 60.0f;
+        profAvgDraw = game->profTimeDraw / 60.0f;
         game->profTimeDraw = 0.0f;
-        profTimePath = game->profTimePath / 60.0f;
+        profAvgPath = game->profTimePath / 60.0f;
         game->profTimePath = 0.0f;
       }
-      debugPrintFloat(4, consoleOffset++, "char=%3.2fms", profTimeCharacters);
-      debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profTimePhysics);
-      debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profTimeDraw);
-      debugPrintFloat(4, consoleOffset++, "path=%3.2fms", profTimePath);
+      debugPrintFloat(4, consoleOffset++, "char=%3.2fms", profAvgCharacters);
+      debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profAvgPhysics);
+      debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profAvgDraw);
+      debugPrintFloat(4, consoleOffset++, "path=%3.2fms", profAvgPath);
 #endif
 
       // debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
       // debugPrintVec3d(4, consoleOffset++, "viewTarget", &game->viewTarget);
       nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "retrace=%d", nuScRetraceCounter);
+      sprintf(conbuf, "retrace=%lu", nuScRetraceCounter);
       nuDebConCPuts(0, conbuf);
 
-      // nuDebConTextPos(0, 4, consoleOffset++);
-      // sprintf(conbuf, "usb=%d,state=%d", usbEnabled, usbState);
-      // nuDebConCPuts(0, conbuf);
+#if CONSOLE_EVERDRIVE_DEBUG
+      usbLoggerGetState(&usbLoggerState);
+      nuDebConTextPos(0, 4, consoleOffset++);
+      sprintf(conbuf, "usb=%d,res=%d,st=%d,id=%d,mqsz=%d", usbEnabled,
+              usbResult, usbLoggerState.fifoWriteState, usbLoggerState.msgID,
+              usbLoggerState.msgQSize);
+      nuDebConCPuts(0, conbuf);
+      nuDebConTextPos(0, 4, consoleOffset++);
+      sprintf(conbuf, "off=%4d,flu=%d,ovf=%d,don=%d,err=%d",
+              usbLoggerState.usbLoggerOffset, usbLoggerState.usbLoggerFlushing,
+              usbLoggerState.usbLoggerOverflow, usbLoggerState.countDone,
+              usbLoggerState.writeError);
+      nuDebConCPuts(0, conbuf);
+#endif
     }
     debugPrintVec3d(4, consoleOffset++, "pos", &game->player.goose->position);
   } else {
     nuDebConTextPos(0, 9, 24);
     nuDebConCPuts(0, "Controller1 not connect");
   }
-#endif
 
   /* Display characters on the frame buffer */
   nuDebConDisp(NU_SC_SWAPBUFFER);
+#endif
 
   /* Switch display list buffers */
   gfx_gtask_no ^= 1;
@@ -323,10 +400,37 @@ void checkDebugControls(Game* game) {
     viewPos.x += 30.0;
 }
 
+void logTrace() {
+  int i;
+  int printedFirst;
+  Game* game;
+  game = Game_get();
+  printedFirst = FALSE;
+  debugPrintf("TRACE=[");
+  for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
+    if (traceEventStarts[i] == 0 && traceEventDurations[i] == 0) {
+      continue;
+    }
+    // ignore these for now
+    switch (i) {
+      case PhysObjCollisionTraceEvent:
+      case CharactersUpdateTraceEvent:
+      case PhysUpdateTraceEvent:
+        continue;
+    }
+    debugPrintf("%s[%.2f,%.2f,%d]", printedFirst ? "," : "",
+                traceEventStarts[i], traceEventDurations[i], i);
+    printedFirst = TRUE;
+  }
+  debugPrintf("]\n");
+}
+
 /* The game progressing process for stage 0 */
 void updateGame00(void) {
   Game* game;
+  float profStartUpdate;
 
+  profStartUpdate = CUR_TIME_MS();
   game = Game_get();
 
   Vec2d_origin(&input.direction);
@@ -380,8 +484,13 @@ void updateGame00(void) {
   //   usbEnabled = !usbEnabled;
   // }
 
+  traceEventStarts[UpdateTraceEvent] = profStartUpdate;
+  traceEventDurations[UpdateTraceEvent] = (CUR_TIME_MS()) - profStartUpdate;
   if (usbEnabled) {
-    usbState = usbLoggerFlush();
+#if LOG_TRACES
+    logTrace();
+#endif
+    usbResult = usbLoggerFlush();
   }
 }
 
@@ -493,14 +602,18 @@ void drawWorldObjects(Dynamic* dynamicp) {
   AnimationInterpolation animInterp;
   AnimationRange* curAnimRange;
   AnimationBoneAttachment* attachment;
+  float profStartSort;
+  float profStartIter;
 
   game = Game_get();
-
+  profStartSort = CUR_TIME_MS();
   Renderer_sortWorldObjects(sortedObjects, game->worldObjectsCount);
+  traceEventDurations[DrawSortTraceEvent] = (CUR_TIME_MS() - profStartSort);
+  traceEventStarts[DrawSortTraceEvent] = profStartSort;
 
   gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
   gDPSetCycleType(glistp++, cycleMode > 0.0F ? G_CYC_1CYCLE : G_CYC_2CYCLE);
-  useZBuffering = Renderer_isZBufferedGameObject(obj);
+  useZBuffering = TRUE;  // Renderer_isZBufferedGameObject(obj);
   if (useZBuffering) {
     gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
     gSPSetGeometryMode(glistp++, G_ZBUFFER);
@@ -515,6 +628,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->camera)),
             G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
 
+  profStartIter = CUR_TIME_MS();
   // render world objects
   for (i = 0; i < game->worldObjectsCount; i++) {
     obj = sortedObjects[i];
@@ -658,4 +772,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
     gDPPipeSync(glistp++);
   }
+
+  traceEventDurations[DrawIterTraceEvent] = (CUR_TIME_MS() - profStartIter);
+  traceEventStarts[DrawIterTraceEvent] = profStartIter;
 }

@@ -16,7 +16,7 @@ u8* usb_buff8;  // = (u8 *) usb_buff;
 extern u8 system_cic;
 
 char* cmdStart = "CMD";
-char* overflowMsg = "LOGOVERFLOW!!!";
+char* overflowMsg = "LOGOVERFLOW!!!\n";
 
 evd_fifoWrNonblockState fifoWriteState;
 char usbLoggerData[USB_LOGGER_BUFFER_SIZE_BYTES];

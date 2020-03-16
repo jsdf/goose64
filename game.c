@@ -21,6 +21,7 @@
 #include "item.h"
 #include "modeltype.h"
 #include "player.h"
+#include "trace.h"
 #include "vec3d.h"
 
 #include "constants.h"
@@ -136,6 +137,15 @@ void Game_init(GameObject* worldObjects,
 
   game.profTimeCharacters = 0;
   game.profTimePhysics = 0;
+  game.profTimeDraw = 0;
+  game.profTimePath = 0;
+  game.trace = traceEventDurations;
+  game.traceEventStarts = traceEventStarts;
+
+  for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
+    traceEventDurations[i] = 0;
+    traceEventStarts[i] = 0;
+  }
 }
 
 Game* Game_get() {
@@ -276,16 +286,24 @@ void Game_update(Input* input) {
     for (i = 0; i < NUM_CHARACTERS; ++i) {
       Character_update(&characters[i], game);
     }
-    game->profTimeCharacters += (CUR_TIME_MS() - profStartCharacters);
+    game->trace[CharactersUpdateTraceEvent] =
+        (CUR_TIME_MS() - profStartCharacters);
+    game->traceEventStarts[CharactersUpdateTraceEvent] = profStartCharacters;
 
     Player_update(&game->player, input, game);
 
     profStartPhysics = CUR_TIME_MS();
     Game_updatePhysics(game);
-    game->profTimePhysics += (CUR_TIME_MS() - profStartPhysics);
+    game->trace[PhysUpdateTraceEvent] = (CUR_TIME_MS() - profStartPhysics);
+    game->traceEventStarts[PhysUpdateTraceEvent] = profStartPhysics;
 
     Game_updateCamera(game, input);
   }
+
+  // update windowed (eg. 60 frame) aggregations
+  game->profTimePhysics += game->trace[PhysUpdateTraceEvent];
+  game->profTimeCharacters += game->trace[CharactersUpdateTraceEvent];
+  game->profTimePath += game->trace[PathfindingTraceEvent];
 
   // reset inputs
   Input_init(input);

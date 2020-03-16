@@ -38,4 +38,11 @@ sleep 1;
 retry loader64 -v --pifboot
 
 # tail the logger
-ed64log
+if [ -z "${PROFILE-}" ]; then
+  ed64log
+else
+  ed64log > trace.log
+  python3 process_trace.py trace.log trace.json
+  $CATAPULT/tracing/bin/trace2html trace.json --output=trace.html
+  open trace.html
+fi

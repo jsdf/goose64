@@ -1048,7 +1048,7 @@ void drawCollisionMesh() {
   glPopAttrib();
 }
 
-void doPathfinding(int printResult) {
+void doTestPathfinding(int printResult) {
   float profStartPath = CUR_TIME_MS();
 
 #if DEBUG_PATHFINDING_AUTO
@@ -1648,7 +1648,7 @@ void updateAndRender() {
     testCollision();
 #endif
 #if DEBUG_PATHFINDING
-    // doPathfinding(FALSE);
+    // doTestPathfinding(FALSE);
 #endif
 
     Game_update(&input);
