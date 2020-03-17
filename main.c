@@ -52,21 +52,15 @@ void mainproc(void) {
   waiting for the process.
 -----------------------------------------------------------------------------*/
 void stage00(int pendingGfx) {
-  int i;
-
-  // reset tracing for this frame
-  for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
-    traceEventDurations[i] = 0;
-    traceEventStarts[i] = 0;
-  }
+  float skippedGfxTime;
   /* Provide the display process if n or less RCP tasks are processing or
         waiting for the process.  */
-  if (pendingGfx < 2) {  // TODO: sync with num tasks in stage00.c
+  if (pendingGfx < 4) {  // TODO: sync with num tasks in stage00.c
     makeDL00();
   } else {
-    traceEventStarts[SkippedGfxTaskTraceEvent] =
-        OS_CYCLES_TO_USEC(osGetTime()) / 1000.0;
-    traceEventDurations[SkippedGfxTaskTraceEvent] = 16;
+    skippedGfxTime = OS_CYCLES_TO_USEC(osGetTime()) / 1000.0;
+    Trace_addEvent(SkippedGfxTaskTraceEvent, skippedGfxTime,
+                   skippedGfxTime + 16.0f);
   }
 
   /* The process of game progress  */

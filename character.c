@@ -343,11 +343,8 @@ void Character_goToTarget(Character* self,
     } else {
       debugPrintf("character: pathfinding failed\n");
     }
-    if (game->traceEventStarts[PathfindingTraceEvent] == 0) {
-      game->traceEventStarts[PathfindingTraceEvent] = profStartPathfinding;
-    }
-    game->trace[PathfindingTraceEvent] +=
-        (CUR_TIME_MS() - profStartPathfinding);
+
+    Trace_addEvent(PathfindingTraceEvent, profStartPathfinding, CUR_TIME_MS());
   }
 
   if (self->pathfindingResult) {
@@ -557,8 +554,8 @@ void Character_transitionToState(Character* self, CharacterState nextState) {
   if (nextState == SeekingItemState) {
     printf("starting SeekingItemState\n");
   }
-#endif
   Character_printStateTransition(self, nextState);
+#endif
   self->enteredStateTick = Game_get()->tick;
   self->state = nextState;
 }

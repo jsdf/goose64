@@ -12,6 +12,7 @@
 
 #include "constants.h"
 
+#define ITEM_DEBUG 0
 #define ITEM_PICKUP_COOLDOWN 60
 #define ITEM_STEAL_COOLDOWN 120
 
@@ -37,6 +38,7 @@ void Item_take(Item* self, ItemHolder* newHolder) {
           // ensure that characters can't steal this object back from each other
           // too frequently
           : Game_get()->tick > self->lastPickedUpTick + ITEM_STEAL_COOLDOWN) {
+#if ITEM_DEBUG
     if (self->holder) {
       debugPrintf("item taken from %s by %s\n",
                   ItemHolderTypeStrings[self->holder->itemHolderType],
@@ -45,6 +47,7 @@ void Item_take(Item* self, ItemHolder* newHolder) {
       debugPrintf("item picked up by %s\n",
                   ItemHolderTypeStrings[newHolder->itemHolderType]);
     }
+#endif
 
     originalHolder = self->holder;
     if (originalHolder) {

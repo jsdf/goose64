@@ -27,6 +27,10 @@ int usbLoggerCountDone = 0;
 
 extern void _Printf(void (*)(void*), int, const char*, va_list);
 
+int usbLoggerBufferRemaining() {
+  return USB_LOGGER_BUFFER_SIZE_BYTES - usbLoggerOffset;
+}
+
 int usbLoggerLog(const char* str) {
   char* emptySpaceStart = usbLoggerData;
   int lengthToWrite;

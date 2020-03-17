@@ -139,13 +139,6 @@ void Game_init(GameObject* worldObjects,
   game.profTimePhysics = 0;
   game.profTimeDraw = 0;
   game.profTimePath = 0;
-  game.trace = traceEventDurations;
-  game.traceEventStarts = traceEventStarts;
-
-  for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
-    traceEventDurations[i] = 0;
-    traceEventStarts[i] = 0;
-  }
 }
 
 Game* Game_get() {
@@ -275,7 +268,8 @@ void Game_updatePhysics(Game* game) {
 void Game_update(Input* input) {
   Game* game;
   int i;
-  float profStartPhysics, profStartCharacters;
+  float profStartPhysics, profStartCharacters, profEndPhysics,
+      profEndCharacters;
 
   game = Game_get();
 
@@ -286,24 +280,22 @@ void Game_update(Input* input) {
     for (i = 0; i < NUM_CHARACTERS; ++i) {
       Character_update(&characters[i], game);
     }
-    game->trace[CharactersUpdateTraceEvent] =
-        (CUR_TIME_MS() - profStartCharacters);
-    game->traceEventStarts[CharactersUpdateTraceEvent] = profStartCharacters;
-
+    profEndCharacters = CUR_TIME_MS();
+    Trace_addEvent(CharactersUpdateTraceEvent, profStartCharacters,
+                   profEndCharacters);
     Player_update(&game->player, input, game);
 
     profStartPhysics = CUR_TIME_MS();
     Game_updatePhysics(game);
-    game->trace[PhysUpdateTraceEvent] = (CUR_TIME_MS() - profStartPhysics);
-    game->traceEventStarts[PhysUpdateTraceEvent] = profStartPhysics;
+    profEndPhysics = CUR_TIME_MS();
+    Trace_addEvent(PhysUpdateTraceEvent, profStartPhysics, profEndPhysics);
 
     Game_updateCamera(game, input);
-  }
 
-  // update windowed (eg. 60 frame) aggregations
-  game->profTimePhysics += game->trace[PhysUpdateTraceEvent];
-  game->profTimeCharacters += game->trace[CharactersUpdateTraceEvent];
-  game->profTimePath += game->trace[PathfindingTraceEvent];
+    // update windowed (eg. 60 frame) aggregations
+    game->profTimePhysics += profEndPhysics - profStartPhysics;
+    game->profTimeCharacters += profEndCharacters - profStartCharacters;
+  }
 
   // reset inputs
   Input_init(input);

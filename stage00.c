@@ -47,10 +47,10 @@
 #include "ed64io_everdrive.h"
 #include "ed64io_usb.h"
 
-#define CONSOLE 0
-#define CONSOLE_DEBUG 1
+#define CONSOLE 1
 #define CONSOLE_EVERDRIVE_DEBUG 0
 #define CONSOLE_SHOW_PROFILING 1
+#define CONSOLE_SHOW_RCP_TASKS 1
 #define NU_PERF_BAR 0
 #define LOG_TRACES 1
 
@@ -86,6 +86,9 @@ float lastFrameTime;
 static int usbEnabled;
 static int usbResult;
 static UsbLoggerState usbLoggerState;
+
+static int logTraceStartOffset = 0;
+static int loggingTrace = FALSE;
 
 static float cycleMode;
 static RenderMode renderModeSetting;
@@ -126,6 +129,8 @@ void initStage00() {
   profAvgPhysics = 0;
   profAvgDraw = 0;
   profAvgPath = 0;
+
+  loggingTrace = FALSE;
 
   cycleMode = 1.0;
   renderModeSetting = ToonFlatShadingRenderMode;
@@ -187,21 +192,13 @@ void traceRCP() {
     //      nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
     //         1000.0);
 
-    traceEventStarts[RSPTasksTraceEvent] =
-        nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f;
-    traceEventDurations[RSPTasksTraceEvent] =
-        (nuDebTaskPerfPtr->gfxTaskTime[i].rspEnd -
-         nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
-        1000.0f;
+    Trace_addEvent(RSPTasksTraceEvent,
+                   nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f,
+                   nuDebTaskPerfPtr->gfxTaskTime[i].rspEnd / 1000.0f);
 
-    traceEventStarts[RDPTasksTraceEvent] =
-        nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f;
-    traceEventDurations[RDPTasksTraceEvent] +=
-        (nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd -
-         nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
-        1000.0f;
-
-    break;  // ignore rest of tasks
+    Trace_addEvent(RDPTasksTraceEvent,
+                   nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f,
+                   nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd / 1000.0f);
   }
   // debugPrintf("\n");
 }
@@ -213,7 +210,7 @@ void makeDL00() {
   char conbuf[100];
   int consoleOffset;
   float curTime;
-  float profStartDraw;
+  float profStartDraw, profEndDraw;
 
   game = Game_get();
   consoleOffset = 20;
@@ -223,8 +220,8 @@ void makeDL00() {
 
   profStartDraw = curTime;
 
-  traceEventDurations[FrameTraceEvent] = 16;
-  traceEventStarts[FrameTraceEvent] = curTime;
+  Trace_addEvent(FrameTraceEvent, curTime, curTime + 16);
+
   if (curTime - frameCounterLastTime >= 1000.0) {
     frameCounterLastFrames = frameCounterCurFrames;
     frameCounterCurFrames = 0;
@@ -266,11 +263,11 @@ void makeDL00() {
 
   assert((glistp - gfx_glist[gfx_gtask_no]) < GFX_GLIST_LEN);
 
-  traceEventDurations[DrawTraceEvent] = (CUR_TIME_MS() - profStartDraw);
-  traceEventStarts[DrawTraceEvent] = profStartDraw;
-  game->profTimeDraw += traceEventDurations[DrawTraceEvent];
+  profEndDraw = CUR_TIME_MS();
+  Trace_addEvent(DrawTraceEvent, profStartDraw, profEndDraw);
+  game->profTimeDraw += profEndDraw - profStartDraw;
 
-  /* Activate the task and
+  /* Activate the task and (maybe)
      switch display buffers */
   nuGfxTaskStart(&gfx_glist[gfx_gtask_no][0],
                  (s32)(glistp - gfx_glist[gfx_gtask_no]) * sizeof(Gfx),
@@ -290,9 +287,11 @@ void makeDL00() {
 
 // debug text overlay
 #if CONSOLE
+
 #if NU_PERF_BAR
 #error "can't enable NU_PERF_BAR and CONSOLE at the same time"
 #endif
+
   if (contPattern & 0x1) {
     nuDebConClear(0);
     consoleOffset = 21;
@@ -314,10 +313,30 @@ void makeDL00() {
         profAvgPath = game->profTimePath / 60.0f;
         game->profTimePath = 0.0f;
       }
-      debugPrintFloat(4, consoleOffset++, "char=%3.2fms", profAvgCharacters);
-      debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profAvgPhysics);
-      debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profAvgDraw);
-      debugPrintFloat(4, consoleOffset++, "path=%3.2fms", profAvgPath);
+      // debugPrintFloat(4, consoleOffset++, "char=%3.2fms", profAvgCharacters);
+      // debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profAvgPhysics);
+      // debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profAvgDraw);
+      // debugPrintFloat(4, consoleOffset++, "path=%3.2fms", profAvgPath);
+      nuDebConTextPos(0, 4, consoleOffset++);
+      sprintf(conbuf, "trace rec=%d,log=%d,evs=%d,lgd=%d", Trace_isTracing(),
+              loggingTrace, Trace_getEventsCount(), logTraceStartOffset);
+      nuDebConCPuts(0, conbuf);
+#endif
+#if CONSOLE_SHOW_RCP_TASKS
+      {
+        int tskIdx;
+        for (tskIdx = 0; tskIdx < nuDebTaskPerfPtr->gfxTaskCnt; tskIdx++) {
+          nuDebConTextPos(0, 4, consoleOffset++);
+          sprintf(conbuf, "[t%d:  rsp=%.2f,rdp=%.2f] ", tskIdx,
+                  (nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspEnd -
+                   nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspStart) /
+                      1000.0,
+                  (nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rdpEnd -
+                   nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspStart) /
+                      1000.0);
+          nuDebConCPuts(0, conbuf);
+        }
+      }
 #endif
 
       // debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
@@ -400,29 +419,43 @@ void checkDebugControls(Game* game) {
     viewPos.x += 30.0;
 }
 
-void logTrace() {
+void logTraceChunk() {
   int i;
-  int printedFirst;
-  Game* game;
-  game = Game_get();
-  printedFirst = FALSE;
+  int printedFirstItem;
+
+  printedFirstItem = FALSE;
+  if (usbLoggerBufferRemaining() < 120) {
+    return;
+  }
   debugPrintf("TRACE=[");
-  for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
-    if (traceEventStarts[i] == 0 && traceEventDurations[i] == 0) {
-      continue;
+  for (i = logTraceStartOffset; i < Trace_getEventsCount(); i++) {
+    // check we have room for more data
+    if (usbLoggerBufferRemaining() < 40) {
+      break;
     }
-    // ignore these for now
-    switch (i) {
-      case PhysObjCollisionTraceEvent:
-      case CharactersUpdateTraceEvent:
-      case PhysUpdateTraceEvent:
-        continue;
-    }
-    debugPrintf("%s[%.2f,%.2f,%d]", printedFirst ? "," : "",
-                traceEventStarts[i], traceEventDurations[i], i);
-    printedFirst = TRUE;
+    debugPrintf("%s[%.2f,%.2f,%d]", printedFirstItem ? "," : "",
+                traceEvents[i].start, traceEvents[i].end, traceEvents[i].type);
+    printedFirstItem = TRUE;
+    logTraceStartOffset = i;
   }
   debugPrintf("]\n");
+
+  if (logTraceStartOffset == Trace_getEventsCount() - 1) {
+    // finished
+    loggingTrace = FALSE;
+    logTraceStartOffset = 0;
+    Trace_clear();
+  }
+}
+
+void startRecordingTrace() {
+  Trace_clear();
+  Trace_start();
+}
+
+void finishRecordingTrace() {
+  Trace_stop();
+  loggingTrace = TRUE;
 }
 
 /* The game progressing process for stage 0 */
@@ -464,18 +497,38 @@ void updateGame00(void) {
       input.zoomOut = TRUE;
     }
 
-    if (contdata[0].button & U_CBUTTONS) {
-      farPlane += 100.0;
+    if (contdata[0].trigger & U_CBUTTONS) {
+      if (!tracingEnabled) {
+        startRecordingTrace();
+      } else {
+        finishRecordingTrace();
+      }
     }
+    // if (contdata[0].button & U_CBUTTONS) {
+    //   farPlane += 100.0;
+    // }
 
-    if (contdata[0].button & D_CBUTTONS) {
-      farPlane -= 100.0;
-    }
+    // if (contdata[0].button & D_CBUTTONS) {
+    //   farPlane -= 100.0;
+    // }
     input.direction.x = -contdata->stick_x / 61.0F;
     input.direction.y = contdata->stick_y / 63.0F;
     if (Vec2d_length(&input.direction) > 1.0F) {
       Vec2d_normalise(&input.direction);
     }
+  }
+
+  if (Trace_getEventsCount() == TRACE_EVENT_BUFFER_SIZE) {
+    finishRecordingTrace();
+  }
+
+  if (usbEnabled) {
+#if LOG_TRACES
+    if (loggingTrace) {
+      logTraceChunk();
+      usbResult = usbLoggerFlush();
+    }
+#endif
   }
 
   Game_update(&input);
@@ -484,13 +537,17 @@ void updateGame00(void) {
   //   usbEnabled = !usbEnabled;
   // }
 
-  traceEventStarts[UpdateTraceEvent] = profStartUpdate;
-  traceEventDurations[UpdateTraceEvent] = (CUR_TIME_MS()) - profStartUpdate;
+  Trace_addEvent(UpdateTraceEvent, profStartUpdate, CUR_TIME_MS());
+
   if (usbEnabled) {
 #if LOG_TRACES
-    logTrace();
-#endif
+    if (loggingTrace) {
+      logTraceChunk();
+      usbResult = usbLoggerFlush();
+    }
+#else
     usbResult = usbLoggerFlush();
+#endif
   }
 }
 
@@ -608,8 +665,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   game = Game_get();
   profStartSort = CUR_TIME_MS();
   Renderer_sortWorldObjects(sortedObjects, game->worldObjectsCount);
-  traceEventDurations[DrawSortTraceEvent] = (CUR_TIME_MS() - profStartSort);
-  traceEventStarts[DrawSortTraceEvent] = profStartSort;
+  Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
 
   gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
   gDPSetCycleType(glistp++, cycleMode > 0.0F ? G_CYC_1CYCLE : G_CYC_2CYCLE);
@@ -773,6 +829,5 @@ void drawWorldObjects(Dynamic* dynamicp) {
     gDPPipeSync(glistp++);
   }
 
-  traceEventDurations[DrawIterTraceEvent] = (CUR_TIME_MS() - profStartIter);
-  traceEventStarts[DrawIterTraceEvent] = profStartIter;
+  Trace_addEvent(DrawIterTraceEvent, profStartIter, CUR_TIME_MS());
 }

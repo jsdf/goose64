@@ -24,7 +24,6 @@ event_names = [
 line_prefix = "TRACE="
 
 output = []
-frame_num = 0
 with open(sys.argv[1]) as fp:
     line = fp.readline()
     while line:
@@ -37,24 +36,31 @@ with open(sys.argv[1]) as fp:
                 print("failed to decode line", line_slice)
                 continue
 
-            frame = {}
-            for packed_value in frame_packed:
-                event_name_index = packed_value[2]
-                frame[event_names[event_name_index]] = packed_value
-
-            line = fp.readline()
-            for event_type, event in frame.items():
-                if event[0] > 0:
+            for event in frame_packed:
+                start, end, event_type_index = event
+                if start > 0:
                     output.append(
                         {
-                            "pid": event_names.index(event_type),
-                            "name": event_type + (" %d" % frame_num),
+                            "pid": event_type_index,
+                            "tid": 0,
+                            "name": event_names[event_type_index],
+                            "cat": event_names[event_type_index],
                             "ph": "X",
-                            "ts": event[0] * 1000,
-                            "dur": event[1] * 1000,
+                            "ts": start * 1000,
+                            "dur": (end - start) * 1000,
                         }
                     )
-            frame_num += 1
+for event_type_index, event_name in enumerate(event_names):
+    output.append(
+        {
+            "pid": event_type_index,
+            "tid": 0,
+            "ph": "M",
+            "cat": "__metadata",
+            "name": "thread_name",
+            "args": {"name": event_names[event_type_index]},
+        }
+    )
 
 
 with open(sys.argv[2], "w") as outfile:

@@ -25,6 +25,8 @@ typedef struct UsbLoggerState {
 
 void usbLoggerGetState(UsbLoggerState* res);
 
+int usbLoggerBufferRemaining();
+
 void ed64Printf(const char* fmt, ...);
 
 #endif /* _FIFO_H */
