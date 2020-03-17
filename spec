@@ -35,7 +35,7 @@ beginseg
   name  "mem_heap"
   flags OBJECT
   after "code"
-  include "om_mem_heap.o"
+  include "mem_heap.o"
 endseg
 
 beginwave

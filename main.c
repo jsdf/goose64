@@ -11,11 +11,11 @@
 NUContData contdata[1]; /* Read data of 1 controller  */
 u8 contPattern;         /* The pattern connected to the controller  */
 
-extern char mem_heep[1024 * 512 * 1];
+extern char mem_heap[1024 * 512 * 1];
 
 int systemHeapMemoryInit(void) {
   /* Reserve system heap memory */
-  if (InitHeap(mem_heep, sizeof(mem_heep)) == -1) {
+  if (InitHeap(mem_heap, sizeof(mem_heap)) == -1) {
     // osSyncPrintf("Heep Memory Alloc Error\n");
     return -1;
   }
