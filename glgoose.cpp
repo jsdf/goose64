@@ -1236,6 +1236,12 @@ void renderScene(void) {
 
   game = Game_get();
 
+  RendererSortDistance* rendererSortDistance = (RendererSortDistance*)malloc(
+      game->worldObjectsCount * sizeof(RendererSortDistance));
+  if (!rendererSortDistance) {
+    debugPrintf("failed to alloc rendererSortDistance");
+  }
+
   // Clear Color and Depth Buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Use the Projection Matrix
@@ -1266,7 +1272,8 @@ void renderScene(void) {
   glGetDoublev(GL_PROJECTION_MATRIX, lastProjection);
   glGetIntegerv(GL_VIEWPORT, lastViewport);
 
-  Renderer_sortWorldObjects(sortedObjects, game->worldObjectsCount);
+  Renderer_sortWorldObjects(game->worldObjects, rendererSortDistance,
+                            game->worldObjectsCount);
 
 #if USE_LIGHTING
   enableLighting();
@@ -1281,7 +1288,7 @@ void renderScene(void) {
 #endif
   // render world objects
   for (i = 0; i < game->worldObjectsCount; i++) {
-    GameObject* obj = sortedObjects[i];
+    GameObject* obj = (rendererSortDistance + i)->obj;
     if (obj->modelType != NoneModel) {
 #if DEBUG_LOG_RENDER
       printf("draw obj %d %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n", obj->id,
@@ -1289,7 +1296,7 @@ void renderScene(void) {
              Vec3d_distanceTo(&(obj->position), &viewPos), obj->position.x,
              obj->position.y, obj->position.z);
 #endif
-      drawGameObject(sortedObjects[i]);
+      drawGameObject(obj);
     }
   }
 
@@ -1397,6 +1404,8 @@ void renderScene(void) {
   ImGui::Render();
   ImGuiIO& io = ImGui::GetIO();
   ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+
+  free(rendererSortDistance);
 
   game->profTimeDraw += (CUR_TIME_MS() - profStartDraw);
   glutSwapBuffers();

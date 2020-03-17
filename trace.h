@@ -29,8 +29,6 @@ typedef struct TraceEvent {
 } TraceEvent;
 
 extern TraceEvent traceEvents[TRACE_EVENT_BUFFER_SIZE];
-int traceEventsCount;
-int tracingEnabled;
 
 extern char* TraceEventTypeStrings[];
 

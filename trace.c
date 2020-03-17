@@ -18,8 +18,8 @@ char* TraceEventTypeStrings[] = {
 };
 
 TraceEvent traceEvents[TRACE_EVENT_BUFFER_SIZE];
-int traceEventsCount = 0;
-int tracingEnabled = FALSE;
+static int traceEventsCount = 0;
+static int tracingEnabled = FALSE;
 
 void Trace_addEvent(short type, float start, float end) {
   if (!tracingEnabled || traceEventsCount == TRACE_EVENT_BUFFER_SIZE) {

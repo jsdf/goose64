@@ -4,11 +4,15 @@
 
 #include "gameobject.h"
 
+typedef struct RendererSortDistance {
+  GameObject* obj;
+  float distance;
+} RendererSortDistance;
+
 int Renderer_isZBufferedGameObject(GameObject* obj);
 int Renderer_isLitGameObject(GameObject* obj);
 int Renderer_isAnimatedGameObject(GameObject* obj);
-float Renderer_gameobjectSortDist(GameObject* obj);
-int Renderer_gameobjectDistComparatorFn(const void* a, const void* b);
-void Renderer_sortWorldObjects(GameObject** sortedObjects,
-                               int sortedObjectsSize);
+void Renderer_sortWorldObjects(GameObject* objects,
+                               RendererSortDistance* result,
+                               int objectsCount);
 #endif /* !RENDERER_H_ */

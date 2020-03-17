@@ -50,19 +50,22 @@ float Renderer_gameobjectSortDist(GameObject* obj) {
   return Vec3d_distanceTo(&obj->position, &Game_get()->viewPos);
 }
 
-int Renderer_gameobjectDistComparatorFn(const void* a, const void* b) {
-  float distA, distB;
-  GameObject *objA, *objB;
-  objA = *((GameObject**)a);
-  objB = *((GameObject**)b);
-  distA = Renderer_gameobjectSortDist(objA);
-  distB = Renderer_gameobjectSortDist(objB);
-  return distB - distA;  // sort far to near
+int Renderer_sortWorldComparatorFn(const void* a, const void* b) {
+  return ((RendererSortDistance*)a)->distance -
+         ((RendererSortDistance*)b)->distance;  // sort far to near
 }
 
-// note the GameObject** (it's an array of pointers)
-void Renderer_sortWorldObjects(GameObject** sortedObjects,
-                               int sortedObjectsSize) {
-  qsort(sortedObjects, sortedObjectsSize, sizeof(GameObject*),
-        Renderer_gameobjectDistComparatorFn);
+void Renderer_sortWorldObjects(GameObject* objects,
+                               RendererSortDistance* result,
+                               int objectsCount) {
+  int i;
+  RendererSortDistance* sortDist;
+  for (i = 0; i < objectsCount; ++i) {
+    sortDist = result + i;
+    sortDist->obj = objects + i;
+    sortDist->distance = Renderer_gameobjectSortDist(sortDist->obj);
+  }
+
+  qsort(result, objectsCount, sizeof(RendererSortDistance),
+        Renderer_sortWorldComparatorFn);
 }

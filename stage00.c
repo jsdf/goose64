@@ -6,7 +6,9 @@
 
 #include <assert.h>
 #include <nusys.h>
-#include <stdlib.h>
+// #include <stdlib.h>
+
+#include <malloc.h>
 
 // game
 #include "animation.h"
@@ -498,7 +500,7 @@ void updateGame00(void) {
     }
 
     if (contdata[0].trigger & U_CBUTTONS) {
-      if (!tracingEnabled) {
+      if (!Trace_isTracing()) {
         startRecordingTrace();
       } else {
         finishRecordingTrace();
@@ -661,10 +663,18 @@ void drawWorldObjects(Dynamic* dynamicp) {
   AnimationBoneAttachment* attachment;
   float profStartSort;
   float profStartIter;
+  RendererSortDistance* rendererSortDistance;
 
   game = Game_get();
   profStartSort = CUR_TIME_MS();
-  Renderer_sortWorldObjects(sortedObjects, game->worldObjectsCount);
+  rendererSortDistance = (RendererSortDistance*)malloc(
+      game->worldObjectsCount * sizeof(RendererSortDistance));
+  if (!rendererSortDistance) {
+    debugPrintf("failed to alloc rendererSortDistance");
+  }
+
+  Renderer_sortWorldObjects(game->worldObjects, rendererSortDistance,
+                            game->worldObjectsCount);
   Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
 
   gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
@@ -687,7 +697,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   profStartIter = CUR_TIME_MS();
   // render world objects
   for (i = 0; i < game->worldObjectsCount; i++) {
-    obj = sortedObjects[i];
+    obj = (rendererSortDistance + i)->obj;
     if (obj->modelType == NoneModel || !obj->visible) {
       continue;
     }
@@ -828,6 +838,8 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
     gDPPipeSync(glistp++);
   }
+
+  free(rendererSortDistance);
 
   Trace_addEvent(DrawIterTraceEvent, profStartIter, CUR_TIME_MS());
 }
