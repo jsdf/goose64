@@ -55,7 +55,7 @@ void stage00(int pendingGfx) {
   float skippedGfxTime, profStartUpdate, profStartMakeDL;
   /* Provide the display process if n or less RCP tasks are processing or
         waiting for the process.  */
-  if (pendingGfx < GFX_TASKS_PER_MAKEDL) {
+  if (pendingGfx < GFX_TASKS_PER_MAKEDL * 2) {
     profStartMakeDL = CUR_TIME_MS();
     makeDL00();
     Trace_addEvent(MainMakeDisplayListTraceEvent, profStartMakeDL,
