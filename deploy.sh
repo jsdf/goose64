@@ -42,6 +42,7 @@ if [ -z "${PROFILE-}" ]; then
   ed64log
 else
   ed64log > trace.log
+  echo ""
   echo "unpacking trace"
   python3 process_trace.py trace.log trace.json
   echo "converting trace to html"

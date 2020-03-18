@@ -1,25 +1,5 @@
 #include "trace.h"
 
-char* TraceEventTypeStrings[] = {
-    "FrameTraceEvent",
-    "CharactersUpdateTraceEvent",
-    "PhysUpdateTraceEvent",
-    "PathfindingTraceEvent",
-    "DrawTraceEvent",
-    "DrawSortTraceEvent",
-    "DrawIterTraceEvent",
-    "PhysWorldCollisionTraceEvent",
-    "PhysObjCollisionTraceEvent",
-    "RSPTasksTraceEvent",
-    "RDPTasksTraceEvent",
-    "SkippedGfxTaskTraceEvent",
-    "UpdateTraceEvent",
-    "CollisionGetTrianglesTraceEvent",
-    "MainMakeDisplayListTraceEvent",
-    "DebugDrawTraceEvent",
-    "MAX_TRACE_EVENT_TYPE",
-};
-
 TraceEvent traceEvents[TRACE_EVENT_BUFFER_SIZE];
 static int traceEventsCount = 0;
 static int tracingEnabled = FALSE;

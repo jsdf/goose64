@@ -7,21 +7,22 @@
 
 typedef enum TraceEventType {
   FrameTraceEvent,
+  SkippedGfxTaskTraceEvent,
+  MainMakeDisplayListTraceEvent,
+  MainUpdateTraceEvent,
+  UpdateTraceEvent,
+  RSPTaskTraceEvent,
+  RDPTaskTraceEvent,
   CharactersUpdateTraceEvent,
-  PhysUpdateTraceEvent,
   PathfindingTraceEvent,
   DrawTraceEvent,
   DrawSortTraceEvent,
   DrawIterTraceEvent,
+  PhysUpdateTraceEvent,
   PhysWorldCollisionTraceEvent,
   PhysObjCollisionTraceEvent,
-  RSPTasksTraceEvent,
-  RDPTasksTraceEvent,
-  SkippedGfxTaskTraceEvent,
-  UpdateTraceEvent,
   CollisionGetTrianglesTraceEvent,
-  MainUpdateTraceEvent,
-  MainMakeDisplayListTraceEvent,
+  CollisionTestMeshSphereTraceEvent,
   DebugDrawTraceEvent,
   MAX_TRACE_EVENT_TYPE,
 } TraceEventType;
@@ -33,8 +34,6 @@ typedef struct TraceEvent {
 } TraceEvent;
 
 extern TraceEvent traceEvents[TRACE_EVENT_BUFFER_SIZE];
-
-extern char* TraceEventTypeStrings[];
 
 void Trace_addEvent(short type, float start, float end);
 void Trace_clear();

@@ -192,11 +192,11 @@ void traceRCP() {
     //      nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
     //         1000.0);
 
-    Trace_addEvent(RSPTasksTraceEvent,
+    Trace_addEvent(RSPTaskTraceEvent,
                    nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f,
                    nuDebTaskPerfPtr->gfxTaskTime[i].rspEnd / 1000.0f);
 
-    Trace_addEvent(RDPTasksTraceEvent,
+    Trace_addEvent(RDPTaskTraceEvent,
                    nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f,
                    nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd / 1000.0f);
   }

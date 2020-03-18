@@ -559,6 +559,7 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
   // AABB sphereAABB;
   int hit, closestHitTriangleIndex, spatialHashResultsCount;
   int spatialHashResults[COLLISION_SPATIAL_HASH_MAX_RESULTS];
+  float profStartTriangleExact;
   closestHitDistSq = FLT_MAX;
   closestHitTriangleIndex = -1;
   objRadiusSq = objRadius * objRadius;
@@ -577,6 +578,7 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
       objCenter, objRadius, spatialHash, spatialHashResults,
       COLLISION_SPATIAL_HASH_MAX_RESULTS);
 
+  profStartTriangleExact = CUR_TIME_MS();
 #if COLLISION_SPATIAL_HASH_PRUNING_ENABLED
   for (k = 0; k < spatialHashResultsCount; k++) {
     i = spatialHashResults[k];
@@ -640,6 +642,8 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 #endif
 #endif
 
+  Trace_addEvent(CollisionTestMeshSphereTraceEvent, profStartTriangleExact,
+                 CUR_TIME_MS());
   return closestHitTriangleIndex > -1;
 }
 
