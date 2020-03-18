@@ -467,9 +467,6 @@ void finishRecordingTrace() {
 /* The game progressing process for stage 0 */
 void updateGame00(void) {
   Game* game;
-  float profStartUpdate;
-
-  profStartUpdate = CUR_TIME_MS();
   game = Game_get();
 
   Vec2d_origin(&input.direction);
@@ -545,8 +542,6 @@ void updateGame00(void) {
   //   usbEnabled = !usbEnabled;
   // }
 
-  Trace_addEvent(UpdateTraceEvent, profStartUpdate, CUR_TIME_MS());
-
   if (usbEnabled) {
 #if LOG_TRACES
     if (loggingTrace) {
@@ -609,6 +604,15 @@ int getAnimationNumModelMeshParts(ModelType modelType) {
   }
 }
 
+int shouldLerpAnimation(ModelType modelType) {
+  switch (modelType) {
+    case GooseModel:
+      return TRUE;
+    default:
+      return FALSE;
+  }
+}
+
 AnimationRange* getCurrentAnimationRange(GameObject* obj) {
   if (obj->modelType == GooseModel) {
     return &goose_anim_ranges[(GooseAnimType)obj->animState->state];
@@ -667,8 +671,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   AnimationInterpolation animInterp;
   AnimationRange* curAnimRange;
   AnimationBoneAttachment* attachment;
-  float profStartSort;
-  float profStartIter;
+  float profStartSort, profStartIter, profStartAnim, profStartAnimLerp;
   RendererSortDistance* rendererSortDistance;
 
   game = Game_get();
@@ -777,20 +780,35 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
     if (Renderer_isAnimatedGameObject(obj)) {
       // case for multi-part objects using rigid body animation
+      profStartAnim = CUR_TIME_MS();
 
       modelMeshParts = getAnimationNumModelMeshParts(obj->modelType);
       curAnimRange = getCurrentAnimationRange(obj);
       AnimationInterpolation_calc(&animInterp, obj->animState, curAnimRange);
 
       for (modelMeshIdx = 0; modelMeshIdx < modelMeshParts; ++modelMeshIdx) {
-        AnimationFrame_lerp(
-            &animInterp,  // result of AnimationInterpolation_calc()
-            getAnimData(
-                obj->modelType),  // pointer to start of AnimationFrame list
-            modelMeshParts,       // num bones in rig used by animData
-            modelMeshIdx,  // index of bone in rig to produce transform for
-            &animFrame     // the resultant interpolated animation frame
-        );
+        profStartAnimLerp = CUR_TIME_MS();
+        // lerping takes about 0.2ms per bone
+        if (shouldLerpAnimation(obj->modelType)) {
+          AnimationFrame_lerp(
+              &animInterp,  // result of AnimationInterpolation_calc()
+              getAnimData(
+                  obj->modelType),  // pointer to start of AnimationFrame list
+              modelMeshParts,       // num bones in rig used by animData
+              modelMeshIdx,  // index of bone in rig to produce transform for
+              &animFrame     // the resultant interpolated animation frame
+          );
+        } else {
+          AnimationFrame_get(
+              &animInterp,  // result of AnimationInterpolation_calc()
+              getAnimData(
+                  obj->modelType),  // pointer to start of AnimationFrame list
+              modelMeshParts,       // num bones in rig used by animData
+              modelMeshIdx,  // index of bone in rig to produce transform for
+              &animFrame     // the resultant interpolated animation frame
+          );
+        }
+        Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp, CUR_TIME_MS());
 
         // push matrix with the blender to n64 coord rotation, then mulitply
         // it by the model's rotation and offset
@@ -842,6 +860,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
         gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
       }
+      Trace_addEvent(DrawAnimTraceEvent, profStartAnim, CUR_TIME_MS());
     } else {
       // case for simple gameobjects with no moving sub-parts
       modelDisplayList = getModelDisplayList(obj->modelType);

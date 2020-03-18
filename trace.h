@@ -10,7 +10,6 @@ typedef enum TraceEventType {
   SkippedGfxTaskTraceEvent,
   MainMakeDisplayListTraceEvent,
   MainUpdateTraceEvent,
-  UpdateTraceEvent,
   RSPTaskTraceEvent,
   RDPTaskTraceEvent,
   CharactersUpdateTraceEvent,
@@ -24,6 +23,8 @@ typedef enum TraceEventType {
   CollisionGetTrianglesTraceEvent,
   CollisionTestMeshSphereTraceEvent,
   DebugDrawTraceEvent,
+  DrawAnimTraceEvent,
+  AnimLerpTraceEvent,
   MAX_TRACE_EVENT_TYPE,
 } TraceEventType;
 
