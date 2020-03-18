@@ -9,6 +9,7 @@
 // #include <stdlib.h>
 
 #include <malloc.h>
+#include <math.h>
 
 // game
 #include "animation.h"
@@ -53,6 +54,7 @@
 #define CONSOLE_SHOW_PROFILING 1
 #define CONSOLE_SHOW_RCP_TASKS 1
 #define LOG_TRACES 1
+#define CONTROLLER_DEAD_ZONE 0.1
 
 typedef enum RenderMode {
   ToonFlatShadingRenderMode,
@@ -518,6 +520,10 @@ void updateGame00(void) {
     // }
     input.direction.x = -contdata->stick_x / 61.0F;
     input.direction.y = contdata->stick_y / 63.0F;
+    if (fabsf(input.direction.x) < CONTROLLER_DEAD_ZONE)
+      input.direction.x = 0;
+    if (fabsf(input.direction.y) < CONTROLLER_DEAD_ZONE)
+      input.direction.y = 0;
     if (Vec2d_length(&input.direction) > 1.0F) {
       Vec2d_normalise(&input.direction);
     }
