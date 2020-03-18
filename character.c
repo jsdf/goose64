@@ -29,7 +29,7 @@
 #define CHARACTER_NEAR_OBJ_DROP_DIST 60.0f
 #define CHARACTER_NEAR_OBJ_PICKUP_DIST 40.0f
 #define CHARACTER_NEAR_OBJ_STEAL_DIST 60.0f
-#define CHARACTER_ITEM_NEAR_HOME_DIST 60.0f
+#define CHARACTER_ITEM_NEAR_HOME_DIST 80.0f
 #define CHARACTER_SIGHT_RANGE 800.0f
 #define CHARACTER_PICKUP_COOLDOWN 120
 #define CHARACTER_MIN_IDLE_TIME 120
@@ -622,7 +622,7 @@ int Character_isCloseToAndFacing(Character* self,
 // in this state the charcter is trying to go to a 'default activity' and do it
 void Character_updateDefaultActivityState(Character* self, Game* game) {
   if (!Character_isCloseToAndFacing(self, &self->defaultActivityLocation,
-                                    CHARACTER_NEAR_OBJ_DROP_DIST)) {
+                                    CHARACTER_ITEM_NEAR_HOME_DIST)) {
     // go there
     Character_goToTarget(self, game, &self->defaultActivityLocation,
                          CHARACTER_SPEED_MULTIPLIER_WALK);
