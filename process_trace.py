@@ -1,7 +1,6 @@
 import sys
 import json
 
-
 event_names = [
     # copy from trace.c
     "FrameTraceEvent",
@@ -17,6 +16,10 @@ event_names = [
     "RDPTasksTraceEvent",
     "SkippedGfxTaskTraceEvent",
     "UpdateTraceEvent",
+    "CollisionGetTrianglesTraceEvent",
+    "MainUpdateTraceEvent",
+    "MainMakeDisplayListTraceEvent",
+    "DebugDrawTraceEvent",
     "MAX_TRACE_EVENT_TYPE",
 ]
 

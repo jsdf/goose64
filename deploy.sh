@@ -42,7 +42,9 @@ if [ -z "${PROFILE-}" ]; then
   ed64log
 else
   ed64log > trace.log
+  echo "unpacking trace"
   python3 process_trace.py trace.log trace.json
+  echo "converting trace to html"
   $CATAPULT/tracing/bin/trace2html trace.json --output=trace.html
   open trace.html
 fi

@@ -5,6 +5,7 @@
 #include "constants.h"
 
 #include "collision.h"
+#include "trace.h"
 #include "vec3d.h"
 
 #ifndef __N64__
@@ -892,8 +893,11 @@ int SpatialHash_getTriangles(Vec3d* position,
                              int* results,
                              int maxResults) {
   int minCellX, minCellY, maxCellX, maxCellY, cellX, cellY;
-
   GetTrianglesVisitBucketState traversalState;
+  float profStartCollisionGetTriangles;
+
+  profStartCollisionGetTriangles = CUR_TIME_MS();
+
   traversalState.spatialHash = spatialHash;
   traversalState.results = results;
   traversalState.maxResults = maxResults;
@@ -923,5 +927,7 @@ int SpatialHash_getTriangles(Vec3d* position,
   }
 #endif
 
+  Trace_addEvent(CollisionGetTrianglesTraceEvent,
+                 profStartCollisionGetTriangles, CUR_TIME_MS());
   return traversalState.resultsFound;
 }

@@ -49,11 +49,9 @@
 #include "ed64io_everdrive.h"
 #include "ed64io_usb.h"
 
-#define CONSOLE 1
 #define CONSOLE_EVERDRIVE_DEBUG 0
 #define CONSOLE_SHOW_PROFILING 1
 #define CONSOLE_SHOW_RCP_TASKS 1
-#define NU_PERF_BAR 0
 #define LOG_TRACES 1
 
 typedef enum RenderMode {
@@ -209,10 +207,12 @@ void traceRCP() {
 void makeDL00() {
   Game* game;
   Dynamic* dynamicp;
-  char conbuf[100];
   int consoleOffset;
   float curTime;
-  float profStartDraw, profEndDraw;
+  float profStartDraw, profEndDraw, profStartDebugDraw;
+#if CONSOLE
+  char conbuf[100];
+#endif
 
   game = Game_get();
   consoleOffset = 20;
@@ -265,21 +265,26 @@ void makeDL00() {
 
   assert((glistp - gfx_glist[gfx_gtask_no]) < GFX_GLIST_LEN);
 
-  profEndDraw = CUR_TIME_MS();
-  Trace_addEvent(DrawTraceEvent, profStartDraw, profEndDraw);
-  game->profTimeDraw += profEndDraw - profStartDraw;
-
   /* Activate the task and (maybe)
      switch display buffers */
   nuGfxTaskStart(&gfx_glist[gfx_gtask_no][0],
                  (s32)(glistp - gfx_glist[gfx_gtask_no]) * sizeof(Gfx),
                  NU_GFX_UCODE_F3DEX,
-#if NU_PERF_BAR || CONSOLE
+#if CONSOLE || NU_PERF_BAR
                  NU_SC_NOSWAPBUFFER
 #else
                  NU_SC_SWAPBUFFER
 #endif
   );
+
+  /* Switch display list buffers */
+  gfx_gtask_no ^= 1;
+
+  profEndDraw = CUR_TIME_MS();
+  Trace_addEvent(DrawTraceEvent, profStartDraw, profEndDraw);
+  game->profTimeDraw += profEndDraw - profStartDraw;
+
+  profStartDebugDraw = CUR_TIME_MS();
 
   traceRCP();
 
@@ -370,10 +375,9 @@ void makeDL00() {
 
   /* Display characters on the frame buffer */
   nuDebConDisp(NU_SC_SWAPBUFFER);
-#endif
+#endif  // #if CONSOLE
 
-  /* Switch display list buffers */
-  gfx_gtask_no ^= 1;
+  Trace_addEvent(DebugDrawTraceEvent, profStartDebugDraw, CUR_TIME_MS());
 }
 
 void checkDebugControls(Game* game) {
@@ -500,10 +504,12 @@ void updateGame00(void) {
     }
 
     if (contdata[0].trigger & U_CBUTTONS) {
-      if (!Trace_isTracing()) {
-        startRecordingTrace();
-      } else {
-        finishRecordingTrace();
+      if (!loggingTrace) {
+        if (!Trace_isTracing()) {
+          startRecordingTrace();
+        } else {
+          finishRecordingTrace();
+        }
       }
     }
     // if (contdata[0].button & U_CBUTTONS) {
@@ -688,6 +694,8 @@ void drawWorldObjects(Dynamic* dynamicp) {
     gSPClearGeometryMode(glistp++, G_ZBUFFER);
   }
 
+  gSPSetLights0(glistp++, amb_light);
+
   // setup view
   gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
             G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
@@ -707,11 +715,18 @@ void drawWorldObjects(Dynamic* dynamicp) {
     gDPSetTextureFilter(glistp++, G_TF_BILERP);
     gDPSetTexturePersp(glistp++, G_TP_PERSP);
 
-    if (getLightingType(obj) == OnlyAmbientLighting) {
-      gSPSetLights0(glistp++, amb_light);
+    switch (renderModeSetting) {
+      case TextureAndLightingRenderMode:
+      case LightingNoTextureRenderMode:
+        if (getLightingType(obj) == OnlyAmbientLighting) {
+          gSPSetLights0(glistp++, amb_light);
 
-    } else {
-      gSPSetLights1(glistp++, sun_light);
+        } else {
+          gSPSetLights1(glistp++, sun_light);
+        }
+        break;
+      default:
+        break;
     }
 
     switch (renderModeSetting) {

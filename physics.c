@@ -205,8 +205,8 @@ int PhysBehavior_collisionResponseStep(PhysBody* body,
                                        PhysBody* pool,
                                        int numInPool) {
   int hasCollision;
-  hasCollision = FALSE;
 
+  hasCollision = FALSE;
   hasCollision =
       hasCollision || PhysBehavior_worldCollisionResponseStep(body, world);
   return hasCollision;
@@ -217,7 +217,10 @@ void PhysBehavior_collisionResponse(PhysWorldData* world,
                                     int numBodies) {
   int i, k, hasAnyCollision;
   PhysBody* body;
+  float profStartObjCollision;
+  float profStartWorldCollision;
 
+  profStartObjCollision = CUR_TIME_MS();
   // int floorHeight;
   // floorHeight = 0.0;
   for (k = 0, body = bodies; k < numBodies; k++, body++) {
@@ -227,10 +230,14 @@ void PhysBehavior_collisionResponse(PhysWorldData* world,
       PhysBehavior_bodyBodyCollisionResponse(body, bodies, numBodies);
     }
   }
+  Trace_addEvent(PhysObjCollisionTraceEvent, profStartObjCollision,
+                 CUR_TIME_MS());
+
   // run multiple iterations, because the response to a collision can create
   // another collision
   for (i = 0; i < PHYS_MAX_COLLISION_ITERATIONS; ++i) {
     hasAnyCollision = FALSE;
+    profStartWorldCollision = CUR_TIME_MS();
     for (k = 0, body = bodies; k < numBodies; k++, body++) {
       if (body->enabled) {
         hasAnyCollision =
@@ -238,6 +245,8 @@ void PhysBehavior_collisionResponse(PhysWorldData* world,
             PhysBehavior_collisionResponseStep(body, world, bodies, numBodies);
       }
     }
+    Trace_addEvent(PhysWorldCollisionTraceEvent, profStartWorldCollision,
+                   CUR_TIME_MS());
     if (!hasAnyCollision) {
       break;
     }
@@ -386,18 +395,11 @@ void PhysBody_integrateBodies(PhysBody* bodies,
                               PhysState* physics) {
   PhysBody* body;
   int i;
-  float profStartObjCollision;
-  float profStartWorldCollision;
-
-  profStartObjCollision = CUR_TIME_MS();
   for (i = 0, body = bodies; i < numBodies; i++, body++) {
     if (body->enabled) {
       PhysBody_update(body, dt, drag, bodies, numBodies, physics);
     }
   }
-
-  Trace_addEvent(PhysObjCollisionTraceEvent, profStartObjCollision,
-                 CUR_TIME_MS());
 
   for (i = 0, body = bodies; i < numBodies; i++, body++) {
     if (body->enabled /*&& !body->controlled*/) {
@@ -409,12 +411,9 @@ void PhysBody_integrateBodies(PhysBody* bodies,
     }
   }
 
-  profStartWorldCollision = CUR_TIME_MS();
   // do this after so we can fix any world penetration resulting from motion
   // integration
   PhysBehavior_collisionResponse(physics->worldData, bodies, numBodies);
-  Trace_addEvent(PhysWorldCollisionTraceEvent, profStartWorldCollision,
-                 CUR_TIME_MS());
 }
 
 void PhysState_step(PhysState* physics,

@@ -14,6 +14,9 @@ char* TraceEventTypeStrings[] = {
     "RDPTasksTraceEvent",
     "SkippedGfxTaskTraceEvent",
     "UpdateTraceEvent",
+    "CollisionGetTrianglesTraceEvent",
+    "MainMakeDisplayListTraceEvent",
+    "DebugDrawTraceEvent",
     "MAX_TRACE_EVENT_TYPE",
 };
 

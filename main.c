@@ -52,17 +52,22 @@ void mainproc(void) {
   waiting for the process.
 -----------------------------------------------------------------------------*/
 void stage00(int pendingGfx) {
-  float skippedGfxTime;
+  float skippedGfxTime, profStartUpdate, profStartMakeDL;
   /* Provide the display process if n or less RCP tasks are processing or
         waiting for the process.  */
-  if (pendingGfx < 4) {  // TODO: sync with num tasks in stage00.c
+  if (pendingGfx < GFX_TASKS_PER_MAKEDL) {
+    profStartMakeDL = CUR_TIME_MS();
     makeDL00();
+    Trace_addEvent(MainMakeDisplayListTraceEvent, profStartMakeDL,
+                   CUR_TIME_MS());
   } else {
-    skippedGfxTime = OS_CYCLES_TO_USEC(osGetTime()) / 1000.0;
+    skippedGfxTime = CUR_TIME_MS();
     Trace_addEvent(SkippedGfxTaskTraceEvent, skippedGfxTime,
                    skippedGfxTime + 16.0f);
   }
 
+  profStartUpdate = CUR_TIME_MS();
   /* The process of game progress  */
   updateGame00();
+  Trace_addEvent(MainUpdateTraceEvent, profStartUpdate, CUR_TIME_MS());
 }
