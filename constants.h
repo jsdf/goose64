@@ -39,8 +39,6 @@
 
 #define MEM_HEAP_BYTES 524288
 
-#define USE_PHYSICS_MOVEMENT 0
-
 #ifndef TRUE
 #define TRUE 1
 #endif

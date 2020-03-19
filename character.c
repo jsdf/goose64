@@ -14,11 +14,7 @@
 
 #include "characteranimtypes.h"
 
-#if USE_PHYSICS_MOVEMENT
-#define CHARACTER_SPEED 0.1F
-#else
 #define CHARACTER_SPEED 4.1F
-#endif
 
 #define CHARACTER_ENABLED 1
 #define CHARACTER_FOLLOW_PLAYER 0

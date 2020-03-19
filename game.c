@@ -27,7 +27,6 @@
 #include "constants.h"
 
 #define GENERATE_DEBUG_BODIES 0
-#define DEBUG_PHYSICS_MOTION_SYNC 0
 
 static Game game;
 
@@ -214,37 +213,10 @@ void Game_updatePhysics(Game* game) {
   for (i = 0, body = game->physicsBodies; i < game->physicsBodiesCount;
        ++i, body++) {
     obj = Game_getObjectByID(body->id);
-#if USE_PHYSICS_MOVEMENT
-    body->position = obj->position;
-#else
-
-#ifndef __N64__
-#if DEBUG_PHYSICS_MOTION_SYNC
-    char buffer[120];
-    if (body->id == 2) {  // use
-      printf("applying force to body %d\n", body->id);
-      PhysBody_toString(body, buffer);
-      printf("Before: %s\n", buffer);
-    }
-#endif
-#endif
 
     Game_getObjCenter(obj, &positionDelta);
     Vec3d_sub(&positionDelta, &body->position);
     PhysBody_translateWithoutForce(body, &positionDelta);
-
-#ifndef __N64__
-#if DEBUG_PHYSICS_MOTION_SYNC
-    if (body->id == 2) {
-      PhysBody_toString(body, buffer);
-      printf("After: %s\n", buffer);
-      Vec3d_toString(&positionDelta, buffer);
-      printf("positionDelta: %s\n", buffer);
-    }
-#endif
-#endif
-
-#endif
   }
 
   // simulate physics
