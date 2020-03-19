@@ -93,3 +93,5 @@ trace.log
 trace.json
 trace.html
 trace_*.html
+
+buildcache.json
