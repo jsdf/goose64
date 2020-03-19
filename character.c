@@ -130,16 +130,6 @@ float Character_topDownAngleDeltaToPos(Character* self, Vec3d* position) {
   return Character_angleDeltaMag(self->obj->rotation.y, angleToPos);
 }
 
-void Character_directionFromTopDownAngle(float angle, Vec3d* result) {
-  Vec2d direction2d;
-
-  Vec2d_fromAngle(&direction2d, angle);
-
-  result->x = direction2d.x;
-  result->y = 0;
-  result->z = -direction2d.y;
-}
-
 float Character_topDownAngleMagToObj(Character* self, GameObject* obj) {
   float angleFromHeadingToPos;
   angleFromHeadingToPos =
@@ -245,7 +235,7 @@ void Character_moveTowards(Character* self,
                             CHARACTER_FACING_MOVEMENT_TARGET_ANGLE)) /
                      90.0f);
   self->speedScaleForHeading = speedScaleForHeading;
-  Character_directionFromTopDownAngle(degToRad(self->obj->rotation.y),
+  GameUtils_directionFromTopDownAngle(degToRad(self->obj->rotation.y),
                                       &headingDirection);
 
   Vec3d_copyFrom(&movement, &headingDirection);

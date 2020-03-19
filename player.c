@@ -46,32 +46,55 @@ void Player_setVisibleItemAttachment(Player* self, ModelType modelType) {
   self->animState.attachment.modelType = modelType;
 }
 
+float Player_move(Player* self, Input* input, Game* game) {
+  Vec3d inputDirection, updatedHeading, playerMovement;
+  float destAngle, movementMagnitude, movementSpeedRatio,
+      resultantMovementSpeed;
+  GameObject* goose;
+
+  goose = self->goose;
+
+  movementSpeedRatio = (input->run ? 1.0 : GOOSE_WALK_SPEED_RATIO);
+
+  Vec3d_init(&inputDirection, input->direction.x, 0.0F, input->direction.y);
+  movementMagnitude = Vec3d_mag(&inputDirection);
+  // keep the magnitude to re-apply after we get the updated heading
+
+  // apply rotation (less if running) and get updated heading
+  if (Vec2d_lengthSquared(&input->direction) > 0) {
+    destAngle = 360.0F - radToDeg(Vec2d_angle(&input->direction));
+    // rotate towards dest, but with a speed limit
+    goose->rotation.y = GameUtils_rotateTowardsClamped(
+        goose->rotation.y, destAngle,
+        (input->run ? 0.1 : 1.0) * GOOSE_MAX_TURN_SPEED);
+  }
+
+  GameUtils_directionFromTopDownAngle(degToRad(goose->rotation.y),
+                                      &updatedHeading);
+
+  // move based on heading
+  playerMovement = updatedHeading;
+  // prevent moving too fast diagonally
+  Vec3d_normalise(&playerMovement);
+
+  // movement
+  Vec3d_mulScalar(&playerMovement,
+                  movementMagnitude * GOOSE_SPEED * movementSpeedRatio);
+
+  Vec3d_add(&goose->position, &playerMovement);
+  resultantMovementSpeed = Vec3d_mag(&playerMovement);
+  resultantMovementSpeed /= PLAYER_WALK_ANIM_MOVEMENT_DIVISOR;
+
+  return resultantMovementSpeed;
+}
+
 void Player_update(Player* self, Input* input, Game* game) {
-  Vec3d playerMovement, playerMovementScaled;
-  float destAngle, movementSpeedRatio, resultantMovementSpeed;
+  float resultantMovementSpeed;
   GameObject* goose;
   int i;
   Item* item;
-
-  movementSpeedRatio = (input->run ? 1.0 : GOOSE_WALK_SPEED_RATIO);
   goose = self->goose;
-
-  // prevent moving too fast diagonally
-  if (Vec2d_length(&input->direction) > 1.0) {
-    Vec2d_normalise(&input->direction);
-  }
-
-  // movement
-  Vec3d_init(&playerMovement, input->direction.x * movementSpeedRatio, 0.0F,
-             input->direction.y * movementSpeedRatio);
-  playerMovementScaled = playerMovement;
-
-  Vec3d_mulScalar(&playerMovementScaled, GOOSE_SPEED);
-
-  Vec3d_add(&goose->position, &playerMovementScaled);
-  // PhysBody_translateWithoutForce(goose->physBody, &playerMovementScaled);
-  resultantMovementSpeed = Vec3d_mag(&playerMovementScaled);
-  resultantMovementSpeed /= PLAYER_WALK_ANIM_MOVEMENT_DIVISOR;
+  resultantMovementSpeed = Player_move(self, input, game);
 
   // update animation
   if (resultantMovementSpeed > 0.001) {
@@ -96,14 +119,6 @@ void Player_update(Player* self, Input* input, Game* game) {
                                     self->itemHolder.heldItem->obj->modelType);
   } else {
     Player_setVisibleItemAttachment(self, NoneModel);
-  }
-
-  // rot
-  if (Vec2d_lengthSquared(&input->direction) > 0) {
-    destAngle = 360.0F - radToDeg(Vec2d_angle(&input->direction));
-    // rotate towards dest, but with a speed limit
-    goose->rotation.y = GameUtils_rotateTowardsClamped(
-        goose->rotation.y, destAngle, GOOSE_MAX_TURN_SPEED);
   }
 
   if (self->itemHolder.heldItem) {
