@@ -52,13 +52,13 @@ void mainproc(void) {
   waiting for the process.
 -----------------------------------------------------------------------------*/
 void stage00(int pendingGfx) {
-  float skippedGfxTime, profStartUpdate, profStartMakeDL;
+  float skippedGfxTime, profStartUpdate, profStartFrame, profEndFrame;
+  profStartFrame = CUR_TIME_MS();
   /* Provide the display process if n or less RCP tasks are processing or
         waiting for the process.  */
   if (pendingGfx < GFX_TASKS_PER_MAKEDL * 2) {
-    profStartMakeDL = CUR_TIME_MS();
     makeDL00();
-    Trace_addEvent(MainMakeDisplayListTraceEvent, profStartMakeDL,
+    Trace_addEvent(MainMakeDisplayListTraceEvent, profStartFrame,
                    CUR_TIME_MS());
   } else {
     skippedGfxTime = CUR_TIME_MS();
@@ -69,5 +69,7 @@ void stage00(int pendingGfx) {
   profStartUpdate = CUR_TIME_MS();
   /* The process of game progress  */
   updateGame00();
-  Trace_addEvent(MainUpdateTraceEvent, profStartUpdate, CUR_TIME_MS());
+  profEndFrame = CUR_TIME_MS();
+  Trace_addEvent(MainCPUTraceEvent, profStartFrame, profEndFrame);
+  Trace_addEvent(MainUpdateTraceEvent, profStartUpdate, profEndFrame);
 }

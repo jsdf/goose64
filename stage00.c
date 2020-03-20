@@ -14,6 +14,7 @@
 // game
 #include "animation.h"
 #include "constants.h"
+#include "frustum.h"
 #include "game.h"
 #include "gameobject.h"
 #include "graphic.h"
@@ -51,10 +52,12 @@
 #include "ed64io_usb.h"
 
 #define CONSOLE_EVERDRIVE_DEBUG 0
-#define CONSOLE_SHOW_PROFILING 1
+#define CONSOLE_SHOW_PROFILING 0
+#define CONSOLE_SHOW_CULLING 1
 #define CONSOLE_SHOW_RCP_TASKS 1
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
+#define FRUSTUM_CULLING 1
 
 typedef enum RenderMode {
   ToonFlatShadingRenderMode,
@@ -72,6 +75,10 @@ static Input input;
 static u16 perspNorm;
 static u32 nearPlane; /* Near Plane */
 static u32 farPlane;  /* Far Plane */
+static Frustum frustum;
+static float aspect = (f32)SCREEN_WD / (f32)SCREEN_HT;
+static float fovy = 45.0f;
+static Vec3d upVector = {0.0f, 1.0f, 0.0f};
 
 /* frame counter */
 float frameCounterLastTime;
@@ -85,6 +92,8 @@ float profAvgDraw;
 float profAvgPath;
 float lastFrameTime;
 
+static int frustumCulled;
+
 static int usbEnabled;
 static int usbResult;
 static UsbLoggerState usbLoggerState;
@@ -94,7 +103,6 @@ static int loggingTrace = FALSE;
 
 static float cycleMode;
 static RenderMode renderModeSetting;
-static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 PhysWorldData physWorldData = {
     university_map_collision_collision_mesh, UNIVERSITY_MAP_COLLISION_LENGTH,
     &university_map_collision_collision_mesh_hash,
@@ -150,12 +158,6 @@ void initStage00() {
 
   game->pathfindingGraph = &university_map_graph;
   game->pathfindingState = &university_map_graph_pathfinding_state;
-
-  // init sortedObjects pointer array, used for painter's algorithm rendering
-  for (i = 0, obj = game->worldObjects; i < game->worldObjectsCount;
-       i++, obj++) {
-    sortedObjects[i] = obj;
-  }
 
   lastFrameTime = CUR_TIME_MS();
   evd_init();
@@ -242,10 +244,16 @@ void makeDL00() {
   /* Clear the frame and Z-buffer */
   gfxClearCfb();
 
+  Frustum_setCamInternals(&frustum, fovy, aspect, nearPlane, farPlane);
+
   /* projection, viewing, modeling matrix set */
-  guPerspective(&dynamicp->projection, &perspNorm, 45,
-                (f32)SCREEN_WD / (f32)SCREEN_HT, nearPlane, farPlane, 1.0);
+  guPerspective(&dynamicp->projection, &perspNorm, 45, aspect, nearPlane,
+                farPlane, 1.0);
   gSPPerspNormalize(glistp++, perspNorm);
+
+  gSPClipRatio(glistp++, FRUSTRATIO_6);
+
+  Frustum_setCamDef(&frustum, &game->viewPos, &game->viewTarget, &upVector);
 
   if (game->freeView) {
     guPosition(&dynamicp->camera,
@@ -257,7 +265,7 @@ void makeDL00() {
   } else {
     guLookAt(&dynamicp->camera, game->viewPos.x, game->viewPos.y,
              game->viewPos.z, game->viewTarget.x, game->viewTarget.y,
-             game->viewTarget.z, 0.0f, 1.0f, 0.0f);
+             game->viewTarget.z, upVector.x, upVector.y, upVector.z);
   }
 
   drawWorldObjects(dynamicp);
@@ -346,6 +354,11 @@ void makeDL00() {
           nuDebConCPuts(0, conbuf);
         }
       }
+#endif
+#if CONSOLE_SHOW_CULLING
+      nuDebConTextPos(0, 4, consoleOffset++);
+      sprintf(conbuf, "frculled=%d", frustumCulled);
+      nuDebConCPuts(0, conbuf);
 #endif
 
       // debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
@@ -682,6 +695,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
   game = Game_get();
   profStartSort = CUR_TIME_MS();
+  frustumCulled = 0;
   rendererSortDistance = (RendererSortDistance*)malloc(
       game->worldObjectsCount * sizeof(RendererSortDistance));
   if (!rendererSortDistance) {
@@ -718,6 +732,22 @@ void drawWorldObjects(Dynamic* dynamicp) {
     if (obj->modelType == NoneModel || !obj->visible) {
       continue;
     }
+
+#if FRUSTUM_CULLING
+    {
+      AABB* localAABB = university_map_bounds + obj->id;
+      AABB worldAABB = *localAABB;
+
+      Vec3d_add(&worldAABB.min, &obj->position);
+      Vec3d_add(&worldAABB.max, &obj->position);
+
+      if (Frustum_boxInFrustum(&frustum, &worldAABB) == OutsideFrustum) {
+        // cull this object
+        frustumCulled++;
+        continue;
+      }
+    }
+#endif
 
     // render textured models
     gSPTexture(glistp++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);

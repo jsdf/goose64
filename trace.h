@@ -8,6 +8,7 @@
 typedef enum TraceEventType {
   FrameTraceEvent,
   SkippedGfxTaskTraceEvent,
+  MainCPUTraceEvent,
   MainMakeDisplayListTraceEvent,
   MainUpdateTraceEvent,
   RSPTaskTraceEvent,

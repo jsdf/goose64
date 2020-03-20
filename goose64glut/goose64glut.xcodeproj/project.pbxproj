@@ -28,6 +28,7 @@
 		73735E5C235FEB930048C9EC /* modeltype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5B235FEB930048C9EC /* modeltype.cpp */; };
 		73735E5E23600F730048C9EC /* characterstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5D23600F730048C9EC /* characterstate.cpp */; };
 		73735E6023600FD00048C9EC /* item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5F23600FD00048C9EC /* item.cpp */; };
+		73996978242497AC00E671B5 /* frustum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73996976242497AC00E671B5 /* frustum.cpp */; };
 		73A093502389088400C53E85 /* physics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73A0934E2389088400C53E85 /* physics.cpp */; };
 		73A6BA11241F37B100C67C12 /* trace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73A6BA0F241F37B100C67C12 /* trace.cpp */; };
 		73D1784E23BF173800AC253C /* university_map_collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73D1784D23BF173700AC253C /* university_map_collision.cpp */; };
@@ -96,6 +97,8 @@
 		73735E5F23600FD00048C9EC /* item.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = item.cpp; path = ../item.cpp; sourceTree = "<group>"; };
 		73735E6123600FF10048C9EC /* item.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = item.h; path = ../item.h; sourceTree = "<group>"; };
 		73881964234D854C0057630E /* goose64glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = goose64glut; sourceTree = BUILT_PRODUCTS_DIR; };
+		73996976242497AC00E671B5 /* frustum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = frustum.cpp; path = ../frustum.cpp; sourceTree = "<group>"; };
+		73996977242497AC00E671B5 /* frustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = frustum.h; path = ../frustum.h; sourceTree = "<group>"; };
 		73A0934E2389088400C53E85 /* physics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = physics.cpp; path = ../physics.cpp; sourceTree = "<group>"; };
 		73A0934F2389088400C53E85 /* physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = physics.h; path = ../physics.h; sourceTree = "<group>"; };
 		73A2C3C42362720B0036BCCB /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
@@ -170,6 +173,8 @@
 				73A6BA10241F37B100C67C12 /* trace.h */,
 				732EC5282412219700CCCA81 /* compat.cpp */,
 				732EC5292412219800CCCA81 /* compat.h */,
+				73996976242497AC00E671B5 /* frustum.cpp */,
+				73996977242497AC00E671B5 /* frustum.h */,
 				732EC52B2412275D00CCCA81 /* university_map_graph.cpp */,
 				732EC52C2412275D00CCCA81 /* university_map_graph.h */,
 				73E1067123B483A300DE8673 /* collision.cpp */,
@@ -294,6 +299,7 @@
 				733266EB235EAB8200907B30 /* input.cpp in Sources */,
 				733266EA235EAB8200907B30 /* game.cpp in Sources */,
 				73E1066A23B0146600DE8673 /* imgui_impl_glut.cpp in Sources */,
+				73996978242497AC00E671B5 /* frustum.cpp in Sources */,
 				73E1067023B014A600DE8673 /* imgui_draw.cpp in Sources */,
 				73735E58235FE9C40048C9EC /* player.cpp in Sources */,
 				73A6BA11241F37B100C67C12 /* trace.cpp in Sources */,

@@ -28,8 +28,10 @@
 #include "character.h"
 #include "collision.h"
 #include "constants.h"
+#include "frustum.h"
 #include "game.h"
 #include "gameobject.h"
+#include "gameutils.h"
 #include "gl/objloader.hpp"
 #include "gl/texture.hpp"
 #include "input.h"
@@ -37,10 +39,11 @@
 #include "pathfinding.h"
 #include "player.h"
 #include "renderer.h"
+#include "vec3d.h"
+
 #include "university_map.h"
 #include "university_map_collision.h"
 #include "university_map_graph.h"
-#include "vec3d.h"
 
 #include "character_anim.h"
 #include "goose_anim.h"
@@ -57,18 +60,21 @@
 #define DEBUG_ANIMATION_MORE 0
 #define DEBUG_ATTACHMENT 0
 
-#define DEBUG_PHYSICS 1
+#define DEBUG_PHYSICS 0
 
 #define DEBUG_COLLISION_MESH 0
 #define DEBUG_COLLISION_MESH_MORE 0
 #define DEBUG_COLLISION_SPATIAL_HASH 0
 #define DEBUG_COLLISION_SPATIAL_HASH_RAYCAST 0
 #define DEBUG_COLLISION_SPATIAL_HASH_TRIS 0
-#define DEBUG_COLLISION_MESH_AABB 1
+#define DEBUG_COLLISION_MESH_AABB 0
 
-#define DEBUG_PATHFINDING_GRAPH 1
-#define DEBUG_PATHFINDING 1
-#define DEBUG_PATHFINDING_AUTO 1
+#define DEBUG_AABB 1
+#define DEBUG_FRUSTUM 1
+
+#define DEBUG_PATHFINDING_GRAPH 0
+#define DEBUG_PATHFINDING 0
+#define DEBUG_PATHFINDING_AUTO 0
 
 #define DEBUG_PROFILING 1
 
@@ -87,6 +93,14 @@ float cameraLX = 0.0f, cameraLZ = -1.0f;
 Vec3d viewPos = {0.0f, 50.0f, 0.0f};
 // freeview camera angle
 float cameraAngle = 180.0f;
+bool enableControlsInFreeView = false;
+
+static Frustum frustum;
+static float fovy = 45.0f;
+static float aspect = 800 / 600;
+static Vec3d upVector = {0.0f, 1.0f, 0.0f};
+static float nearPlane = 10.0f;
+static float farPlane = 10000.0f;
 
 bool keysDown[127];
 Input input;
@@ -135,9 +149,6 @@ char* CharacterMeshTypeStrings[] = {
     "gkthigh.l_gkthigh_lmesh",      // characterthigh_l_characterthigh_lmesh
     "gkthigh.r_gkthigh_rmesh",      // characterthigh_r_characterthigh_rmesh
 };
-
-// TODO: allocate this in map header file with correct size
-static GameObject* sortedObjects[MAX_WORLD_OBJECTS];
 
 int debugPathfindingFrom = 3;
 int debugPathfindingTo = 8;
@@ -192,6 +203,7 @@ std::string formatEuler(EulerDegrees* self) {
 }
 
 void drawGUI() {
+  Game* game = Game_get();
   GameObject* obj = selectedObject;
   Character* selectedCharacter =
       obj == Game_get()->characters->obj ? Game_get()->characters : NULL;
@@ -250,7 +262,7 @@ void drawGUI() {
       if (ImGui::CollapsingHeader("Character",
                                   ImGuiTreeNodeFlags_DefaultOpen)) {
         Vec3d heading;
-        Character_directionFromTopDownAngle(obj->rotation.y, &heading);
+        GameUtils_directionFromTopDownAngle(obj->rotation.y, &heading);
         ImGui::InputFloat3("heading", (float*)&heading, "%.3f",
                            ImGuiInputTextFlags_ReadOnly);
         ImGui::InputFloat3("targetLocation",
@@ -326,6 +338,40 @@ void drawGUI() {
 
     ImGui::InputInt("updateSkipRate", (int*)&updateSkipRate, 1, 10, inputFlags);
     updateSkipRate = MAX(updateSkipRate, 1);
+  }
+
+  if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
+    ImGui::InputFloat3("viewPos", (float*)&game->viewPos, "%.3f");
+    ImGui::InputFloat3("viewTarget", (float*)&game->viewTarget, "%.3f");
+    ImGui::Checkbox("enableControlsInFreeView", &enableControlsInFreeView);
+    if (ImGui::CollapsingHeader("Camera++")) {
+      ImGui::InputFloat3("ntl", (float*)&frustum.ntl, "%.3f");
+      ImGui::InputFloat3("ntr", (float*)&frustum.ntr, "%.3f");
+      ImGui::InputFloat3("nbl", (float*)&frustum.nbl, "%.3f");
+      ImGui::InputFloat3("nbr", (float*)&frustum.nbr, "%.3f");
+      ImGui::InputFloat3("ftl", (float*)&frustum.ftl, "%.3f");
+      ImGui::InputFloat3("ftr", (float*)&frustum.ftr, "%.3f");
+      ImGui::InputFloat3("fbl", (float*)&frustum.fbl, "%.3f");
+      ImGui::InputFloat3("fbr", (float*)&frustum.fbr, "%.3f");
+      ImGui::InputFloat("nearD", (float*)&frustum.nearD, 1, 1, "%.3f",
+                        ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat("farD", (float*)&frustum.farD, 1, 1, "%.3f",
+                        ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat("aspect", (float*)&frustum.aspect, 1, 1, "%.3f",
+                        ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat("fovy", (float*)&frustum.fovy, 1, 1, "%.3f",
+                        ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat("tang", (float*)&frustum.tang, 1, 1, "%.3f",
+                        ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat("nw", (float*)&frustum.nw, 1, 1, "%.3f",
+                        ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat("nh", (float*)&frustum.nh, 1, 1, "%.3f",
+                        ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat("fw", (float*)&frustum.fw, 1, 1, "%.3f",
+                        ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat("fh", (float*)&frustum.fh, 1, 1, "%.3f",
+                        ImGuiInputTextFlags_ReadOnly);
+    }
   }
 
   if (ImGui::CollapsingHeader("Profiling", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -508,6 +554,121 @@ void drawPhysBall(float radius) {
   glColor3f(1.0, 1.0, 0.0);  // yellow
   glutWireSphere(/*radius*/ radius, /*slices*/ 10, /*stacks*/ 10);
   glPopAttrib();
+}
+
+void Frustum_drawPoints(Frustum* frustum) {
+  glColor3f(1.0, 1.0, 0.0);  // yellow
+  glBegin(GL_POINTS);
+
+  glVertex3f(frustum->ntl.x, frustum->ntl.y, frustum->ntl.z);
+  glVertex3f(frustum->ntr.x, frustum->ntr.y, frustum->ntr.z);
+  glVertex3f(frustum->nbl.x, frustum->nbl.y, frustum->nbl.z);
+  glVertex3f(frustum->nbr.x, frustum->nbr.y, frustum->nbr.z);
+
+  glVertex3f(frustum->ftl.x, frustum->ftl.y, frustum->ftl.z);
+  glVertex3f(frustum->ftr.x, frustum->ftr.y, frustum->ftr.z);
+  glVertex3f(frustum->fbl.x, frustum->fbl.y, frustum->fbl.z);
+  glVertex3f(frustum->fbr.x, frustum->fbr.y, frustum->fbr.z);
+
+  glEnd();
+}
+
+void Frustum_drawLines(Frustum* frustum) {
+  glColor3f(1.0, 0.0, 0.0);
+  glBegin(GL_LINE_LOOP);
+  // near plane
+  glVertex3f(frustum->ntl.x, frustum->ntl.y, frustum->ntl.z);
+  glVertex3f(frustum->ntr.x, frustum->ntr.y, frustum->ntr.z);
+  glVertex3f(frustum->nbr.x, frustum->nbr.y, frustum->nbr.z);
+  glVertex3f(frustum->nbl.x, frustum->nbl.y, frustum->nbl.z);
+  glEnd();
+
+  glBegin(GL_LINE_LOOP);
+  // far plane
+  glVertex3f(frustum->ftr.x, frustum->ftr.y, frustum->ftr.z);
+  glVertex3f(frustum->ftl.x, frustum->ftl.y, frustum->ftl.z);
+  glVertex3f(frustum->fbl.x, frustum->fbl.y, frustum->fbl.z);
+  glVertex3f(frustum->fbr.x, frustum->fbr.y, frustum->fbr.z);
+  glEnd();
+
+  glBegin(GL_LINE_LOOP);
+  // bottom plane
+  glVertex3f(frustum->nbl.x, frustum->nbl.y, frustum->nbl.z);
+  glVertex3f(frustum->nbr.x, frustum->nbr.y, frustum->nbr.z);
+  glVertex3f(frustum->fbr.x, frustum->fbr.y, frustum->fbr.z);
+  glVertex3f(frustum->fbl.x, frustum->fbl.y, frustum->fbl.z);
+  glEnd();
+
+  glBegin(GL_LINE_LOOP);
+  // top plane
+  glVertex3f(frustum->ntr.x, frustum->ntr.y, frustum->ntr.z);
+  glVertex3f(frustum->ntl.x, frustum->ntl.y, frustum->ntl.z);
+  glVertex3f(frustum->ftl.x, frustum->ftl.y, frustum->ftl.z);
+  glVertex3f(frustum->ftr.x, frustum->ftr.y, frustum->ftr.z);
+  glEnd();
+
+  glBegin(GL_LINE_LOOP);
+  // left plane
+  glVertex3f(frustum->ntl.x, frustum->ntl.y, frustum->ntl.z);
+  glVertex3f(frustum->nbl.x, frustum->nbl.y, frustum->nbl.z);
+  glVertex3f(frustum->fbl.x, frustum->fbl.y, frustum->fbl.z);
+  glVertex3f(frustum->ftl.x, frustum->ftl.y, frustum->ftl.z);
+  glEnd();
+
+  glBegin(GL_LINE_LOOP);
+  // right plane
+  glVertex3f(frustum->nbr.x, frustum->nbr.y, frustum->nbr.z);
+  glVertex3f(frustum->ntr.x, frustum->ntr.y, frustum->ntr.z);
+  glVertex3f(frustum->ftr.x, frustum->ftr.y, frustum->ftr.z);
+  glVertex3f(frustum->fbr.x, frustum->fbr.y, frustum->fbr.z);
+
+  glEnd();
+}
+
+void Frustum_drawPlanes(Frustum* frustum) {
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glColor4f(0.0f, 0.0, 1.0, 0.1);
+  glBegin(GL_QUADS);
+
+  // // near plane
+  // glVertex3f(frustum->ntl.x, frustum->ntl.y, frustum->ntl.z);
+  // glVertex3f(frustum->ntr.x, frustum->ntr.y, frustum->ntr.z);
+  // glVertex3f(frustum->nbr.x, frustum->nbr.y, frustum->nbr.z);
+  // glVertex3f(frustum->nbl.x, frustum->nbl.y, frustum->nbl.z);
+
+  // // far plane
+  // glVertex3f(frustum->ftr.x, frustum->ftr.y, frustum->ftr.z);
+  // glVertex3f(frustum->ftl.x, frustum->ftl.y, frustum->ftl.z);
+  // glVertex3f(frustum->fbl.x, frustum->fbl.y, frustum->fbl.z);
+  // glVertex3f(frustum->fbr.x, frustum->fbr.y, frustum->fbr.z);
+
+  // // bottom plane
+  glVertex3f(frustum->nbl.x, frustum->nbl.y, frustum->nbl.z);
+  glVertex3f(frustum->nbr.x, frustum->nbr.y, frustum->nbr.z);
+  glVertex3f(frustum->fbr.x, frustum->fbr.y, frustum->fbr.z);
+  glVertex3f(frustum->fbl.x, frustum->fbl.y, frustum->fbl.z);
+
+  // // top plane
+  glVertex3f(frustum->ntr.x, frustum->ntr.y, frustum->ntr.z);
+  glVertex3f(frustum->ntl.x, frustum->ntl.y, frustum->ntl.z);
+  glVertex3f(frustum->ftl.x, frustum->ftl.y, frustum->ftl.z);
+  glVertex3f(frustum->ftr.x, frustum->ftr.y, frustum->ftr.z);
+
+  // left plane
+  glVertex3f(frustum->ntl.x, frustum->ntl.y, frustum->ntl.z);
+  glVertex3f(frustum->nbl.x, frustum->nbl.y, frustum->nbl.z);
+  glVertex3f(frustum->fbl.x, frustum->fbl.y, frustum->fbl.z);
+  glVertex3f(frustum->ftl.x, frustum->ftl.y, frustum->ftl.z);
+
+  // right plane
+  glVertex3f(frustum->nbr.x, frustum->nbr.y, frustum->nbr.z);
+  glVertex3f(frustum->ntr.x, frustum->ntr.y, frustum->ntr.z);
+  glVertex3f(frustum->ftr.x, frustum->ftr.y, frustum->ftr.z);
+  glVertex3f(frustum->fbr.x, frustum->fbr.y, frustum->fbr.z);
+
+  glDisable(GL_BLEND);
+  glEnd();
 }
 
 void drawMesh(ObjMesh& mesh, GLuint texture) {
@@ -717,12 +878,11 @@ void drawModel(GameObject* obj) {
 
 void resizeWindow(int w, int h) {
   ImGui_ImplGLUT_ReshapeFunc(w, h);
-  float ratio;
   // Prevent a divide by zero, when window is too short
   // (you cant make a window of zero width).
   if (h == 0)
     h = 1;
-  ratio = w * 1.0 / h;
+  aspect = w * 1.0 / h;
 
   // Use the Projection Matrix
   glMatrixMode(GL_PROJECTION);
@@ -731,7 +891,8 @@ void resizeWindow(int w, int h) {
   // Set the viewport to be the entire window
   glViewport(0, 0, w, h);
   // Set the correct perspective.
-  gluPerspective(45.0f, ratio, 10.0f, 3000.0f);
+  gluPerspective(fovy, aspect, nearPlane, farPlane);
+  Frustum_setCamInternals(&frustum, fovy, aspect, nearPlane, farPlane);
   // Get Back to the Modelview
   glMatrixMode(GL_MODELVIEW);
 }
@@ -885,7 +1046,7 @@ void drawCollisionMesh() {
 
 #if DEBUG_COLLISION_SPATIAL_HASH_RAYCAST
     Vec3d testRayEnd = {0, 25, 0};
-    Character_directionFromTopDownAngle(degToRad(selectedObject->rotation.y),
+    GameUtils_directionFromTopDownAngle(degToRad(selectedObject->rotation.y),
                                         &testRayEnd);
     Vec3d_mulScalar(&testRayEnd, 600);
     Vec3d_add(&testRayEnd, &selectedObjCenter);
@@ -1236,6 +1397,8 @@ void renderScene(void) {
 
   game = Game_get();
 
+  // TODO: frustum cull before sorting world objects
+
   RendererSortDistance* rendererSortDistance = (RendererSortDistance*)malloc(
       game->worldObjectsCount * sizeof(RendererSortDistance));
   if (!rendererSortDistance) {
@@ -1248,22 +1411,25 @@ void renderScene(void) {
   glMatrixMode(GL_PROJECTION);
   int w = glutGet(GLUT_WINDOW_WIDTH);
   int h = glutGet(GLUT_WINDOW_HEIGHT);
+  float aspect = w / h;
   resizeWindow(w, h);
 
   // Reset transformations
   glLoadIdentity();
+
   // Set the camera
+  Frustum_setCamDef(&frustum, &game->viewPos, &game->viewTarget, &upVector);
   if (game->freeView) {
     gluLookAt(                                                  //
         viewPos.x, viewPos.y, viewPos.z,                        // eye
         viewPos.x + cameraLX, viewPos.y, viewPos.z + cameraLZ,  // center
-        0.0f, 1.0f, 0.0f                                        // up
+        upVector.x, upVector.y, upVector.z                      // up
     );
   } else {
     gluLookAt(                                                       //
         game->viewPos.x, game->viewPos.y, game->viewPos.z,           // eye
         game->viewTarget.x, game->viewTarget.y, game->viewTarget.z,  // center
-        0.0f, 1.0f, 0.0f                                             // up
+        upVector.x, upVector.y, upVector.z                           // up
     );
   }
 
@@ -1296,7 +1462,13 @@ void renderScene(void) {
              Vec3d_distanceTo(&(obj->position), &viewPos), obj->position.x,
              obj->position.y, obj->position.z);
 #endif
-      drawGameObject(obj);
+      AABB* localAABB = university_map_bounds + obj->id;
+      AABB worldAABB = *localAABB;
+      Vec3d_add(&worldAABB.min, &obj->position);
+      Vec3d_add(&worldAABB.max, &obj->position);
+      if (Frustum_boxInFrustum(&frustum, &worldAABB) != OutsideFrustum) {
+        drawGameObject(obj);
+      }
     }
   }
 
@@ -1310,6 +1482,60 @@ void renderScene(void) {
 #if DEBUG_COLLISION_MESH || DEBUG_COLLISION_MESH_MORE || \
     DEBUG_COLLISION_SPATIAL_HASH || DEBUG_COLLISION_MESH_AABB
   drawCollisionMesh();
+#endif
+
+#if DEBUG_AABB
+  for (i = 0; i < game->worldObjectsCount; i++) {
+    GameObject* obj = game->worldObjects + i;
+    AABB* localAABB = university_map_bounds + i;
+    AABB worldAABB = *localAABB;
+    Vec3d_add(&worldAABB.min, &obj->position);
+    Vec3d_add(&worldAABB.max, &obj->position);
+    glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    glColor3f(0.8, 0.8, 0.8);  // white
+    drawAABB(&worldAABB);
+    glPopAttrib();
+
+#if DEBUG_FRUSTUM
+    // Vec3d vertexP, vertexN;
+    // Frustum_getAABBVertexP(
+    //     &worldAABB, &frustum.planes[BottomFrustumPlane].normal, &vertexP);
+    // Frustum_getAABBVertexN(
+    //     &worldAABB, &frustum.planes[BottomFrustumPlane].normal, &vertexN);
+    FrustumTestResult frustumTestResult =
+        Frustum_boxInFrustum(&frustum, &worldAABB);
+    // Frustum_boxFrustumPlaneTest(&frustum, &worldAABB, BottomFrustumPlane);
+    drawStringAtPoint(
+        frustumTestResult == OutsideFrustum
+            ? "Outside"
+            : (frustumTestResult == IntersectingFrustum ? "Intersecting"
+                                                        : "Inside"),
+        &obj->position, TRUE);
+
+    glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
+                 GL_POLYGON_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    // glDisable(GL_CULL_FACE);
+
+    // glPushMatrix();
+    // glTranslatef(vertexP.x, vertexP.y, vertexP.z);
+    // glColor3f(1.0, 0.0, 0.0);
+    // glutSolidCube(2);
+    // glPopMatrix();
+
+    // glPushMatrix();
+    // glTranslatef(vertexN.x, vertexN.y, vertexN.z);
+    // glColor3f(0.0, 1.0, 0.0);
+    // glutSolidCube(2);
+    // glPopMatrix();
+
+#endif
+  }
 #endif
 
 #if DEBUG_PHYSICS
@@ -1339,10 +1565,27 @@ void renderScene(void) {
   drawNodeGraph();
 #endif
 
+#if DEBUG_FRUSTUM
+  glPushMatrix();
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
+               GL_POLYGON_BIT);
+  glEnable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_CULL_FACE);
+  Frustum_drawPoints(&frustum);
+  Frustum_drawLines(&frustum);
+  Frustum_drawPlanes(&frustum);
+
+  glPopMatrix();
+  glPopAttrib();
+
+#endif
+
 #if DEBUG_OBJECTS
   char objdebugtext[300];
   for (i = 0; i < game->worldObjectsCount; i++) {
-    GameObject* obj = sortedObjects[i];
+    GameObject* obj = (rendererSortDistance + i)->obj;
     if (obj->modelType != NoneModel) {
       strcpy(objdebugtext, "");
 
@@ -1459,7 +1702,7 @@ void updateFreeView() {
 
   for (int key = 0; key < 127; ++key) {
     if (keysDown[key]) {
-      if (game->freeView) {
+      if (game->freeView && !enableControlsInFreeView) {
         switch (key) {
           case 97:  // a
             moveLeft();
@@ -1506,7 +1749,7 @@ void updateInputs() {
 
   for (int key = 0; key < 127; ++key) {
     if (keysDown[key]) {
-      if (!game->freeView) {
+      if (!game->freeView || enableControlsInFreeView) {
         switch (key) {
           case 113:  // q
             input.zoomIn = TRUE;
@@ -1662,9 +1905,6 @@ void updateAndRender() {
 
     Game_update(&input);
   }
-  if (game->freeView) {
-    game->viewPos = viewPos;
-  }
 
   renderScene();
 }
@@ -1692,19 +1932,13 @@ int main(int argc, char** argv) {
            obj->position.z);
   }
 
-  // init sortedObjects pointers array
-  for (i = 0, obj = game->worldObjects; i < game->worldObjectsCount;
-       i++, obj++) {
-    sortedObjects[i] = obj;
-  }
-
   assert(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
 
   // init GLUT and create window
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE);
   glutInitWindowPosition(300, 100);
-  glutInitWindowSize(1440, 1080);
+  glutInitWindowSize(1920, 1200);
   glutCreateWindow("Goose");
 
   // register callbacks

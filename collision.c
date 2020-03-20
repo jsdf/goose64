@@ -74,6 +74,16 @@ void AABB_fromTriangle(Triangle* triangle, AABB* result) {
   result->max.z = MAX(result->max.z, triangle->c.z);
 }
 
+void AABB_expandByPoint(AABB* self, Vec3d* point) {
+  self->min.x = MIN(self->min.x, point->x);
+  self->min.y = MIN(self->min.y, point->y);
+  self->min.z = MIN(self->min.z, point->z);
+
+  self->max.x = MAX(self->max.x, point->x);
+  self->max.y = MAX(self->max.y, point->y);
+  self->max.z = MAX(self->max.z, point->z);
+}
+
 int Collision_intersectAABBAABB(AABB* a, AABB* b) {
   // Exit with no intersection if separated along an axis
   if (a->max.x < b->min.x || a->min.x > b->max.x)
