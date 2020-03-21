@@ -97,11 +97,11 @@ bool enableControlsInFreeView = false;
 int frustumPlaneToTest = -1;
 
 static Frustum frustum;
-static float fovy = 45.0f;
+static float fovy = DEFAULT_FOVY;
 static float aspect = 800 / 600;
 static Vec3d upVector = {0.0f, 1.0f, 0.0f};
-static float nearPlane = 10.0f;
-static float farPlane = 3000.0f;
+static float nearPlane = DEFAULT_NEARPLANE;
+static float farPlane = DEFAULT_FARPLANE;
 
 bool keysDown[127];
 Input input;

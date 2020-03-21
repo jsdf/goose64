@@ -55,6 +55,7 @@
 #define CONSOLE_SHOW_PROFILING 1
 #define CONSOLE_SHOW_TRACING 0
 #define CONSOLE_SHOW_CULLING 1
+#define CONSOLE_SHOW_CAMERA_POS 0
 #define CONSOLE_SHOW_RCP_TASKS 0
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
@@ -77,7 +78,7 @@ static u32 nearPlane; /* Near Plane */
 static u32 farPlane;  /* Far Plane */
 static Frustum frustum;
 static float aspect = (f32)SCREEN_WD / (f32)SCREEN_HT;
-static float fovy = 45.0f;
+static float fovy = DEFAULT_FOVY;
 static Vec3d upVector = {0.0f, 1.0f, 0.0f};
 
 /* frame counter */
@@ -128,7 +129,6 @@ Lights0 amb_light = gdSPDefLights0(200, 200, 200 /*  ambient light */);
 /* The initialization of stage 0 */
 void initStage00() {
   Game* game;
-  GameObject* obj;
   int i;
 
   usbEnabled = TRUE;
@@ -145,8 +145,8 @@ void initStage00() {
 
   cycleMode = 1.0;
   renderModeSetting = ToonFlatShadingRenderMode;
-  nearPlane = 10;
-  farPlane = 10000;
+  nearPlane = DEFAULT_NEARPLANE;
+  farPlane = DEFAULT_FARPLANE;
   Vec3d_init(&viewPos, 0.0F, 0.0F, -400.0F);
   Vec3d_init(&viewRot, 0.0F, 0.0F, 0.0F);
   Input_init(&input);
@@ -293,7 +293,7 @@ void makeDL00() {
      switch display buffers */
   nuGfxTaskStart(&gfx_glist[gfx_gtask_no][0],
                  (s32)(glistp - gfx_glist[gfx_gtask_no]) * sizeof(Gfx),
-                 NU_GFX_UCODE_F3DEX,
+                 NU_GFX_UCODE_F3DEX_NON,
 #if CONSOLE || NU_PERF_BAR
                  NU_SC_NOSWAPBUFFER
 #else
@@ -371,11 +371,10 @@ void makeDL00() {
       nuDebConCPuts(0, conbuf);
 #endif
 
-      // debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
-      // debugPrintVec3d(4, consoleOffset++, "viewTarget", &game->viewTarget);
-      nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "retrace=%lu", nuScRetraceCounter);
-      nuDebConCPuts(0, conbuf);
+#if CONSOLE_SHOW_CAMERA_POS
+      debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
+      debugPrintVec3d(4, consoleOffset++, "viewTarget", &game->viewTarget);
+#endif
 
 #if CONSOLE_EVERDRIVE_DEBUG
       usbLoggerGetState(&usbLoggerState);
@@ -392,10 +391,13 @@ void makeDL00() {
       nuDebConCPuts(0, conbuf);
 #endif
     }
+    nuDebConTextPos(0, 4, consoleOffset++);
+    sprintf(conbuf, "retrace=%lu", nuScRetraceCounter);
+    nuDebConCPuts(0, conbuf);
     debugPrintVec3d(4, consoleOffset++, "pos", &game->player.goose->position);
   } else {
     nuDebConTextPos(0, 9, 24);
-    nuDebConCPuts(0, "Controller1 not connect");
+    nuDebConCPuts(0, "Controller1 not connected");
   }
 
   /* Display characters on the frame buffer */
@@ -740,7 +742,6 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
   Trace_addEvent(DrawFrustumCullTraceEvent, profStartFrustum, CUR_TIME_MS());
 
-  profStartSort = CUR_TIME_MS();
   // only alloc space for num visible objects
   visibleObjectsCount = game->worldObjectsCount - visibilityCulled;
   visibleObjDistanceDescending = (RendererSortDistance*)malloc(
@@ -748,6 +749,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   if (!visibleObjDistanceDescending) {
     debugPrintf("failed to alloc visibleObjDistanceDescending");
   }
+  profStartSort = CUR_TIME_MS();
   Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
                               worldObjectsVisibility, visibleObjectsCount,
                               visibleObjDistanceDescending);
