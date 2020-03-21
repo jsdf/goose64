@@ -123,6 +123,6 @@ void Renderer_sortVisibleObjects(GameObject* worldObjects,
     }
   }
 
-  qsort(result, worldObjectsCount, sizeof(RendererSortDistance),
+  qsort(result, visibleObjectsCount, sizeof(RendererSortDistance),
         Renderer_sortWorldComparatorFn);
 }

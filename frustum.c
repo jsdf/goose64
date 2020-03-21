@@ -5,9 +5,18 @@
 #include "constants.h"
 
 char* FrustumTestResultStrings[MAX_FRUSTUM_TEST_RESULT] = {
-    "InsideFrustum",
-    "OutsideFrustum",
-    "IntersectingFrustum",
+    "Inside",
+    "Outside",
+    "Intersecting",
+};
+
+char* FrustumPlanesStrings[NUM_FRUSTUM_PLANES] = {
+    "NearFrustumPlane",    //
+    "FarFrustumPlane",     //
+    "TopFrustumPlane",     //
+    "BottomFrustumPlane",  //
+    "LeftFrustumPlane",    //
+    "RightFrustumPlane",   //
 };
 
 void Plane_setNormalAndPoint(Plane* self, Vec3d* normal, Vec3d* point) {
@@ -420,7 +429,7 @@ FrustumTestResult Frustum_boxInFrustum(Frustum* frustum, AABB* aabb) {
     planeResult = Frustum_boxFrustumPlaneTestPN(frustum, aabb, i);
 
     if (planeResult == OutsideFrustum) {
-      return result;
+      return OutsideFrustum;
     } else if (planeResult == IntersectingFrustum) {
       result = planeResult;
     }

@@ -94,13 +94,14 @@ Vec3d viewPos = {0.0f, 50.0f, 0.0f};
 // freeview camera angle
 float cameraAngle = 180.0f;
 bool enableControlsInFreeView = false;
+int frustumPlaneToTest = -1;
 
 static Frustum frustum;
 static float fovy = 45.0f;
 static float aspect = 800 / 600;
 static Vec3d upVector = {0.0f, 1.0f, 0.0f};
 static float nearPlane = 10.0f;
-static float farPlane = 10000.0f;
+static float farPlane = 3000.0f;
 
 bool keysDown[127];
 Input input;
@@ -371,17 +372,29 @@ void drawGUI() {
     ImGui::InputFloat3("viewPos", (float*)&game->viewPos, "%.3f");
     ImGui::InputFloat3("viewTarget", (float*)&game->viewTarget, "%.3f");
     ImGui::Checkbox("enableControlsInFreeView", &enableControlsInFreeView);
+    ImGui::Combo("plane to test", &frustumPlaneToTest, FrustumPlanesStrings,
+                 NUM_FRUSTUM_PLANES);
 
     if (obj) {
       {
+        ImGui::Text("frustum test results for obj=%d", obj->id);
         AABB* localAABB = localAABBs + obj->id;
         AABB worldAABB = *localAABB;
         Vec3d_add(&worldAABB.min, &obj->position);
         Vec3d_add(&worldAABB.max, &obj->position);
-        FrustumTestResult frustumTestResult =
-            Frustum_boxInFrustum(&frustum, &worldAABB);
-        ImGui::Text("FrustumTestResult(obj=%d): %s", obj->id,
-                    FrustumTestResultStrings[frustumTestResult]);
+
+        ImGui::Text("boxInFrustum: %s",
+                    FrustumTestResultStrings[Frustum_boxInFrustum(&frustum,
+                                                                  &worldAABB)]);
+        ImGui::Text("boxInFrustumNaive: %s",
+                    FrustumTestResultStrings[Frustum_boxInFrustumNaive(
+                        &frustum, &worldAABB)]);
+        ImGui::Text("Per plane tests:");
+        for (int i = 0; i < NUM_FRUSTUM_PLANES; ++i) {
+          ImGui::Text("%s: %s", FrustumPlanesStrings[i],
+                      FrustumTestResultStrings[Frustum_boxFrustumPlaneTestPN(
+                          &frustum, &worldAABB, i)]);
+        }
       }
     }
 
@@ -937,7 +950,8 @@ void resizeWindow(int w, int h) {
   // Set the viewport to be the entire window
   glViewport(0, 0, w, h);
   // Set the correct perspective.
-  gluPerspective(fovy, aspect, nearPlane, farPlane);
+  gluPerspective(fovy, aspect, nearPlane,
+                 Game_get()->freeView ? 10000 : farPlane);
   Frustum_setCamInternals(&frustum, fovy, aspect, nearPlane, farPlane);
   // Get Back to the Modelview
   glMatrixMode(GL_MODELVIEW);
@@ -1489,14 +1503,15 @@ void renderScene(void) {
 
   // only alloc space for num visible objects
   int visibleObjectsCount = game->worldObjectsCount - visibilityCulled;
-  RendererSortDistance* objDistanceDescending = (RendererSortDistance*)malloc(
-      (visibleObjectsCount) * sizeof(RendererSortDistance));
-  if (!objDistanceDescending) {
-    debugPrintf("failed to alloc objDistanceDescending");
+  RendererSortDistance* visibleObjDistanceDescending =
+      (RendererSortDistance*)malloc((visibleObjectsCount) *
+                                    sizeof(RendererSortDistance));
+  if (!visibleObjDistanceDescending) {
+    debugPrintf("failed to alloc visibleObjDistanceDescending");
   }
   Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
                               worldObjectsVisibility, visibleObjectsCount,
-                              objDistanceDescending);
+                              visibleObjDistanceDescending);
 
 #if USE_LIGHTING
   enableLighting();
@@ -1509,24 +1524,16 @@ void renderScene(void) {
 #if DEBUG_LOG_RENDER
   printf("draw start\n");
 #endif
-  // render world objects
-  for (i = 0; i < game->worldObjectsCount; i++) {
-    GameObject* obj = (objDistanceDescending + i)->obj;
-    if (obj->modelType != NoneModel) {
+  // render visible objects
+  for (i = 0; i < visibleObjectsCount; i++) {
+    GameObject* obj = (visibleObjDistanceDescending + i)->obj;
 #if DEBUG_LOG_RENDER
-      printf("draw obj %d %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n", obj->id,
-             ModelTypeStrings[obj->modelType],
-             Vec3d_distanceTo(&(obj->position), &viewPos), obj->position.x,
-             obj->position.y, obj->position.z);
+    printf("draw obj %d %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n", obj->id,
+           ModelTypeStrings[obj->modelType],
+           Vec3d_distanceTo(&(obj->position), &viewPos), obj->position.x,
+           obj->position.y, obj->position.z);
 #endif
-      AABB* localAABB = localAABBs + obj->id;
-      AABB worldAABB = *localAABB;
-      Vec3d_add(&worldAABB.min, &obj->position);
-      Vec3d_add(&worldAABB.max, &obj->position);
-      if (Frustum_boxInFrustum(&frustum, &worldAABB) != OutsideFrustum) {
-        drawGameObject(obj);
-      }
-    }
+    drawGameObject(obj);
   }
 
 #if USE_LIGHTING
@@ -1557,39 +1564,38 @@ void renderScene(void) {
     glPopAttrib();
 
 #if DEBUG_FRUSTUM
-    Vec3d vertexP, vertexN;
-    Frustum_getAABBVertexP(
-        &worldAABB, &frustum.planes[BottomFrustumPlane].normal, &vertexP);
-    Frustum_getAABBVertexN(
-        &worldAABB, &frustum.planes[BottomFrustumPlane].normal, &vertexN);
-    FrustumTestResult frustumTestResult =
-        Frustum_boxInFrustum(&frustum, &worldAABB);
-    // Frustum_boxFrustumPlaneTestPN(&frustum, &worldAABB, BottomFrustumPlane);
-    drawStringAtPoint(
-        frustumTestResult == OutsideFrustum
-            ? "Outside"
-            : (frustumTestResult == IntersectingFrustum ? "Intersecting"
-                                                        : "Inside"),
-        &obj->position, TRUE);
+    FrustumTestResult frustumTestResult;
+    if (frustumPlaneToTest > -1) {
+      Vec3d vertexP, vertexN;
+      Frustum_getAABBVertexP(
+          &worldAABB, &frustum.planes[frustumPlaneToTest].normal, &vertexP);
+      Frustum_getAABBVertexN(
+          &worldAABB, &frustum.planes[frustumPlaneToTest].normal, &vertexN);
+      frustumTestResult = Frustum_boxFrustumPlaneTestPN(&frustum, &worldAABB,
+                                                        frustumPlaneToTest);
+      glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
+                   GL_POLYGON_BIT);
+      glDisable(GL_DEPTH_TEST);
+      glDisable(GL_LIGHTING);
+      glDisable(GL_TEXTURE_2D);
+      // glDisable(GL_CULL_FACE);
 
-    glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
-                 GL_POLYGON_BIT);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-    // glDisable(GL_CULL_FACE);
+      glPushMatrix();
+      glTranslatef(vertexP.x, vertexP.y, vertexP.z);
+      glColor3f(1.0, 0.0, 0.0);
+      glutSolidCube(2);
+      glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(vertexP.x, vertexP.y, vertexP.z);
-    glColor3f(1.0, 0.0, 0.0);
-    glutSolidCube(2);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(vertexN.x, vertexN.y, vertexN.z);
-    glColor3f(0.0, 1.0, 0.0);
-    glutSolidCube(2);
-    glPopMatrix();
+      glPushMatrix();
+      glTranslatef(vertexN.x, vertexN.y, vertexN.z);
+      glColor3f(0.0, 1.0, 0.0);
+      glutSolidCube(2);
+      glPopMatrix();
+    } else {
+      frustumTestResult = Frustum_boxInFrustum(&frustum, &worldAABB);
+    }
+    drawStringAtPoint(FrustumTestResultStrings[frustumTestResult],
+                      &obj->position, TRUE);
 
 #endif
   }
@@ -1626,7 +1632,7 @@ void renderScene(void) {
   glPushMatrix();
   glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
                GL_POLYGON_BIT);
-  glEnable(GL_DEPTH_TEST);
+  // glEnable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
   glDisable(GL_CULL_FACE);
@@ -1642,23 +1648,20 @@ void renderScene(void) {
 #if DEBUG_OBJECTS
   char objdebugtext[300];
   for (i = 0; i < game->worldObjectsCount; i++) {
-    GameObject* obj = (objDistanceDescending + i)->obj;
-    if (obj->modelType != NoneModel) {
-      strcpy(objdebugtext, "");
+    GameObject* obj = game->worldObjects + i;
+    strcpy(objdebugtext, "");
 
-      sprintf(objdebugtext, "%d: %s", obj->id,
-              ModelTypeStrings[obj->modelType]);
+    sprintf(objdebugtext, "%d: %s", obj->id, ModelTypeStrings[obj->modelType]);
 
-      drawStringAtPoint(objdebugtext, &obj->position, TRUE);
+    drawStringAtPoint(objdebugtext, &obj->position, TRUE);
 
-      Vec3d objCenter;
-      Game_getObjCenter(obj, &objCenter);
+    Vec3d objCenter;
+    Game_getObjCenter(obj, &objCenter);
 
-      glPushMatrix();
-      glTranslatef(objCenter.x, objCenter.y, objCenter.z);
-      drawMarker(0.2, 0.2, 0.2, Game_getObjRadius(obj));
-      glPopMatrix();
-    }
+    glPushMatrix();
+    glTranslatef(objCenter.x, objCenter.y, objCenter.z);
+    drawMarker(0.2, 0.2, 0.2, Game_getObjRadius(obj));
+    glPopMatrix();
   }
 #endif
 
@@ -1705,7 +1708,7 @@ void renderScene(void) {
   ImGuiIO& io = ImGui::GetIO();
   ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
-  free(objDistanceDescending);
+  free(visibleObjDistanceDescending);
   free(worldObjectsVisibility);
 
   game->profTimeDraw += (CUR_TIME_MS() - profStartDraw);

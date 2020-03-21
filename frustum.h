@@ -29,6 +29,7 @@ typedef enum FrustumTestResult {
 } FrustumTestResult;
 
 extern char* FrustumTestResultStrings[MAX_FRUSTUM_TEST_RESULT];
+extern char* FrustumPlanesStrings[NUM_FRUSTUM_PLANES];
 
 typedef struct Frustum {
   Plane planes[NUM_FRUSTUM_PLANES];
@@ -47,6 +48,8 @@ void Frustum_setCamInternals(Frustum* self,
 
 void Frustum_setCamDef(Frustum* self, Vec3d* p, Vec3d* l, Vec3d* u);
 FrustumTestResult Frustum_boxInFrustum(Frustum* frustum, AABB* aabb);
+FrustumTestResult Frustum_boxInFrustumNaive(Frustum* frustum, AABB* aabb);
+
 FrustumTestResult Frustum_boxFrustumPlaneTestRTCD(Frustum* frustum,
                                                   AABB* aabb,
                                                   int planeIdx);

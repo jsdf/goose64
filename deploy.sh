@@ -41,6 +41,7 @@ retry loader64 -v --pifboot
 if [ -z "${PROFILE-}" ]; then
   ed64log
 else
+  echo "press ctrl+C to end capture and show trace"
   ed64log > trace.log
   echo ""
   echo "unpacking trace"

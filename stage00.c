@@ -54,7 +54,7 @@
 #define CONSOLE_EVERDRIVE_DEBUG 0
 #define CONSOLE_SHOW_PROFILING 1
 #define CONSOLE_SHOW_TRACING 0
-#define CONSOLE_SHOW_CULLING 0
+#define CONSOLE_SHOW_CULLING 1
 #define CONSOLE_SHOW_RCP_TASKS 0
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
@@ -93,7 +93,7 @@ float profAvgPath;
 float lastFrameTime;
 float profilingAverages[MAX_TRACE_EVENT_TYPE];
 
-static int frustumCulled;
+static int objectsCulled;
 
 static int usbEnabled;
 static int usbResult;
@@ -367,7 +367,7 @@ void makeDL00() {
 #endif
 #if CONSOLE_SHOW_CULLING
       nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "frculled=%d", frustumCulled);
+      sprintf(conbuf, "culled=%d", objectsCulled);
       nuDebConCPuts(0, conbuf);
 #endif
 
@@ -718,7 +718,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   AnimationInterpolation animInterp;
   AnimationRange* curAnimRange;
   AnimationBoneAttachment* attachment;
-  RendererSortDistance* objDistanceDescending;
+  RendererSortDistance* visibleObjDistanceDescending;
   int* worldObjectsVisibility;
   int visibleObjectsCount;
   int visibilityCulled = 0;
@@ -736,21 +736,21 @@ void drawWorldObjects(Dynamic* dynamicp) {
   visibilityCulled = Renderer_cullVisibility(
       game->worldObjects, game->worldObjectsCount, worldObjectsVisibility,
       &frustum, university_map_bounds);
-  frustumCulled = visibilityCulled;
+  objectsCulled = visibilityCulled;
 
   Trace_addEvent(DrawFrustumCullTraceEvent, profStartFrustum, CUR_TIME_MS());
 
   profStartSort = CUR_TIME_MS();
   // only alloc space for num visible objects
   visibleObjectsCount = game->worldObjectsCount - visibilityCulled;
-  objDistanceDescending = (RendererSortDistance*)malloc(
+  visibleObjDistanceDescending = (RendererSortDistance*)malloc(
       (visibleObjectsCount) * sizeof(RendererSortDistance));
-  if (!objDistanceDescending) {
-    debugPrintf("failed to alloc objDistanceDescending");
+  if (!visibleObjDistanceDescending) {
+    debugPrintf("failed to alloc visibleObjDistanceDescending");
   }
   Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
                               worldObjectsVisibility, visibleObjectsCount,
-                              objDistanceDescending);
+                              visibleObjDistanceDescending);
   Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
 
   gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
@@ -776,7 +776,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   // render world objects
   for (i = 0; i < visibleObjectsCount; i++) {
     // iterate visible objects far to near
-    obj = (objDistanceDescending + i)->obj;
+    obj = (visibleObjDistanceDescending + i)->obj;
 
     // render textured models
     gSPTexture(glistp++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
@@ -938,7 +938,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
     gDPPipeSync(glistp++);
   }
 
-  free(objDistanceDescending);
+  free(visibleObjDistanceDescending);
   free(worldObjectsVisibility);
 
   Trace_addEvent(DrawIterTraceEvent, profStartIter, CUR_TIME_MS());
