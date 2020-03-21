@@ -72,4 +72,5 @@ void stage00(int pendingGfx) {
   profEndFrame = CUR_TIME_MS();
   Trace_addEvent(MainCPUTraceEvent, profStartFrame, profEndFrame);
   Trace_addEvent(MainUpdateTraceEvent, profStartUpdate, profEndFrame);
+  profilingAccumulated[MainCPUTraceEvent] += profEndFrame - profStartFrame;
 }

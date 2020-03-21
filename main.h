@@ -6,7 +6,7 @@
 extern NUContData contdata[1]; /* Read data of the controller  */
 extern u8 contPattern;         /* The pattern of the connected controller  */
 
-#define CONSOLE 0
+#define CONSOLE 1
 #define NU_PERF_BAR 0
 
 #if CONSOLE || NU_PERF_BAR

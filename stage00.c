@@ -52,12 +52,12 @@
 #include "ed64io_usb.h"
 
 #define CONSOLE_EVERDRIVE_DEBUG 0
-#define CONSOLE_SHOW_PROFILING 0
-#define CONSOLE_SHOW_CULLING 1
-#define CONSOLE_SHOW_RCP_TASKS 1
+#define CONSOLE_SHOW_PROFILING 1
+#define CONSOLE_SHOW_TRACING 0
+#define CONSOLE_SHOW_CULLING 0
+#define CONSOLE_SHOW_RCP_TASKS 0
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
-#define FRUSTUM_CULLING 1
 
 typedef enum RenderMode {
   ToonFlatShadingRenderMode,
@@ -91,6 +91,7 @@ float profAvgPhysics;
 float profAvgDraw;
 float profAvgPath;
 float lastFrameTime;
+float profilingAverages[MAX_TRACE_EVENT_TYPE];
 
 static int frustumCulled;
 
@@ -162,6 +163,11 @@ void initStage00() {
   lastFrameTime = CUR_TIME_MS();
   evd_init();
 
+  for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
+    profilingAverages[i] = 0;
+    profilingAccumulated[i] = 0;
+  }
+
   debugPrintf("good morning\n");
 }
 
@@ -181,6 +187,7 @@ void debugPrintFloat(int x, int y, char* format, float value) {
 
 void traceRCP() {
   int i;
+  float longestTaskTime = 0;
   // s64 retraceTime;
 
   // retraceTime = nuDebTaskPerfPtr->retraceTime;
@@ -203,8 +210,14 @@ void traceRCP() {
     Trace_addEvent(RDPTaskTraceEvent,
                    nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f,
                    nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd / 1000.0f);
+
+    longestTaskTime =
+        MAX(longestTaskTime, (nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd -
+                              nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
+                                 1000.0f);
   }
   // debugPrintf("\n");
+  profilingAccumulated[RDPTaskTraceEvent] += longestTaskTime;
 }
 
 /* Make the display list and activate the task */
@@ -213,6 +226,7 @@ void makeDL00() {
   Dynamic* dynamicp;
   int consoleOffset;
   float curTime;
+  int i;
   float profStartDraw, profEndDraw, profStartDebugDraw;
 #if CONSOLE
   char conbuf[100];
@@ -320,20 +334,16 @@ void makeDL00() {
       debugPrintVec3d(4, consoleOffset++, "viewPos", &viewPos);
     } else {
 #if CONSOLE_SHOW_PROFILING
-      if (game->tick % 60 == 0) {
-        profAvgCharacters = game->profTimeCharacters / 60.0f;
-        game->profTimeCharacters = 0.0f;
-        profAvgPhysics = game->profTimePhysics / 60.0f;
-        game->profTimePhysics = 0.0f;
-        profAvgDraw = game->profTimeDraw / 60.0f;
-        game->profTimeDraw = 0.0f;
-        profAvgPath = game->profTimePath / 60.0f;
-        game->profTimePath = 0.0f;
-      }
       // debugPrintFloat(4, consoleOffset++, "char=%3.2fms", profAvgCharacters);
       // debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profAvgPhysics);
       // debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profAvgDraw);
       // debugPrintFloat(4, consoleOffset++, "path=%3.2fms", profAvgPath);
+      debugPrintFloat(4, consoleOffset++, "cpu=%3.2fms",
+                      profilingAverages[MainCPUTraceEvent]);
+      debugPrintFloat(4, consoleOffset++, "rdp=%3.2fms",
+                      profilingAverages[RDPTaskTraceEvent]);
+#endif
+#if CONSOLE_SHOW_TRACING
       nuDebConTextPos(0, 4, consoleOffset++);
       sprintf(conbuf, "trace rec=%d,log=%d,evs=%d,lgd=%d", Trace_isTracing(),
               loggingTrace, Trace_getEventsCount(), logTraceStartOffset);
@@ -481,6 +491,7 @@ void finishRecordingTrace() {
 
 /* The game progressing process for stage 0 */
 void updateGame00(void) {
+  int i;
   Game* game;
   game = Game_get();
 
@@ -570,6 +581,23 @@ void updateGame00(void) {
 #else
     usbResult = usbLoggerFlush();
 #endif
+  }
+
+  if (nuScRetraceCounter % 60 == 0) {
+    // calc averages for last 60 frames
+    profAvgCharacters = game->profTimeCharacters / 60.0;
+    game->profTimeCharacters = 0.0f;
+    profAvgPhysics = game->profTimePhysics / 60.0;
+    game->profTimePhysics = 0.0f;
+    profAvgDraw = game->profTimeDraw / 60.0;
+    game->profTimeDraw = 0.0f;
+    profAvgPath = game->profTimePath / 60.0;
+    game->profTimePath = 0.0f;
+
+    for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
+      profilingAverages[i] = profilingAccumulated[i] / 60.0;
+      profilingAccumulated[i] = 0;
+    }
   }
 }
 
@@ -690,20 +718,39 @@ void drawWorldObjects(Dynamic* dynamicp) {
   AnimationInterpolation animInterp;
   AnimationRange* curAnimRange;
   AnimationBoneAttachment* attachment;
-  float profStartSort, profStartIter, profStartAnim, profStartAnimLerp;
-  RendererSortDistance* rendererSortDistance;
+  RendererSortDistance* objDistanceDescending;
+  int* worldObjectsVisibility;
+  int visibleObjectsCount;
+  int visibilityCulled = 0;
+  float profStartSort, profStartIter, profStartAnim;
+  // float profStartAnimLerp;
+  float profStartFrustum;
 
   game = Game_get();
-  profStartSort = CUR_TIME_MS();
-  frustumCulled = 0;
-  rendererSortDistance = (RendererSortDistance*)malloc(
-      game->worldObjectsCount * sizeof(RendererSortDistance));
-  if (!rendererSortDistance) {
-    debugPrintf("failed to alloc rendererSortDistance");
+  worldObjectsVisibility = (int*)malloc(game->worldObjectsCount * sizeof(int));
+  if (!worldObjectsVisibility) {
+    debugPrintf("failed to alloc worldObjectsVisibility");
   }
 
-  Renderer_sortWorldObjects(game->worldObjects, rendererSortDistance,
-                            game->worldObjectsCount);
+  profStartFrustum = CUR_TIME_MS();
+  visibilityCulled = Renderer_cullVisibility(
+      game->worldObjects, game->worldObjectsCount, worldObjectsVisibility,
+      &frustum, university_map_bounds);
+  frustumCulled = visibilityCulled;
+
+  Trace_addEvent(DrawFrustumCullTraceEvent, profStartFrustum, CUR_TIME_MS());
+
+  profStartSort = CUR_TIME_MS();
+  // only alloc space for num visible objects
+  visibleObjectsCount = game->worldObjectsCount - visibilityCulled;
+  objDistanceDescending = (RendererSortDistance*)malloc(
+      (visibleObjectsCount) * sizeof(RendererSortDistance));
+  if (!objDistanceDescending) {
+    debugPrintf("failed to alloc objDistanceDescending");
+  }
+  Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
+                              worldObjectsVisibility, visibleObjectsCount,
+                              objDistanceDescending);
   Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
 
   gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
@@ -727,27 +774,9 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
   profStartIter = CUR_TIME_MS();
   // render world objects
-  for (i = 0; i < game->worldObjectsCount; i++) {
-    obj = (rendererSortDistance + i)->obj;
-    if (obj->modelType == NoneModel || !obj->visible) {
-      continue;
-    }
-
-#if FRUSTUM_CULLING
-    {
-      AABB* localAABB = university_map_bounds + obj->id;
-      AABB worldAABB = *localAABB;
-
-      Vec3d_add(&worldAABB.min, &obj->position);
-      Vec3d_add(&worldAABB.max, &obj->position);
-
-      if (Frustum_boxInFrustum(&frustum, &worldAABB) == OutsideFrustum) {
-        // cull this object
-        frustumCulled++;
-        continue;
-      }
-    }
-#endif
+  for (i = 0; i < visibleObjectsCount; i++) {
+    // iterate visible objects far to near
+    obj = (objDistanceDescending + i)->obj;
 
     // render textured models
     gSPTexture(glistp++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
@@ -823,7 +852,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
       AnimationInterpolation_calc(&animInterp, obj->animState, curAnimRange);
 
       for (modelMeshIdx = 0; modelMeshIdx < modelMeshParts; ++modelMeshIdx) {
-        profStartAnimLerp = CUR_TIME_MS();
+        // profStartAnimLerp = CUR_TIME_MS();
         // lerping takes about 0.2ms per bone
         if (shouldLerpAnimation(obj->modelType)) {
           AnimationFrame_lerp(
@@ -844,7 +873,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
               &animFrame     // the resultant interpolated animation frame
           );
         }
-        Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp, CUR_TIME_MS());
+        // Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp, CUR_TIME_MS());
 
         // push matrix with the blender to n64 coord rotation, then mulitply
         // it by the model's rotation and offset
@@ -909,7 +938,8 @@ void drawWorldObjects(Dynamic* dynamicp) {
     gDPPipeSync(glistp++);
   }
 
-  free(rendererSortDistance);
+  free(objDistanceDescending);
+  free(worldObjectsVisibility);
 
   Trace_addEvent(DrawIterTraceEvent, profStartIter, CUR_TIME_MS());
 }

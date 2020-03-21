@@ -158,6 +158,9 @@ PathfindingState* pathfindingState = &university_map_graph_pathfinding_state;
 static NodeGraph nodeGraph = NodeGraph();
 static int selectedNode = -1;
 
+AABB* localAABBs = university_map_bounds;
+static int frustumCulled = 0;
+
 void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   // the map exporter scales the world up by this much, so we scale up the
   // meshes to match
@@ -179,15 +182,29 @@ void screenCoordsToWorld(Vec3d* screenPos, Vec3d* result) {
   Vec3d_init(result, res[0], res[1], res[2]);
 }
 
-void worldCoordsToScreen(Vec3d* pos, Vec3d* result) {
+bool worldCoordsToScreen(Vec3d* pos, Vec3d* result) {
   GLdouble scr[3];
 
-  gluProject(pos->x, pos->y, pos->z, lastModelView, lastProjection,
-             lastViewport, &scr[0], &scr[1], &scr[2]);
+  bool success =
+      gluProject(pos->x, pos->y, pos->z, lastModelView, lastProjection,
+                 lastViewport, &scr[0], &scr[1], &scr[2]);
 
-  result->x = scr[0];
-  result->y = scr[1];
-  result->z = scr[2];
+  int screenSizeX = lastViewport[2];
+  int screenSizeY = lastViewport[3];
+
+  if (success &&
+      // valid number range
+      (scr[0] >= 0 && scr[1] >= 0 && scr[2] >= 0) &&
+      (scr[0] <= FLT_MAX && scr[1] <= FLT_MAX && scr[2] <= FLT_MAX) &&
+      // inside 2d viewport extents
+      (scr[0] < screenSizeX && scr[1] < screenSizeY)) {
+    result->x = scr[0];
+    result->y = scr[1];
+    result->z = scr[2];
+    return true;
+  } else {
+    return false;
+  }
 }
 
 std::string formatVec3d(Vec3d* self) {
@@ -235,6 +252,16 @@ void drawGUI() {
       ImGui::InputFloat("radius",
                         (float*)&modelTypesProperties[obj->modelType].radius,
                         0.1, 1.0, "%.3f", inputFlags);
+
+      AABB* localAABB = localAABBs + obj->id;
+      AABB worldAABB = *localAABB;
+      Vec3d_add(&worldAABB.min, &obj->position);
+      Vec3d_add(&worldAABB.max, &obj->position);
+
+      ImGui::InputFloat3("worldAABB.min", (float*)&worldAABB.min, "%.3f",
+                         ImGuiInputTextFlags_ReadOnly);
+      ImGui::InputFloat3("worldAABB.max", (float*)&worldAABB.max, "%.3f",
+                         ImGuiInputTextFlags_ReadOnly);
     }
     if (obj->physBody) {
       if (ImGui::CollapsingHeader("Physics", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -344,6 +371,20 @@ void drawGUI() {
     ImGui::InputFloat3("viewPos", (float*)&game->viewPos, "%.3f");
     ImGui::InputFloat3("viewTarget", (float*)&game->viewTarget, "%.3f");
     ImGui::Checkbox("enableControlsInFreeView", &enableControlsInFreeView);
+
+    if (obj) {
+      {
+        AABB* localAABB = localAABBs + obj->id;
+        AABB worldAABB = *localAABB;
+        Vec3d_add(&worldAABB.min, &obj->position);
+        Vec3d_add(&worldAABB.max, &obj->position);
+        FrustumTestResult frustumTestResult =
+            Frustum_boxInFrustum(&frustum, &worldAABB);
+        ImGui::Text("FrustumTestResult(obj=%d): %s", obj->id,
+                    FrustumTestResultStrings[frustumTestResult]);
+      }
+    }
+
     if (ImGui::CollapsingHeader("Camera++")) {
       ImGui::InputFloat3("ntl", (float*)&frustum.ntl, "%.3f");
       ImGui::InputFloat3("ntr", (float*)&frustum.ntr, "%.3f");
@@ -382,6 +423,8 @@ void drawGUI() {
     ImGui::Text("Phys=%.3fms, Char=%.3f ms, Draw=%.3f ms, Path=%.3f ms",
                 profAvgPhysics, profAvgCharacters, profAvgDraw, profAvgPath);
 #endif
+    ImGui::InputInt("frustumCulled", (int*)&frustumCulled, 0, 10,
+                    ImGuiInputTextFlags_ReadOnly);
   }
 
   Vec3d* goosePos = &Game_get()->player.goose->position;
@@ -441,7 +484,10 @@ void drawString(const char* string, int x, int y) {
 
 void drawStringAtPoint(const char* string, Vec3d* pos, int centered) {
   Vec3d screen;  // x, y, zdepth
-  worldCoordsToScreen(pos, &screen);
+  bool success = worldCoordsToScreen(pos, &screen);
+  if (!success) {
+    return;
+  }
 
   int stringLength;
 
@@ -1397,14 +1443,6 @@ void renderScene(void) {
 
   game = Game_get();
 
-  // TODO: frustum cull before sorting world objects
-
-  RendererSortDistance* rendererSortDistance = (RendererSortDistance*)malloc(
-      game->worldObjectsCount * sizeof(RendererSortDistance));
-  if (!rendererSortDistance) {
-    debugPrintf("failed to alloc rendererSortDistance");
-  }
-
   // Clear Color and Depth Buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Use the Projection Matrix
@@ -1438,8 +1476,27 @@ void renderScene(void) {
   glGetDoublev(GL_PROJECTION_MATRIX, lastProjection);
   glGetIntegerv(GL_VIEWPORT, lastViewport);
 
-  Renderer_sortWorldObjects(game->worldObjects, rendererSortDistance,
-                            game->worldObjectsCount);
+  int* worldObjectsVisibility =
+      (int*)malloc(game->worldObjectsCount * sizeof(int));
+  if (!worldObjectsVisibility) {
+    debugPrintf("failed to alloc worldObjectsVisibility");
+  }
+
+  int visibilityCulled =
+      Renderer_cullVisibility(game->worldObjects, game->worldObjectsCount,
+                              worldObjectsVisibility, &frustum, localAABBs);
+  frustumCulled = visibilityCulled;
+
+  // only alloc space for num visible objects
+  int visibleObjectsCount = game->worldObjectsCount - visibilityCulled;
+  RendererSortDistance* objDistanceDescending = (RendererSortDistance*)malloc(
+      (visibleObjectsCount) * sizeof(RendererSortDistance));
+  if (!objDistanceDescending) {
+    debugPrintf("failed to alloc objDistanceDescending");
+  }
+  Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
+                              worldObjectsVisibility, visibleObjectsCount,
+                              objDistanceDescending);
 
 #if USE_LIGHTING
   enableLighting();
@@ -1454,7 +1511,7 @@ void renderScene(void) {
 #endif
   // render world objects
   for (i = 0; i < game->worldObjectsCount; i++) {
-    GameObject* obj = (rendererSortDistance + i)->obj;
+    GameObject* obj = (objDistanceDescending + i)->obj;
     if (obj->modelType != NoneModel) {
 #if DEBUG_LOG_RENDER
       printf("draw obj %d %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n", obj->id,
@@ -1462,7 +1519,7 @@ void renderScene(void) {
              Vec3d_distanceTo(&(obj->position), &viewPos), obj->position.x,
              obj->position.y, obj->position.z);
 #endif
-      AABB* localAABB = university_map_bounds + obj->id;
+      AABB* localAABB = localAABBs + obj->id;
       AABB worldAABB = *localAABB;
       Vec3d_add(&worldAABB.min, &obj->position);
       Vec3d_add(&worldAABB.max, &obj->position);
@@ -1487,7 +1544,7 @@ void renderScene(void) {
 #if DEBUG_AABB
   for (i = 0; i < game->worldObjectsCount; i++) {
     GameObject* obj = game->worldObjects + i;
-    AABB* localAABB = university_map_bounds + i;
+    AABB* localAABB = localAABBs + i;
     AABB worldAABB = *localAABB;
     Vec3d_add(&worldAABB.min, &obj->position);
     Vec3d_add(&worldAABB.max, &obj->position);
@@ -1500,14 +1557,14 @@ void renderScene(void) {
     glPopAttrib();
 
 #if DEBUG_FRUSTUM
-    // Vec3d vertexP, vertexN;
-    // Frustum_getAABBVertexP(
-    //     &worldAABB, &frustum.planes[BottomFrustumPlane].normal, &vertexP);
-    // Frustum_getAABBVertexN(
-    //     &worldAABB, &frustum.planes[BottomFrustumPlane].normal, &vertexN);
+    Vec3d vertexP, vertexN;
+    Frustum_getAABBVertexP(
+        &worldAABB, &frustum.planes[BottomFrustumPlane].normal, &vertexP);
+    Frustum_getAABBVertexN(
+        &worldAABB, &frustum.planes[BottomFrustumPlane].normal, &vertexN);
     FrustumTestResult frustumTestResult =
         Frustum_boxInFrustum(&frustum, &worldAABB);
-    // Frustum_boxFrustumPlaneTest(&frustum, &worldAABB, BottomFrustumPlane);
+    // Frustum_boxFrustumPlaneTestPN(&frustum, &worldAABB, BottomFrustumPlane);
     drawStringAtPoint(
         frustumTestResult == OutsideFrustum
             ? "Outside"
@@ -1522,17 +1579,17 @@ void renderScene(void) {
     glDisable(GL_TEXTURE_2D);
     // glDisable(GL_CULL_FACE);
 
-    // glPushMatrix();
-    // glTranslatef(vertexP.x, vertexP.y, vertexP.z);
-    // glColor3f(1.0, 0.0, 0.0);
-    // glutSolidCube(2);
-    // glPopMatrix();
+    glPushMatrix();
+    glTranslatef(vertexP.x, vertexP.y, vertexP.z);
+    glColor3f(1.0, 0.0, 0.0);
+    glutSolidCube(2);
+    glPopMatrix();
 
-    // glPushMatrix();
-    // glTranslatef(vertexN.x, vertexN.y, vertexN.z);
-    // glColor3f(0.0, 1.0, 0.0);
-    // glutSolidCube(2);
-    // glPopMatrix();
+    glPushMatrix();
+    glTranslatef(vertexN.x, vertexN.y, vertexN.z);
+    glColor3f(0.0, 1.0, 0.0);
+    glutSolidCube(2);
+    glPopMatrix();
 
 #endif
   }
@@ -1585,7 +1642,7 @@ void renderScene(void) {
 #if DEBUG_OBJECTS
   char objdebugtext[300];
   for (i = 0; i < game->worldObjectsCount; i++) {
-    GameObject* obj = (rendererSortDistance + i)->obj;
+    GameObject* obj = (objDistanceDescending + i)->obj;
     if (obj->modelType != NoneModel) {
       strcpy(objdebugtext, "");
 
@@ -1648,7 +1705,8 @@ void renderScene(void) {
   ImGuiIO& io = ImGui::GetIO();
   ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
-  free(rendererSortDistance);
+  free(objDistanceDescending);
+  free(worldObjectsVisibility);
 
   game->profTimeDraw += (CUR_TIME_MS() - profStartDraw);
   glutSwapBuffers();

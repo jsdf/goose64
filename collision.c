@@ -569,7 +569,7 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
   // AABB sphereAABB;
   int hit, closestHitTriangleIndex, spatialHashResultsCount;
   int spatialHashResults[COLLISION_SPATIAL_HASH_MAX_RESULTS];
-  float profStartTriangleExact;
+  // float profStartTriangleExact = CUR_TIME_MS();
   closestHitDistSq = FLT_MAX;
   closestHitTriangleIndex = -1;
   objRadiusSq = objRadius * objRadius;
@@ -588,7 +588,6 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
       objCenter, objRadius, spatialHash, spatialHashResults,
       COLLISION_SPATIAL_HASH_MAX_RESULTS);
 
-  profStartTriangleExact = CUR_TIME_MS();
 #if COLLISION_SPATIAL_HASH_PRUNING_ENABLED
   for (k = 0; k < spatialHashResultsCount; k++) {
     i = spatialHashResults[k];
@@ -652,8 +651,8 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 #endif
 #endif
 
-  Trace_addEvent(CollisionTestMeshSphereTraceEvent, profStartTriangleExact,
-                 CUR_TIME_MS());
+  // Trace_addEvent(CollisionTestMeshSphereTraceEvent, profStartTriangleExact,
+  //                CUR_TIME_MS());
   return closestHitTriangleIndex > -1;
 }
 
@@ -908,9 +907,7 @@ int SpatialHash_getTriangles(Vec3d* position,
                              int maxResults) {
   int minCellX, minCellY, maxCellX, maxCellY, cellX, cellY;
   GetTrianglesVisitBucketState traversalState;
-  float profStartCollisionGetTriangles;
-
-  profStartCollisionGetTriangles = CUR_TIME_MS();
+  // float profStartCollisionGetTriangles = CUR_TIME_MS();
 
   traversalState.spatialHash = spatialHash;
   traversalState.results = results;
@@ -941,7 +938,7 @@ int SpatialHash_getTriangles(Vec3d* position,
   }
 #endif
 
-  Trace_addEvent(CollisionGetTrianglesTraceEvent,
-                 profStartCollisionGetTriangles, CUR_TIME_MS());
+  // Trace_addEvent(CollisionGetTrianglesTraceEvent,
+  //                profStartCollisionGetTriangles, CUR_TIME_MS());
   return traversalState.resultsFound;
 }

@@ -4,6 +4,12 @@
 #include "collision.h"
 #include "constants.h"
 
+char* FrustumTestResultStrings[MAX_FRUSTUM_TEST_RESULT] = {
+    "InsideFrustum",
+    "OutsideFrustum",
+    "IntersectingFrustum",
+};
+
 void Plane_setNormalAndPoint(Plane* self, Vec3d* normal, Vec3d* point) {
   self->normal = *normal;
   Vec3d_normalise(&self->normal);
@@ -345,26 +351,30 @@ void Frustum_getAABBVertexN(AABB* self, Vec3d* normal, Vec3d* result) {
 //   return result;
 // }
 
-FrustumTestResult Frustum_boxFrustumPlaneTest(Frustum* frustum,
-                                              AABB* aabb,
-                                              FrustumPlanes planeIdx) {
+// from Real Time Collision Detection ch 5.2.3
+// currently doesn't work, maybe plane representation is wrong?
+FrustumTestResult Frustum_boxFrustumPlaneTestRTCD(Frustum* frustum,
+                                                  AABB* aabb,
+                                                  int planeIdx) {
   float r, s;
   Vec3d center, positiveExtents;
   Plane* plane;
-  FrustumTestResult result;
-  result = InsideFrustum;
+  FrustumTestResult result = InsideFrustum;
   // for each plane do ...
   plane = &frustum->planes[planeIdx];
   // Compute AABB center
-  center = aabb->max;
-  Vec3d_add(&center, &aabb->min);
+  // center = (min + max) * 0.5
+  center = aabb->min;
+  Vec3d_add(&center, &aabb->max);
   Vec3d_mulScalar(&center, 0.5f);
 
   // Compute positive extents
+  // extents = max - center
   positiveExtents = aabb->max;
   Vec3d_sub(&positiveExtents, &center);
 
-  // Compute the projection interval radius of b onto L(t) = aabb->c + t * p.n
+  // Compute the projection interval radius of b onto L(t) = center + t *
+  // plane.normal
   r = positiveExtents.x * fabsf(plane->normal.x) +
       positiveExtents.y * fabsf(plane->normal.y) +
       positiveExtents.z * fabsf(plane->normal.z);
@@ -373,33 +383,50 @@ FrustumTestResult Frustum_boxFrustumPlaneTest(Frustum* frustum,
   // Intersection occurs when distance s falls within [-r,+r] interval
   // fabsf(s) <= r;
 
-  if (fabsf(s) <= r) {
+  if (s + r > 0) {
     result = IntersectingFrustum;
-  } else if (s < -r) {
+  } else if (s - r >= 0) {
+    // fully inside
+  } else {
     return OutsideFrustum;
   }
 
   return result;
 }
 
-// FrustumTestResult Frustum_boxInFrustum(Frustum* frustum, AABB* aabb) {
-//   FrustumTestResult result = InsideFrustum;
-//   Vec3d vertexP, vertexN;
-//   int i;
-//   // for each plane do ...
-//   for (i = 0; i < NUM_FRUSTUM_PLANES; i++) {
-//     Frustum_getAABBVertexP(aabb, &frustum->planes[i].normal, &vertexP);
-//     Frustum_getAABBVertexN(aabb, &frustum->planes[i].normal, &vertexN);
-//     // is the positive vertex outside?
-//     if (Plane_distance(&frustum->planes[i], &vertexP) < 0) {
-//       return OutsideFrustum;
-//       // is the negative vertex outside?
-//     } else if (Plane_distance(&frustum->planes[i], &vertexN) < 0) {
-//       result = IntersectingFrustum;
-//     }
-//   }
-//   return result;
-// }
+FrustumTestResult Frustum_boxFrustumPlaneTestPN(Frustum* frustum,
+                                                AABB* aabb,
+                                                int planeIdx) {
+  Vec3d vertexP, vertexN;
+  FrustumTestResult result = InsideFrustum;
+  Frustum_getAABBVertexP(aabb, &frustum->planes[planeIdx].normal, &vertexP);
+  Frustum_getAABBVertexN(aabb, &frustum->planes[planeIdx].normal, &vertexN);
+  // is the positive vertex outside?
+  if (Plane_distance(&frustum->planes[planeIdx], &vertexP) < 0) {
+    return OutsideFrustum;
+    // is the negative vertex outside?
+  } else if (Plane_distance(&frustum->planes[planeIdx], &vertexN) < 0) {
+    result = IntersectingFrustum;
+  }
+  return result;
+}
+
+FrustumTestResult Frustum_boxInFrustum(Frustum* frustum, AABB* aabb) {
+  FrustumTestResult result = InsideFrustum;
+  FrustumTestResult planeResult;
+  int i;
+  // for each plane do ...
+  for (i = 0; i < NUM_FRUSTUM_PLANES; i++) {
+    planeResult = Frustum_boxFrustumPlaneTestPN(frustum, aabb, i);
+
+    if (planeResult == OutsideFrustum) {
+      return result;
+    } else if (planeResult == IntersectingFrustum) {
+      result = planeResult;
+    }
+  }
+  return result;
+}
 
 void Frustum_getAABBVertex(AABB* aabb, int vertex, Vec3d* result) {
   switch (vertex) {
@@ -430,7 +457,7 @@ void Frustum_getAABBVertex(AABB* aabb, int vertex, Vec3d* result) {
   }
 }
 
-FrustumTestResult Frustum_boxInFrustum(Frustum* frustum, AABB* aabb) {
+FrustumTestResult Frustum_boxInFrustumNaive(Frustum* frustum, AABB* aabb) {
   int i, k;
   int out;
   int in;

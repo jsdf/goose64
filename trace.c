@@ -1,5 +1,7 @@
 #include "trace.h"
 
+float profilingAccumulated[MAX_TRACE_EVENT_TYPE];
+
 TraceEvent traceEvents[TRACE_EVENT_BUFFER_SIZE];
 static int traceEventsCount = 0;
 static int tracingEnabled = FALSE;

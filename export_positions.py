@@ -44,11 +44,17 @@ class AABB:
 
 
 def print_pos(pos):
+    return "{%f, %f, %f}" % (pos.x, pos.y, pos.z)
+
+
+def pos_from_blender(pos):
     # rotate the position from z-up (blender) to y-up (opengl)
-    return "{%f, %f, %f}" % (
-        pos.x * N64_SCALE_FACTOR,
-        pos.z * N64_SCALE_FACTOR,
-        -(pos.y * N64_SCALE_FACTOR),
+    return mathutils.Vector(
+        (
+            pos.x * N64_SCALE_FACTOR,
+            pos.z * N64_SCALE_FACTOR,
+            -(pos.y * N64_SCALE_FACTOR),
+        )
     )
 
 
@@ -64,9 +70,10 @@ for index, obj in enumerate(world_objects):
     for vertex in mesh.vertices:
         vert_world = obj.matrix_world @ vertex.co
         vert_local_rotated = vert_world - obj.matrix_world.to_translation()
-        aabb.expand_by_point(vert_local_rotated)
+        aabb.expand_by_point(pos_from_blender(vert_local_rotated))
 
     out += "{"
+    # these have already been converted from z-up (blender) to y-up (opengl)
     out += print_pos(aabb.min) + ", " + print_pos(aabb.max)
     out += "},\n"
 out += """
@@ -87,7 +94,7 @@ for index, obj in enumerate(world_objects):
     out += "{"
     out += "%d, // object id\n" % (index)
     # we rotate the position and rotation from z-up (blender) to y-up (opengl)
-    out += "%s, // position\n" % (print_pos(pos))
+    out += "%s, // position\n" % (print_pos(pos_from_blender(pos)))
     out += "{%f, %f, %f}, // rotation\n" % (
         math.degrees(rot.x),
         math.degrees(rot.z),
