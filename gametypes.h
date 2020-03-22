@@ -51,6 +51,9 @@ typedef struct Character {
   int pathProgress;
   float pathSegmentProgress;  // param between segments, used by path smoothing
   float speedScaleForHeading;
+  float speedMultiplier;
+  float speedScaleForArrival;
+  float turningSpeedScaleForHeading;
 
   unsigned int enteredStateTick;
   unsigned int startedActivityTick;

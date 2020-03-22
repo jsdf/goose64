@@ -21,11 +21,14 @@
 #define DEBUG_CHARACTER 0
 #define CHARACTER_MAX_TURN_SPEED 10.0f
 #define CHARACTER_FLEE_DIST 1200.0f
+#define CHARACTER_ARRIVAL_DIST 100.0f
+#define CHARACTER_ARRIVAL_DURATION 0.5
+#define CHARACTER_NEAR_PATH_WAYPOINT_DIST 40.0f
 #define CHARACTER_NEAR_TARGET_DIST 60.0f
 #define CHARACTER_NEAR_OBJ_DROP_DIST 60.0f
 #define CHARACTER_NEAR_OBJ_PICKUP_DIST 40.0f
 #define CHARACTER_NEAR_OBJ_STEAL_DIST 60.0f
-#define CHARACTER_ITEM_NEAR_HOME_DIST 80.0f
+#define CHARACTER_ITEM_NEAR_HOME_DIST 100.0f
 #define CHARACTER_SIGHT_RANGE 800.0f
 #define CHARACTER_PICKUP_COOLDOWN 120
 #define CHARACTER_MIN_IDLE_TIME 120
@@ -206,17 +209,42 @@ int Character_canSeePlayer(Character* self, Game* game) {
       game->worldObjectsCount);
 }
 
+float Character_getDistanceTopDown(Vec3d* from, Vec3d* to) {
+  Vec2d from2d, to2d;
+  Vec2d_init(&from2d, from->x, -from->z);
+  Vec2d_init(&to2d, to->x, -to->z);
+  return Vec2d_distanceTo(&from2d, &to2d);
+}
+
 void Character_moveTowards(Character* self,
-                           Vec3d target,
-                           float speedMultiplier) {
+                           Vec3d* target,
+                           float speedMultiplier,
+                           int shouldStopAtLocation) {
   Vec3d targetDirection;
   Vec2d targetDirection2d;
   Vec3d headingDirection;
   Vec3d movement;
   float targetAngle;
-  float speedScaleForHeading;
+  float derivedSpeed;
+  float framesToDesiredArrival;
+  float speedForDesiredArrival;
 
-  Vec3d_directionTo(&self->obj->position, &target, &targetDirection);
+  float distToTarget =
+      Character_getDistanceTopDown(&self->obj->position, target);
+
+  self->speedScaleForArrival = 1.0f;
+  self->speedMultiplier = speedMultiplier;
+  derivedSpeed = CHARACTER_SPEED * speedMultiplier * self->speedScaleForHeading;
+  if (shouldStopAtLocation && distToTarget < CHARACTER_ARRIVAL_DIST) {
+    framesToDesiredArrival = CHARACTER_ARRIVAL_DURATION * VSYNC_FPS;
+    speedForDesiredArrival = distToTarget / framesToDesiredArrival;
+    // for debugging
+    self->speedScaleForArrival =
+        (MIN(derivedSpeed, speedForDesiredArrival)) / derivedSpeed;
+    derivedSpeed = MIN(derivedSpeed, speedForDesiredArrival);
+  }
+
+  Vec3d_directionTo(&self->obj->position, target, &targetDirection);
 
   targetDirection.y =
       0;  // remove vertical component to stop character trying to fly
@@ -225,22 +253,23 @@ void Character_moveTowards(Character* self,
   // rotate towards target, but with a speed limit
   Vec2d_init(&targetDirection2d, targetDirection.x, targetDirection.z);
   targetAngle = 360.0 - radToDeg(Vec2d_angle(&targetDirection2d));
+
+  self->turningSpeedScaleForHeading =
+      (1.0f - (CLAMP((speedMultiplier - 0.5f), 0.0, 0.5)));
   self->obj->rotation.y = GameUtils_rotateTowardsClamped(
       self->obj->rotation.y, targetAngle,
-      CHARACTER_MAX_TURN_SPEED * speedMultiplier);
+      CHARACTER_MAX_TURN_SPEED * self->turningSpeedScaleForHeading);
 
   // resulting heading
-  speedScaleForHeading = MIN(
-      1.0, 1.0 - MAX(0.0f, (Character_topDownAngleDeltaToPos(self, &target) -
-                            CHARACTER_FACING_MOVEMENT_TARGET_ANGLE)) /
-                     90.0f);
-  self->speedScaleForHeading = speedScaleForHeading;
+  self->speedScaleForHeading =
+      MIN(1.0, 1.0 - MAX(0.0f, (Character_topDownAngleDeltaToPos(self, target) -
+                                CHARACTER_FACING_MOVEMENT_TARGET_ANGLE)) /
+                         90.0f);
   GameUtils_directionFromTopDownAngle(degToRad(self->obj->rotation.y),
                                       &headingDirection);
 
   Vec3d_copyFrom(&movement, &headingDirection);
-  Vec3d_mulScalar(&movement,
-                  CHARACTER_SPEED * speedMultiplier * speedScaleForHeading);
+  Vec3d_mulScalar(&movement, derivedSpeed);
   Vec3d_add(&self->obj->position, &movement);
 }
 
@@ -258,17 +287,11 @@ Node* Character_getPathNode(Character* self, Game* game, int pathNodeIndex) {
   return Path_getNodeByID(game->pathfindingGraph, *pathNodeID);
 }
 
-float Character_getDistanceTopDown(Vec3d* from, Vec3d* to) {
-  Vec2d from2d, to2d;
-  Vec2d_init(&from2d, from->x, -from->z);
-  Vec2d_init(&to2d, to->x, -to->z);
-  return Vec2d_distanceTo(&from2d, &to2d);
-}
-
 void Character_goToTarget(Character* self,
                           Game* game,
                           Vec3d* target,
-                          float speedMultiplier) {
+                          float speedMultiplier,
+                          int shouldStopAtTarget) {
   int from;
   int to;
   float profStartPathfinding;
@@ -333,7 +356,10 @@ void Character_goToTarget(Character* self,
     Trace_addEvent(PathfindingTraceEvent, profStartPathfinding, CUR_TIME_MS());
   }
 
-  if (self->pathfindingResult) {
+  if (!self->pathfindingResult) {
+    // no path or at end of path, just head towards target
+    Character_moveTowards(self, target, speedMultiplier, shouldStopAtTarget);
+  } else {
     // path smoothing
     // raycasts to find if there is any obstacle to going straight to next node
     // in path, and if not, skips ahead
@@ -442,7 +468,11 @@ void Character_goToTarget(Character* self,
     self->movementTarget = movementTarget;
 
     // head towards waypoint
-    Character_moveTowards(self, movementTarget, speedMultiplier);
+    Character_moveTowards(
+        self, &movementTarget, speedMultiplier,
+        // use arrival steering for last point (target)
+        shouldStopAtTarget &&
+            self->pathProgress == self->pathfindingResult->resultSize);
 
 #if CHARACTER_TARGET_PATH_PARAM
     nextNodePos = pathSegmentP1;
@@ -458,15 +488,12 @@ void Character_goToTarget(Character* self,
 
     } else if (self->pathProgress < self->pathfindingResult->resultSize - 1 &&
                Character_getDistanceTopDown(&self->obj->position, nextNodePos) <
-                   40) {
+                   CHARACTER_NEAR_PATH_WAYPOINT_DIST) {
       // printf("advancing due to near enough to waypoint pathProgress=%d\n",
       //        self->pathProgress);
       // near enough to waypoint
       self->pathProgress++;
     }
-  } else {
-    // no path or at end of path, just head towards target
-    Character_moveTowards(self, *target, speedMultiplier);
   }
 }
 
@@ -496,7 +523,8 @@ void Character_update(Character* self, Game* game) {
 #if CHARACTER_FOLLOW_PLAYER
   self->targetLocation = game->player.goose->position;
   Character_goToTarget(self, game, &self->targetLocation,
-                       CHARACTER_SPEED_MULTIPLIER_WALK);
+                       CHARACTER_SPEED_MULTIPLIER_WALK,
+                       /*  shouldStopAtTarget  */ FALSE);
 #elif CHARACTER_ENABLED
   Character_updateState(self, game);
 #endif
@@ -611,7 +639,8 @@ void Character_updateDefaultActivityState(Character* self, Game* game) {
                                     CHARACTER_ITEM_NEAR_HOME_DIST)) {
     // go there
     Character_goToTarget(self, game, &self->defaultActivityLocation,
-                         CHARACTER_SPEED_MULTIPLIER_WALK);
+                         CHARACTER_SPEED_MULTIPLIER_WALK,
+                         /*  shouldStopAtTarget  */ TRUE);
   } else {
     // do default activity
     if (self->startedActivityTick) {
@@ -672,7 +701,8 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
     } else {
       // bringing item back to initial location
       Character_goToTarget(self, game, &self->targetItem->initialLocation,
-                           CHARACTER_SPEED_MULTIPLIER_WALK);
+                           CHARACTER_SPEED_MULTIPLIER_WALK,
+                           /* shouldStopAtTarget */ TRUE);
     }
   } else {
     // can we still see the item?
@@ -706,10 +736,12 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
 
     } else {
       // no, move towards
-      Character_goToTarget(self, game, &self->targetItem->obj->position,
-                           Character_isSomeoneElseIsHoldingItem(self)
-                               ? CHARACTER_SPEED_MULTIPLIER_WALK
-                               : CHARACTER_SPEED_MULTIPLIER_WALK);
+      Character_goToTarget(
+          self, game, &self->targetItem->obj->position,
+          Character_isSomeoneElseIsHoldingItem(self)
+              ? CHARACTER_SPEED_MULTIPLIER_RUN
+              : CHARACTER_SPEED_MULTIPLIER_WALK,
+          /* shouldStopAtTarget */ !Character_isSomeoneElseIsHoldingItem(self));
     }
   }
 }
@@ -743,10 +775,12 @@ void Character_updateSeekingTargetState(Character* self, Game* game) {
     // TODO: this is pretty sketchy, instead perhaps this should be incorporated
     // into SeekingItemState
     // continue advancing towards target
-    Character_goToTarget(self, game, &self->targetLocation,
-                         Character_isSomeoneElseIsHoldingItem(self)
-                             ? CHARACTER_SPEED_MULTIPLIER_WALK
-                             : CHARACTER_SPEED_MULTIPLIER_WALK);
+    Character_goToTarget(
+        self, game, &self->targetLocation,
+        Character_isSomeoneElseIsHoldingItem(self)
+            ? CHARACTER_SPEED_MULTIPLIER_RUN
+            : CHARACTER_SPEED_MULTIPLIER_WALK,
+        /* shouldStopAtTarget */ !Character_isSomeoneElseIsHoldingItem(self));
   }
 }
 void Character_updateFleeingState(Character* self, Game* game) {

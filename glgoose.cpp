@@ -299,8 +299,18 @@ void drawGUI() {
         ImGui::Text("state: %s",
                     CharacterStateStrings[selectedCharacter->state]);
 
-        ImGui::InputFloat("speedScaleForHeading",
+        ImGui::InputFloat("speedMultiplier",
+                          (float*)&selectedCharacter->speedMultiplier, 0.1, 1.0,
+                          "%.3f", ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputFloat("heading speed scale",
                           (float*)&selectedCharacter->speedScaleForHeading, 0.1,
+                          1.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputFloat(
+            "heading turn scale",
+            (float*)&selectedCharacter->turningSpeedScaleForHeading, 0.1, 1.0,
+            "%.3f", ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputFloat("arrival speed scale",
+                          (float*)&selectedCharacter->speedScaleForArrival, 0.1,
                           1.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
         ImGui::InputInt("pathProgress", (int*)&selectedCharacter->pathProgress,
                         0, 1, ImGuiInputTextFlags_ReadOnly);
