@@ -33,7 +33,7 @@ extern Gfx gfx_glist[][GFX_GLIST_LEN];
 extern u32 gfx_gtask_no;
 /*-------------------------------- function ---------------------------------*/
 extern void gfxRCPInit(void);
-extern void gfxClearCfb(void);
+extern void gfxClearCfb(u16 fillColor);
 /*------------------------------- other extern define -----------------------*/
 extern Gfx setup_rdpstate[];
 extern Gfx setup_rspstate[];

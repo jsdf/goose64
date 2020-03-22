@@ -14,6 +14,7 @@ typedef struct GameObject {
   Vec3d position;
   EulerDegrees rotation;
   ModelType modelType;
+  int subtype;
   AnimationState* animState;
   PhysBody* physBody;
   int visible;

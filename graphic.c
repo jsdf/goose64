@@ -39,7 +39,7 @@ void gfxRCPInit(void) {
   Using nuGfxZBuffer (the address of the Z-buffer) and  nuGfxCfb_ptr (the
   address of the frame buffer) which are global variables of NuSYSTEM.
 ----------------------------------------------------------------------------*/
-void gfxClearCfb(void) {
+void gfxClearCfb(u16 fillColor) {
   /* Clear the Z-buffer  */
   gDPSetDepthImage(glistp++, OS_K0_TO_PHYSICAL(nuGfxZBuffer));
   gDPSetCycleType(glistp++, G_CYC_FILL);
@@ -53,8 +53,7 @@ void gfxClearCfb(void) {
   /* Clear the frame buffer  */
   gDPSetColorImage(glistp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD,
                    osVirtualToPhysical(nuGfxCfb_ptr));
-  gDPSetFillColor(glistp++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 |
-                             GPACK_RGBA5551(0, 0, 0, 1)));
+  gDPSetFillColor(glistp++, (fillColor << 16 | fillColor));
   gDPFillRectangle(glistp++, 0, 0, SCREEN_WD - 1, SCREEN_HT - 1);
   gDPPipeSync(glistp++);
 }

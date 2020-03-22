@@ -15,6 +15,7 @@ Game* Game_get();
 GameObject* Game_findObjectByType(ModelType modelType);
 GameObject* Game_findObjectNByType(ModelType modelType, int n);
 
+int Game_countObjectsInCategory(ModelTypeCategory category);
 GameObject* Game_getIntersectingObject(Vec3d* raySource, Vec3d* rayDirection);
 
 float Game_getObjRadius(GameObject* obj);

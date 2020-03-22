@@ -15,16 +15,27 @@ typedef enum ModelType {
   UniFloorModel,
   BushModel,
   FlagpoleModel,
-  GroundskeeperCharacterModel,
+  GardenerCharacterModel,
   WallModel,
   PlanterModel,
+  GroundModel,
   MAX_MODEL_TYPE
 } ModelType;
+
+typedef enum ModelTypeCategory {
+  GenericModelType,
+  ItemModelType,
+  CharacterModelType,
+  PlayerModelType,
+  MAX_MODEL_TYPE_CATEGORY,
+} ModelTypeCategory;
 
 typedef struct ModelProperties {
   float mass;
   float radius;
   Vec3d centroidOffset;
+  float scale;
+  ModelTypeCategory category;
 } ModelProperties;
 
 extern ModelProperties modelTypesProperties[];

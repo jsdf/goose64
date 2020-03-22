@@ -34,6 +34,7 @@
 #include "characterrig.h"
 #include "flagpole.h"
 #include "gooserig.h"
+#include "ground.h"
 #include "planter.h"
 #include "testingCube.h"
 #include "university_bldg.h"
@@ -103,7 +104,7 @@ static UsbLoggerState usbLoggerState;
 static int logTraceStartOffset = 0;
 static int loggingTrace = FALSE;
 
-static float cycleMode;
+static int twoCycleMode;
 static RenderMode renderModeSetting;
 PhysWorldData physWorldData = {
     university_map_collision_collision_mesh, UNIVERSITY_MAP_COLLISION_LENGTH,
@@ -143,7 +144,7 @@ void initStage00() {
 
   loggingTrace = FALSE;
 
-  cycleMode = 1.0;
+  twoCycleMode = FALSE;
   renderModeSetting = ToonFlatShadingRenderMode;
   nearPlane = DEFAULT_NEARPLANE;
   farPlane = DEFAULT_FARPLANE;
@@ -256,7 +257,7 @@ void makeDL00() {
   gfxRCPInit();
 
   /* Clear the frame and Z-buffer */
-  gfxClearCfb();
+  gfxClearCfb(GPACK_RGBA5551(0, 0, 0, 1));
 
   Frustum_setCamInternals(&frustum, fovy, aspect, nearPlane, farPlane);
 
@@ -414,7 +415,7 @@ void checkDebugControls(Game* game) {
 
   /* The reverse rotation by the A button */
   if (contdata[0].trigger & A_BUTTON) {
-    cycleMode = -cycleMode;
+    twoCycleMode = !twoCycleMode;
   }
   if (contdata[0].trigger & B_BUTTON) {
     renderModeSetting++;
@@ -688,7 +689,7 @@ AnimationFrame* getAnimData(ModelType modelType) {
   }
 }
 
-Gfx* getModelDisplayList(ModelType modelType) {
+Gfx* getModelDisplayList(ModelType modelType, int subtype) {
   switch (modelType) {
     case BushModel:
       return Wtx_bush;
@@ -704,6 +705,23 @@ Gfx* getModelDisplayList(ModelType modelType) {
       return Wtx_wall;
     case PlanterModel:
       return Wtx_planter;
+    case GroundModel:
+      switch (subtype) {
+        case 1:
+          return Wtx_ground_Ground_001_Grid_002;
+        case 2:
+          return Wtx_ground_Ground_002_Grid_003;
+        case 3:
+          return Wtx_ground_Ground_003_Grid_004;
+        case 4:
+          return Wtx_ground_Ground_004_Grid_005;
+        case 5:
+          return Wtx_ground_Ground_005_Grid_006;
+        case 6:
+          return Wtx_ground_Ground_006_Grid_007;
+        case 7:
+          return Wtx_ground_Ground_007_Grid_008;
+      }
     default:
       return Wtx_testingCube;
   }
@@ -756,7 +774,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
 
   gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-  gDPSetCycleType(glistp++, cycleMode > 0.0F ? G_CYC_1CYCLE : G_CYC_2CYCLE);
+  gDPSetCycleType(glistp++, twoCycleMode ? G_CYC_2CYCLE : G_CYC_1CYCLE);
   useZBuffering = TRUE;  // Renderer_isZBufferedGameObject(obj);
   if (useZBuffering) {
     gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
@@ -807,7 +825,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
         //   gSPSetGeometryMode(glistp++, G_SHADE | G_CULL_BACK);
         // }
 
-        gSPSetGeometryMode(glistp++, G_SHADE | G_CULL_BACK);
+        gSPSetGeometryMode(glistp++, G_CULL_BACK);
         gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
         break;
       case TextureNoLightingRenderMode:
@@ -833,13 +851,13 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
     // set the transform in world space for the gameobject to render
     guPosition(&obj->objTransform,
-               0.0F,             // rot x
-               obj->rotation.y,  // rot y
-               0.0F,             // rot z
-               1.0F,             // scale
-               obj->position.x,  // pos x
-               obj->position.y,  // pos y
-               obj->position.z   // pos z
+               0.0F,                                        // rot x
+               obj->rotation.y,                             // rot y
+               0.0F,                                        // rot z
+               modelTypesProperties[obj->modelType].scale,  // scale
+               obj->position.x,                             // pos x
+               obj->position.y,                             // pos y
+               obj->position.z                              // pos z
     );
     gSPMatrix(
         glistp++, OS_K0_TO_PHYSICAL(&(obj->objTransform)),
@@ -920,7 +938,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
           gSPMatrix(glistp++,
                     OS_K0_TO_PHYSICAL(&(obj->animState->attachmentTransform)),
                     G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
-          modelDisplayList = getModelDisplayList(attachment->modelType);
+          modelDisplayList = getModelDisplayList(attachment->modelType, 0);
           gSPDisplayList(glistp++, modelDisplayList);
           gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
         }
@@ -930,7 +948,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
       Trace_addEvent(DrawAnimTraceEvent, profStartAnim, CUR_TIME_MS());
     } else {
       // case for simple gameobjects with no moving sub-parts
-      modelDisplayList = getModelDisplayList(obj->modelType);
+      modelDisplayList = getModelDisplayList(obj->modelType, obj->subtype);
 
       gSPDisplayList(glistp++, modelDisplayList);
     }

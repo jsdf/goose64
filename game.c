@@ -30,13 +30,6 @@
 
 static Game game;
 
-#define NUM_CHARACTERS 1
-Character characters[NUM_CHARACTERS];
-#define NUM_ITEMS 5
-Item items[NUM_ITEMS];
-#define NUM_PHYS_BODIES 10
-PhysBody physicsBodies[NUM_PHYS_BODIES];
-
 void Game_initGameObjectPhysBody(PhysBody* body, GameObject* obj) {
   Vec3d objCenter;
   Game_getObjCenter(obj, &objCenter);
@@ -49,9 +42,13 @@ void Game_initGameObjectPhysBody(PhysBody* body, GameObject* obj) {
 void Game_init(GameObject* worldObjects,
                int worldObjectsCount,
                PhysWorldData* physWorldData) {
-  int i, itemsCount, physicsBodiesCount, charactersCount;
+  int i, initIndex, itemsCount, physicsBodiesCount, charactersCount;
   GameObject* goose;
   GameObject* obj;
+
+  Character* characters;
+  Item* items;
+  PhysBody* physicsBodies;
 
   game.paused = FALSE;
   game.worldObjects = worldObjects;
@@ -79,18 +76,33 @@ void Game_init(GameObject* worldObjects,
   // setup camera
   Vec3d_copyFrom(&game.viewTarget, &game.player.goose->position);
 
-  itemsCount = 2;
-  Item_init(&items[0], Game_findObjectByType(BookItemModel), &game);
-  for (i = 0; i < 3; ++i) {
-    obj = Game_findObjectNByType(HomeworkItemModel, i);
-    assert(obj);
-    Item_init(&items[1 + i], obj, &game);
+  // TODO: move these to be statically allocated per map?
+  itemsCount = Game_countObjectsInCategory(ItemModelType);
+  items = (Item*)malloc(itemsCount * sizeof(Item));
+  assert(items);
+  initIndex = 0;
+  for (i = 0; i < game.worldObjectsCount; ++i) {
+    obj = game.worldObjects + i;
+    if (modelTypesProperties[obj->modelType].category == ItemModelType) {
+      Item_init(items + initIndex, obj, &game);
+      initIndex++;
+    }
   }
 
-  charactersCount = 1;
-  Character_init(&characters[0],
-                 Game_findObjectByType(GroundskeeperCharacterModel),
-                 /*book*/ &items[0], &game);
+  charactersCount = Game_countObjectsInCategory(CharacterModelType);
+  characters = (Character*)malloc(charactersCount * sizeof(Character));
+  assert(characters);
+  initIndex = 0;
+  for (i = 0; i < game.worldObjectsCount; ++i) {
+    obj = game.worldObjects + i;
+    if (modelTypesProperties[obj->modelType].category == CharacterModelType) {
+      Character_init(characters + initIndex,
+                     Game_findObjectByType(GardenerCharacterModel),
+                     /*book*/ &items[0],  // TODO: make items owned by character
+                     &game);
+      initIndex++;
+    }
+  }
 
   physicsBodiesCount = 0;
 #if GENERATE_DEBUG_BODIES
@@ -102,25 +114,22 @@ void Game_init(GameObject* worldObjects,
     physicsBodiesCount++;
   }
 #else
-  obj = game.player.goose;
-  Game_initGameObjectPhysBody(&physicsBodies[physicsBodiesCount], obj);
-  physicsBodiesCount++;
-  assert(physicsBodiesCount <= NUM_PHYS_BODIES);
-  for (i = 0; i < NUM_CHARACTERS; ++i) {
-    obj = characters[i].obj;
-    if (!obj)
-      break;
-    Game_initGameObjectPhysBody(&physicsBodies[physicsBodiesCount], obj);
-    physicsBodiesCount++;
-    assert(physicsBodiesCount <= NUM_PHYS_BODIES);
-  }
-  for (i = 0; i < NUM_ITEMS; ++i) {
-    obj = items[i].obj;
-    if (!obj)
-      break;
-    Game_initGameObjectPhysBody(&physicsBodies[physicsBodiesCount], obj);
-    physicsBodiesCount++;
-    assert(physicsBodiesCount <= NUM_PHYS_BODIES);
+  physicsBodiesCount = itemsCount + charactersCount +
+                       Game_countObjectsInCategory(PlayerModelType);
+  physicsBodies = (PhysBody*)malloc(physicsBodiesCount * sizeof(PhysBody));
+  assert(physicsBodies);
+  initIndex = 0;
+  for (i = 0; i < game.worldObjectsCount; ++i) {
+    obj = game.worldObjects + i;
+    {
+      ModelTypeCategory category =
+          modelTypesProperties[obj->modelType].category;
+      if (category == ItemModelType || category == CharacterModelType ||
+          category == PlayerModelType) {
+        Game_initGameObjectPhysBody(physicsBodies + initIndex, obj);
+        initIndex++;
+      }
+    }
   }
 #endif
 
@@ -140,6 +149,13 @@ void Game_init(GameObject* worldObjects,
   game.profTimePath = 0;
 }
 
+// TODO: not used yet, but if we have map transitions we might want this
+void Game_destroy() {
+  free(game.items);
+  free(game.characters);
+  free(game.physicsBodies);
+}
+
 Game* Game_get() {
   return &game;
 }
@@ -147,6 +163,19 @@ Game* Game_get() {
 GameObject* Game_getObjectByID(int id) {
   assert(id < game.worldObjectsCount);
   return game.worldObjects + id;
+}
+
+int Game_countObjectsInCategory(ModelTypeCategory category) {
+  int i;
+  int count = 0;
+
+  for (i = 0; i < game.worldObjectsCount; i++) {
+    if (modelTypesProperties[(game.worldObjects + i)->modelType].category ==
+        category) {
+      count++;
+    }
+  }
+  return count;
 }
 
 // finds the first object with a particular modeltype
@@ -248,8 +277,8 @@ void Game_update(Input* input) {
     game->tick++;
 
     profStartCharacters = CUR_TIME_MS();
-    for (i = 0; i < NUM_CHARACTERS; ++i) {
-      Character_update(&characters[i], game);
+    for (i = 0; i < game->charactersCount; ++i) {
+      Character_update(&game->characters[i], game);
     }
     profEndCharacters = CUR_TIME_MS();
     Trace_addEvent(CharactersUpdateTraceEvent, profStartCharacters,

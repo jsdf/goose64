@@ -81,6 +81,20 @@ out += """
 """
 
 
+def get_modeltype(name):
+    return re.sub(r"[.].*?$", "", obj.name)
+
+
+def get_subtype(name):
+    if name.startswith("Ground"):
+        try:
+            return int(re.sub(r"^.*?[.]", "", obj.name))
+        except ValueError:
+            return 0
+    else:
+        return 0
+
+
 out += """
 GameObject %s_data[] = {
 """ % (
@@ -100,7 +114,8 @@ for index, obj in enumerate(world_objects):
         math.degrees(rot.z),
         -math.degrees(rot.y),
     )
-    out += "%sModel, // modelType\n" % (re.sub(r"[.].*?$", "", obj.name))
+    out += "%sModel, // modelType\n" % (get_modeltype(obj.name))
+    out += "%d, // subtype\n" % (get_subtype(obj.name))
     out += "},\n"
 out += """
 };

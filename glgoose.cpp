@@ -746,20 +746,51 @@ void drawMesh(ObjMesh& mesh, GLuint texture) {
   glDisable(GL_TEXTURE_2D);
 }
 
-void drawMeshesForModel(ObjModel& model) {
-  // render each model mesh. usually there will only be one
-  std::map<std::string, ObjMesh>::iterator it = model.meshes.begin();
-  while (it != model.meshes.end()) {
-    // std::cout << "drawing model: " << ModelTypeStrings[obj->modelType]
-    //           << " mesh:" << it->first << std::endl;
+ObjMesh& getMeshForModelType(ModelType modelType, int subtype) {
+  try {
+    switch (modelType) {
+      case GroundModel:
+        switch (subtype) {
+          case 1:
+            return models[GroundModel].meshes.at("Ground.001_Grid.002");
+          case 2:
+            return models[GroundModel].meshes.at("Ground.002_Grid.003");
+          case 3:
+            return models[GroundModel].meshes.at("Ground.003_Grid.004");
+          case 4:
+            return models[GroundModel].meshes.at("Ground.004_Grid.005");
+          case 5:
+            return models[GroundModel].meshes.at("Ground.005_Grid.006");
+          case 6:
+            return models[GroundModel].meshes.at("Ground.006_Grid.007");
+          case 7:
+            return models[GroundModel].meshes.at("Ground.007_Grid.008");
+        }
 
-    ObjMesh& mesh = it->second;
+      default:
+        ObjModel& model = models[modelType];
 
-    // draw mesh
-    drawMesh(mesh, model.texture);
+        // render each model mesh. usually there will only be one
+        std::map<std::string, ObjMesh>::iterator it = model.meshes.begin();
+        while (it != model.meshes.end()) {
+          ObjMesh& mesh = it->second;
 
-    it++;
+          return mesh;
+
+          it++;
+        }
+    }
+  } catch (const std::out_of_range& oor) {
+    std::cerr << "Out of Range error: " << oor.what() << '\n';
   }
+  assert(false);
+}
+
+void drawMeshesForModel(ModelType modelType, int subtype) {
+  ObjModel& model = models[modelType];
+  ObjMesh& mesh = getMeshForModelType(modelType, subtype);
+  // draw mesh
+  drawMesh(mesh, model.texture);
 }
 
 char* getMeshNameForModelMeshPart(ModelType modelType, int meshPart) {
@@ -887,8 +918,7 @@ void drawModel(GameObject* obj) {
         glRotatef(attachment.rotation.x, 1, 0, 0);
         glRotatef(attachment.rotation.y, 0, 1, 0);
         glRotatef(attachment.rotation.z, 0, 0, 1);
-        ObjModel& attachmentModel = models[attachment.modelType];
-        drawMeshesForModel(attachmentModel);
+        drawMeshesForModel(attachment.modelType, 0);
         glPopMatrix();
       }
 
@@ -928,7 +958,7 @@ void drawModel(GameObject* obj) {
 
   } else {
     // case for simple gameobjects with no moving sub-parts
-    drawMeshesForModel(model);
+    drawMeshesForModel(obj->modelType, obj->subtype);
 #if DEBUG_MODELS
     drawMarker(255.0, 0.0, 255.0, 1);  // obj marker, purple
 #endif
@@ -989,6 +1019,9 @@ void drawGameObject(GameObject* obj) {
   glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(obj->rotation.y, 0, 1, 0);
+  glScalef(modelTypesProperties[obj->modelType].scale,
+           modelTypesProperties[obj->modelType].scale,
+           modelTypesProperties[obj->modelType].scale);
 
   if (obj->modelType != NoneModel) {
     if (Renderer_isZBufferedGameObject(obj)) {
@@ -1457,6 +1490,7 @@ void renderScene(void) {
 
   game = Game_get();
 
+  glClearColor(0, 0, 0, 1);
   // Clear Color and Depth Buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Use the Projection Matrix
@@ -2040,11 +2074,12 @@ int main(int argc, char** argv) {
   loadModel(UniBldgModel, "university_bldg.obj", "redbldg.bmp");
   loadModel(BushModel, "bush.obj", "bush.bmp");
   loadModel(FlagpoleModel, "flagpole.obj", "flagpole.bmp");
-  loadModel(GroundskeeperCharacterModel, "characterrig.obj", "person.bmp");
+  loadModel(GardenerCharacterModel, "characterrig.obj", "person.bmp");
   loadModel(BookItemModel, "book.obj", "book.bmp");
   loadModel(HomeworkItemModel, "testingCube.obj", "testCubeTex.bmp");
   loadModel(WallModel, "wall.obj", "wall.bmp");
   loadModel(PlanterModel, "planter.obj", "planter.bmp");
+  loadModel(GroundModel, "ground.obj", "gardengrass.bmp");
 
 #if ENABLE_NODEGRAPH_EDITOR
   nodeGraph.load(pathfindingGraph);

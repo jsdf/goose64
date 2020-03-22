@@ -39,7 +39,7 @@ int Renderer_isLitGameObject(GameObject* obj) {
 int Renderer_isAnimatedGameObject(GameObject* obj) {
   switch (obj->modelType) {
     case GooseModel:
-    case GroundskeeperCharacterModel:
+    case GardenerCharacterModel:
       return TRUE;
     default:
       return FALSE;
