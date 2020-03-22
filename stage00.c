@@ -587,19 +587,19 @@ void updateGame00(void) {
 #endif
   }
 
-  if (nuScRetraceCounter % 60 == 0) {
-    // calc averages for last 60 frames
-    profAvgCharacters = game->profTimeCharacters / 60.0;
+  if (nuScRetraceCounter % VSYNC_FPS == 0) {
+    // calc averages for last VSYNC_FPS frames
+    profAvgCharacters = game->profTimeCharacters / VSYNC_FPS;
     game->profTimeCharacters = 0.0f;
-    profAvgPhysics = game->profTimePhysics / 60.0;
+    profAvgPhysics = game->profTimePhysics / VSYNC_FPS;
     game->profTimePhysics = 0.0f;
-    profAvgDraw = game->profTimeDraw / 60.0;
+    profAvgDraw = game->profTimeDraw / VSYNC_FPS;
     game->profTimeDraw = 0.0f;
-    profAvgPath = game->profTimePath / 60.0;
+    profAvgPath = game->profTimePath / VSYNC_FPS;
     game->profTimePath = 0.0f;
 
     for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
-      profilingAverages[i] = profilingAccumulated[i] / 60.0;
+      profilingAverages[i] = profilingAccumulated[i] / VSYNC_FPS;
       profilingAccumulated[i] = 0;
     }
   }

@@ -13,6 +13,9 @@
 #define degToRad(angleInDegrees) ((angleInDegrees)*CONST_PI / 180.0)
 #define radToDeg(angleInRadians) ((angleInRadians)*180.0 / CONST_PI)
 
+// TODO: switch based on region
+#define VSYNC_FPS 60
+
 // dumb
 #ifdef __N64__
 #ifdef __cplusplus  // only for clang linter
