@@ -288,6 +288,15 @@ void drawGUI() {
                         1, ImGuiInputTextFlags_ReadOnly);
       }
     }
+    if (obj->animState) {
+      if (ImGui::CollapsingHeader("Animation",
+                                  ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::InputInt("state", (int*)&obj->animState->state, 0, 1,
+                        ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputFloat("progress", (float*)&obj->animState->progress, 0.1,
+                          1.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
+      }
+    }
     if (selectedCharacter) {
       if (ImGui::CollapsingHeader("Character",
                                   ImGuiTreeNodeFlags_DefaultOpen)) {

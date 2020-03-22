@@ -547,7 +547,7 @@ void Character_update(Character* self, Game* game) {
   ) {
     if (self->animState.state != character_walk_anim) {
       // enter walk anim
-      self->animState.progress = 0.0;
+      self->animState.progress = 0.25;  // most similar to idle
     } else {
       // advance walk anim
       self->animState.progress = fmodf(

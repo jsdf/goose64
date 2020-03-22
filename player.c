@@ -107,7 +107,7 @@ void Player_update(Player* self, Input* input, Game* game) {
           self->animState.progress +
               resultantMovementSpeed * (GameUtils_inWater(goose)
                                             ? 0.5
-                                            : 1.0),  // slower anim in waters
+                                            : 1.0),  // slower anim in water
           1.0);
     }
     self->animState.state = goose_walk_anim;
