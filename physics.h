@@ -16,6 +16,7 @@ typedef struct PhysWorldData {
   SpatialHash* worldMeshSpatialHash;
   float gravity;
   float viscosity;
+  float waterHeight;
 } PhysWorldData;
 
 typedef struct PhysState {

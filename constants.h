@@ -8,6 +8,7 @@
 #define DEFAULT_FOVY 45.0f
 #define DEFAULT_NEARPLANE 100
 #define DEFAULT_FARPLANE 3000
+#define WATER_HEIGHT -70.0
 
 #define CONST_PI 3.14159265358979323846
 #define degToRad(angleInDegrees) ((angleInDegrees)*CONST_PI / 180.0)

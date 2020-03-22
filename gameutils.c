@@ -1,5 +1,6 @@
 #include "gameutils.h"
 #include <math.h>
+#include "game.h"
 #include "vec2d.h"
 #include "vec3d.h"
 
@@ -31,4 +32,14 @@ void GameUtils_directionFromTopDownAngle(float angle, Vec3d* result) {
   result->x = direction2d.x;
   result->y = 0;
   result->z = -direction2d.y;
+}
+
+int GameUtils_inWater(GameObject* obj) {
+  Vec3d center;
+  Game_getObjCenter(obj, &center);
+
+  if (center.y < WATER_HEIGHT) {
+    return TRUE;
+  }
+  return FALSE;
 }

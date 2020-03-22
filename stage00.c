@@ -107,10 +107,12 @@ static int loggingTrace = FALSE;
 
 static int twoCycleMode;
 static RenderMode renderModeSetting;
-PhysWorldData physWorldData = {
-    university_map_collision_collision_mesh, UNIVERSITY_MAP_COLLISION_LENGTH,
-    &university_map_collision_collision_mesh_hash,
-    /*gravity*/ -9.8 * N64_SCALE_FACTOR, /*viscosity*/ 0.05};
+PhysWorldData physWorldData = {university_map_collision_collision_mesh,
+                               UNIVERSITY_MAP_COLLISION_LENGTH,
+                               &university_map_collision_collision_mesh_hash,
+                               /*gravity*/ -9.8 * N64_SCALE_FACTOR,
+                               /*viscosity*/ 0.05,
+                               /*waterHeight*/ WATER_HEIGHT};
 
 void drawWorldObjects(Dynamic* dynamicp);
 

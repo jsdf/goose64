@@ -69,14 +69,14 @@
 #define DEBUG_COLLISION_SPATIAL_HASH_TRIS 0
 #define DEBUG_COLLISION_MESH_AABB 0
 
-#define DEBUG_AABB 1
-#define DEBUG_FRUSTUM 1
+#define DEBUG_AABB 0
+#define DEBUG_FRUSTUM 0
 
 #define DEBUG_PATHFINDING_GRAPH 0
 #define DEBUG_PATHFINDING 0
 #define DEBUG_PATHFINDING_AUTO 0
 
-#define DEBUG_PROFILING 1
+#define DEBUG_PROFILING 0
 
 #define USE_LIGHTING 1
 #define USE_LIGHTING_STATIC_ONLY 1
@@ -107,10 +107,12 @@ bool keysDown[127];
 Input input;
 GameObject* selectedObject = NULL;
 
-PhysWorldData physWorldData = {
-    university_map_collision_collision_mesh, UNIVERSITY_MAP_COLLISION_LENGTH,
-    &university_map_collision_collision_mesh_hash,
-    /*gravity*/ -9.8 * N64_SCALE_FACTOR, /*viscosity*/ 0.05};
+PhysWorldData physWorldData = {university_map_collision_collision_mesh,
+                               UNIVERSITY_MAP_COLLISION_LENGTH,
+                               &university_map_collision_collision_mesh_hash,
+                               /*gravity*/ -9.8 * N64_SCALE_FACTOR,
+                               /*viscosity*/ 0.05,
+                               /*waterHeight*/ WATER_HEIGHT};
 
 // crap for gluProject/gluUnProject
 GLdouble lastModelView[16];
@@ -378,7 +380,13 @@ void drawGUI() {
     updateSkipRate = MAX(updateSkipRate, 1);
   }
 
-  if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
+  if (ImGui::CollapsingHeader("Camera",
+#if DEBUG_FRUSTUM
+                              ImGuiTreeNodeFlags_DefaultOpen
+#else
+                              0
+#endif
+                              )) {
     ImGui::InputFloat3("viewPos", (float*)&game->viewPos, "%.3f");
     ImGui::InputFloat3("viewTarget", (float*)&game->viewTarget, "%.3f");
     ImGui::Checkbox("enableControlsInFreeView", &enableControlsInFreeView);
@@ -438,14 +446,18 @@ void drawGUI() {
     }
   }
 
-  if (ImGui::CollapsingHeader("Profiling", ImGuiTreeNodeFlags_DefaultOpen)) {
+  if (ImGui::CollapsingHeader("Profiling",
+#if DEBUG_PROFILING
+                              ImGuiTreeNodeFlags_DefaultOpen
+#else
+                              0
+#endif
+                              )) {
     ImGui::Text("Frametime %.3f ms (%.1f FPS)",
                 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-#if DEBUG_PROFILING
     ImGui::Text("Phys=%.3fms, Char=%.3f ms, Draw=%.3f ms, Path=%.3f ms",
                 profAvgPhysics, profAvgCharacters, profAvgDraw, profAvgPath);
-#endif
     ImGui::InputInt("frustumCulled", (int*)&frustumCulled, 0, 10,
                     ImGuiInputTextFlags_ReadOnly);
   }
@@ -1687,7 +1699,6 @@ void renderScene(void) {
 
   glPopMatrix();
   glPopAttrib();
-
 #endif
 
 #if DEBUG_OBJECTS
