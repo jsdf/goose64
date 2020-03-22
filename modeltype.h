@@ -4,7 +4,9 @@
 
 #include "vec3d.h"
 
-// when updating this, also update ModelTypeStrings[]
+// when updating this, also update ModelTypeStrings[] and modelTypesProperties[]
+// and add new meshes to getModelDisplayList() in stage00.c and add a
+// loadModel() call in glgoose.cpp
 typedef enum ModelType {
   NoneModel,
   GooseModel,
@@ -19,6 +21,7 @@ typedef enum ModelType {
   WallModel,
   PlanterModel,
   GroundModel,
+  WaterModel,
   MAX_MODEL_TYPE
 } ModelType;
 

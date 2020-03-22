@@ -783,6 +783,7 @@ ObjMesh& getMeshForModelType(ModelType modelType, int subtype) {
   } catch (const std::out_of_range& oor) {
     std::cerr << "Out of Range error: " << oor.what() << '\n';
   }
+  printf("did you forget to load \"%s\"?\n", ModelTypeStrings[modelType]);
   assert(false);
 }
 
@@ -2080,6 +2081,7 @@ int main(int argc, char** argv) {
   loadModel(WallModel, "wall.obj", "wall.bmp");
   loadModel(PlanterModel, "planter.obj", "planter.bmp");
   loadModel(GroundModel, "ground.obj", "gardengrass.bmp");
+  loadModel(WaterModel, "water.obj", "water.bmp");
 
 #if ENABLE_NODEGRAPH_EDITOR
   nodeGraph.load(pathfindingGraph);

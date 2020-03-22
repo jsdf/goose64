@@ -63,6 +63,21 @@ void PhysBehavior_floorClamp(PhysBody* body, float floorHeight) {
   }
 }
 
+void PhysBehavior_waterBuoyancy(PhysBody* body,
+                                float waterHeight,
+                                Vec3d* gravity) {
+  Vec3d response;
+  float maxDepth = -58.0;
+
+  if (body->position.y < waterHeight) {
+    float buoyancyRatio = CLAMP(
+        (body->position.y - waterHeight) / (maxDepth - waterHeight), -2.0, 0.0);
+    body->position.y = waterHeight;
+    Vec3d_init(&response, 0.0, gravity->y * buoyancyRatio, 0.0);
+    PhysBody_applyForce(body, &response);
+  }
+}
+
 int PhysBehavior_worldCollisionResponseStep(PhysBody* body,
                                             PhysWorldData* world) {
   int hasCollision;
@@ -219,10 +234,9 @@ void PhysBehavior_collisionResponse(PhysWorldData* world,
   PhysBody* body;
   float profStartObjCollision;
   float profStartWorldCollision;
+  // int floorHeight = 0.0;
 
   profStartObjCollision = CUR_TIME_MS();
-  // int floorHeight;
-  // floorHeight = 0.0;
   for (k = 0, body = bodies; k < numBodies; k++, body++) {
     if (body->enabled) {
       // PhysBehavior_floorBounce(body, floorHeight);
@@ -293,10 +307,13 @@ void PhysBody_update(PhysBody* self,
                      PhysBody* pool,
                      int numInPool,
                      PhysState* physics) {
+  int waterHeight = -65.0;
   Vec3d gravity;
   Vec3d_init(&gravity, 0, physics->worldData->gravity * self->mass, 0);
   // do behaviours
   PhysBehavior_constantForce(self, gravity);  // apply gravity
+
+  PhysBehavior_waterBuoyancy(self, waterHeight, &gravity);
 }
 
 void PhysBody_dampenSmallMovements(PhysBody* body) {

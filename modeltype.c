@@ -15,13 +15,19 @@ char* ModelTypeStrings[] = {
     "WallModel",               //
     "PlanterModel",            //
     "GroundModel",             //
+    "WaterModel",              //
     "MAX_MODEL_TYPE",          //
 };
 
+#define DEFAULT_MODEL_PROPERTIES                                  \
+  { /* mass */                                                    \
+    100, /* radius */ 50.0, /* centroidOffset */ {0.0, 0.0, 0.0}, \
+        /*scale*/ 1.0, GenericModelType                           \
+  }
+
 ModelProperties modelTypesProperties[] = {
     /* NoneModel */
-    {/* mass */ 100, /* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}, /*scale*/ 1.0, GenericModelType},
+    DEFAULT_MODEL_PROPERTIES,
     /* GooseModel */
     {/* mass */ 200, /* radius */ 25.0,
      /* centroidOffset */ {0.0, 15.0, 0.0}, /*scale*/ 0.7, PlayerModelType},
@@ -35,30 +41,25 @@ ModelProperties modelTypesProperties[] = {
     {/* mass */ 100, /* radius */ 50.0,
      /* centroidOffset */ {0.0, 0.0, 0.0}, /*scale*/ 1.0, ItemModelType},
     /* UniBldgModel */
-    {/* mass */ 100, /* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}, /*scale*/ 1.0, GenericModelType},
+    DEFAULT_MODEL_PROPERTIES,
     /* UniFloorModel */
-    {/* mass */ 100, /* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}, /*scale*/ 1.0, GenericModelType},
+    DEFAULT_MODEL_PROPERTIES,
     /* BushModel */
     {/* mass */ 100, /* radius */ 55.0,
      /* centroidOffset */ {0.0, 15.0, 0.0}, /*scale*/ 1.0, GenericModelType},
     /* FlagpoleModel */
-    {/* mass */ 100, /* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}, /*scale*/ 1.0, GenericModelType},
+    DEFAULT_MODEL_PROPERTIES,
     /* GardenerCharacterModel */
     {/* mass */ 2000, /* radius */ 25.0,
      /* centroidOffset */ {0.0, 22.0, 0.0}, /*scale*/ 1.0, CharacterModelType},
     /* WallModel */
-    {/* mass */ 100, /* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}, /*scale*/ 1.0, GenericModelType},
+    DEFAULT_MODEL_PROPERTIES,
     /* PlanterModel */
-    {/* mass */ 100, /* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}, /*scale*/ 1.0, GenericModelType},
+    DEFAULT_MODEL_PROPERTIES,
     /* GroundModel */
-    {/* mass */ 100, /* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}, /*scale*/ 1.0, GenericModelType},
+    DEFAULT_MODEL_PROPERTIES,
+    /* WaterModel */
+    DEFAULT_MODEL_PROPERTIES,
     /* MAX_MODEL_TYPE */
-    {/* mass */ 100, /* radius */ 50.0,
-     /* centroidOffset */ {0.0, 0.0, 0.0}, /*scale*/ 1.0, GenericModelType},
+    DEFAULT_MODEL_PROPERTIES,
 };

@@ -40,6 +40,7 @@
 #include "university_bldg.h"
 #include "university_floor.h"
 #include "wall.h"
+#include "water.h"
 
 // map
 #include "university_map.h"
@@ -722,6 +723,8 @@ Gfx* getModelDisplayList(ModelType modelType, int subtype) {
         case 7:
           return Wtx_ground_Ground_007_Grid_008;
       }
+    case WaterModel:
+      return Wtx_water;
     default:
       return Wtx_testingCube;
   }
