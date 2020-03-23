@@ -221,9 +221,3 @@ Gfx Wtx_planter[] = {
 	  gsSPDisplayList(Vtx_planter_mesh01_dl),
 	  gsSPEndDisplayList()
 };
-
-#define PLANTER_MODEL_MESH_COUNT 1
-
-Gfx* planter_model_meshes[] = {
-    Wtx_planter,
-};

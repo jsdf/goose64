@@ -264,9 +264,3 @@ Gfx Wtx_flagpole[] = {
 	  gsSPDisplayList(Vtx_flagpole_mesh01_dl),
 	  gsSPEndDisplayList()
 };
-
-#define FLAGPOLE_MODEL_MESH_COUNT 1
-
-Gfx* flagpole_model_meshes[] = {
-    Wtx_flagpole,
-};

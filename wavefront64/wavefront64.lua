@@ -84,12 +84,12 @@ function w64_main()
 		end
 
 
-		table.insert(final_file_output,
-			string.format("#define %s_MODEL_MESH_COUNT %d\n\n", string.upper(objname), tableLength(objfile_subobjtables))
-			.. string.format("Gfx* %s_model_meshes[] = {\n", objname)
-			.. table.concat(meshList, '\n')
-			.. "\n};\n"
-		)
+		-- table.insert(final_file_output,
+		-- 	string.format("#define %s_MODEL_MESH_COUNT %d\n\n", string.upper(objname), tableLength(objfile_subobjtables))
+		-- 	.. string.format("Gfx* %s_model_meshes[] = {\n", objname)
+		-- 	.. table.concat(meshList, '\n')
+		-- 	.. "\n};\n"
+		-- )
 
 		filename = arg[2]
 	elseif(arg[1]:lower()=="spr") then

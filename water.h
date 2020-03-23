@@ -89,9 +89,3 @@ Gfx Wtx_water[] = {
 	  gsSPDisplayList(Vtx_water_mesh01_dl),
 	  gsSPEndDisplayList()
 };
-
-#define WATER_MODEL_MESH_COUNT 1
-
-Gfx* water_model_meshes[] = {
-    Wtx_water,
-};

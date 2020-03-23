@@ -852,20 +852,3 @@ Gfx Wtx_characterrig_gkbicep_l_gkbicep_lrmesh[] = {
 	  gsSPDisplayList(Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
-
-#define CHARACTERRIG_MODEL_MESH_COUNT 12
-
-Gfx* characterrig_model_meshes[] = {
-    Wtx_characterrig_gkfoot_r_gkfoot_rmesh,
-    Wtx_characterrig_gkforearm_r_gkforearm_rmesh,
-    Wtx_characterrig_gkhead_gkheadmesh,
-    Wtx_characterrig_gkshin_r_gkshin_rmesh,
-    Wtx_characterrig_gkthigh_r_gkthigh_rmesh,
-    Wtx_characterrig_gktorso_gktorsomesh,
-    Wtx_characterrig_gkfoot_l_gkfoot_lrmesh,
-    Wtx_characterrig_gkforearm_l_gkforearm_lrmesh,
-    Wtx_characterrig_gkshin_l_gkshin_lmesh,
-    Wtx_characterrig_gkthigh_l_gkthigh_lmesh,
-    Wtx_characterrig_gkbicep_r_gkbicep_rmesh,
-    Wtx_characterrig_gkbicep_l_gkbicep_lrmesh,
-};

@@ -101,9 +101,3 @@ Gfx Wtx_wall[] = {
 	  gsSPDisplayList(Vtx_wall_mesh01_dl),
 	  gsSPEndDisplayList()
 };
-
-#define WALL_MODEL_MESH_COUNT 1
-
-Gfx* wall_model_meshes[] = {
-    Wtx_wall,
-};

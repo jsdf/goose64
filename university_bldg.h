@@ -120,9 +120,3 @@ Gfx Wtx_university_bldg[] = {
 	  gsSPDisplayList(Vtx_university_bldg_mesh01_dl),
 	  gsSPEndDisplayList()
 };
-
-#define UNIVERSITY_BLDG_MODEL_MESH_COUNT 1
-
-Gfx* university_bldg_model_meshes[] = {
-    Wtx_university_bldg,
-};

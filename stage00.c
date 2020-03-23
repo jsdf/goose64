@@ -34,9 +34,9 @@
 #include "characterrig.h"
 #include "flagpole.h"
 #include "gooserig.h"
-// #include "ground.h"
+#include "ground.h"
 #include "planter.h"
-// #include "rocks.h"
+#include "rocks.h"
 #include "testingCube.h"
 #include "university_bldg.h"
 #include "university_floor.h"
@@ -709,12 +709,34 @@ Gfx* getModelDisplayList(ModelType modelType, int subtype) {
       return Wtx_wall;
     case PlanterModel:
       return Wtx_planter;
-    // case GroundModel:
-    //   return ground_model_meshes[subtype];
+    case GroundModel:
+      switch (subtype) {
+        case 0:
+          return Wtx_ground_Ground_001_Grid_002;
+        case 1:
+          return Wtx_ground_Ground_002_Grid_003;
+        case 2:
+          return Wtx_ground_Ground_003_Grid_004;
+        case 3:
+          return Wtx_ground_Ground_004_Grid_005;
+        case 4:
+          return Wtx_ground_Ground_005_Grid_006;
+        case 5:
+          return Wtx_ground_Ground_006_Grid_007;
+        case 6:
+          return Wtx_ground_Ground_007_Grid_008;
+      }
+    case RockModel:
+      switch (subtype) {
+        case 0:
+          return Wtx_rocks_Rock_Cube_001;
+        case 1:
+          return Wtx_rocks_Rock_001_Cube_002;
+        case 2:
+          return Wtx_rocks_Rock_002_Cube_003;
+      }
     case WaterModel:
       return Wtx_water;
-    // case RockModel:
-    //   return rocks_model_meshes[subtype];
     default:
       return Wtx_testingCube;
   }

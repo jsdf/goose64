@@ -482,9 +482,3 @@ Gfx Wtx_university_floor[] = {
 	  gsSPDisplayList(Vtx_university_floor_mesh01_dl),
 	  gsSPEndDisplayList()
 };
-
-#define UNIVERSITY_FLOOR_MODEL_MESH_COUNT 1
-
-Gfx* university_floor_model_meshes[] = {
-    Wtx_university_floor,
-};
