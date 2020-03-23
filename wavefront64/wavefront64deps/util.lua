@@ -1,6 +1,6 @@
 -- UTILITIES
 function err(str)
-	if(str) then print(str) end
+	if(str) then print("ERROR: "..str) end
 	os.exit(1)
 end
 

@@ -2,6 +2,7 @@ import bpy
 import re
 import math
 import mathutils
+from collections import defaultdict
 
 
 """
@@ -85,14 +86,20 @@ def get_modeltype(name):
     return re.sub(r"[.].*?$", "", obj.name)
 
 
+modeltypes_counts = defaultdict(int)
+names_subtypes = {}
+has_subtypes = {"Rock", "Ground"}
+
+
 def get_subtype(name):
-    if name.startswith("Ground"):
-        try:
-            return int(re.sub(r"^.*?[.]", "", obj.name))
-        except ValueError:
-            return 0
-    else:
+    modeltype = get_modeltype(name)
+    if modeltype not in has_subtypes:
         return 0
+    if name not in names_subtypes:
+        names_subtypes[name] = modeltypes_counts[modeltype]
+        modeltypes_counts[modeltype] += 1
+
+    return names_subtypes[name]
 
 
 out += """
@@ -106,7 +113,7 @@ for index, obj in enumerate(world_objects):
     rot = obj.rotation_euler
 
     out += "{"
-    out += "%d, // object id\n" % (index)
+    out += "%d, // object id (%s)\n" % (index, obj.name)
     # we rotate the position and rotation from z-up (blender) to y-up (opengl)
     out += "%s, // position\n" % (print_pos(pos_from_blender(pos)))
     out += "{%f, %f, %f}, // rotation\n" % (

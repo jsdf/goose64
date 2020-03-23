@@ -22,6 +22,7 @@ typedef enum ModelType {
   PlanterModel,
   GroundModel,
   WaterModel,
+  RockModel,
   MAX_MODEL_TYPE
 } ModelType;
 

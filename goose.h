@@ -405,3 +405,9 @@ Gfx Wtx_goose[] = {
 	  gsSPDisplayList(Vtx_goose_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+
+#define GOOSE_MODEL_MESH_COUNT 1
+
+Gfx* goose_model_meshes[] = {
+    Wtx_goose,
+};

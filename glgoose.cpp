@@ -781,35 +781,13 @@ ObjMesh& getMeshForModelType(ModelType modelType, int subtype) {
   try {
     switch (modelType) {
       case GroundModel:
-        switch (subtype) {
-          case 1:
-            return models[GroundModel].meshes.at("Ground.001_Grid.002");
-          case 2:
-            return models[GroundModel].meshes.at("Ground.002_Grid.003");
-          case 3:
-            return models[GroundModel].meshes.at("Ground.003_Grid.004");
-          case 4:
-            return models[GroundModel].meshes.at("Ground.004_Grid.005");
-          case 5:
-            return models[GroundModel].meshes.at("Ground.005_Grid.006");
-          case 6:
-            return models[GroundModel].meshes.at("Ground.006_Grid.007");
-          case 7:
-            return models[GroundModel].meshes.at("Ground.007_Grid.008");
-        }
-
+      case RockModel:
+        return models[modelType].meshList.at(subtype);
       default:
         ObjModel& model = models[modelType];
 
-        // render each model mesh. usually there will only be one
-        std::map<std::string, ObjMesh>::iterator it = model.meshes.begin();
-        while (it != model.meshes.end()) {
-          ObjMesh& mesh = it->second;
-
-          return mesh;
-
-          it++;
-        }
+        // otherwise there should only be one
+        return model.meshList.at(0);
     }
   } catch (const std::out_of_range& oor) {
     std::cerr << "Out of Range error: " << oor.what() << '\n';
@@ -924,11 +902,12 @@ void drawModel(GameObject* obj) {
       char* meshName =
           getMeshNameForModelMeshPart(obj->modelType, animFrame.object);
       try {
-        ObjMesh& mesh = model.meshes.at(meshName);
+        ObjMesh& mesh = model.meshList.at(model.meshes.at(meshName));
         drawMesh(mesh, model.texture);
       } catch (const std::out_of_range& oor) {
         std::cerr << "missing mesh: " << meshName << " on model "
                   << ModelTypeStrings[obj->modelType] << "\n";
+        assert(false);
       }
 
       // attachment drawing stuff
@@ -2112,6 +2091,7 @@ int main(int argc, char** argv) {
   loadModel(PlanterModel, "planter.obj", "planter.bmp");
   loadModel(GroundModel, "ground.obj", "gardengrass.bmp");
   loadModel(WaterModel, "water.obj", "water.bmp");
+  loadModel(RockModel, "rocks.obj", "rock.bmp");
 
 #if ENABLE_NODEGRAPH_EDITOR
   nodeGraph.load(pathfindingGraph);

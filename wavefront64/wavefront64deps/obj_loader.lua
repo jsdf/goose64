@@ -63,14 +63,16 @@ function loader.parse(object)
 	local vp	= {} -- Parameter space vertices - u, [v], [w]
 
 	function makeobj(name)
-		result[name] = {
+		local new_obj = {
 			f	= {}, -- Faces
 			v	= v,
 			vt	= vt,
 			vn	= vn,
-			vp	= vp
+			vp	= vp,
+			name = name
 		}
-		return result[name]
+		table.insert(result, new_obj)
+		return new_obj
 	end
 
 	local obj = makeobj("__default")
@@ -129,8 +131,8 @@ function loader.parse(object)
 	end
 
   -- clean up default object if no faces were written to it
-	if #result["__default"].f == 0 then
-		result["__default"] = nil
+	if #result[1].f == 0 then
+		table.remove(result, 1)
 	end
 
 	return result

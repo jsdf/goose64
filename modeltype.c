@@ -16,6 +16,7 @@ char* ModelTypeStrings[] = {
     "PlanterModel",            //
     "GroundModel",             //
     "WaterModel",              //
+    "RockModel",               //
     "MAX_MODEL_TYPE",          //
 };
 
@@ -59,6 +60,8 @@ ModelProperties modelTypesProperties[] = {
     /* GroundModel */
     DEFAULT_MODEL_PROPERTIES,
     /* WaterModel */
+    DEFAULT_MODEL_PROPERTIES,
+    /* RockModel */
     DEFAULT_MODEL_PROPERTIES,
     /* MAX_MODEL_TYPE */
     DEFAULT_MODEL_PROPERTIES,

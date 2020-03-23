@@ -56,10 +56,12 @@ function w64_main()
 		local is_multiple_obj_model = tableLength(objfile_subobjtables) > 1
 		local bmptable, previewtable 								= w64_bmpFileToC(bmp)
 		local metaString, textureString 	= w64_outputTexture(objname,texturename,previewtable,bmptable)
+		local meshList = {}
 		table.insert(final_file_output, metaString)
 		table.insert(final_file_output, textureString)
 
-		for subobjname,subobjtable in pairs(objfile_subobjtables) do
+		for index,subobjtable in ipairs(objfile_subobjtables) do
+			local subobjname = subobjtable.name
 			local subobj_combined_name
 			if is_multiple_obj_model then
 				subobj_combined_name = objname.."_"..subobjname
@@ -78,7 +80,16 @@ function w64_main()
 			table.insert(final_file_output, vertexString)
 			table.insert(final_file_output, faceString)
 			table.insert(final_file_output, displayListString)
+			table.insert(meshList, string.format("    Wtx_%s,", subobj_combined_name))
 		end
+
+
+		table.insert(final_file_output,
+			string.format("#define %s_MODEL_MESH_COUNT %d\n\n", string.upper(objname), tableLength(objfile_subobjtables))
+			.. string.format("Gfx* %s_model_meshes[] = {\n", objname)
+			.. table.concat(meshList, '\n')
+			.. "\n};\n"
+		)
 
 		filename = arg[2]
 	elseif(arg[1]:lower()=="spr") then
@@ -143,6 +154,9 @@ function w64_initTexturedObject(argument)
 	-- load bitmap
 	local image_file_name, name_of_texture = string.match(mtl_file, "map_Kd (([A-Za-z_-]+).[A-Za-z_-]+)")
 	local image_file_path
+	if(image_file_name==nil) then
+		err("no material texture found for "..obj_Name)
+	end
 	if string.match(image_file_name, "[\\/]") then
 		print("abs path")
 		image_file_path = image_file_name

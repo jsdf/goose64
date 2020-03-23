@@ -10,14 +10,29 @@
 #include "objloader.hpp"
 
 void printModel(ObjModel& model) {
-  std::map<std::string, ObjMesh>::iterator it = model.meshes.begin();
+  std::map<std::string, int>::iterator it = model.meshes.begin();
   while (it != model.meshes.end()) {
-    std::cout << " mesh:" << it->first << std::endl;
+    std::cout << " mesh:" << it->first << ": " << it->second << std::endl;
     it++;
+  }
+
+  std::vector<ObjMesh>::iterator meshListItem;
+  int i = 0;
+  for (meshListItem = model.meshList.begin();
+       meshListItem < model.meshList.end(); meshListItem++) {
+    std::cout << i << ": " << meshListItem->name << std::endl;
+    i++;
   }
 }
 
-bool loadOBJ(const char* path, ObjModel& result, float meshScale) {
+ObjMesh* addMesh(ObjModel& model, std::string meshName) {
+  model.meshList.push_back((ObjMesh){});
+  ObjMesh* currentMesh = &model.meshList.back();
+  currentMesh->name = meshName;
+  return currentMesh;
+}
+
+bool loadOBJ(const char* path, ObjModel& model, float meshScale) {
   printf("Loading OBJ file %s...\n", path);
 
   std::vector<unsigned int> faceVertexIndices, faceUVIndices, faceNormalIndices;
@@ -28,7 +43,7 @@ bool loadOBJ(const char* path, ObjModel& result, float meshScale) {
   // we keep track of a current mesh and write any faces encountered to it until
   // we hit another "o" line (object definition) in the OBJ file
   std::string currentMeshName = "__default";
-  ObjMesh* currentMesh = &result.meshes[currentMeshName];
+  ObjMesh* currentMesh = addMesh(model, currentMeshName);
 
   FILE* file = fopen(path, "r");
   if (file == NULL) {
@@ -46,7 +61,7 @@ bool loadOBJ(const char* path, ObjModel& result, float meshScale) {
       char objName[256];
       fscanf(file, "%s\n", objName);
       currentMeshName.assign(objName);
-      currentMesh = &result.meshes[currentMeshName];
+      currentMesh = addMesh(model, currentMeshName);
     } else if (strcmp(lineHeader, "v") == 0) {
       glm::vec3 vertex;
       fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
@@ -96,11 +111,19 @@ bool loadOBJ(const char* path, ObjModel& result, float meshScale) {
   }
 
   // clean up default mesh if no vertices were written to it
-  if (result.meshes["__default"].vertices.size() == 0) {
-    result.meshes.erase("__default");
+  if (model.meshList.at(0).vertices.size() == 0) {
+    model.meshList.erase(model.meshList.begin());
   }
 
-  printModel(result);
+  std::vector<ObjMesh>::iterator meshListItem;
+  int i = 0;
+  for (meshListItem = model.meshList.begin();
+       meshListItem < model.meshList.end(); meshListItem++) {
+    model.meshes.insert(std::pair<std::string, int>(meshListItem->name, i));
+    i++;
+  }
+
+  printModel(model);
 
   return true;
 }

@@ -11,10 +11,12 @@ typedef struct ObjMesh {
   std::vector<glm::vec3> vertices;
   std::vector<glm::vec3> normals;
   std::vector<glm::vec2> uvs;
+  std::string name;
 } ObjMesh;
 
 typedef struct ObjModel {
-  std::map<std::string, ObjMesh> meshes;
+  std::vector<ObjMesh> meshList;
+  std::map<std::string, int> meshes;
   GLuint texture;
 } ObjModel;
 
