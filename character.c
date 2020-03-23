@@ -232,18 +232,6 @@ void Character_moveTowards(Character* self,
   float distToTarget =
       Character_getDistanceTopDown(&self->obj->position, target);
 
-  self->speedScaleForArrival = 1.0f;
-  self->speedMultiplier = speedMultiplier;
-  derivedSpeed = CHARACTER_SPEED * speedMultiplier * self->speedScaleForHeading;
-  if (shouldStopAtLocation && distToTarget < CHARACTER_ARRIVAL_DIST) {
-    framesToDesiredArrival = CHARACTER_ARRIVAL_DURATION * VSYNC_FPS;
-    speedForDesiredArrival = distToTarget / framesToDesiredArrival;
-    // for debugging
-    self->speedScaleForArrival =
-        (MIN(derivedSpeed, speedForDesiredArrival)) / derivedSpeed;
-    derivedSpeed = MIN(derivedSpeed, speedForDesiredArrival);
-  }
-
   Vec3d_directionTo(&self->obj->position, target, &targetDirection);
 
   targetDirection.y =
@@ -267,6 +255,18 @@ void Character_moveTowards(Character* self,
                          90.0f);
   GameUtils_directionFromTopDownAngle(degToRad(self->obj->rotation.y),
                                       &headingDirection);
+
+  self->speedScaleForArrival = 1.0f;
+  self->speedMultiplier = speedMultiplier;  // for debugging
+  derivedSpeed = CHARACTER_SPEED * speedMultiplier * self->speedScaleForHeading;
+  if (shouldStopAtLocation && distToTarget < CHARACTER_ARRIVAL_DIST) {
+    framesToDesiredArrival = CHARACTER_ARRIVAL_DURATION * VSYNC_FPS;
+    speedForDesiredArrival = distToTarget / framesToDesiredArrival;
+    // for debugging
+    self->speedScaleForArrival =
+        (MIN(derivedSpeed, speedForDesiredArrival)) / derivedSpeed;
+    derivedSpeed = MIN(derivedSpeed, speedForDesiredArrival);
+  }
 
   Vec3d_copyFrom(&movement, &headingDirection);
   Vec3d_mulScalar(&movement, derivedSpeed);
