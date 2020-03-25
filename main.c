@@ -5,19 +5,18 @@
 #include "malloc.h"
 
 #include <PR/os_convert.h>
+#include "mem_heap.h"
 #include "trace.h"
 
 /* The global variable  */
 NUContData contdata[1]; /* Read data of 1 controller  */
 u8 contPattern;         /* The pattern connected to the controller  */
 
-extern char mem_heap[1024 * 512 * 1];
+extern char mem_heap[MEM_HEAP_SIZE];
 
 int systemHeapMemoryInit(void) {
   /* Reserve system heap memory */
-  if (InitHeap(mem_heap, sizeof(mem_heap)) == -1) {
-    // osSyncPrintf("Heep Memory Alloc Error\n");
-    return -1;
+  int initHeapResult = InitHeap(mem_heap, MEM_HEAP_SIZE);
   }
   return 0;
 }
