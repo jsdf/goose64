@@ -32,13 +32,12 @@ CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c vec3d.c vec2d.c gameobject.c
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
 
-DATAFILES   =	mem_heap.c
-
+DATAFILES   = mem_heap.c models.c
 DATAOBJECTS =	$(DATAFILES:.c=.o)
 
 CODESEGMENT =	codesegment.o
 
-OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS)
+OBJECTS =	$(CODESEGMENT) $(HEAPSEGMENT) $(MODELSSEGMENT) $(DATAOBJECTS)
 
 
 default:        $(TARGETS)
@@ -49,6 +48,6 @@ $(CODESEGMENT):	$(CODEOBJECTS) Makefile $(HFILES)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)
 
 $(TARGETS):	$(OBJECTS)
-		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP)
+		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E 
 		makemask $(TARGETS) 
 

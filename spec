@@ -7,7 +7,9 @@
   	0x80000400  zbuffer (size 320*240*2)
   	0x80025c00  codesegment
                 heap (512 * 1024)
+    0x80025c00
 	      :  
+    0x80100000  end of 1st mb
   	0x8038F800  cfb 16b 3buffer (size 320*240*2*3)
 
 */
@@ -21,6 +23,7 @@ beginseg
 	entry 	nuBoot
 	address NU_SPEC_BOOT_ADDR
         stack   NU_SPEC_BOOT_STACK
+  maxsize 0xDA400
 	include "codesegment.o"
 	include "$(ROOT)/usr/lib/PR/rspboot.o"
 	include "$(ROOT)/usr/lib/PR/gspF3DEX2.fifo.o"
@@ -32,14 +35,24 @@ beginseg
 endseg
 
 beginseg
-  name  "mem_heap"
+  name  "models"
   flags OBJECT
   after "code"
+  include "models.o"
+endseg
+
+beginseg
+  name  "mem_heap"
+  flags OBJECT
+  after "models"
   include "mem_heap.o"
 endseg
 
+
+
 beginwave
-	name	"nu1"
+	name	"goose"
   include "code"
+  include "models"
   include "mem_heap"
 endwave
