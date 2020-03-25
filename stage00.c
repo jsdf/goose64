@@ -51,7 +51,6 @@
 #include "character_anim.h"
 #include "goose_anim.h"
 
-#include "ed64io_everdrive.h"
 #include "ed64io_usb.h"
 
 #define CONSOLE_EVERDRIVE_DEBUG 0
@@ -166,7 +165,6 @@ void initStage00() {
   game->pathfindingState = &university_map_graph_pathfinding_state;
 
   lastFrameTime = CUR_TIME_MS();
-  evd_init();
 
   for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
     profilingAverages[i] = 0;

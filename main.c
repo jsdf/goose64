@@ -5,6 +5,8 @@
 #include "malloc.h"
 
 #include <PR/os_convert.h>
+#include "ed64io_everdrive.h"
+#include "ed64io_usb.h"
 #include "mem_heap.h"
 #include "trace.h"
 
@@ -17,6 +19,13 @@ extern char mem_heap[MEM_HEAP_SIZE];
 int systemHeapMemoryInit(void) {
   /* Reserve system heap memory */
   int initHeapResult = InitHeap(mem_heap, MEM_HEAP_SIZE);
+
+  if (initHeapResult == -1) {
+    ed64PrintfSync("failed to init heap\n");
+  } else {
+    ed64PrintfSync("init heap success, allocated=%d\n", MEM_HEAP_SIZE);
+
+    ed64PrintfSync("nice\n");
   }
   return 0;
 }
@@ -25,6 +34,8 @@ int systemHeapMemoryInit(void) {
         Main
 --------------------------*/
 void mainproc(void) {
+  evd_init();
+
   /* The initialization of graphic  */
   nuGfxInit();
   systemHeapMemoryInit();

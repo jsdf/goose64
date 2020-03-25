@@ -29,4 +29,6 @@ int usbLoggerBufferRemaining();
 
 void ed64Printf(const char* fmt, ...);
 
+void ed64PrintfSync(const char* fmt, ...);
+
 #endif /* _FIFO_H */

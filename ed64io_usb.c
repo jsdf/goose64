@@ -10,6 +10,10 @@
 #define USB_BUFFER_SIZE_BYTES 1024
 #define USB_LOGGER_BUFFER_SIZE_BYTES 512
 
+#ifndef MIN
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+
 u64 usb_buff[USB_BUFFER_SIZE];
 u8* usb_buff8;  // = (u8 *) usb_buff;
 
@@ -66,6 +70,7 @@ void usbLoggerGetState(UsbLoggerState* res) {
 }
 
 int usbLoggerFlush() {
+  char usbLoggerData[USB_LOGGER_BUFFER_SIZE_BYTES];
   if (!usbLoggerFlushing) {
     if (!usbLoggerOffset) {
       // nothing to write
@@ -96,9 +101,9 @@ int usbLoggerFlush() {
   return 0;
 }
 
-static void* _usb_printf_s(void* str,
-                           register const char* buf,
-                           register int n) {
+static void* _PrintfImplUSBAsync(void* str,
+                                 register const char* buf,
+                                 register int n) {
   char tocopy[USB_LOGGER_BUFFER_SIZE_BYTES];
 
   memcpy(tocopy, buf, MIN(USB_LOGGER_BUFFER_SIZE_BYTES, n));
@@ -110,10 +115,34 @@ static void* _usb_printf_s(void* str,
   return ((void*)1);
 }
 
+static void* _PrintfImplUSBSync(void* str,
+                                register const char* buf,
+                                register int n) {
+  u64 usbMsgBuff[USB_BUFFER_SIZE];
+  char* usbBuffCharPtr = (char*)usbMsgBuff;
+
+  memcpy(usbBuffCharPtr, buf, MIN(USB_BUFFER_SIZE, n));
+  if (n < USB_BUFFER_SIZE) {
+    usbBuffCharPtr[n] = '\0';
+  }
+
+  evd_fifoWr(usbMsgBuff, 1);
+
+  return ((void*)1);
+}
+
 void ed64Printf(const char* fmt, ...) {
   va_list ap;
 
   va_start(ap, fmt);
-  _Printf((void (*)(void*))_usb_printf_s, 0, fmt, ap);
+  _Printf((void (*)(void*))_PrintfImplUSBAsync, 0, fmt, ap);
+  va_end(ap);
+}
+
+void ed64PrintfSync(const char* fmt, ...) {
+  va_list ap;
+
+  va_start(ap, fmt);
+  _Printf((void (*)(void*))_PrintfImplUSBSync, 0, fmt, ap);
   va_end(ap);
 }
