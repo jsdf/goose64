@@ -126,7 +126,9 @@ static void* _PrintfImplUSBSync(void* str,
     usbBuffCharPtr[n] = '\0';
   }
 
-  evd_fifoWr(usbMsgBuff, 1);
+  while (evd_fifoWr(usbMsgBuff, 1)) {
+    // retry on timeout
+  }
 
   return ((void*)1);
 }

@@ -96,8 +96,31 @@
 #define debugPrintfSync printf
 #endif
 
-#define die(msg)        \
-  debugPrintfSync(msg); \
-  assert(FALSE)
+#ifdef __N64__
+#define die(msg)                                                            \
+  debugPrintfSync("died: \"%s\" in %s at %s:%d\n", msg, __FILE__, __LINE__, \
+                  __FUNCTION__);                                            \
+  while (TRUE) {                                                            \
+  }
+
+#else
+
+#define die(msg)                                                   \
+  printf("died: \"%s\" in %s at %s:%d\n", msg, __FILE__, __LINE__, \
+         __FUNCTION__);                                            \
+  assert(FALSE);
+#endif
+
+#ifdef __N64__
+#define invariant(expression)                                                \
+  if (!(expression)) {                                                       \
+    debugPrintfSync("assertion failed in %s at %s:%d\n", __FILE__, __LINE__, \
+                    __FUNCTION__);                                           \
+    while (TRUE) {                                                           \
+    }                                                                        \
+  }
+#else
+#define invariant(expression) assert(expression)
+#endif
 
 #endif /* CONSTANTS_H */

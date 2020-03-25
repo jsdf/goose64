@@ -68,7 +68,7 @@ void Game_init(GameObject* worldObjects,
   game.freeView = 0;
 
   goose = Game_findObjectByType(GooseModel);
-  assert(goose != NULL);
+  invariant(goose != NULL);
 
   Player_init(&game.player, goose);
   PhysState_init(&game.physicsState, physWorldData);
@@ -79,7 +79,7 @@ void Game_init(GameObject* worldObjects,
   // TODO: move these to be statically allocated per map?
   itemsCount = Game_countObjectsInCategory(ItemModelType);
   items = (Item*)malloc(itemsCount * sizeof(Item));
-  assert(items);
+  invariant(items);
   initIndex = 0;
   for (i = 0; i < game.worldObjectsCount; ++i) {
     obj = game.worldObjects + i;
@@ -91,7 +91,7 @@ void Game_init(GameObject* worldObjects,
 
   charactersCount = Game_countObjectsInCategory(CharacterModelType);
   characters = (Character*)malloc(charactersCount * sizeof(Character));
-  assert(characters);
+  invariant(characters);
   initIndex = 0;
   for (i = 0; i < game.worldObjectsCount; ++i) {
     obj = game.worldObjects + i;
@@ -117,7 +117,7 @@ void Game_init(GameObject* worldObjects,
   physicsBodiesCount = itemsCount + charactersCount +
                        Game_countObjectsInCategory(PlayerModelType);
   physicsBodies = (PhysBody*)malloc(physicsBodiesCount * sizeof(PhysBody));
-  assert(physicsBodies);
+  invariant(physicsBodies);
   initIndex = 0;
   for (i = 0; i < game.worldObjectsCount; ++i) {
     obj = game.worldObjects + i;
@@ -161,7 +161,7 @@ Game* Game_get() {
 }
 
 GameObject* Game_getObjectByID(int id) {
-  assert(id < game.worldObjectsCount);
+  invariant(id < game.worldObjectsCount);
   return game.worldObjects + id;
 }
 

@@ -114,7 +114,7 @@ void Renderer_sortVisibleObjects(GameObject* worldObjects,
     // only add visible objects, compacting results array
     if (worldObjectsVisibility[i]) {
       // results array is only as long as num visible objects
-      assert(visibleObjectIndex < visibleObjectsCount);
+      invariant(visibleObjectIndex < visibleObjectsCount);
       sortDist = result + visibleObjectIndex;
       sortDist->obj = worldObjects + i;
       sortDist->distance = Renderer_gameobjectSortDist(sortDist->obj);

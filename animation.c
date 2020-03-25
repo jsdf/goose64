@@ -48,14 +48,14 @@ void AnimationFrame_get(
   int frameDataOffset;
 
 #ifndef __N64__
-  assert(animDataNumBones <= MAX_ANIM_MESH_PARTS);
+  invariant(animDataNumBones <= MAX_ANIM_MESH_PARTS);
 #endif
 
   frameDataOffset = interp->currentFrame * animDataNumBones + boneIdx;
   *result = *(animData + frameDataOffset);
 
 #ifndef __N64__
-  assert(result->object == boneIdx);
+  invariant(result->object == boneIdx);
 #endif
 }
 
@@ -74,7 +74,7 @@ void AnimationFrame_lerp(
   AnimationFrame *a, *b;
 
 #ifndef __N64__
-  assert(animDataNumBones <= MAX_ANIM_MESH_PARTS);
+  invariant(animDataNumBones <= MAX_ANIM_MESH_PARTS);
 #endif
 
   frameDataOffsetA = interp->currentFrame * animDataNumBones + boneIdx;
@@ -84,8 +84,8 @@ void AnimationFrame_lerp(
 
 #ifndef __N64__
   // if either of these fail, the animation data is messed up
-  assert(a->object == boneIdx);
-  assert(b->object == boneIdx);
+  invariant(a->object == boneIdx);
+  invariant(b->object == boneIdx);
 #endif
 
   // start with data from A

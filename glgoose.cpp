@@ -793,7 +793,7 @@ ObjMesh& getMeshForModelType(ModelType modelType, int subtype) {
     std::cerr << "Out of Range error: " << oor.what() << '\n';
   }
   printf("did you forget to load \"%s\"?\n", ModelTypeStrings[modelType]);
-  assert(false);
+  invariant(false);
 }
 
 void drawMeshesForModel(ModelType modelType, int subtype) {
@@ -855,7 +855,7 @@ void drawModel(GameObject* obj) {
     AnimationFrame animFrame;           // animation frame data for one bone
     int modelMeshParts = getAnimationNumModelMeshParts(obj->modelType);
 
-    assert(obj->animState != NULL);
+    invariant(obj->animState != NULL);
     curAnimRange = getCurrentAnimationRange(obj);
 
 #if DEBUG_ANIMATION
@@ -907,7 +907,7 @@ void drawModel(GameObject* obj) {
       } catch (const std::out_of_range& oor) {
         std::cerr << "missing mesh: " << meshName << " on model "
                   << ModelTypeStrings[obj->modelType] << "\n";
-        assert(false);
+        invariant(false);
       }
 
       // attachment drawing stuff
@@ -2037,7 +2037,7 @@ int main(int argc, char** argv) {
            obj->position.z);
   }
 
-  assert(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
+  invariant(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
 
   // init GLUT and create window
   glutInit(&argc, argv);

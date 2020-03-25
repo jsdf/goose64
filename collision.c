@@ -817,7 +817,7 @@ SpatialHashBucket* SpatialHash_getBucket(float x,
   bucketIndex =
       SpatialHash_getBucketIndex(cellX, cellY, spatialHash->cellsInDimension);
 
-  assert(bucketIndex < spatialHash->numBuckets);
+  invariant(bucketIndex < spatialHash->numBuckets);
 
   return *(spatialHash->data + bucketIndex);
 }
@@ -839,7 +839,7 @@ void SpatialHash_getTrianglesVisitBucket(int cellX,
   bucketIndex = SpatialHash_getBucketIndex(
       cellX, cellY, state->spatialHash->cellsInDimension);
 
-  assert(bucketIndex < state->spatialHash->numBuckets);
+  invariant(bucketIndex < state->spatialHash->numBuckets);
 
   bucket = *(state->spatialHash->data + bucketIndex);
   if (!bucket) {

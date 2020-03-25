@@ -51,7 +51,7 @@ void Item_take(Item* self, ItemHolder* newHolder) {
 
     originalHolder = self->holder;
     if (originalHolder) {
-      assert(originalHolder->heldItem == self);
+      invariant(originalHolder->heldItem == self);
       // take from original holder
       originalHolder->heldItem = NULL;
 
@@ -66,7 +66,7 @@ void Item_take(Item* self, ItemHolder* newHolder) {
       }
     }
 
-    assert(newHolder->heldItem == NULL);
+    invariant(newHolder->heldItem == NULL);
     // give to new holder
     newHolder->heldItem = self;
     // be held by new holder
@@ -83,7 +83,7 @@ void Item_take(Item* self, ItemHolder* newHolder) {
 }
 
 void Item_drop(Item* self) {
-  assert(self->holder != NULL);
+  invariant(self->holder != NULL);
 
   debugPrintf("item dropped by %s\n",
               ItemHolderTypeStrings[self->holder->itemHolderType]);

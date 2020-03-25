@@ -157,7 +157,7 @@ void initStage00() {
 
   Game_init(university_map_data, UNIVERSITY_MAP_COUNT, &physWorldData);
 
-  assert(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
+  invariant(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
 
   game = Game_get();
 
@@ -290,7 +290,7 @@ void makeDL00() {
   gDPFullSync(glistp++);
   gSPEndDisplayList(glistp++);
 
-  assert((glistp - gfx_glist[gfx_gtask_no]) < GFX_GLIST_LEN);
+  invariant((glistp - gfx_glist[gfx_gtask_no]) < GFX_GLIST_LEN);
 
   /* Activate the task and (maybe)
      switch display buffers */
@@ -761,9 +761,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
   game = Game_get();
   worldObjectsVisibility = (int*)malloc(game->worldObjectsCount * sizeof(int));
-  if (!worldObjectsVisibility) {
-    debugPrintf("failed to alloc worldObjectsVisibility");
-  }
+  invariant(worldObjectsVisibility);
 
   profStartFrustum = CUR_TIME_MS();
   visibilityCulled = Renderer_cullVisibility(
@@ -777,9 +775,8 @@ void drawWorldObjects(Dynamic* dynamicp) {
   visibleObjectsCount = game->worldObjectsCount - visibilityCulled;
   visibleObjDistanceDescending = (RendererSortDistance*)malloc(
       (visibleObjectsCount) * sizeof(RendererSortDistance));
-  if (!visibleObjDistanceDescending) {
-    debugPrintf("failed to alloc visibleObjDistanceDescending");
-  }
+  invariant(visibleObjDistanceDescending);
+
   profStartSort = CUR_TIME_MS();
   Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
                               worldObjectsVisibility, visibleObjectsCount,

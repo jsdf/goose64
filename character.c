@@ -365,7 +365,7 @@ void Character_goToTarget(Character* self,
     // in path, and if not, skips ahead
     while (TRUE) {
 #ifndef __N64__
-      assert(self->pathProgress <= self->pathfindingResult->resultSize);
+      invariant(self->pathProgress <= self->pathfindingResult->resultSize);
 #endif
       if (self->pathProgress == self->pathfindingResult->resultSize)
         break;
@@ -430,7 +430,7 @@ void Character_goToTarget(Character* self,
         // we can go straight there
         self->pathProgress++;
 #ifndef __N64__
-        assert(self->pathProgress <= self->pathfindingResult->resultSize);
+        invariant(self->pathProgress <= self->pathfindingResult->resultSize);
 #endif
       } else {
         break;
@@ -748,7 +748,7 @@ void Character_updateSeekingItemState(Character* self, Game* game) {
 void Character_updateSeekingTargetState(Character* self, Game* game) {
 #ifndef __N64__
   if (self->targetType == ItemCharacterTarget) {
-    assert(self->targetType);
+    invariant(self->targetType);
   }
 #endif
   // if character is close enough from target, give up

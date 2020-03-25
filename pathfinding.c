@@ -11,8 +11,8 @@
 #endif
 
 float Path_distance(Node* a, Node* b) {
-  assert(a != NULL);
-  assert(b != NULL);
+  invariant(a != NULL);
+  invariant(b != NULL);
   return Vec3d_distanceTo(&a->position, &b->position);
 }
 
