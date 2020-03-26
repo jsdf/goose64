@@ -210,3 +210,9 @@ Gfx Wtx_book[] = {
 	  gsSPDisplayList(Vtx_book_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+
+#define BOOK_MODEL_MESH_COUNT 1
+
+Gfx* book_model_meshes[2] = {
+    Wtx_book,
+};

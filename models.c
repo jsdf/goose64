@@ -20,7 +20,7 @@
 #include "water.h"
 
 // map the mesh type enum (used by animation frames) to the mesh displaylists
-Gfx* GooseMeshList[] = {
+Gfx* GooseMeshList[8] = {
     Wtx_gooserig_goosebody_goosebodymesh,      // goosebody_goosebodymesh
     Wtx_gooserig_goosehead_gooseheadmesh,      // goosehead_gooseheadmesh
     Wtx_gooserig_gooseleg_l_gooseleg_lmesh,    // gooseleg_l_gooseleg_lmesh
@@ -30,7 +30,7 @@ Gfx* GooseMeshList[] = {
     Wtx_gooserig_gooseneck_gooseneckmesh,      // gooseneck_gooseneckmesh
 };
 
-Gfx* CharacterMeshList[] = {
+Gfx* CharacterMeshList[12] = {
     Wtx_characterrig_gkbicep_l_gkbicep_lrmesh,  // characterbicep_l_characterbicep_lmesh
     Wtx_characterrig_gkbicep_r_gkbicep_rmesh,  // characterbicep_r_characterbicep_rmesh
     Wtx_characterrig_gkfoot_l_gkfoot_lrmesh,  // characterfoot_l_characterfoot_lmesh

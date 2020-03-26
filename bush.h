@@ -177,3 +177,9 @@ Gfx Wtx_bush[] = {
 	  gsSPDisplayList(Vtx_bush_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+
+#define BUSH_MODEL_MESH_COUNT 1
+
+Gfx* bush_model_meshes[2] = {
+    Wtx_bush,
+};

@@ -575,7 +575,7 @@ void updateGame00(void) {
   // }
 
   if (nuScRetraceCounter % VSYNC_FPS == 0) {
-    debugPrintf("retrace: %d", nuScRetraceCounter);
+    debugPrintf("retrace: %d\n", nuScRetraceCounter);
   }
 
   if (usbEnabled) {

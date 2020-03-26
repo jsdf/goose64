@@ -38,7 +38,7 @@ beginseg
   name  "models"
   flags OBJECT
   after "code"
-  include "models.o"
+  include "modelssegement.o"
 endseg
 
 beginseg

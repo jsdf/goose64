@@ -855,3 +855,15 @@ Gfx Wtx_gooserig_gooseneck_gooseneckmesh[] = {
 	  gsSPDisplayList(Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+
+#define GOOSERIG_MODEL_MESH_COUNT 7
+
+Gfx* gooserig_model_meshes[8] = {
+    Wtx_gooserig_goosebody_goosebodymesh,
+    Wtx_gooserig_goosefoot_l_goosefoot_lmesh,
+    Wtx_gooserig_goosefoot_r_goosefoot_rmesh,
+    Wtx_gooserig_goosehead_gooseheadmesh,
+    Wtx_gooserig_gooseleg_l_gooseleg_lmesh,
+    Wtx_gooserig_gooseleg_r_gooseleg_rmesh,
+    Wtx_gooserig_gooseneck_gooseneckmesh,
+};

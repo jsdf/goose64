@@ -318,3 +318,15 @@ Gfx Wtx_ground_Ground_007_Grid_008[] = {
 	  gsSPDisplayList(Vtx_ground_Ground_007_Grid_008_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+
+#define GROUND_MODEL_MESH_COUNT 7
+
+Gfx* ground_model_meshes[8] = {
+    Wtx_ground_Ground_001_Grid_002,
+    Wtx_ground_Ground_002_Grid_003,
+    Wtx_ground_Ground_003_Grid_004,
+    Wtx_ground_Ground_004_Grid_005,
+    Wtx_ground_Ground_005_Grid_006,
+    Wtx_ground_Ground_006_Grid_007,
+    Wtx_ground_Ground_007_Grid_008,
+};

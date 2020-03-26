@@ -210,3 +210,11 @@ Gfx Wtx_rocks_Rock_002_Cube_003[] = {
 	  gsSPDisplayList(Vtx_rocks_Rock_002_Cube_003_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+
+#define ROCKS_MODEL_MESH_COUNT 3
+
+Gfx* rocks_model_meshes[4] = {
+    Wtx_rocks_Rock_Cube_001,
+    Wtx_rocks_Rock_001_Cube_002,
+    Wtx_rocks_Rock_002_Cube_003,
+};

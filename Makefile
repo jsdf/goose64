@@ -32,12 +32,18 @@ CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c vec3d.c vec2d.c gameobject.c
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
 
-DATAFILES   = mem_heap.c models.c
+DATAFILES   = mem_heap.c
 DATAOBJECTS =	$(DATAFILES:.c=.o)
 
 CODESEGMENT =	codesegment.o
 
-OBJECTS =	$(CODESEGMENT) $(HEAPSEGMENT) $(MODELSSEGMENT) $(DATAOBJECTS)
+
+MODELSFILES   = models.c
+MODELSOBJECTS =	$(MODELSFILES:.c=.o)
+
+MODELSSEGMENT =	modelssegement.o
+
+OBJECTS =	$(CODESEGMENT) $(MODELSSEGMENT) $(DATAOBJECTS)
 
 
 default:        $(TARGETS)
@@ -47,7 +53,12 @@ include $(COMMONRULES)
 $(CODESEGMENT):	$(CODEOBJECTS) Makefile $(HFILES)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)
 
+$(MODELSSEGMENT):	$(MODELSOBJECTS)
+# use -M to print memory map from ld
+		$(LD) -o $(MODELSSEGMENT) -r $(MODELSOBJECTS) $(LDFLAGS) -M
+
 $(TARGETS):	$(OBJECTS)
-		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E -m
+# use -m to print memory map from mild
+		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E 
 		makemask $(TARGETS) 
 

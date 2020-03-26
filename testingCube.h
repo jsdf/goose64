@@ -104,3 +104,9 @@ Gfx Wtx_testingCube[] = {
 	  gsSPDisplayList(Vtx_testingCube_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+
+#define TESTINGCUBE_MODEL_MESH_COUNT 1
+
+Gfx* testingCube_model_meshes[2] = {
+    Wtx_testingCube,
+};

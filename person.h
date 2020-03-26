@@ -536,3 +536,9 @@ Gfx Wtx_person[] = {
 	  gsSPDisplayList(Vtx_person_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+
+#define PERSON_MODEL_MESH_COUNT 1
+
+Gfx* person_model_meshes[2] = {
+    Wtx_person,
+};
