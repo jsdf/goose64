@@ -48,6 +48,6 @@ $(CODESEGMENT):	$(CODEOBJECTS) Makefile $(HFILES)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)
 
 $(TARGETS):	$(OBJECTS)
-		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E 
+		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E -m
 		makemask $(TARGETS) 
 

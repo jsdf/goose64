@@ -15,10 +15,22 @@ NUContData contdata[1]; /* Read data of 1 controller  */
 u8 contPattern;         /* The pattern connected to the controller  */
 
 extern char mem_heap[MEM_HEAP_SIZE];
+extern u8 _memheapSegmentStart[];
+extern u8 _memheapSegmentRomStart[];
+extern u8 _memheapSegmentRomEnd[];
+extern u8 _memheapSegmentBssStart[];
+extern u8 _memheapSegmentBssEnd[];
 
 int systemHeapMemoryInit(void) {
+  int initHeapResult;
+  nuPiReadRom((u32)_memheapSegmentRomStart, _memheapSegmentStart,
+              (u32)_memheapSegmentRomEnd - (u32)_memheapSegmentRomStart);
+
+  bzero(_memheapSegmentBssStart,
+        _memheapSegmentBssEnd - _memheapSegmentBssStart);
+
   /* Reserve system heap memory */
-  int initHeapResult = InitHeap(mem_heap, MEM_HEAP_SIZE);
+  initHeapResult = InitHeap(mem_heap, MEM_HEAP_SIZE);
 
   if (initHeapResult == -1) {
     ed64PrintfSync("failed to init heap\n");

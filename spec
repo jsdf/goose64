@@ -9,7 +9,7 @@
                 heap (512 * 1024)
     0x80025c00
 	      :  
-    0x80100000  end of 1st mb
+    0x80100000  end of 1st mb (codesegment must end before this)
   	0x8038F800  cfb 16b 3buffer (size 320*240*2*3)
 
 */
@@ -42,7 +42,7 @@ beginseg
 endseg
 
 beginseg
-  name  "mem_heap"
+  name  "memheap"
   flags OBJECT
   after "models"
   include "mem_heap.o"
@@ -54,5 +54,5 @@ beginwave
 	name	"goose"
   include "code"
   include "models"
-  include "mem_heap"
+  include "memheap"
 endwave
