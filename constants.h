@@ -97,27 +97,27 @@
 #endif
 
 #ifdef __N64__
-#define die(msg)                                                            \
-  debugPrintfSync("died: \"%s\" in %s at %s:%d\n", msg, __FILE__, __LINE__, \
-                  __FUNCTION__);                                            \
-  while (TRUE) {                                                            \
+#define die(msg)                                                      \
+  debugPrintfSync("died: \"%s\" in %s at %s:%d\n", msg, __FUNCTION__, \
+                  __FILE__, __LINE__);                                \
+  while (TRUE) {                                                      \
   }
 
 #else
 
-#define die(msg)                                                   \
-  printf("died: \"%s\" in %s at %s:%d\n", msg, __FILE__, __LINE__, \
-         __FUNCTION__);                                            \
+#define die(msg)                                                       \
+  printf("died: \"%s\" in %s at %s:%d\n", msg, __FUNCTION__, __FILE__, \
+         __LINE__);                                                    \
   assert(FALSE);
 #endif
 
 #ifdef __N64__
-#define invariant(expression)                                                \
-  if (!(expression)) {                                                       \
-    debugPrintfSync("assertion failed in %s at %s:%d\n", __FILE__, __LINE__, \
-                    __FUNCTION__);                                           \
-    while (TRUE) {                                                           \
-    }                                                                        \
+#define invariant(expression)                                          \
+  if (!(expression)) {                                                 \
+    debugPrintfSync("assertion failed in %s at %s:%d\n", __FUNCTION__, \
+                    __FILE__, __LINE__);                               \
+    while (TRUE) {                                                     \
+    }                                                                  \
   }
 #else
 #define invariant(expression) assert(expression)
