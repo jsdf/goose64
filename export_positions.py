@@ -81,25 +81,30 @@ out += """
 };
 """
 
-
+# modeltype is anything up to the first '.'
 def get_modeltype(name):
-    return re.sub(r"[.].*?$", "", obj.name)
+    return re.sub(r"[.].*$", "", obj.name)
 
 
-modeltypes_counts = defaultdict(int)
-names_subtypes = {}
-has_subtypes = {"Rock", "Ground"}
+# you can add a .inst suffix, then any copies will get the same subtype
+def get_subtypekey(name):
+    return re.sub(r"[.]inst.*$", "", obj.name)
+
+
+modeltype_next_subtype_id = defaultdict(int)
+subtypekeys_subtypeids = {}
 
 
 def get_subtype(name):
     modeltype = get_modeltype(name)
-    if modeltype not in has_subtypes:
-        return 0
-    if name not in names_subtypes:
-        names_subtypes[name] = modeltypes_counts[modeltype]
-        modeltypes_counts[modeltype] += 1
+    subtypekey = get_subtypekey(name)
+    # dispense a new subtype id if we don't have an id for this subtypekey
+    if subtypekey not in subtypekeys_subtypeids:
+        subtypekeys_subtypeids[subtypekey] = modeltype_next_subtype_id[modeltype]
+        modeltype_next_subtype_id[modeltype] += 1
+    print(name, subtypekey, subtypekeys_subtypeids[subtypekey])
 
-    return names_subtypes[name]
+    return subtypekeys_subtypeids[subtypekey]
 
 
 out += """
