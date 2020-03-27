@@ -214,15 +214,20 @@ void Game_updateCamera(Game* game, Input* input) {
   float desiredZoom, desiredZoomDist;
 
   // spring to desired zoom level
-  desiredZoom = input->zoomIn ? 3.0 : input->zoomOut ? 1.0 : 2.0;
+  desiredZoom = input->zoomIn ? 3.0 : input->zoomOut ? 1.2 : 2.0;
   // desiredZoom = 1.0;
   desiredZoomDist = game->viewZoom - desiredZoom;
   game->viewZoom -= desiredZoomDist * 0.1;
 
-  Vec3d_set(&cameraOffset, 0.0F, 0.65F, -0.8F);
+  // Vec3d_set(&cameraOffset, 0.0F, 0.65F, -0.8F);  // 90 deg
+  // Vec3d_set(&cameraOffset, -0.8F, 0.9F, -0.8F);  // 45
+
+  Vec3d_set(&cameraOffset, -0.4F, 0.5F, -0.6F);  // goose game
   // Vec3d_set(&cameraOffset, 0.0F, 0, -0.8F); // side view
 
-  cameraDist = 1000.0f / game->viewZoom;
+  Vec3d_normalise(&cameraOffset);
+
+  cameraDist = 2500.0f / game->viewZoom;  // 20 fov
   Vec3d_mulScalar(&cameraOffset, cameraDist);
 
   Vec3d_copyFrom(&game->viewPos, &game->player.goose->position);

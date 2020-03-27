@@ -5,9 +5,9 @@
 #define MAX_WORLD_OBJECTS 100
 // we scale the models up by this much to avoid n64 fixed point precision issues
 #define N64_SCALE_FACTOR 30
-#define DEFAULT_FOVY 45.0f
+#define DEFAULT_FOVY 15.0f
 #define DEFAULT_NEARPLANE 100
-#define DEFAULT_FARPLANE 3000
+#define DEFAULT_FARPLANE 4000
 #define WATER_HEIGHT -70.0
 
 #define CONST_PI 3.14159265358979323846
