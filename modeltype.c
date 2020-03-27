@@ -17,12 +17,15 @@ char* ModelTypeStrings[] = {
     "GroundModel",             //
     "WaterModel",              //
     "RockModel",               //
+    "WatergrassModel",         //
+    "ReedModel",               //
+    "LilypadModel",            //
     "MAX_MODEL_TYPE",          //
 };
 
 #define DEFAULT_MODEL_PROPERTIES                                  \
   { /* mass */                                                    \
-    100, /* radius */ 50.0, /* centroidOffset */ {0.0, 0.0, 0.0}, \
+    100, /* radius */ 10.0, /* centroidOffset */ {0.0, 0.0, 0.0}, \
         /*scale*/ 1.0, GenericModelType                           \
   }
 
@@ -63,6 +66,10 @@ ModelProperties modelTypesProperties[] = {
     DEFAULT_MODEL_PROPERTIES,
     /* RockModel */
     DEFAULT_MODEL_PROPERTIES,
-    /* MAX_MODEL_TYPE */
+    /* WatergrassModel */
+    DEFAULT_MODEL_PROPERTIES,
+    /* ReedModel */
+    DEFAULT_MODEL_PROPERTIES,
+    /* LilypadModel */
     DEFAULT_MODEL_PROPERTIES,
 };

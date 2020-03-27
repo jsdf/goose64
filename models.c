@@ -8,16 +8,16 @@
 #include "book.h"
 #include "bush.h"
 #include "characterrig.h"
-#include "flagpole.h"
 #include "gooserig.h"
 #include "ground.h"
+#include "lilypad.h"
 #include "planter.h"
+#include "reed.h"
 #include "rocks.h"
 #include "testingCube.h"
-#include "university_bldg.h"
-#include "university_floor.h"
 #include "wall.h"
 #include "water.h"
+#include "watergrass.h"
 
 // map the mesh type enum (used by animation frames) to the mesh displaylists
 Gfx* GooseMeshList[8] = {
@@ -57,48 +57,26 @@ Gfx* getMeshDisplayListForModelMeshPart(ModelType modelType, int meshPart) {
 Gfx* getModelDisplayList(ModelType modelType, int subtype) {
   switch (modelType) {
     case BushModel:
-      return Wtx_bush;
+      return bush_model_meshes[subtype];
     case BookItemModel:
-      return Wtx_book;
-    case UniBldgModel:
-      return Wtx_university_bldg;
-    case UniFloorModel:
-      return Wtx_university_floor;
-    case FlagpoleModel:
-      return Wtx_flagpole;
+      return book_model_meshes[subtype];
     case WallModel:
-      return Wtx_wall;
+      return wall_model_meshes[subtype];
     case PlanterModel:
-      return Wtx_planter;
+      return planter_model_meshes[subtype];
     case GroundModel:
-      switch (subtype) {
-        case 0:
-          return Wtx_ground_Ground_001_Grid_002;
-        case 1:
-          return Wtx_ground_Ground_002_Grid_003;
-        case 2:
-          return Wtx_ground_Ground_003_Grid_004;
-        case 3:
-          return Wtx_ground_Ground_004_Grid_005;
-        case 4:
-          return Wtx_ground_Ground_005_Grid_006;
-        case 5:
-          return Wtx_ground_Ground_006_Grid_007;
-        case 6:
-          return Wtx_ground_Ground_007_Grid_008;
-      }
+      return ground_model_meshes[subtype];
     case RockModel:
-      switch (subtype) {
-        case 0:
-          return Wtx_rocks_Rock_Cube_001;
-        case 1:
-          return Wtx_rocks_Rock_001_Cube_002;
-        case 2:
-          return Wtx_rocks_Rock_002_Cube_003;
-      }
+      return rocks_model_meshes[subtype];
     case WaterModel:
-      return Wtx_water;
+      return water_model_meshes[subtype];
+    case WatergrassModel:
+      return watergrass_model_meshes[subtype];
+    case ReedModel:
+      return reed_model_meshes[subtype];
+    case LilypadModel:
+      return lilypad_model_meshes[subtype];
     default:
-      return Wtx_testingCube;
+      return testingCube_model_meshes[0];
   }
 }
