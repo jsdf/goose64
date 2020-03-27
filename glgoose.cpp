@@ -90,7 +90,7 @@ int updateSkipRate = 1;
 // actual vector representing the freeview camera's direction
 float cameraLX = 0.0f, cameraLZ = -1.0f;
 // XZ position of the freeview camera
-Vec3d viewPos = {0.0f, 50.0f, 0.0f};
+Vec3d freeViewPos = {0.0f, 50.0f, 0.0f};
 // freeview camera angle
 float cameraAngle = 180.0f;
 bool enableControlsInFreeView = false;
@@ -230,8 +230,19 @@ void drawGUI() {
   ImGuiInputTextFlags inputFlags =
       ImGuiInputTextFlags_EnterReturnsTrue;  // only update on blur
 
-  ImGui::Begin("Object Inspector");  // Create a window called "Hello, world!"
-                                     // and append into it.
+  ImGui::Begin("Objects");  // Create a window
+  for (int i; i < game->worldObjectsCount; i++) {
+    GameObject* listObj = game->worldObjects + i;
+    if (ImGui::Selectable(
+            (std::to_string(i) + " " + ModelTypeStrings[listObj->modelType])
+                .c_str(),
+            listObj == obj)) {
+      selectedObject = listObj;
+    }
+  }
+  ImGui::End();
+
+  ImGui::Begin("Object Inspector");  // Create a window
 
   // Display some text (you can use a format strings too)
   ImGui::Text("Selected object: %d (%s)", obj ? obj->id : -1,
@@ -255,6 +266,8 @@ void drawGUI() {
       ImGui::InputFloat("radius",
                         (float*)&modelTypesProperties[obj->modelType].radius,
                         0.1, 1.0, "%.3f", inputFlags);
+      ImGui::InputInt("subtype", (int*)&obj->subtype, 0, 1,
+                      ImGuiInputTextFlags_ReadOnly);
 
       AABB* localAABB = localAABBs + obj->id;
       AABB worldAABB = *localAABB;
@@ -398,6 +411,7 @@ void drawGUI() {
                               )) {
     ImGui::InputFloat3("viewPos", (float*)&game->viewPos, "%.3f");
     ImGui::InputFloat3("viewTarget", (float*)&game->viewTarget, "%.3f");
+    ImGui::InputFloat3("freeViewPos", (float*)&freeViewPos, "%.3f");
     ImGui::Checkbox("enableControlsInFreeView", &enableControlsInFreeView);
     ImGui::Combo("plane to test", &frustumPlaneToTest, FrustumPlanesStrings,
                  NUM_FRUSTUM_PLANES);
@@ -779,16 +793,7 @@ void drawMesh(ObjMesh& mesh, GLuint texture) {
 
 ObjMesh& getMeshForModelType(ModelType modelType, int subtype) {
   try {
-    switch (modelType) {
-      case GroundModel:
-      case RockModel:
-        return models[modelType].meshList.at(subtype);
-      default:
-        ObjModel& model = models[modelType];
-
-        // otherwise there should only be one
-        return model.meshList.at(0);
-    }
+    return models[modelType].meshList.at(subtype);
   } catch (const std::out_of_range& oor) {
     std::cerr << "Out of Range error: " << oor.what() << '\n';
   }
@@ -1517,10 +1522,11 @@ void renderScene(void) {
   // Set the camera
   Frustum_setCamDef(&frustum, &game->viewPos, &game->viewTarget, &upVector);
   if (game->freeView) {
-    gluLookAt(                                                  //
-        viewPos.x, viewPos.y, viewPos.z,                        // eye
-        viewPos.x + cameraLX, viewPos.y, viewPos.z + cameraLZ,  // center
-        upVector.x, upVector.y, upVector.z                      // up
+    gluLookAt(                                        //
+        freeViewPos.x, freeViewPos.y, freeViewPos.z,  // eye
+        freeViewPos.x + cameraLX, freeViewPos.y,
+        freeViewPos.z + cameraLZ,           // center
+        upVector.x, upVector.y, upVector.z  // up
     );
   } else {
     gluLookAt(                                                       //
@@ -1774,31 +1780,31 @@ void turnRight() {
 }
 
 void moveForward() {
-  viewPos.x += cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
-  viewPos.z += cameraLZ * FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  freeViewPos.x += cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  freeViewPos.z += cameraLZ * FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void moveBack() {
-  viewPos.x -= cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
-  viewPos.z -= cameraLZ * FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  freeViewPos.x -= cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  freeViewPos.z -= cameraLZ * FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void moveLeft() {
-  viewPos.x -= cameraLZ * -FREEVIEW_SPEED * N64_SCALE_FACTOR;
-  viewPos.z -= cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  freeViewPos.x -= cameraLZ * -FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  freeViewPos.z -= cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void moveRight() {
-  viewPos.x += cameraLZ * -FREEVIEW_SPEED * N64_SCALE_FACTOR;
-  viewPos.z += cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  freeViewPos.x += cameraLZ * -FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  freeViewPos.z += cameraLX * FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void moveUp() {
-  viewPos.y += FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  freeViewPos.y += FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void moveDown() {
-  viewPos.y -= FREEVIEW_SPEED * N64_SCALE_FACTOR;
+  freeViewPos.y -= FREEVIEW_SPEED * N64_SCALE_FACTOR;
 }
 
 void updateFreeView() {
@@ -2026,6 +2032,10 @@ int main(int argc, char** argv) {
   game->pathfindingGraph = pathfindingGraph;
   game->pathfindingState = pathfindingState;
 
+  freeViewPos = game->player.goose->position;
+  freeViewPos.x += 10;
+  freeViewPos.z += 10;
+
   Input_init(&input);
 
   updateCameraAngle(180);
@@ -2092,6 +2102,9 @@ int main(int argc, char** argv) {
   loadModel(GroundModel, "ground.obj", "gardengrass.bmp");
   loadModel(WaterModel, "water.obj", "water.bmp");
   loadModel(RockModel, "rocks.obj", "rock.bmp");
+  loadModel(WatergrassModel, "watergrass.obj", "watergrass.bmp");
+  loadModel(ReedModel, "reed.obj", "reed.bmp");
+  loadModel(LilypadModel, "lilypad.obj", "lilypad.bmp");
 
 #if ENABLE_NODEGRAPH_EDITOR
   nodeGraph.load(pathfindingGraph);
