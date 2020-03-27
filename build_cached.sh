@@ -1,11 +1,12 @@
 set -eu
 
-CHANGED_C_FILES=`python3 get_changed_files.py`
+INVALIDATED_FILES=`python3 get_changed_files.py`
 
-if [ -n "$CHANGED_C_FILES" ]; then
-  for f in $CHANGED_C_FILES; do
-    rm -f -- "${f%.c}.o"
+if [ -n "$INVALIDATED_FILES" ]; then
+  for f in $INVALIDATED_FILES; do
+    rm -f "$f"
   done
+  echo "invalidated files: $INVALIDATED_FILES"
 
   /Applications/Wine\ Stable.app/Contents/Resources/wine/bin/wine cmd /c compile.bat
 fi

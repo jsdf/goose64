@@ -14,30 +14,70 @@ try:
 except FileNotFoundError:
     pass
 
+
+def get_mtimes_map(filelist):
+    return {filepath: os.path.getmtime(filepath) for filepath in filelist}
+
+
 c_files = glob.glob("*.c")
-full_rebuild_deps = glob.glob("*.h") + glob.glob("spec") + glob.glob("Makefile")
 
-c_files_mtimes = {filepath: os.path.getmtime(filepath) for filepath in c_files}
-full_rebuild_deps_mtimes = {
-    filepath: os.path.getmtime(filepath) for filepath in full_rebuild_deps
-}
+obj_model_files = glob.glob("*.obj")
+model_headers = set([obj[:-3] + "h" for obj in obj_model_files])
+
+full_rebuild_deps = glob.glob("Makefile") + [
+    header for header in glob.glob("*.h") if header not in model_headers
+]
+link_deps = glob.glob("spec")
+
+c_files_mtimes = get_mtimes_map(c_files)
+full_rebuild_deps_mtimes = get_mtimes_map(full_rebuild_deps)
+link_deps_mtimes = get_mtimes_map(link_deps)
+model_deps_mtimes = get_mtimes_map(model_headers)
 
 
-changed_files = []
+invalid_files = []
 
-# if any c file is change, bust the cache for that file
+
+def get_artifact_for_c_file(filepath):
+    return filepath[:-1] + "o"
+
+
+def get_artifacts_for_spec_file():
+    return glob.glob("*.out") + glob.glob("*.n64")
+
+
+# if any c file changed, bust the relevant .o file
 for file, mtime in c_files_mtimes.items():
     if previous_mtimes.get(file, 0) < mtime:
-        changed_files.append(file)
+        invalid_files.append(get_artifact_for_c_file(file))
 
-# if any of these files are changed, just bust the whole build cache
+# if Makefile or a header file (with some exceptions) changed, bust everything
 for file, mtime in full_rebuild_deps_mtimes.items():
     if previous_mtimes.get(file, 0) < mtime:
-        changed_files = c_files
+        invalid_files += [get_artifact_for_c_file(file) for file in c_files]
 
-if len(changed_files) > 0:
-    print(" ".join(changed_files))
+# spec file: only bust final output
+for file, mtime in link_deps_mtimes.items():
+    if previous_mtimes.get(file, 0) < mtime:
+        invalid_files += get_artifacts_for_spec_file()
 
-updated_cache = {**c_files_mtimes, **full_rebuild_deps_mtimes}
+# model headers: only bust models segment
+for file, mtime in model_deps_mtimes.items():
+    if previous_mtimes.get(file, 0) < mtime:
+        invalid_files += [
+            get_artifact_for_c_file(file) for file in glob.glob("models.c")
+        ]
+
+invalid_files = list(set(invalid_files))
+
+if len(invalid_files) > 0:
+    print(" ".join(invalid_files))
+
+updated_cache = {
+    **c_files_mtimes,
+    **full_rebuild_deps_mtimes,
+    **link_deps_mtimes,
+    **model_deps_mtimes,
+}
 with open(CACHE_FILE, "w") as outfile:
     json.dump(updated_cache, outfile)
