@@ -17,8 +17,9 @@ Run `./rebuild_models.sh` to turn your .obj file into a .h file containing displ
 ## Level Editing
 Place all the objects you want in your game level. They should have the same name as the ModelType defined to represent them in the ModelTypes enum.
 
+Environment geometry can be exported directly from the level scene, using `export_map_meshes.py`. Select all mesh parts before running the script. If multiple parts are selected, the output .obj will contain them all. `./rebuild_models.sh` will produce a single .h file containing them all, with an array named `[objname]_model_meshes` to allow accessing mesh parts by index.
 
-To export the level, run the script `export_positions.py` using Blender's text editor (or however you prefer to run Blender Python scripts)
+To export the level, run the script `export_positions.py` using Blender's text editor (or however you prefer to run Blender Python scripts). Objects named with the same modeltype but suffixed with a .xxx number (as added by copy-paste in Blender) will be exported with the 'subtype' field set to an incrementing number, which can be aligned with a multi part mesh to allow rendering of batch-exported environment geometry. Any further suffix after the string '.inst' will be stripped, allowing multiple instances of multi-part meshes to be created for geometry reuse. This means that you add a .inst suffix, then copy-paste, it will not create an additional subtype (eg. it will still use the same mesh part).
 
 ## Character Animation
 

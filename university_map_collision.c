@@ -38,46 +38,6 @@ Triangle university_map_collision_collision_mesh[] = {
 {{-1466.104431, 61.387954, -479.158459},{-1315.494919, 61.387954, -479.158459},{-1315.494919, -6.860545, -479.158459},},
 {{-1315.494919, 61.387954, -479.158459},{-1315.494919, 61.387954, -330.547628},{-1315.494919, -6.860545, -330.547628},},
 {{-1315.494919, 61.387954, -330.547628},{-1466.104431, 61.387954, -330.547628},{-1466.104431, -6.860545, -330.547628},},
-{{-2125.696106, -34.249234, -1480.171623},{-2405.253296, -97.405658, -1739.580688},{-2401.782532, 16.236829, -1466.690254},},
-{{-1854.418945, -30.406380, -1492.901230},{-2115.249710, -81.720972, -1758.554306},{-2125.696106, -34.249234, -1480.171623},},
-{{-1854.418945, -30.406380, -1492.901230},{-1600.918007, -63.952374, -1759.645157},{-1860.862656, -68.257914, -1764.111557},},
-{{-1585.447426, -36.123097, -1492.080231},{-1313.224525, -64.293652, -1763.547821},{-1600.918007, -63.952374, -1759.645157},},
-{{-2405.253296, -97.405658, -1739.580688},{-2123.866882, -167.972560, -2011.054916},{-2411.665649, -165.326858, -2021.313171},},
-{{-2115.249710, -81.720972, -1758.554306},{-1869.430389, -186.586232, -1998.912506},{-2123.866882, -167.972560, -2011.054916},},
-{{-1860.862656, -68.257914, -1764.111557},{-1601.113014, -179.949932, -2012.300491},{-1869.430389, -186.586232, -1998.912506},},
-{{-1313.224525, -64.293652, -1763.547821},{-1601.113014, -179.949932, -2012.300491},{-1600.918007, -63.952374, -1759.645157},},
-{{-2411.665649, -165.326858, -2021.313171},{-2134.404144, -65.535693, -2285.570526},{-2406.778564, -53.057284, -2282.135468},},
-{{-2123.866882, -167.972560, -2011.054916},{-1865.722389, -70.004010, -2282.306213},{-2134.404144, -65.535693, -2285.570526},},
-{{-1601.113014, -179.949932, -2012.300491},{-1865.722389, -70.004010, -2282.306213},{-1869.430389, -186.586232, -1998.912506},},
-{{-1303.716888, -168.049364, -2022.378845},{-1584.202080, -74.968371, -2290.268097},{-1601.113014, -179.949932, -2012.300491},},
-{{-1298.422852, -93.962460, -2440.397873},{-1566.634712, -42.167376, -2572.905121},{-1576.045647, -64.944391, -2440.030289},},
-{{-1576.045647, -64.944391, -2440.030289},{-1846.086044, -30.135895, -2572.849045},{-1855.706177, -47.007354, -2427.622147},},
-{{-1855.706177, -47.007354, -2427.622147},{-2115.357513, -18.569482, -2572.540741},{-2124.470673, -30.717012, -2430.486145},},
-{{-2124.470673, -30.717012, -2430.486145},{-2386.607208, 0.102150, -2572.472763},{-2396.033020, -14.368144, -2426.272430},},
-{{-2134.404144, -65.535693, -2285.570526},{-2396.033020, -14.368144, -2426.272430},{-2406.778564, -53.057284, -2282.135468},},
-{{-1865.722389, -70.004010, -2282.306213},{-2124.470673, -30.717012, -2430.486145},{-2134.404144, -65.535693, -2285.570526},},
-{{-1584.202080, -74.968371, -2290.268097},{-1855.706177, -47.007354, -2427.622147},{-1865.722389, -70.004010, -2282.306213},},
-{{-1302.018013, -133.764267, -2296.394119},{-1576.045647, -64.944391, -2440.030289},{-1584.202080, -74.968371, -2290.268097},},
-{{-2125.696106, -34.249234, -1480.171623},{-2115.249710, -81.720972, -1758.554306},{-2405.253296, -97.405658, -1739.580688},},
-{{-1854.418945, -30.406380, -1492.901230},{-1860.862656, -68.257914, -1764.111557},{-2115.249710, -81.720972, -1758.554306},},
-{{-1854.418945, -30.406380, -1492.901230},{-1585.447426, -36.123097, -1492.080231},{-1600.918007, -63.952374, -1759.645157},},
-{{-1585.447426, -36.123097, -1492.080231},{-1305.189743, -18.641244, -1482.617340},{-1313.224525, -64.293652, -1763.547821},},
-{{-2405.253296, -97.405658, -1739.580688},{-2115.249710, -81.720972, -1758.554306},{-2123.866882, -167.972560, -2011.054916},},
-{{-2115.249710, -81.720972, -1758.554306},{-1860.862656, -68.257914, -1764.111557},{-1869.430389, -186.586232, -1998.912506},},
-{{-1860.862656, -68.257914, -1764.111557},{-1600.918007, -63.952374, -1759.645157},{-1601.113014, -179.949932, -2012.300491},},
-{{-1313.224525, -64.293652, -1763.547821},{-1303.716888, -168.049364, -2022.378845},{-1601.113014, -179.949932, -2012.300491},},
-{{-2411.665649, -165.326858, -2021.313171},{-2123.866882, -167.972560, -2011.054916},{-2134.404144, -65.535693, -2285.570526},},
-{{-2123.866882, -167.972560, -2011.054916},{-1869.430389, -186.586232, -1998.912506},{-1865.722389, -70.004010, -2282.306213},},
-{{-1601.113014, -179.949932, -2012.300491},{-1584.202080, -74.968371, -2290.268097},{-1865.722389, -70.004010, -2282.306213},},
-{{-1303.716888, -168.049364, -2022.378845},{-1302.018013, -133.764267, -2296.394119},{-1584.202080, -74.968371, -2290.268097},},
-{{-1298.422852, -93.962460, -2440.397873},{-1294.827576, -54.160656, -2572.807617},{-1566.634712, -42.167376, -2572.905121},},
-{{-1576.045647, -64.944391, -2440.030289},{-1566.634712, -42.167376, -2572.905121},{-1846.086044, -30.135895, -2572.849045},},
-{{-1855.706177, -47.007354, -2427.622147},{-1846.086044, -30.135895, -2572.849045},{-2115.357513, -18.569482, -2572.540741},},
-{{-2124.470673, -30.717012, -2430.486145},{-2115.357513, -18.569482, -2572.540741},{-2386.607208, 0.102150, -2572.472763},},
-{{-2134.404144, -65.535693, -2285.570526},{-2124.470673, -30.717012, -2430.486145},{-2396.033020, -14.368144, -2426.272430},},
-{{-1865.722389, -70.004010, -2282.306213},{-1855.706177, -47.007354, -2427.622147},{-2124.470673, -30.717012, -2430.486145},},
-{{-1584.202080, -74.968371, -2290.268097},{-1576.045647, -64.944391, -2440.030289},{-1855.706177, -47.007354, -2427.622147},},
-{{-1302.018013, -133.764267, -2296.394119},{-1298.422852, -93.962460, -2440.397873},{-1576.045647, -64.944391, -2440.030289},},
 {{-1305.189743, -18.641244, -1482.617340},{-1021.282196, -34.587457, -1744.565964},{-1313.224525, -64.293652, -1763.547821},},
 {{-1021.130447, -21.323635, -1469.534683},{-742.409821, -37.458916, -1740.298691},{-1021.282196, -34.587457, -1744.565964},},
 {{-742.597160, -35.272976, -2015.836716},{-742.409821, -37.458916, -1740.298691},{-470.145092, -0.059913, -1464.617157},},
@@ -85,9 +45,9 @@ Triangle university_map_collision_collision_mesh[] = {
 {{-1021.282196, -34.587457, -1744.565964},{-742.597160, -35.272976, -2015.836716},{-1018.327332, -54.569410, -2016.646271},},
 {{-1018.327332, -54.569410, -2016.646271},{-1302.546043, -143.872089, -2297.920532},{-1303.716888, -168.049364, -2022.378845},},
 {{-742.597160, -35.272976, -2015.836716},{-1009.942474, -69.018831, -2293.221588},{-1018.327332, -54.569410, -2016.646271},},
-{{-469.922161, -3.599913, -2291.301727},{-736.959000, -44.749063, -2572.851562},{-743.940926, -23.136703, -2291.329651},},
-{{-743.940926, -23.136703, -2291.329651},{-1002.960548, -50.004365, -2572.829819},{-1009.942474, -69.018831, -2293.221588},},
-{{-1009.942474, -69.018831, -2293.221588},{-1294.827576, -54.160656, -2572.830276},{-1302.546043, -143.872089, -2297.920532},},
+{{-469.922161, -3.599913, -2291.301727},{-736.959000, -44.749063, -2946.199493},{-743.940926, -23.136703, -2291.329651},},
+{{-743.940926, -23.136703, -2291.329651},{-1002.960548, -50.004365, -2946.177521},{-1009.942474, -69.018831, -2293.221588},},
+{{-1009.942474, -69.018831, -2293.221588},{-1294.827576, -54.160656, -2946.177979},{-1302.546043, -143.872089, -2297.920532},},
 {{-1305.189743, -18.641244, -1482.617340},{-1021.130447, -21.323635, -1469.534683},{-1021.282196, -34.587457, -1744.565964},},
 {{-1021.130447, -21.323635, -1469.534683},{-744.295177, -16.553732, -1464.616470},{-742.409821, -37.458916, -1740.298691},},
 {{-744.295177, -16.553732, -1464.616470},{-470.145092, -0.059913, -1464.617157},{-742.409821, -37.458916, -1740.298691},},
@@ -97,22 +57,22 @@ Triangle university_map_collision_collision_mesh[] = {
 {{-1021.282196, -34.587457, -1744.565964},{-742.409821, -37.458916, -1740.298691},{-742.597160, -35.272976, -2015.836716},},
 {{-1018.327332, -54.569410, -2016.646271},{-1009.942474, -69.018831, -2293.221588},{-1302.546043, -143.872089, -2297.920532},},
 {{-742.597160, -35.272976, -2015.836716},{-743.940926, -23.136703, -2291.329651},{-1009.942474, -69.018831, -2293.221588},},
-{{-469.922161, -3.599913, -2291.301727},{-470.136395, -3.664530, -2572.507553},{-736.959000, -44.749063, -2572.851562},},
-{{-743.940926, -23.136703, -2291.329651},{-736.959000, -44.749063, -2572.851562},{-1002.960548, -50.004365, -2572.829819},},
-{{-1009.942474, -69.018831, -2293.221588},{-1002.960548, -50.004365, -2572.829819},{-1294.827576, -54.160656, -2572.830276},},
-{{-2399.084244, 1.616169, -913.491669},{-2124.688797, 22.836767, -1189.031296},{-2399.131622, 19.307531, -1189.016991},},
+{{-469.922161, -3.599913, -2291.301727},{-470.136395, -3.664530, -2945.855255},{-736.959000, -44.749063, -2946.199493},},
+{{-743.940926, -23.136703, -2291.329651},{-736.959000, -44.749063, -2946.199493},{-1002.960548, -50.004365, -2946.177521},},
+{{-1009.942474, -69.018831, -2293.221588},{-1002.960548, -50.004365, -2946.177521},{-1294.827576, -54.160656, -2946.177979},},
+{{-2531.761551, 1.616169, -913.491669},{-2124.688797, 22.836767, -1189.031296},{-2531.808929, 19.307531, -1189.016991},},
 {{-2123.521500, 5.769895, -913.491669},{-1850.646172, -4.644725, -1191.126823},{-2124.688797, 22.836767, -1189.031296},},
 {{-1847.958755, 4.399129, -913.491669},{-1573.379517, -3.916255, -1190.251694},{-1850.646172, -4.644725, -1191.126823},},
 {{-1572.396011, 0.407858, -913.491669},{-1296.868515, -0.420637, -1189.101105},{-1573.379517, -3.916255, -1190.251694},},
-{{-2124.688797, 22.836767, -1189.031296},{-2401.782532, 16.236829, -1466.690254},{-2399.131622, 19.307531, -1189.016991},},
+{{-2124.688797, 22.836767, -1189.031296},{-2534.459839, 16.236829, -1466.690254},{-2531.808929, 19.307531, -1189.016991},},
 {{-1850.646172, -4.644725, -1191.126823},{-2125.696106, -34.249234, -1480.171623},{-2124.688797, 22.836767, -1189.031296},},
 {{-1850.646172, -4.644725, -1191.126823},{-1585.447426, -36.123097, -1492.080231},{-1854.418945, -30.406380, -1492.901230},},
 {{-1573.379517, -3.916255, -1190.251694},{-1305.189743, -18.641244, -1482.617340},{-1585.447426, -36.123097, -1492.080231},},
-{{-2399.084244, 1.616169, -913.491669},{-2123.521500, 5.769895, -913.491669},{-2124.688797, 22.836767, -1189.031296},},
+{{-2531.761551, 1.616169, -913.491669},{-2123.521500, 5.769895, -913.491669},{-2124.688797, 22.836767, -1189.031296},},
 {{-2123.521500, 5.769895, -913.491669},{-1847.958755, 4.399129, -913.491669},{-1850.646172, -4.644725, -1191.126823},},
 {{-1847.958755, 4.399129, -913.491669},{-1572.396011, 0.407858, -913.491669},{-1573.379517, -3.916255, -1190.251694},},
 {{-1572.396011, 0.407858, -913.491669},{-1296.833267, -0.059913, -913.491669},{-1296.868515, -0.420637, -1189.101105},},
-{{-2124.688797, 22.836767, -1189.031296},{-2125.696106, -34.249234, -1480.171623},{-2401.782532, 16.236829, -1466.690254},},
+{{-2124.688797, 22.836767, -1189.031296},{-2125.696106, -34.249234, -1480.171623},{-2534.459839, 16.236829, -1466.690254},},
 {{-1850.646172, -4.644725, -1191.126823},{-1854.418945, -30.406380, -1492.901230},{-2125.696106, -34.249234, -1480.171623},},
 {{-1850.646172, -4.644725, -1191.126823},{-1573.379517, -3.916255, -1190.251694},{-1585.447426, -36.123097, -1492.080231},},
 {{-1573.379517, -3.916255, -1190.251694},{-1296.868515, -0.420637, -1189.101105},{-1305.189743, -18.641244, -1482.617340},},
@@ -129,17 +89,17 @@ Triangle university_map_collision_collision_mesh[] = {
 {{-1021.270523, -0.059913, -1189.054413},{-745.707779, -0.059913, -1189.054413},{-744.295177, -16.553732, -1464.616470},},
 {{-470.145092, -0.059913, -1189.054413},{-470.145092, -0.059913, -1464.617157},{-744.295177, -16.553732, -1464.616470},},
 {{-1021.270523, -0.059913, 188.759308},{-1296.833267, -0.059913, -913.491669},{-1572.396011, 0.407858, -913.491669},},
-{{-2399.084244, 1.616169, -913.491669},{-2399.084244, -0.059913, 188.759308},{-2123.521500, 5.769895, -913.491669},},
-{{-2399.084244, -0.059913, 188.759308},{-1021.270523, -0.059913, 188.759308},{-1572.396011, 0.407858, -913.491669},},
-{{-2123.521500, 5.769895, -913.491669},{-2399.084244, -0.059913, 188.759308},{-1847.958755, 4.399129, -913.491669},},
+{{-2531.761551, 1.616169, -913.491669},{-2531.761551, -0.059913, 188.759308},{-2123.521500, 5.769895, -913.491669},},
+{{-2531.761551, -0.059913, 188.759308},{-1021.270523, -0.059913, 188.759308},{-1572.396011, 0.407858, -913.491669},},
+{{-2123.521500, 5.769895, -913.491669},{-2531.761551, -0.059913, 188.759308},{-1847.958755, 4.399129, -913.491669},},
 {{-1021.270523, -0.059913, 188.759308},{-1021.270523, -0.059913, -913.491669},{-1296.833267, -0.059913, -913.491669},},
-{{-1572.396011, 0.407858, -913.491669},{-1847.958755, 4.399129, -913.491669},{-2399.084244, -0.059913, 188.759308},},
+{{-1572.396011, 0.407858, -913.491669},{-1847.958755, 4.399129, -913.491669},{-2531.761551, -0.059913, 188.759308},},
 {{80.980339, -0.059913, 188.759308},{80.980339, -0.059913, -913.491669},{-470.145092, -0.059913, -913.491669},},
 {{-1021.270523, -0.059913, -913.491669},{-1021.270523, -0.059913, 188.759308},{-745.707779, -0.059913, -913.491669},},
 {{-1021.270523, -0.059913, 188.759308},{80.980339, -0.059913, 188.759308},{-470.145092, -0.059913, -913.491669},},
 {{-745.707779, -0.059913, -913.491669},{-1021.270523, -0.059913, 188.759308},{-470.145092, -0.059913, -913.491669},},
-{{80.980339, -0.059913, -913.491669},{-469.922161, -3.599913, -2572.340240},{-470.145092, -0.059913, -913.491669},},
-{{80.980339, -0.059913, -913.491669},{80.980339, -0.059913, -2572.343903},{-469.922161, -3.599913, -2572.340240},},
+{{80.980339, -0.059913, -913.491669},{-469.922161, -3.599913, -2945.688171},{-470.145092, -0.059913, -913.491669},},
+{{80.980339, -0.059913, -913.491669},{80.980339, -0.059913, -2945.691376},{-469.922161, -3.599913, -2945.688171},},
 {{-1820.239449, -57.163399, -1736.167259},{-1856.722527, -120.639124, -1741.664772},{-1808.687553, -129.100199, -1704.858055},},
 {{-1829.379272, -57.163399, -1755.833931},{-1792.033882, -129.100199, -1765.154572},{-1856.722527, -120.639124, -1741.664772},},
 {{-1789.989052, -60.498054, -1772.869606},{-1776.124077, -129.100199, -1724.978600},{-1792.033882, -129.100199, -1765.154572},},
@@ -190,523 +150,672 @@ Triangle university_map_collision_collision_mesh[] = {
 {{-1346.649170, -57.512426, -1800.018997},{-1347.110939, -69.045668, -1768.072472},{-1349.694328, -145.403109, -1768.072472},},
 {{-1347.110939, -69.045668, -1768.072472},{-1385.948982, -60.558550, -1767.342339},{-1388.703690, -145.403109, -1768.072472},},
 {{-1378.361320, -57.512426, -1789.607849},{-1385.948982, -60.558550, -1767.342339},{-1347.110939, -69.045668, -1768.072472},},
+{{-2125.696106, -34.249234, -1480.171623},{-2537.930603, -97.405658, -1739.580688},{-2534.459839, 16.236829, -1466.690254},},
+{{-1854.418945, -30.406380, -1492.901230},{-2115.249710, -81.720972, -1758.554306},{-2125.696106, -34.249234, -1480.171623},},
+{{-1854.418945, -30.406380, -1492.901230},{-1600.918007, -63.952374, -1759.645157},{-1860.862656, -68.257914, -1764.111557},},
+{{-1585.447426, -36.123097, -1492.080231},{-1313.224525, -64.293652, -1763.547821},{-1600.918007, -63.952374, -1759.645157},},
+{{-2537.930603, -97.405658, -1739.580688},{-2123.866882, -167.972560, -2011.054916},{-2544.342957, -165.326858, -2021.313171},},
+{{-2115.249710, -81.720972, -1758.554306},{-1869.430389, -186.586232, -1998.912506},{-2123.866882, -167.972560, -2011.054916},},
+{{-1860.862656, -68.257914, -1764.111557},{-1601.113014, -179.949932, -2012.300491},{-1869.430389, -186.586232, -1998.912506},},
+{{-1313.224525, -64.293652, -1763.547821},{-1601.113014, -179.949932, -2012.300491},{-1600.918007, -63.952374, -1759.645157},},
+{{-2544.342957, -165.326858, -2021.313171},{-2134.404144, -65.535693, -2285.570526},{-2539.455872, -53.057284, -2282.135468},},
+{{-2123.866882, -167.972560, -2011.054916},{-1865.722389, -70.004010, -2282.306213},{-2134.404144, -65.535693, -2285.570526},},
+{{-1601.113014, -179.949932, -2012.300491},{-1865.722389, -70.004010, -2282.306213},{-1869.430389, -186.586232, -1998.912506},},
+{{-1303.716888, -168.049364, -2022.378845},{-1584.202080, -74.968371, -2290.268097},{-1601.113014, -179.949932, -2012.300491},},
+{{-1298.422852, -93.962460, -2440.397873},{-1566.634712, -42.167376, -2946.253052},{-1576.045647, -64.944391, -2440.030289},},
+{{-1576.045647, -64.944391, -2440.030289},{-1846.086044, -30.135895, -2946.196747},{-1855.706177, -47.007354, -2427.622147},},
+{{-1855.706177, -47.007354, -2427.622147},{-2115.357513, -18.569482, -2945.888443},{-2124.470673, -30.717012, -2430.486145},},
+{{-2124.470673, -30.717012, -2430.486145},{-2519.284515, 0.102150, -2945.820465},{-2528.710327, -14.368144, -2426.272430},},
+{{-2134.404144, -65.535693, -2285.570526},{-2528.710327, -14.368144, -2426.272430},{-2539.455872, -53.057284, -2282.135468},},
+{{-1865.722389, -70.004010, -2282.306213},{-2124.470673, -30.717012, -2430.486145},{-2134.404144, -65.535693, -2285.570526},},
+{{-1584.202080, -74.968371, -2290.268097},{-1855.706177, -47.007354, -2427.622147},{-1865.722389, -70.004010, -2282.306213},},
+{{-1302.018013, -133.764267, -2296.394119},{-1576.045647, -64.944391, -2440.030289},{-1584.202080, -74.968371, -2290.268097},},
+{{-2125.696106, -34.249234, -1480.171623},{-2115.249710, -81.720972, -1758.554306},{-2537.930603, -97.405658, -1739.580688},},
+{{-1854.418945, -30.406380, -1492.901230},{-1860.862656, -68.257914, -1764.111557},{-2115.249710, -81.720972, -1758.554306},},
+{{-1854.418945, -30.406380, -1492.901230},{-1585.447426, -36.123097, -1492.080231},{-1600.918007, -63.952374, -1759.645157},},
+{{-1585.447426, -36.123097, -1492.080231},{-1305.189743, -18.641244, -1482.617340},{-1313.224525, -64.293652, -1763.547821},},
+{{-2537.930603, -97.405658, -1739.580688},{-2115.249710, -81.720972, -1758.554306},{-2123.866882, -167.972560, -2011.054916},},
+{{-2115.249710, -81.720972, -1758.554306},{-1860.862656, -68.257914, -1764.111557},{-1869.430389, -186.586232, -1998.912506},},
+{{-1860.862656, -68.257914, -1764.111557},{-1600.918007, -63.952374, -1759.645157},{-1601.113014, -179.949932, -2012.300491},},
+{{-1313.224525, -64.293652, -1763.547821},{-1303.716888, -168.049364, -2022.378845},{-1601.113014, -179.949932, -2012.300491},},
+{{-2544.342957, -165.326858, -2021.313171},{-2123.866882, -167.972560, -2011.054916},{-2134.404144, -65.535693, -2285.570526},},
+{{-2123.866882, -167.972560, -2011.054916},{-1869.430389, -186.586232, -1998.912506},{-1865.722389, -70.004010, -2282.306213},},
+{{-1601.113014, -179.949932, -2012.300491},{-1584.202080, -74.968371, -2290.268097},{-1865.722389, -70.004010, -2282.306213},},
+{{-1303.716888, -168.049364, -2022.378845},{-1302.018013, -133.764267, -2296.394119},{-1584.202080, -74.968371, -2290.268097},},
+{{-1298.422852, -93.962460, -2440.397873},{-1294.827576, -54.160656, -2946.155319},{-1566.634712, -42.167376, -2946.253052},},
+{{-1576.045647, -64.944391, -2440.030289},{-1566.634712, -42.167376, -2946.253052},{-1846.086044, -30.135895, -2946.196747},},
+{{-1855.706177, -47.007354, -2427.622147},{-1846.086044, -30.135895, -2946.196747},{-2115.357513, -18.569482, -2945.888443},},
+{{-2124.470673, -30.717012, -2430.486145},{-2115.357513, -18.569482, -2945.888443},{-2519.284515, 0.102150, -2945.820465},},
+{{-2134.404144, -65.535693, -2285.570526},{-2124.470673, -30.717012, -2430.486145},{-2528.710327, -14.368144, -2426.272430},},
+{{-1865.722389, -70.004010, -2282.306213},{-1855.706177, -47.007354, -2427.622147},{-2124.470673, -30.717012, -2430.486145},},
+{{-1584.202080, -74.968371, -2290.268097},{-1576.045647, -64.944391, -2440.030289},{-1855.706177, -47.007354, -2427.622147},},
+{{-1302.018013, -133.764267, -2296.394119},{-1298.422852, -93.962460, -2440.397873},{-1576.045647, -64.944391, -2440.030289},},
 
 };
-int university_map_collision_collision_mesh_hash_bucket_3382_data[] = {127, 128, 129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3383_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3384_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3385_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3386_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3387_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3388_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3389_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3390_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3391_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3392_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3393_data[] = {126, 128, 130, 133, 134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3394_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3395_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3396_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3397_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3398_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3399_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3400_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3401_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3402_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3466_data[] = {127, 128, 129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3467_data[] = {128, 131};
-int university_map_collision_collision_mesh_hash_bucket_3468_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3469_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3470_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3471_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3472_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3473_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3474_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3475_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3476_data[] = {126, 128};
-int university_map_collision_collision_mesh_hash_bucket_3477_data[] = {126, 128, 130, 133, 134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3478_data[] = {134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3479_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3480_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3481_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3482_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3483_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3484_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3485_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3486_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3550_data[] = {127, 129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3551_data[] = {128, 129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3552_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3553_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3554_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3555_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3556_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3557_data[] = {20, 23, 24, 27, 128};
-int university_map_collision_collision_mesh_hash_bucket_3558_data[] = {23, 27, 128};
-int university_map_collision_collision_mesh_hash_bucket_3559_data[] = {22, 23, 26, 27, 128};
-int university_map_collision_collision_mesh_hash_bucket_3560_data[] = {126, 128, 130};
-int university_map_collision_collision_mesh_hash_bucket_3561_data[] = {126, 130, 133, 135};
-int university_map_collision_collision_mesh_hash_bucket_3562_data[] = {133, 134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3563_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3564_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3565_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3566_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3567_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3568_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3569_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3570_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3634_data[] = {127, 129};
-int university_map_collision_collision_mesh_hash_bucket_3635_data[] = {128, 129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3636_data[] = {128, 131};
-int university_map_collision_collision_mesh_hash_bucket_3637_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3638_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3639_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3640_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3641_data[] = {20, 21, 24, 25, 128};
-int university_map_collision_collision_mesh_hash_bucket_3642_data[] = {21, 25, 128};
-int university_map_collision_collision_mesh_hash_bucket_3643_data[] = {21, 22, 25, 26, 126, 128};
-int university_map_collision_collision_mesh_hash_bucket_3644_data[] = {126, 128, 130};
-int university_map_collision_collision_mesh_hash_bucket_3645_data[] = {130, 133};
-int university_map_collision_collision_mesh_hash_bucket_3646_data[] = {133, 134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3647_data[] = {134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3648_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3649_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3650_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3651_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3652_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3653_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3654_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3718_data[] = {127, 129};
-int university_map_collision_collision_mesh_hash_bucket_3719_data[] = {127, 129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3720_data[] = {128, 129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3721_data[] = {128, 131};
-int university_map_collision_collision_mesh_hash_bucket_3722_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3723_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3724_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3725_data[] = {28, 31, 32, 35, 128};
-int university_map_collision_collision_mesh_hash_bucket_3726_data[] = {31, 35, 128};
-int university_map_collision_collision_mesh_hash_bucket_3727_data[] = {30, 31, 34, 35, 126, 128};
-int university_map_collision_collision_mesh_hash_bucket_3728_data[] = {126, 130};
-int university_map_collision_collision_mesh_hash_bucket_3729_data[] = {130, 133};
-int university_map_collision_collision_mesh_hash_bucket_3730_data[] = {133, 135};
-int university_map_collision_collision_mesh_hash_bucket_3731_data[] = {134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3732_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3733_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3734_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3735_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3736_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3737_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3738_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3802_data[] = {127};
-int university_map_collision_collision_mesh_hash_bucket_3803_data[] = {127, 129};
-int university_map_collision_collision_mesh_hash_bucket_3804_data[] = {129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3805_data[] = {128, 131};
-int university_map_collision_collision_mesh_hash_bucket_3806_data[] = {128, 131};
-int university_map_collision_collision_mesh_hash_bucket_3807_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3808_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3809_data[] = {28, 29, 32, 33, 128};
-int university_map_collision_collision_mesh_hash_bucket_3810_data[] = {29, 33, 126, 128};
-int university_map_collision_collision_mesh_hash_bucket_3811_data[] = {29, 30, 33, 34, 126, 128};
-int university_map_collision_collision_mesh_hash_bucket_3812_data[] = {126, 130};
-int university_map_collision_collision_mesh_hash_bucket_3813_data[] = {130, 133};
-int university_map_collision_collision_mesh_hash_bucket_3814_data[] = {133, 135};
-int university_map_collision_collision_mesh_hash_bucket_3815_data[] = {134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3816_data[] = {134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3817_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3818_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3819_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3820_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3821_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3822_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3886_data[] = {127};
-int university_map_collision_collision_mesh_hash_bucket_3887_data[] = {127, 129};
-int university_map_collision_collision_mesh_hash_bucket_3888_data[] = {129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3889_data[] = {129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3890_data[] = {128, 131};
-int university_map_collision_collision_mesh_hash_bucket_3891_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3892_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3893_data[] = {128};
-int university_map_collision_collision_mesh_hash_bucket_3894_data[] = {126, 128};
-int university_map_collision_collision_mesh_hash_bucket_3895_data[] = {126, 130};
-int university_map_collision_collision_mesh_hash_bucket_3896_data[] = {126, 130};
-int university_map_collision_collision_mesh_hash_bucket_3897_data[] = {130, 133};
-int university_map_collision_collision_mesh_hash_bucket_3898_data[] = {133, 135};
-int university_map_collision_collision_mesh_hash_bucket_3899_data[] = {133, 135};
-int university_map_collision_collision_mesh_hash_bucket_3900_data[] = {134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3901_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3902_data[] = {134};
-int university_map_collision_collision_mesh_hash_bucket_3903_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3904_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3905_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3906_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3970_data[] = {127};
-int university_map_collision_collision_mesh_hash_bucket_3971_data[] = {127, 129};
-int university_map_collision_collision_mesh_hash_bucket_3972_data[] = {129};
-int university_map_collision_collision_mesh_hash_bucket_3973_data[] = {129, 131};
-int university_map_collision_collision_mesh_hash_bucket_3974_data[] = {128, 131};
-int university_map_collision_collision_mesh_hash_bucket_3975_data[] = {10, 11, 13, 14, 15, 16, 18, 19, 128, 131};
-int university_map_collision_collision_mesh_hash_bucket_3976_data[] = {11, 13, 14, 16, 18, 19, 128};
-int university_map_collision_collision_mesh_hash_bucket_3977_data[] = {11, 13, 14, 16, 18, 19, 126, 128};
-int university_map_collision_collision_mesh_hash_bucket_3978_data[] = {11, 13, 14, 16, 18, 19, 126, 128};
-int university_map_collision_collision_mesh_hash_bucket_3979_data[] = {11, 12, 13, 14, 16, 17, 18, 19, 126, 130};
-int university_map_collision_collision_mesh_hash_bucket_3980_data[] = {0, 1, 3, 4, 5, 6, 8, 9, 130};
-int university_map_collision_collision_mesh_hash_bucket_3981_data[] = {1, 3, 4, 6, 8, 9, 130, 133};
-int university_map_collision_collision_mesh_hash_bucket_3982_data[] = {1, 3, 4, 6, 8, 9, 133};
-int university_map_collision_collision_mesh_hash_bucket_3983_data[] = {1, 3, 4, 6, 8, 9, 133, 135};
-int university_map_collision_collision_mesh_hash_bucket_3984_data[] = {1, 2, 3, 4, 6, 7, 8, 9, 134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3985_data[] = {134, 135};
-int university_map_collision_collision_mesh_hash_bucket_3986_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3987_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_3988_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3989_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_3990_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_4054_data[] = {127};
-int university_map_collision_collision_mesh_hash_bucket_4055_data[] = {127, 129};
-int university_map_collision_collision_mesh_hash_bucket_4056_data[] = {127, 129};
-int university_map_collision_collision_mesh_hash_bucket_4057_data[] = {129, 131};
-int university_map_collision_collision_mesh_hash_bucket_4058_data[] = {129, 131};
-int university_map_collision_collision_mesh_hash_bucket_4059_data[] = {128, 131};
-int university_map_collision_collision_mesh_hash_bucket_4060_data[] = {128, 131};
-int university_map_collision_collision_mesh_hash_bucket_4061_data[] = {126, 128};
-int university_map_collision_collision_mesh_hash_bucket_4062_data[] = {126};
-int university_map_collision_collision_mesh_hash_bucket_4063_data[] = {126, 130};
-int university_map_collision_collision_mesh_hash_bucket_4064_data[] = {130};
-int university_map_collision_collision_mesh_hash_bucket_4065_data[] = {130, 133};
-int university_map_collision_collision_mesh_hash_bucket_4066_data[] = {133};
-int university_map_collision_collision_mesh_hash_bucket_4067_data[] = {133, 135};
-int university_map_collision_collision_mesh_hash_bucket_4068_data[] = {135};
-int university_map_collision_collision_mesh_hash_bucket_4069_data[] = {134, 135};
-int university_map_collision_collision_mesh_hash_bucket_4070_data[] = {132, 134};
-int university_map_collision_collision_mesh_hash_bucket_4071_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_4072_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_4073_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_4074_data[] = {132};
-int university_map_collision_collision_mesh_hash_bucket_4138_data[] = {98, 106, 127};
-int university_map_collision_collision_mesh_hash_bucket_4139_data[] = {106, 127};
-int university_map_collision_collision_mesh_hash_bucket_4140_data[] = {99, 106, 107, 127, 129};
-int university_map_collision_collision_mesh_hash_bucket_4141_data[] = {107, 129};
-int university_map_collision_collision_mesh_hash_bucket_4142_data[] = {100, 107, 108, 129, 131};
-int university_map_collision_collision_mesh_hash_bucket_4143_data[] = {108, 131};
-int university_map_collision_collision_mesh_hash_bucket_4144_data[] = {101, 108, 109, 126, 128, 131};
-int university_map_collision_collision_mesh_hash_bucket_4145_data[] = {101, 109, 126, 128};
-int university_map_collision_collision_mesh_hash_bucket_4146_data[] = {109, 126};
-int university_map_collision_collision_mesh_hash_bucket_4147_data[] = {109, 114, 120, 126, 130};
-int university_map_collision_collision_mesh_hash_bucket_4148_data[] = {120, 130};
-int university_map_collision_collision_mesh_hash_bucket_4149_data[] = {115, 120, 130, 133};
-int university_map_collision_collision_mesh_hash_bucket_4150_data[] = {115, 133};
-int university_map_collision_collision_mesh_hash_bucket_4151_data[] = {115, 116, 121, 133, 135};
-int university_map_collision_collision_mesh_hash_bucket_4152_data[] = {116, 135};
-int university_map_collision_collision_mesh_hash_bucket_4153_data[] = {116, 122, 134, 135};
-int university_map_collision_collision_mesh_hash_bucket_4154_data[] = {116, 122, 132, 134, 135, 136};
-int university_map_collision_collision_mesh_hash_bucket_4155_data[] = {132, 136};
-int university_map_collision_collision_mesh_hash_bucket_4156_data[] = {132, 136};
-int university_map_collision_collision_mesh_hash_bucket_4157_data[] = {132, 136};
-int university_map_collision_collision_mesh_hash_bucket_4158_data[] = {132, 136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4222_data[] = {98, 106};
-int university_map_collision_collision_mesh_hash_bucket_4223_data[] = {98, 106};
-int university_map_collision_collision_mesh_hash_bucket_4224_data[] = {99, 106, 107};
-int university_map_collision_collision_mesh_hash_bucket_4225_data[] = {99, 107};
-int university_map_collision_collision_mesh_hash_bucket_4226_data[] = {100, 107, 108};
-int university_map_collision_collision_mesh_hash_bucket_4227_data[] = {100, 108};
-int university_map_collision_collision_mesh_hash_bucket_4228_data[] = {101, 108};
-int university_map_collision_collision_mesh_hash_bucket_4229_data[] = {101, 109};
-int university_map_collision_collision_mesh_hash_bucket_4230_data[] = {101, 109};
-int university_map_collision_collision_mesh_hash_bucket_4231_data[] = {109, 114, 120};
-int university_map_collision_collision_mesh_hash_bucket_4232_data[] = {114, 120};
-int university_map_collision_collision_mesh_hash_bucket_4233_data[] = {115, 120};
-int university_map_collision_collision_mesh_hash_bucket_4234_data[] = {115, 121};
-int university_map_collision_collision_mesh_hash_bucket_4235_data[] = {115, 116, 121};
-int university_map_collision_collision_mesh_hash_bucket_4236_data[] = {116, 122};
-int university_map_collision_collision_mesh_hash_bucket_4237_data[] = {116, 122};
-int university_map_collision_collision_mesh_hash_bucket_4238_data[] = {122, 136};
-int university_map_collision_collision_mesh_hash_bucket_4239_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4240_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4241_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4242_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4306_data[] = {98, 102};
-int university_map_collision_collision_mesh_hash_bucket_4307_data[] = {98, 102, 106};
-int university_map_collision_collision_mesh_hash_bucket_4308_data[] = {98, 99, 102, 103, 106, 110};
-int university_map_collision_collision_mesh_hash_bucket_4309_data[] = {99, 103, 107};
-int university_map_collision_collision_mesh_hash_bucket_4310_data[] = {99, 100, 103, 104, 107, 111, 112};
-int university_map_collision_collision_mesh_hash_bucket_4311_data[] = {100, 108, 112};
-int university_map_collision_collision_mesh_hash_bucket_4312_data[] = {100, 101, 105, 108, 112, 113};
-int university_map_collision_collision_mesh_hash_bucket_4313_data[] = {101, 113};
-int university_map_collision_collision_mesh_hash_bucket_4314_data[] = {101, 109, 113};
-int university_map_collision_collision_mesh_hash_bucket_4315_data[] = {101, 109, 113, 114, 117, 123};
-int university_map_collision_collision_mesh_hash_bucket_4316_data[] = {114, 120, 123};
-int university_map_collision_collision_mesh_hash_bucket_4317_data[] = {114, 115, 118, 120, 121, 123, 124};
-int university_map_collision_collision_mesh_hash_bucket_4318_data[] = {115, 121, 124};
-int university_map_collision_collision_mesh_hash_bucket_4319_data[] = {116, 119, 121, 122, 124};
-int university_map_collision_collision_mesh_hash_bucket_4320_data[] = {116, 119, 122};
-int university_map_collision_collision_mesh_hash_bucket_4321_data[] = {119, 122, 125};
-int university_map_collision_collision_mesh_hash_bucket_4322_data[] = {119, 122, 125, 136};
-int university_map_collision_collision_mesh_hash_bucket_4323_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4324_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4325_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4326_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4389_data[] = {102};
-int university_map_collision_collision_mesh_hash_bucket_4390_data[] = {102};
-int university_map_collision_collision_mesh_hash_bucket_4391_data[] = {102, 110};
-int university_map_collision_collision_mesh_hash_bucket_4392_data[] = {102, 103, 110};
-int university_map_collision_collision_mesh_hash_bucket_4393_data[] = {103, 111};
-int university_map_collision_collision_mesh_hash_bucket_4394_data[] = {103, 104, 111, 112};
-int university_map_collision_collision_mesh_hash_bucket_4395_data[] = {104, 112};
-int university_map_collision_collision_mesh_hash_bucket_4396_data[] = {105, 112, 113};
-int university_map_collision_collision_mesh_hash_bucket_4397_data[] = {105, 113};
-int university_map_collision_collision_mesh_hash_bucket_4398_data[] = {113};
-int university_map_collision_collision_mesh_hash_bucket_4399_data[] = {113, 117, 123};
-int university_map_collision_collision_mesh_hash_bucket_4400_data[] = {117, 123};
-int university_map_collision_collision_mesh_hash_bucket_4401_data[] = {118, 123, 124};
-int university_map_collision_collision_mesh_hash_bucket_4402_data[] = {118, 124};
-int university_map_collision_collision_mesh_hash_bucket_4403_data[] = {119, 124};
-int university_map_collision_collision_mesh_hash_bucket_4404_data[] = {119, 125};
-int university_map_collision_collision_mesh_hash_bucket_4405_data[] = {119, 125};
-int university_map_collision_collision_mesh_hash_bucket_4406_data[] = {125, 136};
-int university_map_collision_collision_mesh_hash_bucket_4407_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4408_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4409_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4410_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4473_data[] = {102};
-int university_map_collision_collision_mesh_hash_bucket_4474_data[] = {102, 110};
-int university_map_collision_collision_mesh_hash_bucket_4475_data[] = {102, 110};
-int university_map_collision_collision_mesh_hash_bucket_4476_data[] = {103, 110, 111};
-int university_map_collision_collision_mesh_hash_bucket_4477_data[] = {103, 111};
-int university_map_collision_collision_mesh_hash_bucket_4478_data[] = {104, 111};
-int university_map_collision_collision_mesh_hash_bucket_4479_data[] = {104, 112};
-int university_map_collision_collision_mesh_hash_bucket_4480_data[] = {104, 105, 112};
-int university_map_collision_collision_mesh_hash_bucket_4481_data[] = {105, 113};
-int university_map_collision_collision_mesh_hash_bucket_4482_data[] = {105, 113};
-int university_map_collision_collision_mesh_hash_bucket_4483_data[] = {113, 117};
-int university_map_collision_collision_mesh_hash_bucket_4484_data[] = {117, 123};
-int university_map_collision_collision_mesh_hash_bucket_4485_data[] = {117, 118, 123};
-int university_map_collision_collision_mesh_hash_bucket_4486_data[] = {118, 124};
-int university_map_collision_collision_mesh_hash_bucket_4487_data[] = {118, 119, 124};
-int university_map_collision_collision_mesh_hash_bucket_4488_data[] = {119, 125};
-int university_map_collision_collision_mesh_hash_bucket_4489_data[] = {125};
-int university_map_collision_collision_mesh_hash_bucket_4490_data[] = {125, 136};
-int university_map_collision_collision_mesh_hash_bucket_4491_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4492_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4493_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4494_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4557_data[] = {36, 102, 110};
-int university_map_collision_collision_mesh_hash_bucket_4558_data[] = {36, 102, 110};
-int university_map_collision_collision_mesh_hash_bucket_4559_data[] = {36, 56, 110};
-int university_map_collision_collision_mesh_hash_bucket_4560_data[] = {36, 37, 56, 103, 110, 111};
-int university_map_collision_collision_mesh_hash_bucket_4561_data[] = {37, 57, 111};
-int university_map_collision_collision_mesh_hash_bucket_4562_data[] = {37, 38, 57, 58, 104, 111};
-int university_map_collision_collision_mesh_hash_bucket_4563_data[] = {38, 58, 104};
-int university_map_collision_collision_mesh_hash_bucket_4564_data[] = {39, 58, 59, 104, 105, 112};
-int university_map_collision_collision_mesh_hash_bucket_4565_data[] = {39, 59, 105};
-int university_map_collision_collision_mesh_hash_bucket_4566_data[] = {59, 105, 113};
-int university_map_collision_collision_mesh_hash_bucket_4567_data[] = {59, 76, 86, 105, 113, 117};
-int university_map_collision_collision_mesh_hash_bucket_4568_data[] = {86, 117};
-int university_map_collision_collision_mesh_hash_bucket_4569_data[] = {77, 86, 87, 117, 118, 123};
-int university_map_collision_collision_mesh_hash_bucket_4570_data[] = {77, 87, 118};
-int university_map_collision_collision_mesh_hash_bucket_4571_data[] = {87, 88, 118, 119, 124, 125};
-int university_map_collision_collision_mesh_hash_bucket_4572_data[] = {88, 119, 125};
-int university_map_collision_collision_mesh_hash_bucket_4573_data[] = {78, 88, 89, 125};
-int university_map_collision_collision_mesh_hash_bucket_4574_data[] = {78, 88, 89, 125, 136};
-int university_map_collision_collision_mesh_hash_bucket_4575_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4576_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4577_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4578_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4641_data[] = {36};
-int university_map_collision_collision_mesh_hash_bucket_4642_data[] = {36, 56};
-int university_map_collision_collision_mesh_hash_bucket_4643_data[] = {36, 56};
-int university_map_collision_collision_mesh_hash_bucket_4644_data[] = {37, 56};
-int university_map_collision_collision_mesh_hash_bucket_4645_data[] = {37, 57};
-int university_map_collision_collision_mesh_hash_bucket_4646_data[] = {38, 57};
-int university_map_collision_collision_mesh_hash_bucket_4647_data[] = {38, 58};
-int university_map_collision_collision_mesh_hash_bucket_4648_data[] = {38, 39, 58};
-int university_map_collision_collision_mesh_hash_bucket_4649_data[] = {39, 59};
-int university_map_collision_collision_mesh_hash_bucket_4650_data[] = {39, 59};
-int university_map_collision_collision_mesh_hash_bucket_4651_data[] = {59, 76, 86};
-int university_map_collision_collision_mesh_hash_bucket_4652_data[] = {76, 86};
-int university_map_collision_collision_mesh_hash_bucket_4653_data[] = {77, 86};
-int university_map_collision_collision_mesh_hash_bucket_4654_data[] = {77, 87};
-int university_map_collision_collision_mesh_hash_bucket_4655_data[] = {77, 87, 88};
-int university_map_collision_collision_mesh_hash_bucket_4656_data[] = {78, 88};
-int university_map_collision_collision_mesh_hash_bucket_4657_data[] = {78, 88, 89};
-int university_map_collision_collision_mesh_hash_bucket_4658_data[] = {89, 136};
-int university_map_collision_collision_mesh_hash_bucket_4659_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4660_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4661_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4662_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4725_data[] = {36, 40, 56, 60};
-int university_map_collision_collision_mesh_hash_bucket_4726_data[] = {36, 40, 56, 60};
-int university_map_collision_collision_mesh_hash_bucket_4727_data[] = {56, 60};
-int university_map_collision_collision_mesh_hash_bucket_4728_data[] = {37, 41, 56, 57, 60, 61};
-int university_map_collision_collision_mesh_hash_bucket_4729_data[] = {37, 57, 61};
-int university_map_collision_collision_mesh_hash_bucket_4730_data[] = {38, 42, 57, 61, 62, 138, 139, 141, 142, 143, 144, 146, 147};
-int university_map_collision_collision_mesh_hash_bucket_4731_data[] = {38, 62, 139, 140, 141, 142, 144, 145, 146, 147, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167};
-int university_map_collision_collision_mesh_hash_bucket_4732_data[] = {38, 39, 43, 58, 62};
-int university_map_collision_collision_mesh_hash_bucket_4733_data[] = {39, 43};
-int university_map_collision_collision_mesh_hash_bucket_4734_data[] = {39, 43, 59, 63, 168, 171, 173, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187};
-int university_map_collision_collision_mesh_hash_bucket_4735_data[] = {39, 43, 59, 63, 76, 79, 91, 170, 171, 172, 173, 175, 176, 177};
-int university_map_collision_collision_mesh_hash_bucket_4736_data[] = {76, 86, 91};
-int university_map_collision_collision_mesh_hash_bucket_4737_data[] = {76, 77, 80, 86, 91, 92};
-int university_map_collision_collision_mesh_hash_bucket_4738_data[] = {77, 92};
-int university_map_collision_collision_mesh_hash_bucket_4739_data[] = {77, 78, 87, 88, 92};
-int university_map_collision_collision_mesh_hash_bucket_4740_data[] = {78, 88, 89};
-int university_map_collision_collision_mesh_hash_bucket_4741_data[] = {78, 89};
-int university_map_collision_collision_mesh_hash_bucket_4742_data[] = {89, 136};
-int university_map_collision_collision_mesh_hash_bucket_4743_data[] = {136};
-int university_map_collision_collision_mesh_hash_bucket_4744_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4745_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4746_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4809_data[] = {40};
-int university_map_collision_collision_mesh_hash_bucket_4810_data[] = {40, 60};
-int university_map_collision_collision_mesh_hash_bucket_4811_data[] = {40, 60};
-int university_map_collision_collision_mesh_hash_bucket_4812_data[] = {41, 60, 61};
-int university_map_collision_collision_mesh_hash_bucket_4813_data[] = {41, 61};
-int university_map_collision_collision_mesh_hash_bucket_4814_data[] = {42, 61, 62};
-int university_map_collision_collision_mesh_hash_bucket_4815_data[] = {42, 62, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157};
-int university_map_collision_collision_mesh_hash_bucket_4816_data[] = {43, 62};
-int university_map_collision_collision_mesh_hash_bucket_4817_data[] = {43, 63};
-int university_map_collision_collision_mesh_hash_bucket_4818_data[] = {43, 63, 168, 169, 173, 178, 179, 180, 182, 183, 184, 185};
-int university_map_collision_collision_mesh_hash_bucket_4819_data[] = {63, 79, 91, 169, 170, 172, 173, 174, 175, 177};
-int university_map_collision_collision_mesh_hash_bucket_4820_data[] = {79, 91};
-int university_map_collision_collision_mesh_hash_bucket_4821_data[] = {80, 91, 92};
-int university_map_collision_collision_mesh_hash_bucket_4822_data[] = {80, 92};
-int university_map_collision_collision_mesh_hash_bucket_4823_data[] = {78, 92};
-int university_map_collision_collision_mesh_hash_bucket_4824_data[] = {78, 89};
-int university_map_collision_collision_mesh_hash_bucket_4825_data[] = {89};
-int university_map_collision_collision_mesh_hash_bucket_4826_data[] = {89, 136};
-int university_map_collision_collision_mesh_hash_bucket_4827_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4828_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4829_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4830_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4893_data[] = {40, 44, 64};
-int university_map_collision_collision_mesh_hash_bucket_4894_data[] = {40, 44, 64};
-int university_map_collision_collision_mesh_hash_bucket_4895_data[] = {40, 60, 64};
-int university_map_collision_collision_mesh_hash_bucket_4896_data[] = {40, 41, 45, 60, 64, 65};
-int university_map_collision_collision_mesh_hash_bucket_4897_data[] = {41, 61, 65};
-int university_map_collision_collision_mesh_hash_bucket_4898_data[] = {41, 42, 46, 61, 65};
-int university_map_collision_collision_mesh_hash_bucket_4899_data[] = {42, 46, 62};
-int university_map_collision_collision_mesh_hash_bucket_4900_data[] = {42, 43, 46, 47, 62, 63, 66};
-int university_map_collision_collision_mesh_hash_bucket_4901_data[] = {43, 47, 63};
-int university_map_collision_collision_mesh_hash_bucket_4902_data[] = {47, 63, 67};
-int university_map_collision_collision_mesh_hash_bucket_4903_data[] = {47, 63, 67, 79, 81};
-int university_map_collision_collision_mesh_hash_bucket_4904_data[] = {79, 81, 91};
-int university_map_collision_collision_mesh_hash_bucket_4905_data[] = {79, 80, 81, 82, 91, 93};
-int university_map_collision_collision_mesh_hash_bucket_4906_data[] = {80, 82, 92};
-int university_map_collision_collision_mesh_hash_bucket_4907_data[] = {78, 80, 82, 89, 90, 92, 94};
-int university_map_collision_collision_mesh_hash_bucket_4908_data[] = {78, 89, 90};
-int university_map_collision_collision_mesh_hash_bucket_4909_data[] = {89};
-int university_map_collision_collision_mesh_hash_bucket_4910_data[] = {89, 136};
-int university_map_collision_collision_mesh_hash_bucket_4911_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4912_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4913_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4914_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4977_data[] = {44};
-int university_map_collision_collision_mesh_hash_bucket_4978_data[] = {44, 64};
-int university_map_collision_collision_mesh_hash_bucket_4979_data[] = {44, 64};
-int university_map_collision_collision_mesh_hash_bucket_4980_data[] = {45, 64, 65};
-int university_map_collision_collision_mesh_hash_bucket_4981_data[] = {45, 65};
-int university_map_collision_collision_mesh_hash_bucket_4982_data[] = {46, 65};
-int university_map_collision_collision_mesh_hash_bucket_4983_data[] = {46, 66};
-int university_map_collision_collision_mesh_hash_bucket_4984_data[] = {46, 47, 66};
-int university_map_collision_collision_mesh_hash_bucket_4985_data[] = {47, 67};
-int university_map_collision_collision_mesh_hash_bucket_4986_data[] = {47, 67};
-int university_map_collision_collision_mesh_hash_bucket_4987_data[] = {67, 81};
-int university_map_collision_collision_mesh_hash_bucket_4988_data[] = {81, 93};
-int university_map_collision_collision_mesh_hash_bucket_4989_data[] = {81, 82, 93};
-int university_map_collision_collision_mesh_hash_bucket_4990_data[] = {82, 94};
-int university_map_collision_collision_mesh_hash_bucket_4991_data[] = {82, 90, 94};
-int university_map_collision_collision_mesh_hash_bucket_4992_data[] = {89, 90};
-int university_map_collision_collision_mesh_hash_bucket_4993_data[] = {89, 90};
-int university_map_collision_collision_mesh_hash_bucket_4994_data[] = {89, 136};
-int university_map_collision_collision_mesh_hash_bucket_4995_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_4996_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4997_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_4998_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5061_data[] = {44};
-int university_map_collision_collision_mesh_hash_bucket_5062_data[] = {44};
-int university_map_collision_collision_mesh_hash_bucket_5063_data[] = {44, 64};
-int university_map_collision_collision_mesh_hash_bucket_5064_data[] = {44, 45, 64};
-int university_map_collision_collision_mesh_hash_bucket_5065_data[] = {45, 65};
-int university_map_collision_collision_mesh_hash_bucket_5066_data[] = {45, 46, 65, 66};
-int university_map_collision_collision_mesh_hash_bucket_5067_data[] = {46, 66};
-int university_map_collision_collision_mesh_hash_bucket_5068_data[] = {47, 66, 67};
-int university_map_collision_collision_mesh_hash_bucket_5069_data[] = {47, 67};
-int university_map_collision_collision_mesh_hash_bucket_5070_data[] = {67};
-int university_map_collision_collision_mesh_hash_bucket_5071_data[] = {67, 81, 93};
-int university_map_collision_collision_mesh_hash_bucket_5072_data[] = {81, 93};
-int university_map_collision_collision_mesh_hash_bucket_5073_data[] = {82, 93, 94};
-int university_map_collision_collision_mesh_hash_bucket_5074_data[] = {82, 94};
-int university_map_collision_collision_mesh_hash_bucket_5075_data[] = {90, 94};
-int university_map_collision_collision_mesh_hash_bucket_5076_data[] = {90};
-int university_map_collision_collision_mesh_hash_bucket_5077_data[] = {89, 90};
-int university_map_collision_collision_mesh_hash_bucket_5078_data[] = {89, 136, 137};
-int university_map_collision_collision_mesh_hash_bucket_5079_data[] = {136, 137};
-int university_map_collision_collision_mesh_hash_bucket_5080_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5081_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5082_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5145_data[] = {44, 52};
-int university_map_collision_collision_mesh_hash_bucket_5146_data[] = {44, 52, 72};
-int university_map_collision_collision_mesh_hash_bucket_5147_data[] = {44, 52, 72};
-int university_map_collision_collision_mesh_hash_bucket_5148_data[] = {44, 45, 52, 53, 64, 72, 73};
-int university_map_collision_collision_mesh_hash_bucket_5149_data[] = {45, 53, 73};
-int university_map_collision_collision_mesh_hash_bucket_5150_data[] = {45, 46, 53, 54, 65, 66, 73, 74};
-int university_map_collision_collision_mesh_hash_bucket_5151_data[] = {54, 66, 74};
-int university_map_collision_collision_mesh_hash_bucket_5152_data[] = {47, 54, 55, 66, 67, 74};
-int university_map_collision_collision_mesh_hash_bucket_5153_data[] = {55, 67, 75};
-int university_map_collision_collision_mesh_hash_bucket_5154_data[] = {55, 67, 75};
-int university_map_collision_collision_mesh_hash_bucket_5155_data[] = {55, 67, 75, 81, 85, 93};
-int university_map_collision_collision_mesh_hash_bucket_5156_data[] = {85, 93, 97};
-int university_map_collision_collision_mesh_hash_bucket_5157_data[] = {82, 84, 85, 93, 94, 97};
-int university_map_collision_collision_mesh_hash_bucket_5158_data[] = {84, 94, 96};
-int university_map_collision_collision_mesh_hash_bucket_5159_data[] = {83, 84, 90, 94, 96};
-int university_map_collision_collision_mesh_hash_bucket_5160_data[] = {83, 90};
-int university_map_collision_collision_mesh_hash_bucket_5161_data[] = {83, 89, 90, 95};
-int university_map_collision_collision_mesh_hash_bucket_5162_data[] = {83, 89, 90, 95, 136, 137};
-int university_map_collision_collision_mesh_hash_bucket_5163_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5164_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5165_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5166_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5230_data[] = {51, 52, 71, 72};
-int university_map_collision_collision_mesh_hash_bucket_5231_data[] = {51, 71, 72};
-int university_map_collision_collision_mesh_hash_bucket_5232_data[] = {50, 51, 53, 71, 72, 73};
-int university_map_collision_collision_mesh_hash_bucket_5233_data[] = {50, 70, 73};
-int university_map_collision_collision_mesh_hash_bucket_5234_data[] = {49, 50, 54, 70, 73, 74};
-int university_map_collision_collision_mesh_hash_bucket_5235_data[] = {49, 69, 74};
-int university_map_collision_collision_mesh_hash_bucket_5236_data[] = {48, 49, 55, 69, 74, 75};
-int university_map_collision_collision_mesh_hash_bucket_5237_data[] = {48, 55, 68, 75};
-int university_map_collision_collision_mesh_hash_bucket_5238_data[] = {48, 68, 75};
-int university_map_collision_collision_mesh_hash_bucket_5239_data[] = {48, 68, 75, 85, 97};
-int university_map_collision_collision_mesh_hash_bucket_5240_data[] = {85, 97};
-int university_map_collision_collision_mesh_hash_bucket_5241_data[] = {84, 97};
-int university_map_collision_collision_mesh_hash_bucket_5242_data[] = {84, 96};
-int university_map_collision_collision_mesh_hash_bucket_5243_data[] = {83, 96};
-int university_map_collision_collision_mesh_hash_bucket_5244_data[] = {83, 95};
-int university_map_collision_collision_mesh_hash_bucket_5245_data[] = {83, 95};
-int university_map_collision_collision_mesh_hash_bucket_5246_data[] = {95, 136, 137};
-int university_map_collision_collision_mesh_hash_bucket_5247_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5248_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5249_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5250_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5314_data[] = {51, 71};
-int university_map_collision_collision_mesh_hash_bucket_5315_data[] = {71};
-int university_map_collision_collision_mesh_hash_bucket_5316_data[] = {50, 70, 71};
-int university_map_collision_collision_mesh_hash_bucket_5317_data[] = {50, 70};
-int university_map_collision_collision_mesh_hash_bucket_5318_data[] = {49, 69, 70};
-int university_map_collision_collision_mesh_hash_bucket_5319_data[] = {49, 69};
-int university_map_collision_collision_mesh_hash_bucket_5320_data[] = {48, 68, 69};
-int university_map_collision_collision_mesh_hash_bucket_5321_data[] = {48, 68};
-int university_map_collision_collision_mesh_hash_bucket_5322_data[] = {68};
-int university_map_collision_collision_mesh_hash_bucket_5323_data[] = {68, 85, 97};
-int university_map_collision_collision_mesh_hash_bucket_5324_data[] = {97};
-int university_map_collision_collision_mesh_hash_bucket_5325_data[] = {84, 96, 97};
-int university_map_collision_collision_mesh_hash_bucket_5326_data[] = {84, 96};
-int university_map_collision_collision_mesh_hash_bucket_5327_data[] = {83, 95, 96};
-int university_map_collision_collision_mesh_hash_bucket_5328_data[] = {83, 95};
-int university_map_collision_collision_mesh_hash_bucket_5329_data[] = {95};
-int university_map_collision_collision_mesh_hash_bucket_5330_data[] = {95, 136, 137};
-int university_map_collision_collision_mesh_hash_bucket_5331_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5332_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5333_data[] = {137};
-int university_map_collision_collision_mesh_hash_bucket_5334_data[] = {137};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3382 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_3382_data};
+int university_map_collision_collision_mesh_hash_bucket_3380_data[] = {87, 88, 89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3381_data[] = {87, 88, 89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3382_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3383_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3384_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3385_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3386_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3387_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3388_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3389_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3390_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3391_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3392_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3393_data[] = {86, 88, 90, 93, 94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3394_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3395_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3396_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3397_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3398_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3399_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3400_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3401_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3402_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3464_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3465_data[] = {87, 88, 89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3466_data[] = {88, 91};
+int university_map_collision_collision_mesh_hash_bucket_3467_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3468_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3469_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3470_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3471_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3472_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3473_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3474_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3475_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3476_data[] = {86, 88};
+int university_map_collision_collision_mesh_hash_bucket_3477_data[] = {86, 88, 90, 93, 94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3478_data[] = {94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3479_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3480_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3481_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3482_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3483_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3484_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3485_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3486_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3548_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3549_data[] = {87, 89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3550_data[] = {88, 89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3551_data[] = {88, 91};
+int university_map_collision_collision_mesh_hash_bucket_3552_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3553_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3554_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3555_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3556_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3557_data[] = {20, 23, 24, 27, 88};
+int university_map_collision_collision_mesh_hash_bucket_3558_data[] = {23, 27, 88};
+int university_map_collision_collision_mesh_hash_bucket_3559_data[] = {22, 23, 26, 27, 88};
+int university_map_collision_collision_mesh_hash_bucket_3560_data[] = {86, 88, 90};
+int university_map_collision_collision_mesh_hash_bucket_3561_data[] = {86, 90, 93, 95};
+int university_map_collision_collision_mesh_hash_bucket_3562_data[] = {93, 94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3563_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3564_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3565_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3566_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3567_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3568_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3569_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3570_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3632_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3633_data[] = {87, 89};
+int university_map_collision_collision_mesh_hash_bucket_3634_data[] = {87, 89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3635_data[] = {88, 89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3636_data[] = {88, 91};
+int university_map_collision_collision_mesh_hash_bucket_3637_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3638_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3639_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3640_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3641_data[] = {20, 21, 24, 25, 88};
+int university_map_collision_collision_mesh_hash_bucket_3642_data[] = {21, 25, 88};
+int university_map_collision_collision_mesh_hash_bucket_3643_data[] = {21, 22, 25, 26, 86, 88};
+int university_map_collision_collision_mesh_hash_bucket_3644_data[] = {86, 88, 90};
+int university_map_collision_collision_mesh_hash_bucket_3645_data[] = {90, 93};
+int university_map_collision_collision_mesh_hash_bucket_3646_data[] = {93, 94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3647_data[] = {94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3648_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3649_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3650_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3651_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3652_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3653_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3654_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3716_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3717_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3718_data[] = {87, 89};
+int university_map_collision_collision_mesh_hash_bucket_3719_data[] = {89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3720_data[] = {88, 91};
+int university_map_collision_collision_mesh_hash_bucket_3721_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3722_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3723_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3724_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3725_data[] = {28, 31, 32, 35, 88};
+int university_map_collision_collision_mesh_hash_bucket_3726_data[] = {31, 35, 88};
+int university_map_collision_collision_mesh_hash_bucket_3727_data[] = {30, 31, 34, 35, 86, 88};
+int university_map_collision_collision_mesh_hash_bucket_3728_data[] = {86, 90};
+int university_map_collision_collision_mesh_hash_bucket_3729_data[] = {90, 93};
+int university_map_collision_collision_mesh_hash_bucket_3730_data[] = {93, 95};
+int university_map_collision_collision_mesh_hash_bucket_3731_data[] = {94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3732_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3733_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3734_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3735_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3736_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3737_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3738_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3800_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3801_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3802_data[] = {87, 89};
+int university_map_collision_collision_mesh_hash_bucket_3803_data[] = {89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3804_data[] = {88, 89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3805_data[] = {88, 91};
+int university_map_collision_collision_mesh_hash_bucket_3806_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3807_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3808_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3809_data[] = {28, 29, 32, 33, 88};
+int university_map_collision_collision_mesh_hash_bucket_3810_data[] = {29, 33, 86, 88};
+int university_map_collision_collision_mesh_hash_bucket_3811_data[] = {29, 30, 33, 34, 86, 88};
+int university_map_collision_collision_mesh_hash_bucket_3812_data[] = {86, 90};
+int university_map_collision_collision_mesh_hash_bucket_3813_data[] = {90, 93};
+int university_map_collision_collision_mesh_hash_bucket_3814_data[] = {93, 95};
+int university_map_collision_collision_mesh_hash_bucket_3815_data[] = {94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3816_data[] = {94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3817_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3818_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3819_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3820_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3821_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3822_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3884_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3885_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3886_data[] = {87, 89};
+int university_map_collision_collision_mesh_hash_bucket_3887_data[] = {87, 89};
+int university_map_collision_collision_mesh_hash_bucket_3888_data[] = {89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3889_data[] = {88, 91};
+int university_map_collision_collision_mesh_hash_bucket_3890_data[] = {88, 91};
+int university_map_collision_collision_mesh_hash_bucket_3891_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3892_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3893_data[] = {88};
+int university_map_collision_collision_mesh_hash_bucket_3894_data[] = {86, 88};
+int university_map_collision_collision_mesh_hash_bucket_3895_data[] = {86, 90};
+int university_map_collision_collision_mesh_hash_bucket_3896_data[] = {86, 90};
+int university_map_collision_collision_mesh_hash_bucket_3897_data[] = {90, 93};
+int university_map_collision_collision_mesh_hash_bucket_3898_data[] = {93, 95};
+int university_map_collision_collision_mesh_hash_bucket_3899_data[] = {93, 95};
+int university_map_collision_collision_mesh_hash_bucket_3900_data[] = {94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3901_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3902_data[] = {94};
+int university_map_collision_collision_mesh_hash_bucket_3903_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3904_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3905_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3906_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3968_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3969_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3970_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_3971_data[] = {87, 89};
+int university_map_collision_collision_mesh_hash_bucket_3972_data[] = {89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3973_data[] = {89, 91};
+int university_map_collision_collision_mesh_hash_bucket_3974_data[] = {88, 91};
+int university_map_collision_collision_mesh_hash_bucket_3975_data[] = {10, 11, 13, 14, 15, 16, 18, 19, 88, 91};
+int university_map_collision_collision_mesh_hash_bucket_3976_data[] = {11, 13, 14, 16, 18, 19, 88};
+int university_map_collision_collision_mesh_hash_bucket_3977_data[] = {11, 13, 14, 16, 18, 19, 86, 88};
+int university_map_collision_collision_mesh_hash_bucket_3978_data[] = {11, 13, 14, 16, 18, 19, 86, 88};
+int university_map_collision_collision_mesh_hash_bucket_3979_data[] = {11, 12, 13, 14, 16, 17, 18, 19, 86, 90};
+int university_map_collision_collision_mesh_hash_bucket_3980_data[] = {0, 1, 3, 4, 5, 6, 8, 9, 90};
+int university_map_collision_collision_mesh_hash_bucket_3981_data[] = {1, 3, 4, 6, 8, 9, 90, 93};
+int university_map_collision_collision_mesh_hash_bucket_3982_data[] = {1, 3, 4, 6, 8, 9, 93};
+int university_map_collision_collision_mesh_hash_bucket_3983_data[] = {1, 3, 4, 6, 8, 9, 93, 95};
+int university_map_collision_collision_mesh_hash_bucket_3984_data[] = {1, 2, 3, 4, 6, 7, 8, 9, 94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3985_data[] = {94, 95};
+int university_map_collision_collision_mesh_hash_bucket_3986_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3987_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_3988_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3989_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_3990_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_4052_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_4053_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_4054_data[] = {87};
+int university_map_collision_collision_mesh_hash_bucket_4055_data[] = {87, 89};
+int university_map_collision_collision_mesh_hash_bucket_4056_data[] = {87, 89};
+int university_map_collision_collision_mesh_hash_bucket_4057_data[] = {89, 91};
+int university_map_collision_collision_mesh_hash_bucket_4058_data[] = {89, 91};
+int university_map_collision_collision_mesh_hash_bucket_4059_data[] = {88, 91};
+int university_map_collision_collision_mesh_hash_bucket_4060_data[] = {88, 91};
+int university_map_collision_collision_mesh_hash_bucket_4061_data[] = {86, 88};
+int university_map_collision_collision_mesh_hash_bucket_4062_data[] = {86};
+int university_map_collision_collision_mesh_hash_bucket_4063_data[] = {86, 90};
+int university_map_collision_collision_mesh_hash_bucket_4064_data[] = {90};
+int university_map_collision_collision_mesh_hash_bucket_4065_data[] = {90, 93};
+int university_map_collision_collision_mesh_hash_bucket_4066_data[] = {93};
+int university_map_collision_collision_mesh_hash_bucket_4067_data[] = {93, 95};
+int university_map_collision_collision_mesh_hash_bucket_4068_data[] = {95};
+int university_map_collision_collision_mesh_hash_bucket_4069_data[] = {94, 95};
+int university_map_collision_collision_mesh_hash_bucket_4070_data[] = {92, 94};
+int university_map_collision_collision_mesh_hash_bucket_4071_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_4072_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_4073_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_4074_data[] = {92};
+int university_map_collision_collision_mesh_hash_bucket_4136_data[] = {58, 66, 87};
+int university_map_collision_collision_mesh_hash_bucket_4137_data[] = {58, 66, 87};
+int university_map_collision_collision_mesh_hash_bucket_4138_data[] = {66, 87};
+int university_map_collision_collision_mesh_hash_bucket_4139_data[] = {66, 87};
+int university_map_collision_collision_mesh_hash_bucket_4140_data[] = {59, 66, 67, 87, 89};
+int university_map_collision_collision_mesh_hash_bucket_4141_data[] = {67, 89};
+int university_map_collision_collision_mesh_hash_bucket_4142_data[] = {60, 67, 68, 89, 91};
+int university_map_collision_collision_mesh_hash_bucket_4143_data[] = {68, 91};
+int university_map_collision_collision_mesh_hash_bucket_4144_data[] = {61, 68, 69, 86, 88, 91};
+int university_map_collision_collision_mesh_hash_bucket_4145_data[] = {61, 69, 86, 88};
+int university_map_collision_collision_mesh_hash_bucket_4146_data[] = {69, 86};
+int university_map_collision_collision_mesh_hash_bucket_4147_data[] = {69, 74, 80, 86, 90};
+int university_map_collision_collision_mesh_hash_bucket_4148_data[] = {80, 90};
+int university_map_collision_collision_mesh_hash_bucket_4149_data[] = {75, 80, 90, 93};
+int university_map_collision_collision_mesh_hash_bucket_4150_data[] = {75, 93};
+int university_map_collision_collision_mesh_hash_bucket_4151_data[] = {75, 76, 81, 93, 95};
+int university_map_collision_collision_mesh_hash_bucket_4152_data[] = {76, 95};
+int university_map_collision_collision_mesh_hash_bucket_4153_data[] = {76, 82, 94, 95};
+int university_map_collision_collision_mesh_hash_bucket_4154_data[] = {76, 82, 92, 94, 95, 96};
+int university_map_collision_collision_mesh_hash_bucket_4155_data[] = {92, 96};
+int university_map_collision_collision_mesh_hash_bucket_4156_data[] = {92, 96};
+int university_map_collision_collision_mesh_hash_bucket_4157_data[] = {92, 96};
+int university_map_collision_collision_mesh_hash_bucket_4158_data[] = {92, 96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4220_data[] = {58};
+int university_map_collision_collision_mesh_hash_bucket_4221_data[] = {58, 66};
+int university_map_collision_collision_mesh_hash_bucket_4222_data[] = {58, 66};
+int university_map_collision_collision_mesh_hash_bucket_4223_data[] = {66};
+int university_map_collision_collision_mesh_hash_bucket_4224_data[] = {59, 66, 67};
+int university_map_collision_collision_mesh_hash_bucket_4225_data[] = {59, 67};
+int university_map_collision_collision_mesh_hash_bucket_4226_data[] = {60, 67, 68};
+int university_map_collision_collision_mesh_hash_bucket_4227_data[] = {60, 68};
+int university_map_collision_collision_mesh_hash_bucket_4228_data[] = {61, 68};
+int university_map_collision_collision_mesh_hash_bucket_4229_data[] = {61, 69};
+int university_map_collision_collision_mesh_hash_bucket_4230_data[] = {61, 69};
+int university_map_collision_collision_mesh_hash_bucket_4231_data[] = {69, 74, 80};
+int university_map_collision_collision_mesh_hash_bucket_4232_data[] = {74, 80};
+int university_map_collision_collision_mesh_hash_bucket_4233_data[] = {75, 80};
+int university_map_collision_collision_mesh_hash_bucket_4234_data[] = {75, 81};
+int university_map_collision_collision_mesh_hash_bucket_4235_data[] = {75, 76, 81};
+int university_map_collision_collision_mesh_hash_bucket_4236_data[] = {76, 82};
+int university_map_collision_collision_mesh_hash_bucket_4237_data[] = {76, 82};
+int university_map_collision_collision_mesh_hash_bucket_4238_data[] = {82, 96};
+int university_map_collision_collision_mesh_hash_bucket_4239_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4240_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4241_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4242_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4304_data[] = {58, 62};
+int university_map_collision_collision_mesh_hash_bucket_4305_data[] = {58, 62};
+int university_map_collision_collision_mesh_hash_bucket_4306_data[] = {58, 62, 66};
+int university_map_collision_collision_mesh_hash_bucket_4307_data[] = {58, 62, 66};
+int university_map_collision_collision_mesh_hash_bucket_4308_data[] = {58, 59, 62, 63, 66, 70};
+int university_map_collision_collision_mesh_hash_bucket_4309_data[] = {59, 63, 67};
+int university_map_collision_collision_mesh_hash_bucket_4310_data[] = {59, 60, 63, 64, 67, 71, 72};
+int university_map_collision_collision_mesh_hash_bucket_4311_data[] = {60, 68, 72};
+int university_map_collision_collision_mesh_hash_bucket_4312_data[] = {60, 61, 65, 68, 72, 73};
+int university_map_collision_collision_mesh_hash_bucket_4313_data[] = {61, 73};
+int university_map_collision_collision_mesh_hash_bucket_4314_data[] = {61, 69, 73};
+int university_map_collision_collision_mesh_hash_bucket_4315_data[] = {61, 69, 73, 74, 77, 83};
+int university_map_collision_collision_mesh_hash_bucket_4316_data[] = {74, 80, 83};
+int university_map_collision_collision_mesh_hash_bucket_4317_data[] = {74, 75, 78, 80, 81, 83, 84};
+int university_map_collision_collision_mesh_hash_bucket_4318_data[] = {75, 81, 84};
+int university_map_collision_collision_mesh_hash_bucket_4319_data[] = {76, 79, 81, 82, 84};
+int university_map_collision_collision_mesh_hash_bucket_4320_data[] = {76, 79, 82};
+int university_map_collision_collision_mesh_hash_bucket_4321_data[] = {79, 82, 85};
+int university_map_collision_collision_mesh_hash_bucket_4322_data[] = {79, 82, 85, 96};
+int university_map_collision_collision_mesh_hash_bucket_4323_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4324_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4325_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4326_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4388_data[] = {62};
+int university_map_collision_collision_mesh_hash_bucket_4389_data[] = {62};
+int university_map_collision_collision_mesh_hash_bucket_4390_data[] = {62, 70};
+int university_map_collision_collision_mesh_hash_bucket_4391_data[] = {62, 70};
+int university_map_collision_collision_mesh_hash_bucket_4392_data[] = {62, 63, 70};
+int university_map_collision_collision_mesh_hash_bucket_4393_data[] = {63, 71};
+int university_map_collision_collision_mesh_hash_bucket_4394_data[] = {63, 64, 71, 72};
+int university_map_collision_collision_mesh_hash_bucket_4395_data[] = {64, 72};
+int university_map_collision_collision_mesh_hash_bucket_4396_data[] = {65, 72, 73};
+int university_map_collision_collision_mesh_hash_bucket_4397_data[] = {65, 73};
+int university_map_collision_collision_mesh_hash_bucket_4398_data[] = {73};
+int university_map_collision_collision_mesh_hash_bucket_4399_data[] = {73, 77, 83};
+int university_map_collision_collision_mesh_hash_bucket_4400_data[] = {77, 83};
+int university_map_collision_collision_mesh_hash_bucket_4401_data[] = {78, 83, 84};
+int university_map_collision_collision_mesh_hash_bucket_4402_data[] = {78, 84};
+int university_map_collision_collision_mesh_hash_bucket_4403_data[] = {79, 84};
+int university_map_collision_collision_mesh_hash_bucket_4404_data[] = {79, 85};
+int university_map_collision_collision_mesh_hash_bucket_4405_data[] = {79, 85};
+int university_map_collision_collision_mesh_hash_bucket_4406_data[] = {85, 96};
+int university_map_collision_collision_mesh_hash_bucket_4407_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4408_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4409_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4410_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4472_data[] = {62};
+int university_map_collision_collision_mesh_hash_bucket_4473_data[] = {62, 70};
+int university_map_collision_collision_mesh_hash_bucket_4474_data[] = {62, 70};
+int university_map_collision_collision_mesh_hash_bucket_4475_data[] = {70};
+int university_map_collision_collision_mesh_hash_bucket_4476_data[] = {63, 70, 71};
+int university_map_collision_collision_mesh_hash_bucket_4477_data[] = {63, 71};
+int university_map_collision_collision_mesh_hash_bucket_4478_data[] = {64, 71};
+int university_map_collision_collision_mesh_hash_bucket_4479_data[] = {64, 72};
+int university_map_collision_collision_mesh_hash_bucket_4480_data[] = {64, 65, 72};
+int university_map_collision_collision_mesh_hash_bucket_4481_data[] = {65, 73};
+int university_map_collision_collision_mesh_hash_bucket_4482_data[] = {65, 73};
+int university_map_collision_collision_mesh_hash_bucket_4483_data[] = {73, 77};
+int university_map_collision_collision_mesh_hash_bucket_4484_data[] = {77, 83};
+int university_map_collision_collision_mesh_hash_bucket_4485_data[] = {77, 78, 83};
+int university_map_collision_collision_mesh_hash_bucket_4486_data[] = {78, 84};
+int university_map_collision_collision_mesh_hash_bucket_4487_data[] = {78, 79, 84};
+int university_map_collision_collision_mesh_hash_bucket_4488_data[] = {79, 85};
+int university_map_collision_collision_mesh_hash_bucket_4489_data[] = {85};
+int university_map_collision_collision_mesh_hash_bucket_4490_data[] = {85, 96};
+int university_map_collision_collision_mesh_hash_bucket_4491_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4492_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4493_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4494_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_4556_data[] = {62, 70, 148};
+int university_map_collision_collision_mesh_hash_bucket_4557_data[] = {62, 70, 148};
+int university_map_collision_collision_mesh_hash_bucket_4558_data[] = {70, 148};
+int university_map_collision_collision_mesh_hash_bucket_4559_data[] = {70, 148, 168};
+int university_map_collision_collision_mesh_hash_bucket_4560_data[] = {63, 70, 71, 148, 149, 168};
+int university_map_collision_collision_mesh_hash_bucket_4561_data[] = {71, 149, 169};
+int university_map_collision_collision_mesh_hash_bucket_4562_data[] = {64, 71, 149, 150, 169, 170};
+int university_map_collision_collision_mesh_hash_bucket_4563_data[] = {64, 150, 170};
+int university_map_collision_collision_mesh_hash_bucket_4564_data[] = {64, 65, 72, 151, 170, 171};
+int university_map_collision_collision_mesh_hash_bucket_4565_data[] = {65, 151, 171};
+int university_map_collision_collision_mesh_hash_bucket_4566_data[] = {65, 73, 171};
+int university_map_collision_collision_mesh_hash_bucket_4567_data[] = {36, 46, 65, 73, 77, 171};
+int university_map_collision_collision_mesh_hash_bucket_4568_data[] = {46, 77};
+int university_map_collision_collision_mesh_hash_bucket_4569_data[] = {37, 46, 47, 77, 78, 83};
+int university_map_collision_collision_mesh_hash_bucket_4570_data[] = {37, 47, 78};
+int university_map_collision_collision_mesh_hash_bucket_4571_data[] = {47, 48, 78, 79, 84, 85};
+int university_map_collision_collision_mesh_hash_bucket_4572_data[] = {48, 79, 85};
+int university_map_collision_collision_mesh_hash_bucket_4573_data[] = {38, 48, 49, 85};
+int university_map_collision_collision_mesh_hash_bucket_4574_data[] = {38, 48, 49, 85, 96};
+int university_map_collision_collision_mesh_hash_bucket_4575_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4576_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4577_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4578_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_4640_data[] = {148};
+int university_map_collision_collision_mesh_hash_bucket_4641_data[] = {148, 168};
+int university_map_collision_collision_mesh_hash_bucket_4642_data[] = {148, 168};
+int university_map_collision_collision_mesh_hash_bucket_4643_data[] = {148, 168};
+int university_map_collision_collision_mesh_hash_bucket_4644_data[] = {149, 168};
+int university_map_collision_collision_mesh_hash_bucket_4645_data[] = {149, 169};
+int university_map_collision_collision_mesh_hash_bucket_4646_data[] = {150, 169};
+int university_map_collision_collision_mesh_hash_bucket_4647_data[] = {150, 170};
+int university_map_collision_collision_mesh_hash_bucket_4648_data[] = {150, 151, 170};
+int university_map_collision_collision_mesh_hash_bucket_4649_data[] = {151, 171};
+int university_map_collision_collision_mesh_hash_bucket_4650_data[] = {151, 171};
+int university_map_collision_collision_mesh_hash_bucket_4651_data[] = {36, 46, 171};
+int university_map_collision_collision_mesh_hash_bucket_4652_data[] = {36, 46};
+int university_map_collision_collision_mesh_hash_bucket_4653_data[] = {37, 46};
+int university_map_collision_collision_mesh_hash_bucket_4654_data[] = {37, 47};
+int university_map_collision_collision_mesh_hash_bucket_4655_data[] = {37, 47, 48};
+int university_map_collision_collision_mesh_hash_bucket_4656_data[] = {38, 48};
+int university_map_collision_collision_mesh_hash_bucket_4657_data[] = {38, 48, 49};
+int university_map_collision_collision_mesh_hash_bucket_4658_data[] = {49, 96};
+int university_map_collision_collision_mesh_hash_bucket_4659_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4660_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4661_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4662_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_4724_data[] = {148, 152, 168, 172};
+int university_map_collision_collision_mesh_hash_bucket_4725_data[] = {148, 152, 168, 172};
+int university_map_collision_collision_mesh_hash_bucket_4726_data[] = {168, 172};
+int university_map_collision_collision_mesh_hash_bucket_4727_data[] = {168, 172};
+int university_map_collision_collision_mesh_hash_bucket_4728_data[] = {149, 153, 168, 169, 172, 173};
+int university_map_collision_collision_mesh_hash_bucket_4729_data[] = {149, 169, 173};
+int university_map_collision_collision_mesh_hash_bucket_4730_data[] = {98, 99, 101, 102, 103, 104, 106, 107, 150, 154, 169, 173, 174};
+int university_map_collision_collision_mesh_hash_bucket_4731_data[] = {99, 100, 101, 102, 104, 105, 106, 107, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 150, 174};
+int university_map_collision_collision_mesh_hash_bucket_4732_data[] = {150, 151, 155, 170, 174};
+int university_map_collision_collision_mesh_hash_bucket_4733_data[] = {151, 155};
+int university_map_collision_collision_mesh_hash_bucket_4734_data[] = {128, 131, 133, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 151, 155, 171, 175};
+int university_map_collision_collision_mesh_hash_bucket_4735_data[] = {36, 39, 51, 130, 131, 132, 133, 135, 136, 137, 151, 155, 171, 175};
+int university_map_collision_collision_mesh_hash_bucket_4736_data[] = {36, 46, 51};
+int university_map_collision_collision_mesh_hash_bucket_4737_data[] = {36, 37, 40, 46, 51, 52};
+int university_map_collision_collision_mesh_hash_bucket_4738_data[] = {37, 52};
+int university_map_collision_collision_mesh_hash_bucket_4739_data[] = {37, 38, 47, 48, 52};
+int university_map_collision_collision_mesh_hash_bucket_4740_data[] = {38, 48, 49};
+int university_map_collision_collision_mesh_hash_bucket_4741_data[] = {38, 49};
+int university_map_collision_collision_mesh_hash_bucket_4742_data[] = {49, 96};
+int university_map_collision_collision_mesh_hash_bucket_4743_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4744_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4745_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_4746_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_4808_data[] = {152};
+int university_map_collision_collision_mesh_hash_bucket_4809_data[] = {152, 172};
+int university_map_collision_collision_mesh_hash_bucket_4810_data[] = {152, 172};
+int university_map_collision_collision_mesh_hash_bucket_4811_data[] = {152, 172};
+int university_map_collision_collision_mesh_hash_bucket_4812_data[] = {153, 172, 173};
+int university_map_collision_collision_mesh_hash_bucket_4813_data[] = {153, 173};
+int university_map_collision_collision_mesh_hash_bucket_4814_data[] = {154, 173, 174};
+int university_map_collision_collision_mesh_hash_bucket_4815_data[] = {108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 154, 174};
+int university_map_collision_collision_mesh_hash_bucket_4816_data[] = {155, 174};
+int university_map_collision_collision_mesh_hash_bucket_4817_data[] = {155, 175};
+int university_map_collision_collision_mesh_hash_bucket_4818_data[] = {128, 129, 133, 138, 139, 140, 142, 143, 144, 145, 155, 175};
+int university_map_collision_collision_mesh_hash_bucket_4819_data[] = {39, 51, 129, 130, 132, 133, 134, 135, 137, 175};
+int university_map_collision_collision_mesh_hash_bucket_4820_data[] = {39, 51};
+int university_map_collision_collision_mesh_hash_bucket_4821_data[] = {40, 51, 52};
+int university_map_collision_collision_mesh_hash_bucket_4822_data[] = {40, 52};
+int university_map_collision_collision_mesh_hash_bucket_4823_data[] = {38, 52};
+int university_map_collision_collision_mesh_hash_bucket_4824_data[] = {38, 49};
+int university_map_collision_collision_mesh_hash_bucket_4825_data[] = {49};
+int university_map_collision_collision_mesh_hash_bucket_4826_data[] = {49, 96};
+int university_map_collision_collision_mesh_hash_bucket_4827_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4828_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4829_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_4830_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_4892_data[] = {152, 156, 176};
+int university_map_collision_collision_mesh_hash_bucket_4893_data[] = {152, 156, 176};
+int university_map_collision_collision_mesh_hash_bucket_4894_data[] = {152, 176};
+int university_map_collision_collision_mesh_hash_bucket_4895_data[] = {152, 172, 176};
+int university_map_collision_collision_mesh_hash_bucket_4896_data[] = {152, 153, 157, 172, 176, 177};
+int university_map_collision_collision_mesh_hash_bucket_4897_data[] = {153, 173, 177};
+int university_map_collision_collision_mesh_hash_bucket_4898_data[] = {153, 154, 158, 173, 177};
+int university_map_collision_collision_mesh_hash_bucket_4899_data[] = {154, 158, 174};
+int university_map_collision_collision_mesh_hash_bucket_4900_data[] = {154, 155, 158, 159, 174, 175, 178};
+int university_map_collision_collision_mesh_hash_bucket_4901_data[] = {155, 159, 175};
+int university_map_collision_collision_mesh_hash_bucket_4902_data[] = {159, 175, 179};
+int university_map_collision_collision_mesh_hash_bucket_4903_data[] = {39, 41, 159, 175, 179};
+int university_map_collision_collision_mesh_hash_bucket_4904_data[] = {39, 41, 51};
+int university_map_collision_collision_mesh_hash_bucket_4905_data[] = {39, 40, 41, 42, 51, 53};
+int university_map_collision_collision_mesh_hash_bucket_4906_data[] = {40, 42, 52};
+int university_map_collision_collision_mesh_hash_bucket_4907_data[] = {38, 40, 42, 49, 50, 52, 54};
+int university_map_collision_collision_mesh_hash_bucket_4908_data[] = {38, 49, 50};
+int university_map_collision_collision_mesh_hash_bucket_4909_data[] = {49};
+int university_map_collision_collision_mesh_hash_bucket_4910_data[] = {49, 96};
+int university_map_collision_collision_mesh_hash_bucket_4911_data[] = {96};
+int university_map_collision_collision_mesh_hash_bucket_4912_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4913_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_4914_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_4976_data[] = {156};
+int university_map_collision_collision_mesh_hash_bucket_4977_data[] = {156, 176};
+int university_map_collision_collision_mesh_hash_bucket_4978_data[] = {156, 176};
+int university_map_collision_collision_mesh_hash_bucket_4979_data[] = {176};
+int university_map_collision_collision_mesh_hash_bucket_4980_data[] = {157, 176, 177};
+int university_map_collision_collision_mesh_hash_bucket_4981_data[] = {157, 177};
+int university_map_collision_collision_mesh_hash_bucket_4982_data[] = {158, 177};
+int university_map_collision_collision_mesh_hash_bucket_4983_data[] = {158, 178};
+int university_map_collision_collision_mesh_hash_bucket_4984_data[] = {158, 159, 178};
+int university_map_collision_collision_mesh_hash_bucket_4985_data[] = {159, 179};
+int university_map_collision_collision_mesh_hash_bucket_4986_data[] = {159, 179};
+int university_map_collision_collision_mesh_hash_bucket_4987_data[] = {41, 179};
+int university_map_collision_collision_mesh_hash_bucket_4988_data[] = {41, 53};
+int university_map_collision_collision_mesh_hash_bucket_4989_data[] = {41, 42, 53};
+int university_map_collision_collision_mesh_hash_bucket_4990_data[] = {42, 54};
+int university_map_collision_collision_mesh_hash_bucket_4991_data[] = {42, 50, 54};
+int university_map_collision_collision_mesh_hash_bucket_4992_data[] = {49, 50};
+int university_map_collision_collision_mesh_hash_bucket_4993_data[] = {49, 50};
+int university_map_collision_collision_mesh_hash_bucket_4994_data[] = {49, 96};
+int university_map_collision_collision_mesh_hash_bucket_4995_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4996_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_4997_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_4998_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5060_data[] = {156};
+int university_map_collision_collision_mesh_hash_bucket_5061_data[] = {156};
+int university_map_collision_collision_mesh_hash_bucket_5062_data[] = {156, 176};
+int university_map_collision_collision_mesh_hash_bucket_5063_data[] = {156, 176};
+int university_map_collision_collision_mesh_hash_bucket_5064_data[] = {156, 157, 176};
+int university_map_collision_collision_mesh_hash_bucket_5065_data[] = {157, 177};
+int university_map_collision_collision_mesh_hash_bucket_5066_data[] = {157, 158, 177, 178};
+int university_map_collision_collision_mesh_hash_bucket_5067_data[] = {158, 178};
+int university_map_collision_collision_mesh_hash_bucket_5068_data[] = {159, 178, 179};
+int university_map_collision_collision_mesh_hash_bucket_5069_data[] = {159, 179};
+int university_map_collision_collision_mesh_hash_bucket_5070_data[] = {179};
+int university_map_collision_collision_mesh_hash_bucket_5071_data[] = {41, 53, 179};
+int university_map_collision_collision_mesh_hash_bucket_5072_data[] = {41, 53};
+int university_map_collision_collision_mesh_hash_bucket_5073_data[] = {42, 53, 54};
+int university_map_collision_collision_mesh_hash_bucket_5074_data[] = {42, 54};
+int university_map_collision_collision_mesh_hash_bucket_5075_data[] = {50, 54};
+int university_map_collision_collision_mesh_hash_bucket_5076_data[] = {50};
+int university_map_collision_collision_mesh_hash_bucket_5077_data[] = {49, 50};
+int university_map_collision_collision_mesh_hash_bucket_5078_data[] = {49, 96};
+int university_map_collision_collision_mesh_hash_bucket_5079_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_5080_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5081_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5082_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5144_data[] = {156, 164};
+int university_map_collision_collision_mesh_hash_bucket_5145_data[] = {156, 164, 184};
+int university_map_collision_collision_mesh_hash_bucket_5146_data[] = {156, 164, 184};
+int university_map_collision_collision_mesh_hash_bucket_5147_data[] = {156, 164, 184};
+int university_map_collision_collision_mesh_hash_bucket_5148_data[] = {156, 157, 164, 165, 176, 184, 185};
+int university_map_collision_collision_mesh_hash_bucket_5149_data[] = {157, 165, 185};
+int university_map_collision_collision_mesh_hash_bucket_5150_data[] = {157, 158, 165, 166, 177, 178, 185, 186};
+int university_map_collision_collision_mesh_hash_bucket_5151_data[] = {166, 178, 186};
+int university_map_collision_collision_mesh_hash_bucket_5152_data[] = {159, 166, 167, 178, 179, 186};
+int university_map_collision_collision_mesh_hash_bucket_5153_data[] = {167, 179, 187};
+int university_map_collision_collision_mesh_hash_bucket_5154_data[] = {167, 179, 187};
+int university_map_collision_collision_mesh_hash_bucket_5155_data[] = {41, 45, 53, 167, 179, 187};
+int university_map_collision_collision_mesh_hash_bucket_5156_data[] = {45, 53};
+int university_map_collision_collision_mesh_hash_bucket_5157_data[] = {42, 44, 45, 53, 54, 57};
+int university_map_collision_collision_mesh_hash_bucket_5158_data[] = {44, 54};
+int university_map_collision_collision_mesh_hash_bucket_5159_data[] = {43, 44, 50, 54, 56};
+int university_map_collision_collision_mesh_hash_bucket_5160_data[] = {43, 50};
+int university_map_collision_collision_mesh_hash_bucket_5161_data[] = {43, 49, 50, 55};
+int university_map_collision_collision_mesh_hash_bucket_5162_data[] = {43, 49, 50, 55, 96};
+int university_map_collision_collision_mesh_hash_bucket_5163_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_5164_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5165_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5166_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5228_data[] = {163, 164, 184};
+int university_map_collision_collision_mesh_hash_bucket_5229_data[] = {163, 164, 184};
+int university_map_collision_collision_mesh_hash_bucket_5230_data[] = {163, 184};
+int university_map_collision_collision_mesh_hash_bucket_5231_data[] = {163, 183, 184};
+int university_map_collision_collision_mesh_hash_bucket_5232_data[] = {162, 163, 165, 183, 184, 185};
+int university_map_collision_collision_mesh_hash_bucket_5233_data[] = {162, 185};
+int university_map_collision_collision_mesh_hash_bucket_5234_data[] = {161, 162, 166, 182, 185, 186};
+int university_map_collision_collision_mesh_hash_bucket_5235_data[] = {161, 186};
+int university_map_collision_collision_mesh_hash_bucket_5236_data[] = {160, 161, 167, 181, 186, 187};
+int university_map_collision_collision_mesh_hash_bucket_5237_data[] = {160, 167, 187};
+int university_map_collision_collision_mesh_hash_bucket_5238_data[] = {160, 180, 187};
+int university_map_collision_collision_mesh_hash_bucket_5239_data[] = {45, 160, 180, 187};
+int university_map_collision_collision_mesh_hash_bucket_5240_data[] = {45, 57};
+int university_map_collision_collision_mesh_hash_bucket_5241_data[] = {44, 45, 57};
+int university_map_collision_collision_mesh_hash_bucket_5242_data[] = {44};
+int university_map_collision_collision_mesh_hash_bucket_5243_data[] = {43, 44, 56};
+int university_map_collision_collision_mesh_hash_bucket_5244_data[] = {43};
+int university_map_collision_collision_mesh_hash_bucket_5245_data[] = {43, 55};
+int university_map_collision_collision_mesh_hash_bucket_5246_data[] = {55, 96};
+int university_map_collision_collision_mesh_hash_bucket_5247_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_5248_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5249_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5250_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5312_data[] = {163};
+int university_map_collision_collision_mesh_hash_bucket_5313_data[] = {163};
+int university_map_collision_collision_mesh_hash_bucket_5314_data[] = {163, 183};
+int university_map_collision_collision_mesh_hash_bucket_5315_data[] = {163, 183};
+int university_map_collision_collision_mesh_hash_bucket_5316_data[] = {162, 183};
+int university_map_collision_collision_mesh_hash_bucket_5317_data[] = {162, 182};
+int university_map_collision_collision_mesh_hash_bucket_5318_data[] = {161, 162, 182};
+int university_map_collision_collision_mesh_hash_bucket_5319_data[] = {161, 181};
+int university_map_collision_collision_mesh_hash_bucket_5320_data[] = {160, 161, 181};
+int university_map_collision_collision_mesh_hash_bucket_5321_data[] = {160};
+int university_map_collision_collision_mesh_hash_bucket_5322_data[] = {160, 180};
+int university_map_collision_collision_mesh_hash_bucket_5323_data[] = {45, 180};
+int university_map_collision_collision_mesh_hash_bucket_5324_data[] = {45, 57};
+int university_map_collision_collision_mesh_hash_bucket_5325_data[] = {44, 57};
+int university_map_collision_collision_mesh_hash_bucket_5326_data[] = {44, 56};
+int university_map_collision_collision_mesh_hash_bucket_5327_data[] = {43, 44, 56};
+int university_map_collision_collision_mesh_hash_bucket_5328_data[] = {43, 55};
+int university_map_collision_collision_mesh_hash_bucket_5329_data[] = {43, 55};
+int university_map_collision_collision_mesh_hash_bucket_5330_data[] = {55, 96, 97};
+int university_map_collision_collision_mesh_hash_bucket_5331_data[] = {96, 97};
+int university_map_collision_collision_mesh_hash_bucket_5332_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5333_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5334_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5396_data[] = {163};
+int university_map_collision_collision_mesh_hash_bucket_5397_data[] = {163};
+int university_map_collision_collision_mesh_hash_bucket_5398_data[] = {163, 183};
+int university_map_collision_collision_mesh_hash_bucket_5399_data[] = {183};
+int university_map_collision_collision_mesh_hash_bucket_5400_data[] = {162, 183};
+int university_map_collision_collision_mesh_hash_bucket_5401_data[] = {162, 182};
+int university_map_collision_collision_mesh_hash_bucket_5402_data[] = {161, 182};
+int university_map_collision_collision_mesh_hash_bucket_5403_data[] = {161, 181};
+int university_map_collision_collision_mesh_hash_bucket_5404_data[] = {160, 181};
+int university_map_collision_collision_mesh_hash_bucket_5405_data[] = {160, 180};
+int university_map_collision_collision_mesh_hash_bucket_5406_data[] = {160, 180};
+int university_map_collision_collision_mesh_hash_bucket_5407_data[] = {45, 57, 180};
+int university_map_collision_collision_mesh_hash_bucket_5408_data[] = {45, 57};
+int university_map_collision_collision_mesh_hash_bucket_5409_data[] = {44, 57};
+int university_map_collision_collision_mesh_hash_bucket_5410_data[] = {44, 56};
+int university_map_collision_collision_mesh_hash_bucket_5411_data[] = {43, 56};
+int university_map_collision_collision_mesh_hash_bucket_5412_data[] = {43, 55};
+int university_map_collision_collision_mesh_hash_bucket_5413_data[] = {55};
+int university_map_collision_collision_mesh_hash_bucket_5414_data[] = {55, 96, 97};
+int university_map_collision_collision_mesh_hash_bucket_5415_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5416_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5417_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5418_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5480_data[] = {163};
+int university_map_collision_collision_mesh_hash_bucket_5481_data[] = {163, 183};
+int university_map_collision_collision_mesh_hash_bucket_5482_data[] = {163, 183};
+int university_map_collision_collision_mesh_hash_bucket_5483_data[] = {183};
+int university_map_collision_collision_mesh_hash_bucket_5484_data[] = {162, 182, 183};
+int university_map_collision_collision_mesh_hash_bucket_5485_data[] = {162, 182};
+int university_map_collision_collision_mesh_hash_bucket_5486_data[] = {161, 181, 182};
+int university_map_collision_collision_mesh_hash_bucket_5487_data[] = {161, 181};
+int university_map_collision_collision_mesh_hash_bucket_5488_data[] = {160, 181};
+int university_map_collision_collision_mesh_hash_bucket_5489_data[] = {160, 180};
+int university_map_collision_collision_mesh_hash_bucket_5490_data[] = {180};
+int university_map_collision_collision_mesh_hash_bucket_5491_data[] = {45, 57, 180};
+int university_map_collision_collision_mesh_hash_bucket_5492_data[] = {57};
+int university_map_collision_collision_mesh_hash_bucket_5493_data[] = {44, 56, 57};
+int university_map_collision_collision_mesh_hash_bucket_5494_data[] = {44, 56};
+int university_map_collision_collision_mesh_hash_bucket_5495_data[] = {43, 56};
+int university_map_collision_collision_mesh_hash_bucket_5496_data[] = {43, 55};
+int university_map_collision_collision_mesh_hash_bucket_5497_data[] = {55};
+int university_map_collision_collision_mesh_hash_bucket_5498_data[] = {55, 96, 97};
+int university_map_collision_collision_mesh_hash_bucket_5499_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5500_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5501_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5502_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5564_data[] = {163};
+int university_map_collision_collision_mesh_hash_bucket_5565_data[] = {163, 183};
+int university_map_collision_collision_mesh_hash_bucket_5566_data[] = {183};
+int university_map_collision_collision_mesh_hash_bucket_5567_data[] = {183};
+int university_map_collision_collision_mesh_hash_bucket_5568_data[] = {162, 182, 183};
+int university_map_collision_collision_mesh_hash_bucket_5569_data[] = {182};
+int university_map_collision_collision_mesh_hash_bucket_5570_data[] = {161, 181, 182};
+int university_map_collision_collision_mesh_hash_bucket_5571_data[] = {181};
+int university_map_collision_collision_mesh_hash_bucket_5572_data[] = {160, 180, 181};
+int university_map_collision_collision_mesh_hash_bucket_5573_data[] = {160, 180};
+int university_map_collision_collision_mesh_hash_bucket_5574_data[] = {180};
+int university_map_collision_collision_mesh_hash_bucket_5575_data[] = {45, 57, 180};
+int university_map_collision_collision_mesh_hash_bucket_5576_data[] = {57};
+int university_map_collision_collision_mesh_hash_bucket_5577_data[] = {44, 56, 57};
+int university_map_collision_collision_mesh_hash_bucket_5578_data[] = {56};
+int university_map_collision_collision_mesh_hash_bucket_5579_data[] = {43, 55, 56};
+int university_map_collision_collision_mesh_hash_bucket_5580_data[] = {43, 55};
+int university_map_collision_collision_mesh_hash_bucket_5581_data[] = {55};
+int university_map_collision_collision_mesh_hash_bucket_5582_data[] = {55, 96, 97};
+int university_map_collision_collision_mesh_hash_bucket_5583_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5584_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5585_data[] = {97};
+int university_map_collision_collision_mesh_hash_bucket_5586_data[] = {97};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3380 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_3380_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3381 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_3381_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3382 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3382_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3383 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3383_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3384 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3384_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3385 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3385_data};
@@ -727,8 +836,10 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3399 = {1,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3400 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3400_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3401 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3401_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3402 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3402_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3466 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_3466_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3467 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3467_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3464 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3464_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3465 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_3465_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3466 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3466_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3467 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3467_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3468 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3468_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3469 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3469_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3470 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3470_data};
@@ -748,8 +859,10 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3483 = {1,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3484 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3484_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3485 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3485_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3486 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3486_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3548 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3548_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3549 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_3549_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3550 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_3550_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3551 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_3551_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3551 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3551_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3552 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3552_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3553 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3553_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3554 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3554_data};
@@ -769,7 +882,9 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3567 = {1,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3568 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3568_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3569 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3569_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3570 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3570_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3634 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3634_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3632 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3632_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3633 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3633_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3634 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_3634_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3635 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_3635_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3636 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3636_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3637 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3637_data};
@@ -790,10 +905,12 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3651 = {1,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3652 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3652_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3653 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3653_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3654 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3654_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3716 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3716_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3717 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3717_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3718 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3718_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3719 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_3719_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3720 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_3720_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3721 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3721_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3719 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3719_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3720 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3720_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3721 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3721_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3722 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3722_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3723 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3723_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3724 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3724_data};
@@ -811,11 +928,13 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3735 = {1,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3736 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3736_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3737 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3737_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3738 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3738_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3802 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3802_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3800 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3800_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3801 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3801_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3802 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3802_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3803 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3803_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3804 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3804_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3804 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_3804_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3805 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3805_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3806 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3806_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3806 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3806_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3807 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3807_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3808 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3808_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3809 = {5, (int *)university_map_collision_collision_mesh_hash_bucket_3809_data};
@@ -832,7 +951,9 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3819 = {2,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3820 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3820_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3821 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3821_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3822 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3822_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3886 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3886_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3884 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3884_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3885 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3885_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3886 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3886_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3887 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3887_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3888 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3888_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3889 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3889_data};
@@ -853,9 +974,11 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3903 = {2,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3904 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3904_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3905 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3905_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3906 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3906_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3968 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3968_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3969 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3969_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3970 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3970_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3971 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3971_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3972 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3972_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3972 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3972_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3973 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3973_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3974 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_3974_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3975 = {10, (int *)university_map_collision_collision_mesh_hash_bucket_3975_data};
@@ -874,6 +997,8 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3987 = {2,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3988 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3988_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3989 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3989_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_3990 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_3990_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4052 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4052_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4053 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4053_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4054 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4054_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4055 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4055_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4056 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4056_data};
@@ -895,7 +1020,9 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4071 = {1,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4072 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4072_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4073 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4073_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4074 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4074_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4138 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4138_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4136 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4136_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4137 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4137_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4138 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4138_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4139 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4139_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4140 = {5, (int *)university_map_collision_collision_mesh_hash_bucket_4140_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4141 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4141_data};
@@ -916,8 +1043,10 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4155 = {2,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4156 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4156_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4157 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4157_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4158 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4158_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4220 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4220_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4221 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4221_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4222 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4222_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4223 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4223_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4223 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4223_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4224 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4224_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4225 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4225_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4226 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4226_data};
@@ -937,7 +1066,9 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4239 = {1,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4240 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4240_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4241 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4241_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4242 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4242_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4306 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4306_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4304 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4304_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4305 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4305_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4306 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4306_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4307 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4307_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4308 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_4308_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4309 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4309_data};
@@ -956,10 +1087,11 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4321 = {3,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4322 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_4322_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4323 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4323_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4324 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4324_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4325 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4325_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4325 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4325_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4326 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4326_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4388 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4388_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4389 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4389_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4390 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4390_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4390 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4390_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4391 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4391_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4392 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4392_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4393 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4393_data};
@@ -979,10 +1111,11 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4406 = {2,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4407 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4407_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4408 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4408_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4409 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4409_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4410 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4410_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4473 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4473_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4410 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4410_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4472 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4472_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4473 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4473_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4474 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4474_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4475 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4475_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4475 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4475_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4476 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4476_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4477 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4477_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4478 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4478_data};
@@ -1002,8 +1135,9 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4491 = {1,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4492 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4492_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4493 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4493_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4494 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4494_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4556 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4556_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4557 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4557_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4558 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4558_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4558 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4558_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4559 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4559_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4560 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_4560_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4561 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4561_data};
@@ -1021,10 +1155,11 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4572 = {3,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4573 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_4573_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4574 = {5, (int *)university_map_collision_collision_mesh_hash_bucket_4574_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4575 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4575_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4576 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4576_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4576 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4576_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4577 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4577_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4578 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4578_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4641 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4641_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4640 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4640_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4641 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4641_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4642 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4642_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4643 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4643_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4644 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4644_data};
@@ -1044,10 +1179,11 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4657 = {3,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4658 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4658_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4659 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4659_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4660 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4660_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4661 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4661_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4661 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4661_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4662 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4662_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4724 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_4724_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4725 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_4725_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4726 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_4726_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4726 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4726_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4727 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4727_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4728 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_4728_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4729 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4729_data};
@@ -1068,7 +1204,8 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4743 = {1,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4744 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4744_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4745 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4745_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4746 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4746_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4809 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4809_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4808 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4808_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4809 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4809_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4810 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4810_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4811 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4811_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4812 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4812_data};
@@ -1086,12 +1223,13 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4823 = {2,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4824 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4824_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4825 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4825_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4826 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4826_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4827 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4827_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4827 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4827_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4828 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4828_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4829 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4829_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4830 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4830_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4892 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4892_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4893 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4893_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4894 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4894_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4894 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4894_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4895 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4895_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4896 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_4896_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4897 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4897_data};
@@ -1108,13 +1246,14 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4907 = {7,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4908 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4908_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4909 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4909_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4910 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4910_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4911 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4911_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4912 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4912_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4911 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4911_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4912 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4912_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4913 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4913_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4914 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4914_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4977 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4977_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4976 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4976_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4977 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4977_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4978 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4978_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4979 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4979_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4979 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4979_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4980 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_4980_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4981 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4981_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4982 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4982_data};
@@ -1131,11 +1270,12 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4992 = {2,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4993 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4993_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4994 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4994_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4995 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4995_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4996 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4996_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4996 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_4996_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4997 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4997_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_4998 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_4998_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5060 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5060_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5061 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5061_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5062 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5062_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5062 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5062_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5063 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5063_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5064 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5064_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5065 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5065_data};
@@ -1151,12 +1291,13 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5074 = {2,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5075 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5075_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5076 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5076_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5077 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5077_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5078 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5078_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5078 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5078_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5079 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5079_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5080 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5080_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5081 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5081_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5082 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5082_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5145 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5145_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5144 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5144_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5145 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5145_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5146 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5146_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5147 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5147_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5148 = {7, (int *)university_map_collision_collision_mesh_hash_bucket_5148_data};
@@ -1167,59 +1308,132 @@ SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5152 = {6,
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5153 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5153_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5154 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5154_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5155 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_5155_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5156 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5156_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5156 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5156_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5157 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_5157_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5158 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5158_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5158 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5158_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5159 = {5, (int *)university_map_collision_collision_mesh_hash_bucket_5159_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5160 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5160_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5161 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_5161_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5162 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_5162_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5163 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5163_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5162 = {5, (int *)university_map_collision_collision_mesh_hash_bucket_5162_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5163 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5163_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5164 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5164_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5165 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5165_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5166 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5166_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5230 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_5230_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5228 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5228_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5229 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5229_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5230 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5230_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5231 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5231_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5232 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_5232_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5233 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5233_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5233 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5233_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5234 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_5234_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5235 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5235_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5235 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5235_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5236 = {6, (int *)university_map_collision_collision_mesh_hash_bucket_5236_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5237 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_5237_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5237 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5237_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5238 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5238_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5239 = {5, (int *)university_map_collision_collision_mesh_hash_bucket_5239_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5239 = {4, (int *)university_map_collision_collision_mesh_hash_bucket_5239_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5240 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5240_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5241 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5241_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5242 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5242_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5243 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5243_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5244 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5244_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5241 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5241_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5242 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5242_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5243 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5243_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5244 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5244_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5245 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5245_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5246 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5246_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5247 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5247_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5246 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5246_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5247 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5247_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5248 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5248_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5249 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5249_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5250 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5250_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5312 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5312_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5313 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5313_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5314 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5314_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5315 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5315_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5316 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5316_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5315 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5315_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5316 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5316_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5317 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5317_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5318 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5318_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5319 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5319_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5320 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5320_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5321 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5321_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5322 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5322_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5323 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5323_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5324 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5324_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5325 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5325_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5321 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5321_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5322 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5322_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5323 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5323_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5324 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5324_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5325 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5325_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5326 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5326_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5327 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5327_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5328 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5328_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5329 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5329_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5329 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5329_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5330 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5330_data};
-SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5331 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5331_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5331 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5331_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5332 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5332_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5333 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5333_data};
 SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5334 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5334_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5396 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5396_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5397 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5397_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5398 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5398_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5399 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5399_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5400 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5400_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5401 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5401_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5402 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5402_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5403 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5403_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5404 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5404_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5405 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5405_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5406 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5406_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5407 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5407_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5408 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5408_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5409 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5409_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5410 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5410_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5411 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5411_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5412 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5412_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5413 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5413_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5414 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5414_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5415 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5415_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5416 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5416_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5417 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5417_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5418 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5418_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5480 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5480_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5481 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5481_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5482 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5482_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5483 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5483_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5484 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5484_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5485 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5485_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5486 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5486_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5487 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5487_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5488 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5488_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5489 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5489_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5490 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5490_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5491 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5491_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5492 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5492_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5493 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5493_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5494 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5494_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5495 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5495_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5496 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5496_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5497 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5497_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5498 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5498_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5499 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5499_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5500 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5500_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5501 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5501_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5502 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5502_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5564 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5564_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5565 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5565_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5566 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5566_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5567 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5567_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5568 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5568_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5569 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5569_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5570 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5570_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5571 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5571_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5572 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5572_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5573 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5573_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5574 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5574_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5575 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5575_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5576 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5576_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5577 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5577_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5578 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5578_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5579 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5579_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5580 = {2, (int *)university_map_collision_collision_mesh_hash_bucket_5580_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5581 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5581_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5582 = {3, (int *)university_map_collision_collision_mesh_hash_bucket_5582_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5583 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5583_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5584 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5584_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5585 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5585_data};
+SpatialHashBucket university_map_collision_collision_mesh_hash_bucket_5586 = {1, (int *)university_map_collision_collision_mesh_hash_bucket_5586_data};
 
 SpatialHashBucket* university_map_collision_collision_mesh_hash_data[] = {
 NULL,
@@ -4602,8 +4816,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_3380,
+&university_map_collision_collision_mesh_hash_bucket_3381,
 &university_map_collision_collision_mesh_hash_bucket_3382,
 &university_map_collision_collision_mesh_hash_bucket_3383,
 &university_map_collision_collision_mesh_hash_bucket_3384,
@@ -4686,8 +4900,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_3464,
+&university_map_collision_collision_mesh_hash_bucket_3465,
 &university_map_collision_collision_mesh_hash_bucket_3466,
 &university_map_collision_collision_mesh_hash_bucket_3467,
 &university_map_collision_collision_mesh_hash_bucket_3468,
@@ -4770,8 +4984,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_3548,
+&university_map_collision_collision_mesh_hash_bucket_3549,
 &university_map_collision_collision_mesh_hash_bucket_3550,
 &university_map_collision_collision_mesh_hash_bucket_3551,
 &university_map_collision_collision_mesh_hash_bucket_3552,
@@ -4854,8 +5068,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_3632,
+&university_map_collision_collision_mesh_hash_bucket_3633,
 &university_map_collision_collision_mesh_hash_bucket_3634,
 &university_map_collision_collision_mesh_hash_bucket_3635,
 &university_map_collision_collision_mesh_hash_bucket_3636,
@@ -4938,8 +5152,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_3716,
+&university_map_collision_collision_mesh_hash_bucket_3717,
 &university_map_collision_collision_mesh_hash_bucket_3718,
 &university_map_collision_collision_mesh_hash_bucket_3719,
 &university_map_collision_collision_mesh_hash_bucket_3720,
@@ -5022,8 +5236,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_3800,
+&university_map_collision_collision_mesh_hash_bucket_3801,
 &university_map_collision_collision_mesh_hash_bucket_3802,
 &university_map_collision_collision_mesh_hash_bucket_3803,
 &university_map_collision_collision_mesh_hash_bucket_3804,
@@ -5106,8 +5320,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_3884,
+&university_map_collision_collision_mesh_hash_bucket_3885,
 &university_map_collision_collision_mesh_hash_bucket_3886,
 &university_map_collision_collision_mesh_hash_bucket_3887,
 &university_map_collision_collision_mesh_hash_bucket_3888,
@@ -5190,8 +5404,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_3968,
+&university_map_collision_collision_mesh_hash_bucket_3969,
 &university_map_collision_collision_mesh_hash_bucket_3970,
 &university_map_collision_collision_mesh_hash_bucket_3971,
 &university_map_collision_collision_mesh_hash_bucket_3972,
@@ -5274,8 +5488,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4052,
+&university_map_collision_collision_mesh_hash_bucket_4053,
 &university_map_collision_collision_mesh_hash_bucket_4054,
 &university_map_collision_collision_mesh_hash_bucket_4055,
 &university_map_collision_collision_mesh_hash_bucket_4056,
@@ -5358,8 +5572,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4136,
+&university_map_collision_collision_mesh_hash_bucket_4137,
 &university_map_collision_collision_mesh_hash_bucket_4138,
 &university_map_collision_collision_mesh_hash_bucket_4139,
 &university_map_collision_collision_mesh_hash_bucket_4140,
@@ -5442,8 +5656,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4220,
+&university_map_collision_collision_mesh_hash_bucket_4221,
 &university_map_collision_collision_mesh_hash_bucket_4222,
 &university_map_collision_collision_mesh_hash_bucket_4223,
 &university_map_collision_collision_mesh_hash_bucket_4224,
@@ -5526,8 +5740,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4304,
+&university_map_collision_collision_mesh_hash_bucket_4305,
 &university_map_collision_collision_mesh_hash_bucket_4306,
 &university_map_collision_collision_mesh_hash_bucket_4307,
 &university_map_collision_collision_mesh_hash_bucket_4308,
@@ -5610,7 +5824,7 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4388,
 &university_map_collision_collision_mesh_hash_bucket_4389,
 &university_map_collision_collision_mesh_hash_bucket_4390,
 &university_map_collision_collision_mesh_hash_bucket_4391,
@@ -5694,7 +5908,7 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4472,
 &university_map_collision_collision_mesh_hash_bucket_4473,
 &university_map_collision_collision_mesh_hash_bucket_4474,
 &university_map_collision_collision_mesh_hash_bucket_4475,
@@ -5778,7 +5992,7 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4556,
 &university_map_collision_collision_mesh_hash_bucket_4557,
 &university_map_collision_collision_mesh_hash_bucket_4558,
 &university_map_collision_collision_mesh_hash_bucket_4559,
@@ -5862,7 +6076,7 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4640,
 &university_map_collision_collision_mesh_hash_bucket_4641,
 &university_map_collision_collision_mesh_hash_bucket_4642,
 &university_map_collision_collision_mesh_hash_bucket_4643,
@@ -5946,7 +6160,7 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4724,
 &university_map_collision_collision_mesh_hash_bucket_4725,
 &university_map_collision_collision_mesh_hash_bucket_4726,
 &university_map_collision_collision_mesh_hash_bucket_4727,
@@ -6030,7 +6244,7 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4808,
 &university_map_collision_collision_mesh_hash_bucket_4809,
 &university_map_collision_collision_mesh_hash_bucket_4810,
 &university_map_collision_collision_mesh_hash_bucket_4811,
@@ -6114,7 +6328,7 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4892,
 &university_map_collision_collision_mesh_hash_bucket_4893,
 &university_map_collision_collision_mesh_hash_bucket_4894,
 &university_map_collision_collision_mesh_hash_bucket_4895,
@@ -6198,7 +6412,7 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_4976,
 &university_map_collision_collision_mesh_hash_bucket_4977,
 &university_map_collision_collision_mesh_hash_bucket_4978,
 &university_map_collision_collision_mesh_hash_bucket_4979,
@@ -6282,7 +6496,7 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_5060,
 &university_map_collision_collision_mesh_hash_bucket_5061,
 &university_map_collision_collision_mesh_hash_bucket_5062,
 &university_map_collision_collision_mesh_hash_bucket_5063,
@@ -6366,7 +6580,7 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_5144,
 &university_map_collision_collision_mesh_hash_bucket_5145,
 &university_map_collision_collision_mesh_hash_bucket_5146,
 &university_map_collision_collision_mesh_hash_bucket_5147,
@@ -6450,8 +6664,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_5228,
+&university_map_collision_collision_mesh_hash_bucket_5229,
 &university_map_collision_collision_mesh_hash_bucket_5230,
 &university_map_collision_collision_mesh_hash_bucket_5231,
 &university_map_collision_collision_mesh_hash_bucket_5232,
@@ -6534,8 +6748,8 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_5312,
+&university_map_collision_collision_mesh_hash_bucket_5313,
 &university_map_collision_collision_mesh_hash_bucket_5314,
 &university_map_collision_collision_mesh_hash_bucket_5315,
 &university_map_collision_collision_mesh_hash_bucket_5316,
@@ -6618,6 +6832,29 @@ NULL,
 NULL,
 NULL,
 NULL,
+&university_map_collision_collision_mesh_hash_bucket_5396,
+&university_map_collision_collision_mesh_hash_bucket_5397,
+&university_map_collision_collision_mesh_hash_bucket_5398,
+&university_map_collision_collision_mesh_hash_bucket_5399,
+&university_map_collision_collision_mesh_hash_bucket_5400,
+&university_map_collision_collision_mesh_hash_bucket_5401,
+&university_map_collision_collision_mesh_hash_bucket_5402,
+&university_map_collision_collision_mesh_hash_bucket_5403,
+&university_map_collision_collision_mesh_hash_bucket_5404,
+&university_map_collision_collision_mesh_hash_bucket_5405,
+&university_map_collision_collision_mesh_hash_bucket_5406,
+&university_map_collision_collision_mesh_hash_bucket_5407,
+&university_map_collision_collision_mesh_hash_bucket_5408,
+&university_map_collision_collision_mesh_hash_bucket_5409,
+&university_map_collision_collision_mesh_hash_bucket_5410,
+&university_map_collision_collision_mesh_hash_bucket_5411,
+&university_map_collision_collision_mesh_hash_bucket_5412,
+&university_map_collision_collision_mesh_hash_bucket_5413,
+&university_map_collision_collision_mesh_hash_bucket_5414,
+&university_map_collision_collision_mesh_hash_bucket_5415,
+&university_map_collision_collision_mesh_hash_bucket_5416,
+&university_map_collision_collision_mesh_hash_bucket_5417,
+&university_map_collision_collision_mesh_hash_bucket_5418,
 NULL,
 NULL,
 NULL,
@@ -6679,6 +6916,29 @@ NULL,
 NULL,
 NULL,
 NULL,
+&university_map_collision_collision_mesh_hash_bucket_5480,
+&university_map_collision_collision_mesh_hash_bucket_5481,
+&university_map_collision_collision_mesh_hash_bucket_5482,
+&university_map_collision_collision_mesh_hash_bucket_5483,
+&university_map_collision_collision_mesh_hash_bucket_5484,
+&university_map_collision_collision_mesh_hash_bucket_5485,
+&university_map_collision_collision_mesh_hash_bucket_5486,
+&university_map_collision_collision_mesh_hash_bucket_5487,
+&university_map_collision_collision_mesh_hash_bucket_5488,
+&university_map_collision_collision_mesh_hash_bucket_5489,
+&university_map_collision_collision_mesh_hash_bucket_5490,
+&university_map_collision_collision_mesh_hash_bucket_5491,
+&university_map_collision_collision_mesh_hash_bucket_5492,
+&university_map_collision_collision_mesh_hash_bucket_5493,
+&university_map_collision_collision_mesh_hash_bucket_5494,
+&university_map_collision_collision_mesh_hash_bucket_5495,
+&university_map_collision_collision_mesh_hash_bucket_5496,
+&university_map_collision_collision_mesh_hash_bucket_5497,
+&university_map_collision_collision_mesh_hash_bucket_5498,
+&university_map_collision_collision_mesh_hash_bucket_5499,
+&university_map_collision_collision_mesh_hash_bucket_5500,
+&university_map_collision_collision_mesh_hash_bucket_5501,
+&university_map_collision_collision_mesh_hash_bucket_5502,
 NULL,
 NULL,
 NULL,
@@ -6740,75 +7000,29 @@ NULL,
 NULL,
 NULL,
 NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
+&university_map_collision_collision_mesh_hash_bucket_5564,
+&university_map_collision_collision_mesh_hash_bucket_5565,
+&university_map_collision_collision_mesh_hash_bucket_5566,
+&university_map_collision_collision_mesh_hash_bucket_5567,
+&university_map_collision_collision_mesh_hash_bucket_5568,
+&university_map_collision_collision_mesh_hash_bucket_5569,
+&university_map_collision_collision_mesh_hash_bucket_5570,
+&university_map_collision_collision_mesh_hash_bucket_5571,
+&university_map_collision_collision_mesh_hash_bucket_5572,
+&university_map_collision_collision_mesh_hash_bucket_5573,
+&university_map_collision_collision_mesh_hash_bucket_5574,
+&university_map_collision_collision_mesh_hash_bucket_5575,
+&university_map_collision_collision_mesh_hash_bucket_5576,
+&university_map_collision_collision_mesh_hash_bucket_5577,
+&university_map_collision_collision_mesh_hash_bucket_5578,
+&university_map_collision_collision_mesh_hash_bucket_5579,
+&university_map_collision_collision_mesh_hash_bucket_5580,
+&university_map_collision_collision_mesh_hash_bucket_5581,
+&university_map_collision_collision_mesh_hash_bucket_5582,
+&university_map_collision_collision_mesh_hash_bucket_5583,
+&university_map_collision_collision_mesh_hash_bucket_5584,
+&university_map_collision_collision_mesh_hash_bucket_5585,
+&university_map_collision_collision_mesh_hash_bucket_5586,
 NULL,
 NULL,
 NULL,
