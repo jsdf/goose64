@@ -42,10 +42,27 @@ beginseg
 endseg
 
 beginseg
-  name  "memheap"
+  name  "collision"
   flags OBJECT
   after "models"
+  include "university_map_collision.o"
+endseg
+
+
+beginseg
+  name  "memheap"
+  flags OBJECT
+  after "collision"
   include "mem_heap.o"
+endseg
+
+
+beginseg
+  name  "trace"
+  flags OBJECT
+
+  address 0x80400000
+  include "trace.o"
 endseg
 
 
@@ -55,4 +72,6 @@ beginwave
   include "code"
   include "models"
   include "memheap"
+  include "collision"
+  include "trace"
 endwave

@@ -20,6 +20,11 @@ extern u8 _memheapSegmentRomStart[];
 extern u8 _memheapSegmentRomEnd[];
 extern u8 _memheapSegmentBssStart[];
 extern u8 _memheapSegmentBssEnd[];
+extern u8 _traceSegmentStart[];
+extern u8 _traceSegmentRomStart[];
+extern u8 _traceSegmentRomEnd[];
+extern u8 _traceSegmentBssStart[];
+extern u8 _traceSegmentBssEnd[];
 
 int systemHeapMemoryInit(void) {
   int initHeapResult;
@@ -33,11 +38,22 @@ int systemHeapMemoryInit(void) {
   initHeapResult = InitHeap(mem_heap, MEM_HEAP_SIZE);
 
   if (initHeapResult == -1) {
-    ed64PrintfSync("failed to init heap\n");
+    die("failed to init heap\n");
   } else {
     ed64PrintfSync("init heap success, allocated=%d\n", MEM_HEAP_SIZE);
 
     ed64PrintfSync("nice\n");
+  }
+
+  if (osGetMemSize() == 0x00800000) {
+    ed64PrintfSync("have expansion pack\n");
+    nuPiReadRom((u32)_traceSegmentRomStart, _traceSegmentStart,
+                (u32)_traceSegmentRomEnd - (u32)_traceSegmentRomStart);
+    bzero(_traceSegmentBssStart, _traceSegmentBssEnd - _traceSegmentBssStart);
+
+    ed64PrintfSync("init trace buffer at %p\n", _traceSegmentStart);
+  } else {
+    die("expansion pack missing\n");
   }
   return 0;
 }

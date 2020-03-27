@@ -33,6 +33,9 @@
 extern u8 _modelsSegmentStart[];
 extern u8 _modelsSegmentRomStart[];
 extern u8 _modelsSegmentRomEnd[];
+extern u8 _collisionSegmentStart[];
+extern u8 _collisionSegmentRomStart[];
+extern u8 _collisionSegmentRomEnd[];
 
 // map
 #include "university_map.h"
@@ -45,10 +48,10 @@ extern u8 _modelsSegmentRomEnd[];
 #include "ed64io_usb.h"
 
 #define CONSOLE_EVERDRIVE_DEBUG 0
-#define CONSOLE_SHOW_PROFILING 1
+#define CONSOLE_SHOW_PROFILING 0
 #define CONSOLE_SHOW_TRACING 0
-#define CONSOLE_SHOW_CULLING 1
-#define CONSOLE_SHOW_CAMERA_POS 0
+#define CONSOLE_SHOW_CULLING 0
+#define CONSOLE_SHOW_CAMERA 1
 #define CONSOLE_SHOW_RCP_TASKS 0
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
@@ -98,12 +101,7 @@ static int loggingTrace = FALSE;
 
 static int twoCycleMode;
 static RenderMode renderModeSetting;
-PhysWorldData physWorldData = {university_map_collision_collision_mesh,
-                               UNIVERSITY_MAP_COLLISION_LENGTH,
-                               &university_map_collision_collision_mesh_hash,
-                               /*gravity*/ -9.8 * N64_SCALE_FACTOR,
-                               /*viscosity*/ 0.05,
-                               /*waterHeight*/ WATER_HEIGHT};
+PhysWorldData physWorldData;
 
 void drawWorldObjects(Dynamic* dynamicp);
 
@@ -129,6 +127,16 @@ void initStage00() {
   // load in the models segment into higher memory
   nuPiReadRom((u32)_modelsSegmentRomStart, _modelsSegmentStart,
               (u32)_modelsSegmentRomEnd - (u32)_modelsSegmentRomStart);
+  // load in the collision segment into higher memory
+  nuPiReadRom((u32)_collisionSegmentRomStart, _collisionSegmentStart,
+              (u32)_collisionSegmentRomEnd - (u32)_collisionSegmentRomStart);
+
+  physWorldData = (PhysWorldData){university_map_collision_collision_mesh,
+                                  UNIVERSITY_MAP_COLLISION_LENGTH,
+                                  &university_map_collision_collision_mesh_hash,
+                                  /*gravity*/ -9.8 * N64_SCALE_FACTOR,
+                                  /*viscosity*/ 0.05,
+                                  /*waterHeight*/ WATER_HEIGHT};
 
   usbEnabled = TRUE;
   usbResult = 0;
@@ -261,7 +269,7 @@ void makeDL00() {
   Frustum_setCamInternals(&frustum, fovy, aspect, nearPlane, farPlane);
 
   /* projection, viewing, modeling matrix set */
-  guPerspective(&dynamicp->projection, &perspNorm, 45, aspect, nearPlane,
+  guPerspective(&dynamicp->projection, &perspNorm, fovy, aspect, nearPlane,
                 farPlane, 1.0);
   gSPPerspNormalize(glistp++, perspNorm);
 
@@ -325,7 +333,11 @@ void makeDL00() {
 
   if (contPattern & 0x1) {
     nuDebConClear(0);
+#if CONSOLE_SHOW_CAMERA
+    consoleOffset = 16;
+#else
     consoleOffset = 21;
+#endif
 
     debugPrintFloat(4, consoleOffset++, "frame=%3.2fms",
                     1000.0 / frameCounterLastFrames);
@@ -367,13 +379,15 @@ void makeDL00() {
 #endif
 #if CONSOLE_SHOW_CULLING
       nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "culled=%d", objectsCulled);
-      nuDebConCPuts(0, conbuf);
+      sprintf(conbuf, "culled=%d", objectsCulled) 0 nuDebConCPuts(0, conbuf);
 #endif
-
-#if CONSOLE_SHOW_CAMERA_POS
+#if CONSOLE_SHOW_CAMERA
       debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
       debugPrintVec3d(4, consoleOffset++, "viewTarget", &game->viewTarget);
+      debugPrintFloat(4, consoleOffset++, "viewZoom=%1.1f", game->viewZoom);
+      debugPrintFloat(4, consoleOffset++, "fovy=%3.1f", fovy);
+      debugPrintFloat(4, consoleOffset++, "nearPlane=%.2f", nearPlane);
+      debugPrintFloat(4, consoleOffset++, "farPlane=%.2f", farPlane);
 #endif
 
 #if CONSOLE_EVERDRIVE_DEBUG
