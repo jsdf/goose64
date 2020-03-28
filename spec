@@ -23,14 +23,27 @@ beginseg
 	entry 	nuBoot
 	address NU_SPEC_BOOT_ADDR
         stack   NU_SPEC_BOOT_STACK
-  maxsize 0xDA400
+
+  /*       maxsize 0xDA400  keep inside first mb of RDRAM */
+
 	include "codesegment.o"
-	include "$(ROOT)/usr/lib/PR/rspboot.o"
+  include "$(ROOT)/usr/lib/PR/rspboot.o"   
+
+  /*
+  gfx microcodes should match the order of these defines:
+  NU_GFX_UCODE_F3DEX2 0   // F3DEX microcode  
+  NU_GFX_UCODE_F3DEX2_NON 1   // F3DEX.NoN microcode  
+  NU_GFX_UCODE_F3DEX2_REJ 2   // F3DEX.ReJ microcode  
+  NU_GFX_UCODE_F3DLX2_REJ 3   // F3DLX2.ReJ microcode  
+  NU_GFX_UCODE_L3DEX2 4   // L3DEX microcode  
+  NU_GFX_UCODE_S2DEX2 5   // S2DEX microcode  
+  */
+
 	include "$(ROOT)/usr/lib/PR/gspF3DEX2.fifo.o"
+  include "$(ROOT)/usr/lib/PR/gspF3DEX2.NoN.fifo.o"
+  include "$(ROOT)/usr/lib/PR/gspF3DEX2.Rej.fifo.o"
+  include "$(ROOT)/usr/lib/PR/gspF3DLX2.Rej.fifo.o"
 	include "$(ROOT)/usr/lib/PR/gspL3DEX2.fifo.o"
-	include "$(ROOT)/usr/lib/PR/gspF3DEX2.Rej.fifo.o"
-        include "$(ROOT)/usr/lib/PR/gspF3DEX2.NoN.fifo.o"
-        include "$(ROOT)/usr/lib/PR/gspF3DLX2.Rej.fifo.o"
 	include "$(ROOT)/usr/lib/PR/gspS2DEX2.fifo.o"
 endseg
 

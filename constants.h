@@ -8,6 +8,7 @@
 #define DEFAULT_FOVY 15.0f
 #define DEFAULT_NEARPLANE 100
 #define DEFAULT_FARPLANE 4000
+#define HIGH_RESOLUTION 1
 #define WATER_HEIGHT -70.0
 
 #define CONST_PI 3.14159265358979323846
@@ -15,7 +16,11 @@
 #define radToDeg(angleInRadians) ((angleInRadians)*180.0 / CONST_PI)
 
 // TODO: switch based on region
+#if HIGH_RESOLUTION
+#define VSYNC_FPS 30
+#else
 #define VSYNC_FPS 60
+#endif
 
 // dumb
 #ifdef __N64__
@@ -122,5 +127,14 @@
 #else
 #define invariant(expression) assert(expression)
 #endif
+
+#define EXTERN_SEGMENT(name)                                  \
+  extern char _##name##SegmentStart[], _##name##SegmentEnd[], \
+      _##name##SegmentRomStart[], _##name##SegmentRomEnd[]
+
+#define EXTERN_SEGMENT_WITH_BSS(name)                         \
+  extern char _##name##SegmentStart[], _##name##SegmentEnd[], \
+      _##name##SegmentRomStart[], _##name##SegmentRomEnd[],   \
+      _##name##SegmentBssStart[], _##name##SegmentBssEnd[]
 
 #endif /* CONSTANTS_H */

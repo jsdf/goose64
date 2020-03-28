@@ -1,8 +1,3 @@
-/*
-   gfxinit.c
-
-   The display list for the initialization of graphic
-*/
 
 #include <nusys.h>
 #include "graphic.h"
@@ -26,9 +21,8 @@ Lights1 default_sun_light = gdSPDefLights1(120,
                                            80,
                                            0);
 
-/*
-  The initialization of RDP
-*/
+// The display list for the initialization of graphic tasks
+// The initialization of RDP (per frame)
 Gfx setup_rdpstate[] = {
     gsDPSetRenderMode(G_RM_OPA_SURF, G_RM_OPA_SURF2),
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
@@ -37,9 +31,7 @@ Gfx setup_rdpstate[] = {
     gsSPEndDisplayList(),
 };
 
-/*
-  The initialization of RSP
-*/
+// The initialization of RSP (per frame)
 Gfx setup_rspstate[] = {
     gsSPViewport(&vp),
     gsSPClearGeometryMode(0xFFFFFFFF),

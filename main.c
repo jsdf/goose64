@@ -7,6 +7,7 @@
 #include <PR/os_convert.h>
 #include "ed64io_everdrive.h"
 #include "ed64io_usb.h"
+#include "graphic.h"
 #include "mem_heap.h"
 #include "trace.h"
 
@@ -15,16 +16,9 @@ NUContData contdata[1]; /* Read data of 1 controller  */
 u8 contPattern;         /* The pattern connected to the controller  */
 
 extern char mem_heap[MEM_HEAP_SIZE];
-extern u8 _memheapSegmentStart[];
-extern u8 _memheapSegmentRomStart[];
-extern u8 _memheapSegmentRomEnd[];
-extern u8 _memheapSegmentBssStart[];
-extern u8 _memheapSegmentBssEnd[];
-extern u8 _traceSegmentStart[];
-extern u8 _traceSegmentRomStart[];
-extern u8 _traceSegmentRomEnd[];
-extern u8 _traceSegmentBssStart[];
-extern u8 _traceSegmentBssEnd[];
+
+EXTERN_SEGMENT_WITH_BSS(memheap);
+EXTERN_SEGMENT_WITH_BSS(trace);
 
 int systemHeapMemoryInit(void) {
   int initHeapResult;
@@ -65,7 +59,9 @@ void mainproc(void) {
   evd_init();
 
   /* The initialization of graphic  */
-  nuGfxInit();
+  // nuGfxInit();
+  gfxInit();
+
   systemHeapMemoryInit();
 
   /* The initialization of the controller manager  */
@@ -94,14 +90,16 @@ void stage00(int pendingGfx) {
   profStartFrame = CUR_TIME_MS();
   /* Provide the display process if n or less RCP tasks are processing or
         waiting for the process.  */
-  if (pendingGfx < GFX_TASKS_PER_MAKEDL * 2) {
-    makeDL00();
-    Trace_addEvent(MainMakeDisplayListTraceEvent, profStartFrame,
-                   CUR_TIME_MS());
-  } else {
-    skippedGfxTime = CUR_TIME_MS();
-    Trace_addEvent(SkippedGfxTaskTraceEvent, skippedGfxTime,
-                   skippedGfxTime + 16.0f);
+  if (!HIGH_RESOLUTION || nuScRetraceCounter % 2 == 0) {
+    if (pendingGfx < GFX_TASKS_PER_MAKEDL * 2) {
+      makeDL00();
+      Trace_addEvent(MainMakeDisplayListTraceEvent, profStartFrame,
+                     CUR_TIME_MS());
+    } else {
+      skippedGfxTime = CUR_TIME_MS();
+      Trace_addEvent(SkippedGfxTaskTraceEvent, skippedGfxTime,
+                     skippedGfxTime + 16.0f);
+    }
   }
 
   profStartUpdate = CUR_TIME_MS();

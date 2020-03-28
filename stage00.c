@@ -30,12 +30,9 @@
 
 #include "models.h"
 
-extern u8 _modelsSegmentStart[];
-extern u8 _modelsSegmentRomStart[];
-extern u8 _modelsSegmentRomEnd[];
-extern u8 _collisionSegmentStart[];
-extern u8 _collisionSegmentRomStart[];
-extern u8 _collisionSegmentRomEnd[];
+// define stuff like _modelsSegmentRomStart
+EXTERN_SEGMENT(models);
+EXTERN_SEGMENT(collision);
 
 // map
 #include "university_map.h"
