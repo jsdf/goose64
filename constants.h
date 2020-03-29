@@ -125,6 +125,8 @@
   assert(FALSE);
 #endif
 
+#define beacon() debugPrintfSync("at %d in %s\n", __LINE__, __FUNCTION__);
+
 #ifdef __N64__
 #define invariant(expression)                                          \
   if (!(expression)) {                                                 \
