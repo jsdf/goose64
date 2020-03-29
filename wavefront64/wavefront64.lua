@@ -289,9 +289,9 @@ function w64_VFFormat(obj_Table, object_scale, name)
 					padStringLeft(math.floor(2*object_scale*(bmp.height+1)*obj_Table.vt[obj_Table.f[i][j].vt].v),6),
 					padStringLeft(math.floor(2*object_scale*(bmp.width+1)*obj_Table.vt[obj_Table.f[i][j].vt].u),6),
 					-- output normals
-					formatVert( normX, 128 ),
-					formatVert( normY, 128 ),
-					formatVert( normZ , 128 )
+					formatNormal( normX ),
+					formatNormal( normY ),
+					formatNormal( normZ  )
 				)
 				-- print(inspect(obj_Table.vn[obj_Table.f[i][j].v]))
 

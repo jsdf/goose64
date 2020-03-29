@@ -59,6 +59,6 @@ $(MODELSSEGMENT):	$(MODELSOBJECTS)
 
 $(TARGETS):	$(OBJECTS)
 # use -m to print memory map from mild
-		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E 
+		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E -m
 		makemask $(TARGETS) 
 

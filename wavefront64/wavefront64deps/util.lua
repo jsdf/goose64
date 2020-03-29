@@ -103,7 +103,10 @@ function getLocationOfItem(haystack,needle)
 end
 
 function formatVert(floatString, object_scale)
-	return padStringLeft(math.floor(object_scale*floatString),5)
+  return padStringLeft(math.floor(object_scale*floatString),5)
+end
+function formatNormal(floatNorm)
+  return padStringLeft(math.floor(floatNorm * 127),5)
 end
 
 
