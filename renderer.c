@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #include <stdlib.h>
+#include "ed64io_usb.h"
 #include "frustum.h"
 #include "game.h"
 #include "gameobject.h"

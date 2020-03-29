@@ -99,6 +99,7 @@ void stage00(int pendingGfx) {
       skippedGfxTime = CUR_TIME_MS();
       Trace_addEvent(SkippedGfxTaskTraceEvent, skippedGfxTime,
                      skippedGfxTime + 16.0f);
+      // debugPrintfSync("dropped frame %d\n", nuScRetraceCounter / FRAME_SKIP);
     }
   }
 

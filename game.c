@@ -84,6 +84,7 @@ void Game_init(GameObject* worldObjects,
   for (i = 0; i < game.worldObjectsCount; ++i) {
     obj = game.worldObjects + i;
     if (modelTypesProperties[obj->modelType].category == ItemModelType) {
+      invariant(initIndex < itemsCount);
       Item_init(items + initIndex, obj, &game);
       initIndex++;
     }
@@ -96,6 +97,7 @@ void Game_init(GameObject* worldObjects,
   for (i = 0; i < game.worldObjectsCount; ++i) {
     obj = game.worldObjects + i;
     if (modelTypesProperties[obj->modelType].category == CharacterModelType) {
+      invariant(initIndex < charactersCount);
       Character_init(characters + initIndex,
                      Game_findObjectByType(GardenerCharacterModel),
                      /*book*/ &items[0],  // TODO: make items owned by character
@@ -126,6 +128,7 @@ void Game_init(GameObject* worldObjects,
           modelTypesProperties[obj->modelType].category;
       if (category == ItemModelType || category == CharacterModelType ||
           category == PlayerModelType) {
+        invariant(initIndex < physicsBodiesCount);
         Game_initGameObjectPhysBody(physicsBodies + initIndex, obj);
         initIndex++;
       }

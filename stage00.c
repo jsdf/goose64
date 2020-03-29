@@ -586,6 +586,10 @@ void updateGame00(void) {
 
   Game_update(&input);
 
+  if (nuScRetraceCounter % VSYNC_FPS * FRAME_SKIP == 0) {
+    debugPrintfSync("retrace=%d\n", nuScRetraceCounter);
+  }
+
   if (usbEnabled) {
 #if LOG_TRACES
     if (loggingTrace) {

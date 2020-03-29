@@ -12,7 +12,7 @@
 
 #include "constants.h"
 
-#define ITEM_DEBUG 0
+#define ITEM_DEBUG 1
 #define ITEM_PICKUP_COOLDOWN 60
 #define ITEM_STEAL_COOLDOWN 120
 
