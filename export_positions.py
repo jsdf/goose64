@@ -76,7 +76,7 @@ for index, obj in enumerate(world_objects):
     out += "{"
     # these have already been converted from z-up (blender) to y-up (opengl)
     out += print_pos(aabb.min) + ", " + print_pos(aabb.max)
-    out += "},\n"
+    out += "}, // (%s) \n" % obj.name
 out += """
 };
 """
