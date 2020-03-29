@@ -44,11 +44,11 @@ EXTERN_SEGMENT(collision);
 
 #include "ed64io_usb.h"
 
-#define CONSOLE_EVERDRIVE_DEBUG 0
+#define CONSOLE_ED64LOG_DEBUG 1
 #define CONSOLE_SHOW_PROFILING 0
 #define CONSOLE_SHOW_TRACING 0
 #define CONSOLE_SHOW_CULLING 0
-#define CONSOLE_SHOW_CAMERA 1
+#define CONSOLE_SHOW_CAMERA 0
 #define CONSOLE_SHOW_RCP_TASKS 0
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
@@ -387,7 +387,7 @@ void makeDL00() {
       debugPrintFloat(4, consoleOffset++, "farPlane=%.2f", farPlane);
 #endif
 
-#if CONSOLE_EVERDRIVE_DEBUG
+#if CONSOLE_ED64LOG_DEBUG
       usbLoggerGetState(&usbLoggerState);
       nuDebConTextPos(0, 4, consoleOffset++);
       sprintf(conbuf, "usb=%d,res=%d,st=%d,id=%d,mqsz=%d", usbEnabled,
@@ -574,30 +574,19 @@ void updateGame00(void) {
 #if LOG_TRACES
     if (loggingTrace) {
       logTraceChunk();
-      usbResult = usbLoggerFlush();
     }
 #endif
   }
 
   Game_update(&input);
 
-  // if (contdata[0].trigger & R_CBUTTONS) {
-  //   usbEnabled = !usbEnabled;
-  // }
-
-  if (nuScRetraceCounter % VSYNC_FPS == 0) {
-    debugPrintf("retrace: %d\n", nuScRetraceCounter);
-  }
-
   if (usbEnabled) {
 #if LOG_TRACES
     if (loggingTrace) {
       logTraceChunk();
-      usbResult = usbLoggerFlush();
     }
-#else
-    usbResult = usbLoggerFlush();
 #endif
+    usbResult = usbLoggerFlush();
   }
 
   if (nuScRetraceCounter % VSYNC_FPS == 0) {
