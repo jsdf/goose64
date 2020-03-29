@@ -9,15 +9,13 @@
 #define _GRAPHIC_H_
 #include "constants.h"
 
-#define HIGH_RESOLUTION_HALF_Y 1
-
 #define SCREEN_WD_MAX 640
 #define XSCALE_MAX 0x400
 
 // 2bpp = 16 bit color
 #define SCREEN_BPP 2
 /* The screen size  */
-#if HIGH_RESOLUTION
+#if HIGH_RESOLUTION  // 640x480 and 640x240
 #define SCREEN_WD 640
 
 #if HIGH_RESOLUTION_HALF_Y
@@ -36,7 +34,7 @@
 #define CFB1_ADDR (CFB0_ADDR + SCREEN_WD * SCREEN_HT * SCREEN_BPP)
 #define CFB2_ADDR (CFB1_ADDR + SCREEN_WD * SCREEN_HT * SCREEN_BPP)
 
-#else
+#else  // low resolution, 320x240
 #define SCREEN_WD 320
 #define SCREEN_HT 240
 #define FRAME_BUFFERS 3

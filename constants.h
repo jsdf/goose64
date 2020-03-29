@@ -9,7 +9,7 @@
 #define DEFAULT_NEARPLANE 100
 #define DEFAULT_FARPLANE 4000
 #define HIGH_RESOLUTION 1
-#define HIGH_RESOLUTION_OPTS 0
+#define HIGH_RESOLUTION_HALF_Y 1
 
 #define WATER_HEIGHT -70.0
 
@@ -19,9 +19,14 @@
 
 // TODO: switch based on region
 #if HIGH_RESOLUTION
+#if HIGH_RESOLUTION_HALF_Y
 #define VSYNC_FPS 30
 #define FRAME_SKIP 2
 #else
+#define VSYNC_FPS 15
+#define FRAME_SKIP 4
+#endif
+#else  // low resolution
 #define VSYNC_FPS 60
 #define FRAME_SKIP 1
 #endif

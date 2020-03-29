@@ -5,13 +5,9 @@
 #include "frustum.h"
 #include "gameobject.h"
 
-#if HIGH_RESOLUTION && HIGH_RESOLUTION_OPTS
 // when painter's alg enabled we change render order and disable z buffer for
 // some objects that don't need it
-#define RENDERER_PAINTERS_ALGORITHM 1
-#else
 #define RENDERER_PAINTERS_ALGORITHM 0
-#endif
 
 typedef struct RendererSortDistance {
   GameObject* obj;
