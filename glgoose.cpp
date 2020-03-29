@@ -69,8 +69,8 @@
 #define DEBUG_COLLISION_SPATIAL_HASH_TRIS 0
 #define DEBUG_COLLISION_MESH_AABB 0
 
-#define DEBUG_AABB 0
-#define DEBUG_FRUSTUM 0
+#define DEBUG_AABB 1
+#define DEBUG_FRUSTUM 1
 
 #define DEBUG_PATHFINDING_GRAPH 0
 #define DEBUG_PATHFINDING 0
@@ -231,7 +231,7 @@ void drawGUI() {
       ImGuiInputTextFlags_EnterReturnsTrue;  // only update on blur
 
   ImGui::Begin("Objects");  // Create a window
-  for (int i; i < game->worldObjectsCount; i++) {
+  for (int i = 0; i < game->worldObjectsCount; i++) {
     GameObject* listObj = game->worldObjects + i;
     if (ImGui::Selectable(
             (std::to_string(i) + " " + ModelTypeStrings[listObj->modelType])

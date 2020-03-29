@@ -39,7 +39,7 @@
       enableUBSanitizer = "YES"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/jfriend/.wine/drive_c/nintendo/n64kit/nusys/sample/nu1goose64"
+      customWorkingDirectory = "/Users/jfriend/.wine/drive_c/goose64"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"

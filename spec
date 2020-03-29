@@ -24,7 +24,7 @@ beginseg
 	address NU_SPEC_BOOT_ADDR
         stack   NU_SPEC_BOOT_STACK
 
-  /*       maxsize 0xDA400  keep inside first mb of RDRAM */
+  maxsize 0xDA400 /*  keep inside first mb of RDRAM */
 
 	include "codesegment.o"
   include "$(ROOT)/usr/lib/PR/rspboot.o"   

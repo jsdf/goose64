@@ -171,7 +171,7 @@ void initStage00() {
     profilingAccumulated[i] = 0;
   }
 
-  debugPrintfSync("getModelDisplayList at %p", getModelDisplayList);
+  debugPrintfSync("getModelDisplayList at %p\n", getModelDisplayList);
 
   debugPrintf("good morning\n");
 }
