@@ -44,12 +44,12 @@ EXTERN_SEGMENT(collision);
 
 #include "ed64io_usb.h"
 
-#define CONSOLE_ED64LOG_DEBUG 1
+#define CONSOLE_ED64LOG_DEBUG 0
 #define CONSOLE_SHOW_PROFILING 0
 #define CONSOLE_SHOW_TRACING 0
 #define CONSOLE_SHOW_CULLING 0
 #define CONSOLE_SHOW_CAMERA 0
-#define CONSOLE_SHOW_RCP_TASKS 0
+#define CONSOLE_SHOW_RCP_TASKS 1
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
 
@@ -59,6 +59,7 @@ typedef enum RenderMode {
   TextureNoLightingRenderMode,
   NoTextureNoLightingRenderMode,
   LightingNoTextureRenderMode,
+  WireframeRenderMode,
   MAX_RENDER_MODE
 } RenderMode;
 
@@ -70,7 +71,11 @@ static u16 perspNorm;
 static u32 nearPlane; /* Near Plane */
 static u32 farPlane;  /* Far Plane */
 static Frustum frustum;
+#if HIGH_RESOLUTION && HIGH_RESOLUTION_HALF_Y
+static float aspect = (f32)SCREEN_WD / (f32)(SCREEN_HT * 2);
+#else
 static float aspect = (f32)SCREEN_WD / (f32)SCREEN_HT;
+#endif
 static float fovy = DEFAULT_FOVY;
 static Vec3d upVector = {0.0f, 1.0f, 0.0f};
 
@@ -217,9 +222,9 @@ void traceRCP() {
                    nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd / 1000.0f);
 
     longestTaskTime =
-        MAX(longestTaskTime, (nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd -
-                              nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
-                                 1000.0f);
+        MAX(longestTaskTime,
+            ((nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd) / 1000.0f -
+             (nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f)));
   }
   // debugPrintf("\n");
   profilingAccumulated[RDPTaskTraceEvent] += longestTaskTime;
@@ -270,7 +275,7 @@ void makeDL00() {
                 farPlane, 1.0);
   gSPPerspNormalize(glistp++, perspNorm);
 
-  gSPClipRatio(glistp++, FRUSTRATIO_6);
+  // gSPClipRatio(glistp++, FRUSTRATIO_6);
 
   Frustum_setCamDef(&frustum, &game->viewPos, &game->viewTarget, &upVector);
 
@@ -298,7 +303,8 @@ void makeDL00() {
      switch display buffers */
   nuGfxTaskStart(&gfx_glist[gfx_gtask_no][0],
                  (s32)(glistp - gfx_glist[gfx_gtask_no]) * sizeof(Gfx),
-                 NU_GFX_UCODE_F3DEX_NON,
+                 renderModeSetting == WireframeRenderMode ? NU_GFX_UCODE_L3DEX2
+                                                          : NU_GFX_UCODE_F3DEX,
 #if CONSOLE || NU_PERF_BAR
                  NU_SC_NOSWAPBUFFER
 #else
@@ -314,8 +320,6 @@ void makeDL00() {
   game->profTimeDraw += profEndDraw - profStartDraw;
 
   profStartDebugDraw = CUR_TIME_MS();
-
-  traceRCP();
 
 #if NU_PERF_BAR
   nuDebTaskPerfBar1(1, 200, NU_SC_SWAPBUFFER);
@@ -570,6 +574,8 @@ void updateGame00(void) {
     finishRecordingTrace();
   }
 
+  traceRCP();
+
   if (usbEnabled) {
 #if LOG_TRACES
     if (loggingTrace) {
@@ -668,7 +674,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   AnimationInterpolation animInterp;
   AnimationRange* curAnimRange;
   AnimationBoneAttachment* attachment;
-  RendererSortDistance* visibleObjDistanceDescending;
+  RendererSortDistance* visibleObjDistance;
   int* worldObjectsVisibility;
   int visibleObjectsCount;
   int visibilityCulled = 0;
@@ -690,26 +696,22 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
   // only alloc space for num visible objects
   visibleObjectsCount = game->worldObjectsCount - visibilityCulled;
-  visibleObjDistanceDescending = (RendererSortDistance*)malloc(
+  visibleObjDistance = (RendererSortDistance*)malloc(
       (visibleObjectsCount) * sizeof(RendererSortDistance));
-  invariant(visibleObjDistanceDescending);
+  invariant(visibleObjDistance);
 
   profStartSort = CUR_TIME_MS();
   Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
                               worldObjectsVisibility, visibleObjectsCount,
-                              visibleObjDistanceDescending);
+                              visibleObjDistance);
   Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
 
   gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
   gDPSetCycleType(glistp++, twoCycleMode ? G_CYC_2CYCLE : G_CYC_1CYCLE);
-  useZBuffering = TRUE;  // Renderer_isZBufferedGameObject(obj);
-  if (useZBuffering) {
-    gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
-    gSPSetGeometryMode(glistp++, G_ZBUFFER);
-  } else {
-    gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
-    gSPClearGeometryMode(glistp++, G_ZBUFFER);
-  }
+
+  // z-buffered, antialiased triangles
+  gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+  gSPSetGeometryMode(glistp++, G_ZBUFFER);
 
   gSPSetLights0(glistp++, amb_light);
 
@@ -723,7 +725,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   // render world objects
   for (i = 0; i < visibleObjectsCount; i++) {
     // iterate visible objects far to near
-    obj = (visibleObjDistanceDescending + i)->obj;
+    obj = (visibleObjDistance + i)->obj;
 
     // render textured models
     gSPTexture(glistp++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
@@ -744,6 +746,16 @@ void drawWorldObjects(Dynamic* dynamicp) {
         break;
     }
 
+#if RENDERER_PAINTERS_ALGORITHM
+    if (Renderer_isZBufferedGameObject(obj)) {
+      gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+      gSPSetGeometryMode(glistp++, G_ZBUFFER);
+    } else {
+      gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
+      gSPClearGeometryMode(glistp++, G_ZBUFFER);
+    }
+#endif
+
     switch (renderModeSetting) {
       case ToonFlatShadingRenderMode:
         // if (Renderer_isLitGameObject(obj)) {
@@ -756,6 +768,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
         gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
         break;
       case TextureNoLightingRenderMode:
+      case WireframeRenderMode:
         gSPSetGeometryMode(glistp++, G_SHADE | G_SHADING_SMOOTH | G_CULL_BACK);
         gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
         break;
@@ -884,8 +897,20 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
     gDPPipeSync(glistp++);
   }
+  // if (nuScRetraceCounter % 60 == 0) {
+  //   debugPrintf("[");
+  //   for (i = 0; i < visibleObjectsCount; i++) {
+  //     {
+  //       RendererSortDistance* dist = (visibleObjDistance + i);
+  //       debugPrintf("%d: %s(%f),\n", i,
+  //       ModelTypeStrings[dist->obj->modelType],
+  //                   dist->distance);
+  //     }
+  //   }
+  //   debugPrintf("]\n");
+  // }
 
-  free(visibleObjDistanceDescending);
+  free(visibleObjDistance);
   free(worldObjectsVisibility);
 
   Trace_addEvent(DrawIterTraceEvent, profStartIter, CUR_TIME_MS());

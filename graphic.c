@@ -8,12 +8,17 @@
 
 #include <nusys.h>
 // keep nusys at the top
+#include "constants.h"
+#include "ed64io_usb.h"
 #include "graphic.h"
+
+#define DEBUG_VI_MODE 0
 
 Gfx gfx_glist[2][GFX_GLIST_LEN];
 Dynamic gfx_dynamic[2];
 Gfx* glistp;
 u32 gfx_gtask_no = 0;
+OSViMode viMode;
 
 /*----------------------------------------------------------------------------
   gfxRCPIinit
@@ -69,7 +74,7 @@ static NUUcode nugfx_ucode[] = {
     {(u64*)gspS2DEX2_fifoTextStart, (u64*)gspS2DEX2_fifoDataStart},
 };
 
-#if HIGH_RESOLUTION
+#if FRAME_BUFFERS == 2
 static u16* FrameBuf[FRAME_BUFFERS] = {(u16*)CFB0_ADDR, (u16*)CFB1_ADDR};
 #else
 static u16* FrameBuf[FRAME_BUFFERS] = {(u16*)CFB0_ADDR, (u16*)CFB1_ADDR,
@@ -162,16 +167,53 @@ static Gfx rdpstateinit_dl[] = {
 void gfxInit(void) {
   Gfx gfxList[0x100];
   Gfx* gfxList_ptr;
+  OSIntMask im;
+  u32 xScale;
+  xScale = (u32)((SCREEN_WD * XSCALE_MAX) / SCREEN_WD_MAX);
 
   /* Activate the graphic thread  */
   nuGfxThreadStart();
 
+  viMode = osViModeTable[HIGH_RESOLUTION ? OS_VI_NTSC_HAF1 : OS_VI_NTSC_LAN1];
+#if HIGH_RESOLUTION_HALF_Y
+  viMode = osViModeTable[OS_VI_NTSC_LAN1];
+  /* Change width, xScale, and origin */
+  im = osSetIntMask(OS_IM_VI);
+  viMode.comRegs.width = SCREEN_WD;
+  viMode.comRegs.xScale = xScale;
+  viMode.fldRegs[0].origin = SCREEN_WD * 2;
+  viMode.fldRegs[1].origin = SCREEN_WD * 2;
+  (void)osSetIntMask(im);
+#endif
+
+#if DEBUG_VI_MODE
+  debugPrintfSync("SCREEN_WD=%d SCREEN_HT=%d", SCREEN_WD, SCREEN_HT);
+
+  debugPrintfSync(
+      "type=%u\ncomRegs={\nctrl=%u\nwidth=%u\nburst=%u\nvSync=%u\nhSync=%u\n"
+      "leap=%u\nhStart=%u\nxScale=%u\nvCurrent=%u\n}\nfldRegs[0]={\norigin=%u\n"
+      "yScale=%u\nvStart=%u\nvBurst=%u\nvIntr=%u\n}\nfldRegs[1]={\norigin=%u\n"
+      "yScale=%u\nvStart=%u\nvBurst=%u\nvIntr=%u\n}\n",
+      viMode.type, viMode.comRegs.ctrl, viMode.comRegs.width,
+      viMode.comRegs.burst, viMode.comRegs.vSync, viMode.comRegs.hSync,
+      viMode.comRegs.leap, viMode.comRegs.hStart, viMode.comRegs.xScale,
+      viMode.comRegs.vCurrent, viMode.fldRegs[0].origin,
+      viMode.fldRegs[0].yScale, viMode.fldRegs[0].vStart,
+      viMode.fldRegs[0].vBurst, viMode.fldRegs[0].vIntr,
+      viMode.fldRegs[1].origin, viMode.fldRegs[1].yScale,
+      viMode.fldRegs[1].vStart, viMode.fldRegs[1].vBurst,
+      viMode.fldRegs[1].vIntr);
+#endif
+
   /* Set VI */
-  osViSetMode(
-      &osViModeTable[HIGH_RESOLUTION ? OS_VI_NTSC_HAF1 : OS_VI_NTSC_LAN1]);
+  osViSetMode(&viMode);
   // when osViSetMode was called these flags were reset to their default values
   osViSetSpecialFeatures(OS_VI_DITHER_FILTER_ON | OS_VI_GAMMA_OFF |
                          OS_VI_GAMMA_DITHER_OFF | OS_VI_DIVOT_ON);
+
+#if HIGH_RESOLUTION && HIGH_RESOLUTION_HALF_Y
+  // osViSetYScale(0.5);
+#endif
 
   /* Since osViBlack becomes FALSE when the VI mode is changed, */
   /* set the screen display to OFF again.                 */

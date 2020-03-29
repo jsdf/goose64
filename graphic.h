@@ -9,13 +9,24 @@
 #define _GRAPHIC_H_
 #include "constants.h"
 
+#define HIGH_RESOLUTION_HALF_Y 1
+
+#define SCREEN_WD_MAX 640
+#define XSCALE_MAX 0x400
+
 // 2bpp = 16 bit color
 #define SCREEN_BPP 2
 /* The screen size  */
 #if HIGH_RESOLUTION
 #define SCREEN_WD 640
+
+#if HIGH_RESOLUTION_HALF_Y
+#define SCREEN_HT 240
+#else
 #define SCREEN_HT 480
-#define FRAME_BUFFERS 2
+#endif
+
+#define FRAME_BUFFERS 3
 // hi res z buffer uses 600kb, resides in 8th mb of RDRAM
 #define ZBUFFER_ADDR 0x80700000
 // hi res color buffers use 1200kb, reside in top of 6th, all of 7th mb of RDRAM
@@ -23,6 +34,7 @@
   (0x80700000 - SCREEN_WD * SCREEN_HT * SCREEN_BPP * FRAME_BUFFERS)
 #define CFB0_ADDR (CFB_ADDR)
 #define CFB1_ADDR (CFB0_ADDR + SCREEN_WD * SCREEN_HT * SCREEN_BPP)
+#define CFB2_ADDR (CFB1_ADDR + SCREEN_WD * SCREEN_HT * SCREEN_BPP)
 
 #else
 #define SCREEN_WD 320

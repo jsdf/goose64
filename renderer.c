@@ -16,9 +16,24 @@
 
 int Renderer_isZBufferedGameObject(GameObject* obj) {
   switch (obj->modelType) {
-    // case UniFloorModel:
-    // case UniBldgModel:
-    //   return FALSE;
+    case GroundModel:
+    case WaterModel:
+    case GooseModel:
+    case GardenerCharacterModel:
+    case BushModel:
+    case WatergrassModel:
+    case ReedModel:
+      return TRUE;
+    default:
+      return FALSE;
+  }
+}
+
+int Renderer_isBackgroundGameObject(GameObject* obj) {
+  switch (obj->modelType) {
+    case GroundModel:
+    case WaterModel:
+      return FALSE;
     default:
       return TRUE;
   }
@@ -26,8 +41,8 @@ int Renderer_isZBufferedGameObject(GameObject* obj) {
 
 int Renderer_isLitGameObject(GameObject* obj) {
   switch (obj->modelType) {
-    case UniFloorModel:
-    case UniBldgModel:
+    case GroundModel:
+    case WaterModel:
     case WallModel:
     case PlanterModel:
       return TRUE;
@@ -47,7 +62,7 @@ int Renderer_isAnimatedGameObject(GameObject* obj) {
 }
 
 float Renderer_gameobjectSortDist(GameObject* obj) {
-  if (!Renderer_isZBufferedGameObject(obj)) {
+  if (!Renderer_isBackgroundGameObject(obj)) {
     // always consider this far away
     return 10000.0F + obj->id;  // add object id to achieve stable sorting
   }
@@ -56,8 +71,16 @@ float Renderer_gameobjectSortDist(GameObject* obj) {
 }
 
 int Renderer_sortWorldComparatorFn(const void* a, const void* b) {
+#if RENDERER_PAINTERS_ALGORITHM
+  // sort far to near for painters algorithm
+  return ((RendererSortDistance*)b)->distance -
+         ((RendererSortDistance*)a)->distance;
+
+#else
+  // sort near to far, so we benefit from zbuffer fast bailout
   return ((RendererSortDistance*)a)->distance -
-         ((RendererSortDistance*)b)->distance;  // sort far to near
+         ((RendererSortDistance*)b)->distance;
+#endif
 }
 
 int Renderer_cullVisibility(GameObject* worldObjects,

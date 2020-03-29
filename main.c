@@ -90,7 +90,7 @@ void stage00(int pendingGfx) {
   profStartFrame = CUR_TIME_MS();
   /* Provide the display process if n or less RCP tasks are processing or
         waiting for the process.  */
-  if (!HIGH_RESOLUTION || nuScRetraceCounter % 2 == 0) {
+  if (nuScRetraceCounter % FRAME_SKIP == 0) {
     if (pendingGfx < GFX_TASKS_PER_MAKEDL * 2) {
       makeDL00();
       Trace_addEvent(MainMakeDisplayListTraceEvent, profStartFrame,
