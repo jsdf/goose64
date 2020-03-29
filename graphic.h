@@ -54,11 +54,15 @@
 /*-------------------------- define structure ------------------------------ */
 /* The structure of the projection-matrix  */
 typedef struct {
+  // this stuff gets sent to the RCP so it must be 64bit aligned otherwise
+  // everything will fuck up
   Mtx projection;
   Mtx modeling;
   Mtx camera;
 
   Mtx zUpToYUpCoordinatesRotation;
+
+  Mtx objTransforms[MAX_WORLD_OBJECTS];
 } Dynamic;
 
 /*-------------------------------- parameter---------------------------------*/

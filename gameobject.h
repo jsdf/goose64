@@ -19,7 +19,6 @@ typedef struct GameObject {
   PhysBody* physBody;
   int visible;
   int solid;
-  Mtx objTransform;
 } GameObject;
 
 GameObject* GameObject_alloc();

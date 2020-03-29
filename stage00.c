@@ -794,7 +794,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
     }
 
     // set the transform in world space for the gameobject to render
-    guPosition(&obj->objTransform,
+    guPosition(&dynamicp->objTransforms[i],
                0.0F,                                        // rot x
                obj->rotation.y,                             // rot y
                0.0F,                                        // rot z
@@ -804,7 +804,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
                obj->position.z                              // pos z
     );
     gSPMatrix(
-        glistp++, OS_K0_TO_PHYSICAL(&(obj->objTransform)),
+        glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->objTransforms[i])),
         G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);  // gameobject mtx start
 
     if (Renderer_isAnimatedGameObject(obj)) {
