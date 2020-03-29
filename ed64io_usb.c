@@ -142,7 +142,6 @@ void ed64Printf(const char* fmt, ...) {
 
 void ed64PrintfSync(const char* fmt, ...) {
   va_list ap;
-  return;
 
   va_start(ap, fmt);
   _Printf((void (*)(void*))_PrintfImplUSBSync, 0, fmt, ap);
