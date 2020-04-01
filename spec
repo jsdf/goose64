@@ -5,13 +5,18 @@
 
   	0x80000000  exception vectors, ...
   	0x80000400  zbuffer (size 320*240*2)
-  	0x80025c00  codesegment
+  	0x80025c00  codesegment (must end by 0x80100000)
+	      :       models
+                collision
+                audio data
                 heap (512 * 1024)
-    0x80025c00
-	      :  
-    0x80100000  end of 1st mb (codesegment must end before this)
+    0x8030F800  Audio Heap
   	0x8038F800  cfb 16b 3buffer (size 320*240*2*3)
-
+    0x80400000  expansion pack
+                trace buffer
+    0x8053E000  hi res cfb (size 640*480*2*3)
+    0x80700000  hi res zbuffer (size 640*480*2)
+    0x80796000  
 */
 
 #include <nusys.h>
@@ -24,7 +29,7 @@ beginseg
 	address NU_SPEC_BOOT_ADDR
         stack   NU_SPEC_BOOT_STACK
 
-  maxsize 0xDA400 /*  keep inside first mb of RDRAM */
+  /* maxsize 0xDA400  keep inside first mb of RDRAM */
 
 	include "codesegment.o"
   include "$(ROOT)/usr/lib/PR/rspboot.o"   
@@ -45,13 +50,15 @@ beginseg
   include "$(ROOT)/usr/lib/PR/gspF3DLX2.Rej.fifo.o"
 	include "$(ROOT)/usr/lib/PR/gspL3DEX2.fifo.o"
 	include "$(ROOT)/usr/lib/PR/gspS2DEX2.fifo.o"
+
+  include "$(ROOT)/usr/lib/PR/n_aspMain.o"
 endseg
 
 beginseg
   name  "models"
   flags OBJECT
   after "code"
-  include "modelssegement.o"
+  include "models.o"
 endseg
 
 beginseg
@@ -61,7 +68,6 @@ beginseg
   include "university_map_collision.o"
 endseg
 
-
 beginseg
   name  "memheap"
   flags OBJECT
@@ -69,6 +75,27 @@ beginseg
   include "mem_heap.o"
 endseg
 
+
+/* sample data - pointer bank */
+beginseg
+  name "pbank"
+  flags RAW
+  include "honks.ptr"
+endseg
+
+/* sample data - wave bank */
+beginseg
+  name "wbank"
+  flags RAW
+  include "honks.wbk"
+endseg
+ 
+/* sfx data */
+beginseg
+  name "sfx"
+  flags RAW
+  include "honks.bfx"
+endseg
 
 beginseg
   name  "trace"
@@ -78,13 +105,14 @@ beginseg
   include "trace.o"
 endseg
 
-
-
 beginwave
 	name	"goose"
   include "code"
   include "models"
+  include "collision" 
   include "memheap"
-  include "collision"
+  include "pbank"
+  include "wbank"
+  include "sfx"
   include "trace"
 endwave

@@ -6,6 +6,8 @@ NUSYSLIBDIR  = $(N64KITDIR)/nusys/lib
 NUSTDINCDIR = $(N64KITDIR)/nustd/include
 NUSTDLIBDIR = $(N64KITDIR)/nustd/lib
 
+NUAUDIOLIB = -lnualstl_n_d -ln_gmus_d -ln_gaudio_sc
+
 LIB = $(ROOT)/usr/lib
 LPR = $(LIB)/PR
 INC = $(ROOT)/usr/include
@@ -13,10 +15,11 @@ CC  = gcc
 LD  = ld
 MAKEROM = mild
 
-LCDEFS =	-DNU_DEBUG -DF3DEX_GBI_2 -D__N64__
+LCDEFS =	-DNU_DEBUG -DN_AUDIO -DF3DEX_GBI_2 -D__N64__
 LCINCS =	-I. -nostdinc -I- -I$(NUSTDINCDIR) -I$(NUSYSINCDIR) -I$(ROOT)/usr/include/PR
 LCOPTS =	-G 0
-LDFLAGS = $(MKDEPOPT) -L$(LIB)  -L$(NUSYSLIBDIR) -L$(NUSTDLIBDIR)  -lnusys_d -lnustd_d -lgultra_d -L$(GCCDIR)/mipse/lib -lkmc
+# the order of $(NUAUDIOLIB) and -lgultra_d matter :|
+LDFLAGS = $(MKDEPOPT) -L$(LIB)  -L$(NUSYSLIBDIR) -L$(NUSTDLIBDIR) $(NUAUDIOLIB) -lnusys_d -lnustd_d -lgultra_d -L$(GCCDIR)/mipse/lib -lkmc
 
 OPTIMIZER =	-g
 
@@ -28,20 +31,14 @@ HFILES =	main.h graphic.h testingCube.h vec3d.h vec2d.h gameobject.h game.h mode
 
 ED64CODEFILES = ed64io_usb.c ed64io_sys.c ed64io_everdrive.c
 
-CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c  pathfinding.c frustum.c university_map_graph.c $(ED64CODEFILES)
+CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c  pathfinding.c frustum.c  university_map_graph.c $(ED64CODEFILES)
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
 
-DATAFILES   = mem_heap.c trace.c university_map_collision.c 
+DATAFILES   = mem_heap.c trace.c university_map_collision.c  models.c
 DATAOBJECTS =	$(DATAFILES:.c=.o)
 
 CODESEGMENT =	codesegment.o
-
-
-MODELSFILES   = models.c
-MODELSOBJECTS =	$(MODELSFILES:.c=.o)
-
-MODELSSEGMENT =	modelssegement.o
 
 OBJECTS =	$(CODESEGMENT) $(MODELSSEGMENT) $(DATAOBJECTS)
 
@@ -51,11 +48,8 @@ default:        $(TARGETS)
 include $(COMMONRULES)
 
 $(CODESEGMENT):	$(CODEOBJECTS) Makefile $(HFILES)
-		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)
-
-$(MODELSSEGMENT):	$(MODELSOBJECTS)
 # use -M to print memory map from ld
-		$(LD) -o $(MODELSSEGMENT) -r $(MODELSOBJECTS) $(LDFLAGS) -M
+		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS) -M
 
 $(TARGETS):	$(OBJECTS)
 # use -m to print memory map from mild

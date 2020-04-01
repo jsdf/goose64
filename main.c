@@ -4,6 +4,8 @@
 #include "main.h"
 #include "malloc.h"
 
+#include <nualstl_n.h>
+
 #include <PR/os_convert.h>
 #include "ed64io_everdrive.h"
 #include "ed64io_usb.h"
@@ -35,8 +37,6 @@ int systemHeapMemoryInit(void) {
     die("failed to init heap\n");
   } else {
     ed64PrintfSync("init heap success, allocated=%d\n", MEM_HEAP_SIZE);
-
-    ed64PrintfSync("nice\n");
   }
 
   if (osGetMemSize() == 0x00800000) {
@@ -66,6 +66,9 @@ void mainproc(void) {
 
   /* The initialization of the controller manager  */
   contPattern = nuContInit();
+
+  /* The initialization of audio */
+  nuAuStlInit();
 
   /* The initialization for stage00()  */
   initStage00();

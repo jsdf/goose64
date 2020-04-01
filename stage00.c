@@ -8,6 +8,8 @@
 #include <nusys.h>
 // #include <stdlib.h>
 
+#include <nualstl_n.h>
+
 #include <malloc.h>
 #include <math.h>
 
@@ -24,15 +26,13 @@
 #include "pathfinding.h"
 #include "physics.h"
 #include "renderer.h"
+#include "sound.h"
 #include "trace.h"
 #include "vec2d.h"
 #include "vec3d.h"
 
 #include "models.h"
-
-// define stuff like _modelsSegmentRomStart
-EXTERN_SEGMENT(models);
-EXTERN_SEGMENT(collision);
+#include "segments.h"
 
 // map
 #include "university_map.h"
@@ -52,6 +52,7 @@ EXTERN_SEGMENT(collision);
 #define CONSOLE_SHOW_RCP_TASKS 1
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
+#define SOUND_TEST 1
 
 typedef enum RenderMode {
   ToonFlatShadingRenderMode,
@@ -106,6 +107,8 @@ static RenderMode renderModeSetting;
 PhysWorldData physWorldData;
 
 void drawWorldObjects(Dynamic* dynamicp);
+void soundCheck(void);
+void Rom2Ram(void*, void*, s32);
 
 #define OBJ_START_VAL 1000
 
@@ -121,17 +124,30 @@ Lights1 sun_light = gdSPDefLights1(120,
 
 Lights0 amb_light = gdSPDefLights0(200, 200, 200 /*  ambient light */);
 
+static musHandle sndHandle = 0;
+
 /* The initialization of stage 0 */
 void initStage00() {
   Game* game;
   int i;
 
   // load in the models segment into higher memory
-  nuPiReadRom((u32)_modelsSegmentRomStart, _modelsSegmentStart,
-              (u32)_modelsSegmentRomEnd - (u32)_modelsSegmentRomStart);
+  Rom2Ram(_modelsSegmentRomStart, _modelsSegmentStart,
+          _modelsSegmentRomEnd - _modelsSegmentRomStart);
   // load in the collision segment into higher memory
-  nuPiReadRom((u32)_collisionSegmentRomStart, _collisionSegmentStart,
-              (u32)_collisionSegmentRomEnd - (u32)_collisionSegmentRomStart);
+  Rom2Ram(_collisionSegmentRomStart, _collisionSegmentStart,
+          _collisionSegmentRomEnd - _collisionSegmentRomStart);
+
+  /* Read and register the sample bank. */
+  nuAuStlPtrBankInit(PBANK_END - PBANK_START);
+  nuAuStlPtrBankSet((u8*)PBANK_START, PBANK_END - PBANK_START,
+                    (u8*)WBANK_START);
+
+  /* Read and register the sound effects. */
+  nuAuStlSndPlayerDataSet((u8*)SFX_START, SFX_END - SFX_START);
+
+  debugPrintfSync("audio heap used=%d, free=%d\n", nuAuStlHeapGetUsed(),
+                  nuAuStlHeapGetFree());
 
   physWorldData = (PhysWorldData){university_map_collision_collision_mesh,
                                   UNIVERSITY_MAP_COLLISION_LENGTH,
@@ -523,6 +539,9 @@ void updateGame00(void) {
     }
   }
 
+#if SOUND_TEST
+  soundCheck();
+#endif
   if (game->freeView) {
     checkDebugControls(game);
   } else {
@@ -586,9 +605,9 @@ void updateGame00(void) {
 
   Game_update(&input);
 
-  if (nuScRetraceCounter % VSYNC_FPS * FRAME_SKIP == 0) {
-    debugPrintfSync("retrace=%d\n", nuScRetraceCounter);
-  }
+  // if (nuScRetraceCounter % VSYNC_FPS * FRAME_SKIP == 0) {
+  //   debugPrintfSync("retrace=%d\n", nuScRetraceCounter);
+  // }
 
   if (usbEnabled) {
 #if LOG_TRACES
@@ -918,4 +937,44 @@ void drawWorldObjects(Dynamic* dynamicp) {
   free(worldObjectsVisibility);
 
   Trace_addEvent(DrawIterTraceEvent, profStartIter, CUR_TIME_MS());
+}
+
+/* Provide playback and control of audio by the button of the controller */
+void soundCheck(void) {
+  static int snd_no = 0;
+
+  /* The order in which audio is played can be determined using the right and
+   * left sides of the cross key. */
+  if ((contdata[0].trigger & L_JPAD) || (contdata[0].trigger & R_JPAD)) {
+    if (snd_no)
+      nuAuStlSndPlayerSndStop(sndHandle, 0);
+
+    if (contdata[0].trigger & L_JPAD) {
+      snd_no--;
+      if (snd_no < 1)
+        snd_no = MAX_SOUND_TYPE;
+    } else {
+      snd_no++;
+      if (snd_no > MAX_SOUND_TYPE)
+        snd_no = 1;
+    }
+
+    sndHandle = nuAuStlSndPlayerPlay(snd_no);
+    nuAuStlSndPlayerSetSndPitch(sndHandle, 6);
+  }
+}
+
+/*----------------------------------------------------------------------*/
+/*  Rom2Ram - Reads data from ROM into RAM      */
+/*  IN: from_addr The source address of the data in ROM   */
+/*    to_addr   The destination address of the data in RAM */
+/*    seq_size          Size of the data to read      */
+/*  RET:  Nothing             */
+/*----------------------------------------------------------------------*/
+void Rom2Ram(void* from_addr, void* to_addr, s32 seq_size) {
+  /* Cannot transfer if size is an odd number, so make it an even number. */
+  if (seq_size & 0x00000001)
+    seq_size++;
+
+  nuPiReadRom((u32)from_addr, to_addr, seq_size);
 }
