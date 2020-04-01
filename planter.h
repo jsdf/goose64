@@ -35,7 +35,7 @@ Texture preview:
 	:::::::::::---------------------
 */
 
-unsigned short Text_planter_planter_diff[] = {
+unsigned short Text_planter_planter_diff[] __attribute__((aligned (16))) = {
 	0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,
 	0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,
 	0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,
@@ -70,7 +70,7 @@ unsigned short Text_planter_planter_diff[] = {
 	0x5a91,0x5a91,0x5a91,0x5a91,0x5a91,0x5a91,0x5a91,0x5a91,0x6291,0x5a91,0x62d3,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,
 };
 
-Vtx_tn Vtx_planter_mesh01_0[32] = {
+Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (16))) = {
 	{  -56,    31,   -56, 0,     95,   1860,     0,   127,     0, 0},
 	{   55,    31,    55, 0,    522,   1433,     0,   127,     0, 0},
 	{   55,    31,   -56, 0,     95,   1433,     0,   127,     0, 0},
@@ -103,7 +103,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] = {
 	{  -55,   -33,    74, 0,   1485,    742,   127,     0,     0, 0},
 	{  -55,    31,    74, 0,   1485,   1237,     0,     0,   127, 0},
 	{  -76,   -33,    74, 0,   1980,    742,     0,     0,   127, 0},
-};Vtx_tn Vtx_planter_mesh01_1[32] = {
+};Vtx_tn Vtx_planter_mesh01_1[32] __attribute__((aligned (16))) = {
 	{  -76,    31,    53, 0,    990,   1732,     0,   127,     0, 0},
 	{  -55,    31,    74, 0,   1485,   1237,     0,     0,   127, 0},
 	{  -55,    31,    53, 0,    990,   1237,   127,     0,     0, 0},
@@ -136,7 +136,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] = {
 	{   75,   -33,   -54, 0,   1485,    742,   127,     0,     0, 0},
 	{   75,    31,   -54, 0,   1485,   1237,     0,     0,   127, 0},
 	{   54,   -33,   -54, 0,   1980,    742,     0,     0,   127, 0},
-};Vtx_tn Vtx_planter_mesh01_2[32] = {
+};Vtx_tn Vtx_planter_mesh01_2[32] __attribute__((aligned (16))) = {
 	{   54,    31,   -75, 0,    990,   1732,     0,   127,     0, 0},
 	{   75,    31,   -54, 0,   1485,   1237,     0,     0,   127, 0},
 	{   75,    31,   -75, 0,    990,   1237,   127,     0,     0, 0},
@@ -169,7 +169,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] = {
 	{  -76,    31,   -54, 0,   1980,   1237,     0,     0,   127, 0},
 	{  -76,   -33,   -54, 0,   1980,    742,     0,     0,   127, 0},
 	{   54,    31,   -54, 0,   1485,   1732,     0,   127,     0, 0},
-};Vtx_tn Vtx_planter_mesh01_3[6] = {
+};Vtx_tn Vtx_planter_mesh01_3[6] __attribute__((aligned (16))) = {
 	{  -76,    31,   -75, 0,    990,   1732,     0,   127,     0, 0},
 	{  -76,    31,   -54, 0,   1485,   1732,     0,   127,     0, 0},
 	{  -55,    31,   -54, 0,   1485,   1237,     0,     0,   127, 0},
@@ -178,7 +178,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] = {
 	{   54,   -33,   -54, 0,   1980,    742,     0,     0,   127, 0},
 };
 
-Gfx Vtx_planter_mesh01_dl[] = {
+Gfx Vtx_planter_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_planter_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -215,7 +215,7 @@ Gfx Vtx_planter_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_planter[] = {
+Gfx Wtx_planter[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_planter_planter_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_planter_mesh01_dl),
@@ -224,6 +224,6 @@ Gfx Wtx_planter[] = {
 
 #define PLANTER_MODEL_MESH_COUNT 1
 
-Gfx* planter_model_meshes[2] = {
+Gfx* planter_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_planter,
 };

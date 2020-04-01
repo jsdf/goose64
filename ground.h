@@ -35,7 +35,7 @@ Texture preview:
 	================================
 */
 
-unsigned short Text_ground_gardengrass_diff[] = {
+unsigned short Text_ground_gardengrass_diff[] __attribute__((aligned (16))) = {
 	0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,
 	0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,
 	0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,
@@ -70,67 +70,67 @@ unsigned short Text_ground_gardengrass_diff[] = {
 	0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,
 };
 
-Vtx_tn Vtx_ground_Ground_001_Grid_002_mesh01_0[4] = {
+Vtx_tn Vtx_ground_Ground_001_Grid_002_mesh01_0[4] __attribute__((aligned (16))) = {
 	{  275,     0,  1016, 0,    879,   1980,     0,   126,    -1, 0},
 	{ -276,    -3, -1017, 0,   1980,   1540,     0,   126,    -1, 0},
 	{ -276,     0,  1016, 0,    879,   1540,     0,   126,    -1, 0},
 	{  275,     0, -1017, 0,   1980,   1980,    -1,   126,     0, 0},
 };
 
-Gfx Vtx_ground_Ground_001_Grid_002_mesh01_dl[] = {
+Gfx Vtx_ground_Ground_001_Grid_002_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_ground_Ground_001_Grid_002_mesh01_0[0], 4, 0),
 	gsSP2Triangles(0,1,2,0,0,3,1,0),
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_ground_Ground_001_Grid_002[] = {
+Gfx Wtx_ground_Ground_001_Grid_002[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_ground_gardengrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_ground_Ground_001_Grid_002_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_ground_Ground_002_Grid_003_mesh01_0[4] = {
+Vtx_tn Vtx_ground_Ground_002_Grid_003_mesh01_0[4] __attribute__((aligned (16))) = {
 	{  551,     0,   551, 0,      0,   1980,     0,   127,     0, 0},
 	{ -552,     0,  -552, 0,    879,   1100,     0,   127,     0, 0},
 	{ -552,     0,   551, 0,      0,   1100,     0,   127,     0, 0},
 	{  551,     0,  -552, 0,    879,   1980,     0,   127,     0, 0},
 };
 
-Gfx Vtx_ground_Ground_002_Grid_003_mesh01_dl[] = {
+Gfx Vtx_ground_Ground_002_Grid_003_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_ground_Ground_002_Grid_003_mesh01_0[0], 4, 0),
 	gsSP2Triangles(0,1,2,0,0,3,1,0),
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_ground_Ground_002_Grid_003[] = {
+Gfx Wtx_ground_Ground_002_Grid_003[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_ground_gardengrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_ground_Ground_002_Grid_003_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_ground_Ground_003_Grid_004_mesh01_0[4] = {
+Vtx_tn Vtx_ground_Ground_003_Grid_004_mesh01_0[4] __attribute__((aligned (16))) = {
 	{ -756,    -1,   551, 0,      0,      0,     0,   126,     0, 0},
 	{  755,    -1,  -552, 0,    879,   1100,     0,   126,     0, 0},
 	{ -756,     1,  -552, 0,    879,      0,     0,   126,     0, 0},
 	{  755,    -1,   551, 0,      0,   1100,     0,   127,     0, 0},
 };
 
-Gfx Vtx_ground_Ground_003_Grid_004_mesh01_dl[] = {
+Gfx Vtx_ground_Ground_003_Grid_004_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_ground_Ground_003_Grid_004_mesh01_0[0], 4, 0),
 	gsSP2Triangles(0,1,2,0,0,3,1,0),
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_ground_Ground_003_Grid_004[] = {
+Gfx Wtx_ground_Ground_003_Grid_004[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_ground_gardengrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_ground_Ground_003_Grid_004_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_ground_Ground_004_Grid_005_mesh01_0[12] = {
+Vtx_tn Vtx_ground_Ground_004_Grid_005_mesh01_0[12] __attribute__((aligned (16))) = {
 	{ -413,     4,   277, 0,    879,    879,    -1,   126,    -1, 0},
 	{ -138,     4,     1, 0,   1100,   1100,    -1,   126,    -1, 0},
 	{ -413,     4,     1, 0,   1100,    879,    -1,   126,    -1, 0},
@@ -145,7 +145,7 @@ Vtx_tn Vtx_ground_Ground_004_Grid_005_mesh01_0[12] = {
 	{  413,     4,  -274, 0,   1320,   1540,    -8,   126,     0, 0},
 };
 
-Gfx Vtx_ground_Ground_004_Grid_005_mesh01_dl[] = {
+Gfx Vtx_ground_Ground_004_Grid_005_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_ground_Ground_004_Grid_005_mesh01_0[0], 12, 0),
 	gsSP2Triangles(0,1,2,0,3,1,4,0),
 	gsSP2Triangles(5,6,3,0,2,7,8,0),
@@ -156,14 +156,14 @@ Gfx Vtx_ground_Ground_004_Grid_005_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_ground_Ground_004_Grid_005[] = {
+Gfx Wtx_ground_Ground_004_Grid_005[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_ground_gardengrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_ground_Ground_004_Grid_005_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_ground_Ground_005_Grid_006_mesh01_0[15] = {
+Vtx_tn Vtx_ground_Ground_005_Grid_006_mesh01_0[15] __attribute__((aligned (16))) = {
 	{ -655,     5,   281, 0,    879,      0,    -2,   126,     8, 0},
 	{ -248,    26,     6, 0,   1100,    219,    -2,   126,     8, 0},
 	{ -655,    23,     6, 0,   1100,      0,    -2,   126,     8, 0},
@@ -181,7 +181,7 @@ Vtx_tn Vtx_ground_Ground_005_Grid_006_mesh01_0[15] = {
 	{  580,     3,   281, 0,    879,    879,     0,   126,    -1, 0},
 };
 
-Gfx Vtx_ground_Ground_005_Grid_006_mesh01_dl[] = {
+Gfx Vtx_ground_Ground_005_Grid_006_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_ground_Ground_005_Grid_006_mesh01_0[0], 15, 0),
 	gsSP2Triangles(0,1,2,0,3,4,1,0),
 	gsSP2Triangles(5,6,4,0,7,8,6,0),
@@ -194,14 +194,14 @@ Gfx Vtx_ground_Ground_005_Grid_006_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_ground_Ground_005_Grid_006[] = {
+Gfx Wtx_ground_Ground_005_Grid_006[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_ground_gardengrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_ground_Ground_005_Grid_006_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_ground_Ground_006_Grid_007_mesh01_0[18] = {
+Vtx_tn Vtx_ground_Ground_006_Grid_007_mesh01_0[18] __attribute__((aligned (16))) = {
 	{ -377,    28,   636, 0,   1320,    879,   -12,   124,   -20, 0},
 	{  -93,    12,   374, 0,   1540,   1100,   -12,   124,   -20, 0},
 	{ -385,   -18,   355, 0,   1540,    879,   -12,   124,   -20, 0},
@@ -222,7 +222,7 @@ Vtx_tn Vtx_ground_Ground_006_Grid_007_mesh01_0[18] = {
 	{  458,    43,  -827, 0,   1980,   1540,   -20,   125,     0, 0},
 };
 
-Gfx Vtx_ground_Ground_006_Grid_007_mesh01_dl[] = {
+Gfx Vtx_ground_Ground_006_Grid_007_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_ground_Ground_006_Grid_007_mesh01_0[0], 18, 0),
 	gsSP2Triangles(0,1,2,0,3,4,1,0),
 	gsSP2Triangles(5,4,6,0,2,7,8,0),
@@ -238,14 +238,14 @@ Gfx Vtx_ground_Ground_006_Grid_007_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_ground_Ground_006_Grid_007[] = {
+Gfx Wtx_ground_Ground_006_Grid_007[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_ground_gardengrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_ground_Ground_006_Grid_007_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_ground_Ground_Grid_008_mesh01_0[30] = {
+Vtx_tn Vtx_ground_Ground_Grid_008_mesh01_0[30] __attribute__((aligned (16))) = {
 	{ -245,    37,   673, 0,   1320,    219,    12,   116,   -49, 0},
 	{ -658,   -27,   413, 0,   1540,      0,    12,   116,   -49, 0},
 	{ -654,    87,   686, 0,   1320,      0,    12,   116,   -49, 0},
@@ -278,7 +278,7 @@ Vtx_tn Vtx_ground_Ground_Grid_008_mesh01_0[30] = {
 	{  586,    17,  -793, 0,   1980,    879,     5,   126,     9, 0},
 };
 
-Gfx Vtx_ground_Ground_Grid_008_mesh01_dl[] = {
+Gfx Vtx_ground_Ground_Grid_008_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_ground_Ground_Grid_008_mesh01_0[0], 30, 0),
 	gsSP2Triangles(0,1,2,0,3,4,0,0),
 	gsSP2Triangles(3,5,6,0,7,8,5,0),
@@ -303,7 +303,7 @@ Gfx Vtx_ground_Ground_Grid_008_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_ground_Ground_Grid_008[] = {
+Gfx Wtx_ground_Ground_Grid_008[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_ground_gardengrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_ground_Ground_Grid_008_mesh01_dl),
@@ -312,7 +312,7 @@ Gfx Wtx_ground_Ground_Grid_008[] = {
 
 #define GROUND_MODEL_MESH_COUNT 7
 
-Gfx* ground_model_meshes[8] = {
+Gfx* ground_model_meshes[7] __attribute__((aligned (16))) = {
     Wtx_ground_Ground_001_Grid_002,
     Wtx_ground_Ground_002_Grid_003,
     Wtx_ground_Ground_003_Grid_004,

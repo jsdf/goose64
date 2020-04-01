@@ -35,7 +35,7 @@ Texture preview:
 	%%%%%%%%%%%%%%%%%%%%%%%%%@@@@@@@
 */
 
-unsigned short Text_gooserig_goosetex_diff[] = {
+unsigned short Text_gooserig_goosetex_diff[] __attribute__((aligned (16))) = {
 	0xfffd,0xfffd,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
 	0xfffd,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
 	0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0x0001,0x0001,0xffff,0xffff,
@@ -70,7 +70,7 @@ unsigned short Text_gooserig_goosetex_diff[] = {
 	0xffbb,0xffbb,0xffbb,0xffbb,0xffbb,0xffbb,0xffbb,0xffbb,0xffbb,0xffbd,0xfffd,0xfffd,0xfffd,0xfffd,0xfffd,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
 };
 
-Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] = {
+Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   -7,     0,   -27, 0,   1070,    994,   -17,     0,  -126, 0},
 	{  -27,   -11,   -14, 0,   1342,    883,   -90,   -71,   -56, 0},
 	{  -45,     0,     1, 0,   1572,   1004,  -119,     0,    45, 0},
@@ -103,7 +103,7 @@ Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] = {
 	{  -12,   -11,   -25, 0,    123,   1802,   -48,   -52,  -107, 0},
 	{   -1,   -17,   -23, 0,     28,   1691,    22,   -90,   -88, 0},
 	{   14,     0,   -21, 0,    787,   1004,    82,     0,   -97, 0},
-};Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_1[32] = {
+};Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_1[32] __attribute__((aligned (16))) = {
 	{   26,   -12,     3, 0,   1008,   1617,    98,   -80,   -11, 0},
 	{   18,    -9,    19, 0,    977,   1506,    29,   -70,   102, 0},
 	{    7,   -17,     8, 0,   1120,   1609,   -22,  -106,    66, 0},
@@ -136,7 +136,7 @@ Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] = {
 	{   -8,     0,    11, 0,    634,    771,   -41,     0,   120, 0},
 	{  -27,    10,   -14, 0,    451,   1802,   -90,    70,   -56, 0},
 	{  -16,    16,   -10, 0,    345,   1643,   -51,   115,    12, 0},
-};Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_2[32] = {
+};Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_2[32] __attribute__((aligned (16))) = {
 	{   18,     8,    19, 0,    977,   1506,    29,    69,   102, 0},
 	{   23,     2,    16, 0,    377,   1527,    98,    25,    75, 0},
 	{   26,    11,     3, 0,   1008,   1617,    98,    79,   -11, 0},
@@ -171,7 +171,7 @@ Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] = {
 	{   -1,    16,   -23, 0,     28,   1691,    22,    89,   -88, 0},
 };
 
-Gfx Vtx_gooserig_goosebody_goosebodymesh_mesh01_dl[] = {
+Gfx Vtx_gooserig_goosebody_goosebodymesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,1,3,2,0),
 	gsSP2Triangles(4,5,0,0,6,7,8,0),
@@ -205,14 +205,14 @@ Gfx Vtx_gooserig_goosebody_goosebodymesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_gooserig_goosebody_goosebodymesh[] = {
+Gfx Wtx_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_goosebody_goosebodymesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[32] = {
+Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   -6,    -1,    -1, 0,   1764,   1231,   -71,    -7,  -106, 0},
 	{   -6,     1,    -1, 0,   1691,   1231,   -73,    57,   -88, 0},
 	{   -3,    -1,    -2, 0,   1764,   1231,   -11,    -2,  -127, 0},
@@ -245,7 +245,7 @@ Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[32] = {
 	{   -1,    -5,    -2, 0,   1837,   1304,   -38,   -67,  -102, 0},
 	{    8,    -8,    -2, 0,   1764,   1304,   116,   -44,   -25, 0},
 	{   -1,    -5,    -2, 0,   1764,   1231,   -38,   -67,  -102, 0},
-};Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_1[16] = {
+};Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_1[16] __attribute__((aligned (16))) = {
 	{   -6,    -2,    -1, 0,   1764,   1231,   -68,   -53,   -94, 0},
 	{   -2,    -4,    -2, 0,   1764,   1231,   -10,    -3,  -127, 0},
 	{   -1,    -5,    -2, 0,   1764,   1231,   -38,   -67,  -102, 0},
@@ -264,7 +264,7 @@ Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[32] = {
 	{   -8,    -1,     1, 0,   1545,   1377,  -115,   -10,    53, 0},
 };
 
-Gfx Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_dl[] = {
+Gfx Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,6,2,9,0),
@@ -296,14 +296,14 @@ Gfx Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_gooserig_goosefoot_l_goosefoot_lmesh[] = {
+Gfx Wtx_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[32] = {
+Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   -6,     0,    -1, 0,   1764,   1231,    70,    -7,   105, 0},
 	{   -6,    -2,    -1, 0,   1691,   1231,    72,    57,    87, 0},
 	{   -3,     0,    -2, 0,   1764,   1231,    10,    -2,   126, 0},
@@ -336,7 +336,7 @@ Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[32] = {
 	{   -1,     4,    -2, 0,   1837,   1304,    37,   -67,   101, 0},
 	{    8,     7,    -2, 0,   1764,   1304,  -117,   -44,    23, 0},
 	{   -1,     4,    -2, 0,   1764,   1231,    37,   -67,   101, 0},
-};Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_1[16] = {
+};Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_1[16] __attribute__((aligned (16))) = {
 	{   -6,     1,    -1, 0,   1764,   1231,    67,   -53,    93, 0},
 	{   -2,     3,    -2, 0,   1764,   1231,    10,    -4,   126, 0},
 	{   -1,     4,    -2, 0,   1764,   1231,    37,   -67,   101, 0},
@@ -355,7 +355,7 @@ Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[32] = {
 	{   -8,     0,     1, 0,   1545,   1377,   114,   -10,   -54, 0},
 };
 
-Gfx Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_dl[] = {
+Gfx Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,6,2,9,0),
@@ -387,14 +387,14 @@ Gfx Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_gooserig_goosefoot_r_goosefoot_rmesh[] = {
+Gfx Wtx_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] = {
+Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] __attribute__((aligned (16))) = {
 	{    3,    -5,    -3, 0,    198,   1556,    14,   -99,   -79, 0},
 	{   -1,    -4,     5, 0,    299,   1398,   -15,  -115,    52, 0},
 	{   -1,    -6,    -1, 0,    287,   1481,    19,  -125,   -17, 0},
@@ -427,7 +427,7 @@ Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] = {
 	{    0,    -4,     6, 0,   1796,    177,    55,   -85,    76, 0},
 	{   -1,    -4,     5, 0,   1814,    188,   -15,  -115,    52, 0},
 	{  -11,     0,   -12, 0,   1172,    755,  -127,     0,   -14, 0},
-};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_1[32] = {
+};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_1[32] __attribute__((aligned (16))) = {
 	{    0,     0,     8, 0,   1898,    663,    37,     0,   121, 0},
 	{   -6,     0,     7, 0,   1859,    676,   -76,     0,   102, 0},
 	{   -1,    -4,     6, 0,   1877,    622,    -9,   -85,    94, 0},
@@ -460,7 +460,7 @@ Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] = {
 	{   -8,     2,    -9, 0,    377,   1527,    -7,   120,   -39, 0},
 	{   -1,     3,     6, 0,   1877,    622,    -9,    84,    94, 0},
 	{   -1,     3,     5, 0,   1866,    602,   -15,   114,    52, 0},
-};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_2[32] = {
+};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_2[32] __attribute__((aligned (16))) = {
 	{   11,     0,    -4, 0,   1865,   1406,   121,     0,   -38, 0},
 	{    3,     1,     3, 0,   1522,   1361,    74,    60,    83, 0},
 	{    4,     0,     3, 0,   1499,   1406,    88,     0,    91, 0},
@@ -493,7 +493,7 @@ Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] = {
 	{   -1,     3,     6, 0,   1815,    167,    -9,    84,    94, 0},
 	{   -1,    -4,     6, 0,    885,   1307,    -9,   -85,    94, 0},
 	{    0,    -4,     6, 0,    865,   1317,    55,   -85,    76, 0},
-};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_3[8] = {
+};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_3[8] __attribute__((aligned (16))) = {
 	{    0,    -4,     6, 0,    865,   1317,    55,   -85,    76, 0},
 	{    0,    -4,     5, 0,    845,   1328,    28,  -122,    24, 0},
 	{    3,    -4,     2, 0,    763,   1328,    48,  -109,    43, 0},
@@ -504,7 +504,7 @@ Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] = {
 	{    0,     0,     8, 0,    888,   1266,    37,     0,   121, 0},
 };
 
-Gfx Vtx_gooserig_goosehead_gooseheadmesh_mesh01_dl[] = {
+Gfx Vtx_gooserig_goosehead_gooseheadmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,0,3,4,0),
 	gsSP2Triangles(3,5,4,0,6,7,8,0),
@@ -542,14 +542,14 @@ Gfx Vtx_gooserig_goosehead_gooseheadmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_gooserig_goosehead_gooseheadmesh[] = {
+Gfx Wtx_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_goosehead_gooseheadmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] = {
+Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] __attribute__((aligned (16))) = {
 	{    1,    -2,    -2, 0,   1038,   1041,    64,   -79,   -77, 0},
 	{    8,    -2,     5, 0,   1038,   1041,   125,     7,   -17, 0},
 	{    6,    -7,     5, 0,   1038,   1041,    73,  -102,   -23, 0},
@@ -582,7 +582,7 @@ Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] = {
 	{    5,     5,     6, 0,    965,   1041,    81,    97,    -8, 0},
 	{   -1,     4,    10, 0,    965,   1041,   -26,   107,    63, 0},
 	{    1,     2,    14, 0,    965,   1041,    28,    89,    85, 0},
-};Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_1[32] = {
+};Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_1[32] __attribute__((aligned (16))) = {
 	{    1,     2,    14, 0,    965,   1041,    28,    89,    85, 0},
 	{   -1,     4,    10, 0,    965,   1041,   -26,   107,    63, 0},
 	{   -3,     0,    12, 0,    965,   1041,   -75,    92,    45, 0},
@@ -615,7 +615,7 @@ Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] = {
 	{   -1,     0,   -18, 0,   1729,   1442,    -3,    -1,  -127, 0},
 	{   -1,     0,   -18, 0,   1664,   1435,    -3,    -1,  -127, 0},
 	{    1,     1,    -2, 0,   1691,   1450,    98,    61,   -52, 0},
-};Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_2[18] = {
+};Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_2[18] __attribute__((aligned (16))) = {
 	{   -3,    -2,   -17, 0,   1545,   1377,   -82,   -80,   -58, 0},
 	{   -2,    -2,    -2, 0,   1545,   1377,   -84,   -84,   -47, 0},
 	{   -2,    -1,    -2, 0,   1545,   1377,  -121,   -11,   -39, 0},
@@ -636,7 +636,7 @@ Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] = {
 	{   -5,     5,     6, 0,    965,   1041,   -87,    93,    -1, 0},
 };
 
-Gfx Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_dl[] = {
+Gfx Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -671,14 +671,14 @@ Gfx Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_gooserig_gooseleg_l_gooseleg_lmesh[] = {
+Gfx Wtx_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] = {
+Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] __attribute__((aligned (16))) = {
 	{    1,     1,    -2, 0,   1038,   1041,   -65,   -79,    76, 0},
 	{    8,     1,     5, 0,   1038,   1041,  -126,     7,    16, 0},
 	{    6,     6,     5, 0,   1038,   1041,   -74,  -102,    22, 0},
@@ -711,7 +711,7 @@ Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] = {
 	{    5,    -6,     6, 0,    965,   1041,   -82,    97,     7, 0},
 	{   -1,    -5,    10, 0,    965,   1041,    25,   107,   -64, 0},
 	{    1,    -3,    14, 0,    965,   1041,   -29,    89,   -86, 0},
-};Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_1[32] = {
+};Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_1[32] __attribute__((aligned (16))) = {
 	{    1,    -3,    14, 0,    965,   1041,   -29,    89,   -86, 0},
 	{   -1,    -5,    10, 0,    965,   1041,    25,   107,   -64, 0},
 	{   -3,    -1,    12, 0,    965,   1041,    74,    92,   -46, 0},
@@ -744,7 +744,7 @@ Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] = {
 	{   -1,    -1,   -18, 0,   1729,   1442,     2,    -1,   126, 0},
 	{   -1,    -1,   -18, 0,   1664,   1435,     2,    -1,   126, 0},
 	{    1,    -2,    -2, 0,   1691,   1450,   -99,    61,    51, 0},
-};Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_2[18] = {
+};Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_2[18] __attribute__((aligned (16))) = {
 	{   -3,     1,   -17, 0,   1545,   1377,    81,   -80,    57, 0},
 	{   -2,     1,    -2, 0,   1545,   1377,    83,   -84,    46, 0},
 	{   -2,     0,    -2, 0,   1545,   1377,   120,   -11,    38, 0},
@@ -765,7 +765,7 @@ Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] = {
 	{   -5,    -6,     6, 0,    965,   1041,    86,    93,     0, 0},
 };
 
-Gfx Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_dl[] = {
+Gfx Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -800,14 +800,14 @@ Gfx Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_gooserig_gooseleg_r_gooseleg_rmesh[] = {
+Gfx Wtx_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[24] = {
+Vtx_tn Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[24] __attribute__((aligned (16))) = {
 	{   -7,     0,    -4, 0,   1172,    755,  -118,     0,    47, 0},
 	{  -14,     0,   -12, 0,   1008,    758,    96,     0,   -83, 0},
 	{  -15,     5,   -16, 0,   1027,    570,   -34,  -108,   -59, 0},
@@ -834,7 +834,7 @@ Vtx_tn Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[24] = {
 	{   -4,     8,    -6, 0,   1196,    634,   -49,   116,    16, 0},
 };
 
-Gfx Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_dl[] = {
+Gfx Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0], 24, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,7,0),
@@ -849,7 +849,7 @@ Gfx Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_gooserig_gooseneck_gooseneckmesh[] = {
+Gfx Wtx_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_dl),
@@ -858,7 +858,7 @@ Gfx Wtx_gooserig_gooseneck_gooseneckmesh[] = {
 
 #define GOOSERIG_MODEL_MESH_COUNT 7
 
-Gfx* gooserig_model_meshes[8] = {
+Gfx* gooserig_model_meshes[7] __attribute__((aligned (16))) = {
     Wtx_gooserig_goosebody_goosebodymesh,
     Wtx_gooserig_goosefoot_l_goosefoot_lmesh,
     Wtx_gooserig_goosefoot_r_goosefoot_rmesh,

@@ -86,8 +86,7 @@ function w64_main()
 
 		table.insert(final_file_output,
 			string.format("#define %s_MODEL_MESH_COUNT %d\n\n", string.upper(objname), tableLength(objfile_subobjtables))
-			-- length must be padded to 64bit alignment otherwise bad shit happens
-			.. string.format("Gfx* %s_model_meshes[%d] = {\n", objname, (math.floor(tableLength(objfile_subobjtables)/2)+1)*2)
+			.. string.format("Gfx* %s_model_meshes[%d] __attribute__((aligned (16))) = {\n", objname, tableLength(objfile_subobjtables))
 			.. table.concat(meshList, '\n')
 			.. "\n};\n"
 		)
@@ -435,7 +434,7 @@ function w64_outputTriangles(facesInPacks, facesPackRefs, one_tri, objname)
 	-- output faces
 	print("Success creating faces and verts!")
 	return string.format(
-		"Gfx Vtx_%s_mesh01_dl[] = {\n\t%s,\n\tgsSPEndDisplayList(),\n};",
+		"Gfx Vtx_%s_mesh01_dl[] __attribute__((aligned (16))) = {\n\t%s,\n\tgsSPEndDisplayList(),\n};",
 		objname,
 		table.concat(faceOutputTable,",\n\t")
 	)
@@ -446,7 +445,7 @@ function w64_outputDisplayList(subobj_combined_name,obj_Name,name_of_texture)
 	-- This isn't customisable at the moment at all but until I 
 	-- actually figure out what'd need changing, I'll leave this!
 	return string.format(
-		"Gfx Wtx_%s[] = {\n"..
+		"Gfx Wtx_%s[] __attribute__((aligned (16))) = {\n"..
 		"\t  gsDPLoadTextureBlock(Text_%s_%s_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, \n"..
 		"\t  \t  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), \n"..
 		"\t  gsSPDisplayList(Vtx_%s_mesh01_dl),\n"..
@@ -470,13 +469,13 @@ function w64_outputTexture(objname,texturename,previewtable,bmptable)
 	local datastring = ""
 	if(objname==0) then
 		datastring = string.format(
-			"unsigned short Sprite_%s[] = {\n%s};",
+			"unsigned short Sprite_%s[] __attribute__((aligned (16))) = {\n%s};",
 			texturename,
 			table.concat(bmptable)
 		)
 	else
 		datastring = string.format(
-			"unsigned short Text_%s_%s_diff[] = {\n%s};",
+			"unsigned short Text_%s_%s_diff[] __attribute__((aligned (16))) = {\n%s};",
 			objname,
 			texturename,
 			table.concat(bmptable)
@@ -496,7 +495,7 @@ function w64_outputVerts(facesinpacks,facesinpacksrefs,verttexttable,objname)
 			-- ", direct reference: ["..(packNumber-1).."]["..(i-1).."]"
 		end
 		table.insert(outputTable, string.format(
-			"Vtx_tn Vtx_%s_mesh01_%i[%i] = {\n%s\n};",
+			"Vtx_tn Vtx_%s_mesh01_%i[%i] __attribute__((aligned (16))) = {\n%s\n};",
 			objname,
 			packNumber-1,
 			#facesinpacksrefs[packNumber],

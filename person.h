@@ -35,7 +35,7 @@ Texture preview:
 	........--::::::::::::::::::::::
 */
 
-unsigned short Text_person_person_diff[] = {
+unsigned short Text_person_person_diff[] __attribute__((aligned (16))) = {
 	0xde2d,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0x8353,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,
 	0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0x8353,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,
 	0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0x8b51,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,
@@ -70,7 +70,7 @@ unsigned short Text_person_person_diff[] = {
 	0x4189,0x4189,0x4189,0x4189,0x4189,0x4189,0x4189,0x4189,0x8353,0x8b11,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,
 };
 
-Vtx_tn Vtx_person_mesh01_0[32] = {
+Vtx_tn Vtx_person_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   11,    33,    19, 0,   1009,    374,    -1,     1,   126, 0},
 	{   -9,    54,    19, 0,   1178,    257,    -1,     1,   126, 0},
 	{   -4,    30,    19, 0,    997,    267,    -1,     1,   126, 0},
@@ -103,7 +103,7 @@ Vtx_tn Vtx_person_mesh01_0[32] = {
 	{   -5,    98,    34, 0,    990,   1237,  -127,   -13,    -7, 0},
 	{    2,    98,    34, 0,   1587,    373,   125,     2,    18, 0},
 	{   -5,    98,    34, 0,   1586,    372,     0,    87,    92, 0},
-};Vtx_tn Vtx_person_mesh01_1[32] = {
+};Vtx_tn Vtx_person_mesh01_1[32] __attribute__((aligned (16))) = {
 	{   -8,   108,    12, 0,    990,   1237,  -125,     7,    22, 0},
 	{   -5,    98,    34, 0,    990,   1237,  -127,   -13,    -7, 0},
 	{   -7,   118,    15, 0,    990,   1237,  -125,     7,    22, 0},
@@ -136,7 +136,7 @@ Vtx_tn Vtx_person_mesh01_0[32] = {
 	{   20,     0,    17, 0,    178,   1738,     0,  -127,     0, 0},
 	{  -10,    84,    14, 0,   1397,    282,   -33,    12,   122, 0},
 	{  -16,    71,    13, 0,   1315,    221,   -39,     8,   120, 0},
-};Vtx_tn Vtx_person_mesh01_2[32] = {
+};Vtx_tn Vtx_person_mesh01_2[32] __attribute__((aligned (16))) = {
 	{   -4,    81,    40, 0,    403,    407,  -113,    54,   -20, 0},
 	{   -5,    77,    34, 0,    192,    604,  -113,    54,   -20, 0},
 	{   -5,    80,    42, 0,    293,    575,  -113,    54,   -20, 0},
@@ -169,7 +169,7 @@ Vtx_tn Vtx_person_mesh01_0[32] = {
 	{    6,   136,     7, 0,    166,    197,    77,   -86,    53, 0},
 	{    6,   136,     7, 0,    183,    425,   -23,   -42,   117, 0},
 	{   -7,   143,    -8, 0,    270,    274,  -107,     0,   -69, 0},
-};Vtx_tn Vtx_person_mesh01_3[32] = {
+};Vtx_tn Vtx_person_mesh01_3[32] __attribute__((aligned (16))) = {
 	{   -7,   149,     7, 0,    342,    270,   -85,    77,    54, 0},
 	{   -4,   159,     0, 0,    482,    225,   -85,    77,    54, 0},
 	{  -12,   149,     0, 0,    339,    159,  -107,     0,    68, 0},
@@ -202,7 +202,7 @@ Vtx_tn Vtx_person_mesh01_0[32] = {
 	{   -4,    81,    40, 0,    403,    407,  -113,    54,   -20, 0},
 	{    4,    80,    42, 0,    302,    694,     0,    90,    89, 0},
 	{    4,    71,    36, 0,    241,    656,     0,  -120,    43, 0},
-};Vtx_tn Vtx_person_mesh01_4[32] = {
+};Vtx_tn Vtx_person_mesh01_4[32] __attribute__((aligned (16))) = {
 	{   -5,    80,    42, 0,    293,    575,  -113,    54,   -20, 0},
 	{    4,    74,    44, 0,    257,    651,     0,    49,   117, 0},
 	{    4,    80,    42, 0,    302,    694,     0,    90,    89, 0},
@@ -235,7 +235,7 @@ Vtx_tn Vtx_person_mesh01_0[32] = {
 	{   12,    94,     0, 0,   1457,    538,   120,     9,   -38, 0},
 	{    4,   108,   -16, 0,   1555,    405,    19,   -86,    92, 0},
 	{    9,   118,     0, 0,   1639,    525,   115,    18,    49, 0},
-};Vtx_tn Vtx_person_mesh01_5[32] = {
+};Vtx_tn Vtx_person_mesh01_5[32] __attribute__((aligned (16))) = {
 	{    3,    93,   -30, 0,   1586,    373,    19,   -86,    92, 0},
 	{    4,   108,   -16, 0,   1555,    405,    19,   -86,    92, 0},
 	{   -1,   108,   -15, 0,   1550,    373,    19,   -86,    92, 0},
@@ -268,7 +268,7 @@ Vtx_tn Vtx_person_mesh01_0[32] = {
 	{   -1,    76,   -19, 0,   1324,    342,    39,    29,  -117, 0},
 	{    7,     0,    -8, 0,    198,   1705,     0,  -127,     0, 0},
 	{   -8,     0,    -9, 0,    262,   1702,     0,  -127,     0, 0},
-};Vtx_tn Vtx_person_mesh01_6[32] = {
+};Vtx_tn Vtx_person_mesh01_6[32] __attribute__((aligned (16))) = {
 	{   -8,     9,   -19, 0,    416,   1885,     0,     6,  -127, 0},
 	{   -8,     0,    -9, 0,    262,   1702,     0,  -127,     0, 0},
 	{   -8,     9,    -9, 0,    417,   1527,  -127,     0,     0, 0},
@@ -301,7 +301,7 @@ Vtx_tn Vtx_person_mesh01_0[32] = {
 	{    2,   126,    -6, 0,     51,    373,     0,    52,  -116, 0},
 	{   -7,   131,     0, 0,    105,    232,   -83,     0,    96, 0},
 	{   -7,   143,    -8, 0,    270,    274,  -107,     0,   -69, 0},
-};Vtx_tn Vtx_person_mesh01_7[32] = {
+};Vtx_tn Vtx_person_mesh01_7[32] __attribute__((aligned (16))) = {
 	{  -10,    84,   -15, 0,   1397,    282,   -33,    12,  -123, 0},
 	{   -1,    76,   -19, 0,   1324,    342,    39,    29,  -117, 0},
 	{  -16,    71,   -14, 0,   1315,    221,   -39,     8,  -121, 0},
@@ -334,7 +334,7 @@ Vtx_tn Vtx_person_mesh01_0[32] = {
 	{    7,    78,   -15, 0,   1334,    412,   126,     9,    -3, 0},
 	{   -1,    92,   -17, 0,   1442,    359,   -33,    12,  -123, 0},
 	{    6,   136,     7, 0,    166,    197,    77,   -86,    53, 0},
-};Vtx_tn Vtx_person_mesh01_8[32] = {
+};Vtx_tn Vtx_person_mesh01_8[32] __attribute__((aligned (16))) = {
 	{    5,   156,    -8, 0,    331,    177,   106,    41,   -56, 0},
 	{   11,   149,     0, 0,    295,    282,   106,    41,    55, 0},
 	{    6,   149,   -10, 0,    277,    179,   106,    41,   -56, 0},
@@ -367,7 +367,7 @@ Vtx_tn Vtx_person_mesh01_0[32] = {
 	{   11,    33,     5, 0,   1485,   1237,     5,   -24,  -125, 0},
 	{   -4,    30,    19, 0,    990,    742,  -125,   -24,     0, 0},
 	{   -8,     9,     8, 0,   1485,    742,  -125,    24,     0, 0},
-};Vtx_tn Vtx_person_mesh01_9[32] = {
+};Vtx_tn Vtx_person_mesh01_9[32] __attribute__((aligned (16))) = {
 	{   -8,   108,    12, 0,   1574,    326,  -123,    -5,    34, 0},
 	{   -7,   118,    15, 0,   1624,    348,     0,    96,    82, 0},
 	{  -13,   118,     0, 0,   1682,    259,  -123,    -5,    34, 0},
@@ -402,7 +402,7 @@ Vtx_tn Vtx_person_mesh01_0[32] = {
 	{    6,   136,     7, 0,    183,    425,   -23,   -42,   117, 0},
 };
 
-Gfx Vtx_person_mesh01_dl[] = {
+Gfx Vtx_person_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_person_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,0,0),
@@ -530,7 +530,7 @@ Gfx Vtx_person_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_person[] = {
+Gfx Wtx_person[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_person_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_person_mesh01_dl),
@@ -539,6 +539,6 @@ Gfx Wtx_person[] = {
 
 #define PERSON_MODEL_MESH_COUNT 1
 
-Gfx* person_model_meshes[2] = {
+Gfx* person_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_person,
 };

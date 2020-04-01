@@ -35,7 +35,7 @@ Texture preview:
 	@@@@----------------------------
 */
 
-unsigned short Text_book_book_diff[] = {
+unsigned short Text_book_book_diff[] __attribute__((aligned (16))) = {
 	0xffff,0xffff,0xffff,0xffff,0xffff,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,
 	0xffff,0xffff,0xffff,0xffff,0xffff,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,
 	0xffff,0xffff,0xffff,0xffff,0xffff,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,
@@ -70,7 +70,7 @@ unsigned short Text_book_book_diff[] = {
 	0xffff,0xffff,0xffff,0xffff,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,0xcc09,
 };
 
-Vtx_tn Vtx_book_mesh01_0[32] = {
+Vtx_tn Vtx_book_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   -7,     2,   -13, 0,    665,   1152,   126,     0,   -11, 0},
 	{   -7,    -3,   -12, 0,    677,    827,   126,     0,   -11, 0},
 	{   -7,    -3,   -13, 0,    665,    827,   126,     0,   -11, 0},
@@ -103,7 +103,7 @@ Vtx_tn Vtx_book_mesh01_0[32] = {
 	{    9,     2,    11, 0,    212,    912,     0,     0,   127, 0},
 	{   -7,    -3,    11, 0,     52,    752,     0,     0,   127, 0},
 	{   -7,     2,    11, 0,    341,   1152,   126,     0,     6, 0},
-};Vtx_tn Vtx_book_mesh01_1[32] = {
+};Vtx_tn Vtx_book_mesh01_1[32] __attribute__((aligned (16))) = {
 	{   -7,    -3,    12, 0,   1638,    827,     0,     0,   127, 0},
 	{    9,    -3,    11, 0,   1314,    827,     0,   127,     0, 0},
 	{   -7,    -3,    11, 0,   1638,    827,     0,   127,     0, 0},
@@ -136,7 +136,7 @@ Vtx_tn Vtx_book_mesh01_0[32] = {
 	{   -7,    -3,    12, 0,    341,    827,     0,     0,   127, 0},
 	{    9,     2,   -12, 0,    990,   1152,     0,  -127,     0, 0},
 	{   -7,    -3,   -12, 0,    677,    827,   126,     0,   -11, 0},
-};Vtx_tn Vtx_book_mesh01_2[27] = {
+};Vtx_tn Vtx_book_mesh01_2[27] __attribute__((aligned (16))) = {
 	{    9,     2,    11, 0,    212,    912,     0,     0,   127, 0},
 	{   -7,     2,    11, 0,    212,    752,     0,     0,   127, 0},
 	{   -7,    -3,    11, 0,     52,    752,     0,     0,   127, 0},
@@ -166,7 +166,7 @@ Vtx_tn Vtx_book_mesh01_0[32] = {
 	{   -7,     2,    12, 0,   1314,   1476,     0,   127,     0, 0},
 };
 
-Gfx Vtx_book_mesh01_dl[] = {
+Gfx Vtx_book_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_book_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,0,3,4,0),
 	gsSP2Triangles(5,6,7,0,7,8,5,0),
@@ -204,7 +204,7 @@ Gfx Vtx_book_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_book[] = {
+Gfx Wtx_book[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_book_book_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_book_mesh01_dl),
@@ -213,6 +213,6 @@ Gfx Wtx_book[] = {
 
 #define BOOK_MODEL_MESH_COUNT 1
 
-Gfx* book_model_meshes[2] = {
+Gfx* book_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_book,
 };

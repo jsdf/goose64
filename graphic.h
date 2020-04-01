@@ -25,9 +25,10 @@
 #endif
 
 #define FRAME_BUFFERS 3
-// hi res z buffer uses 600kb, resides in 8th mb of RDRAM
+// hi res z buffer uses 600kb (0x96000), resides in 8th mb of RDRAM
 #define ZBUFFER_ADDR 0x80700000
-// hi res color buffers use 1200kb, reside in top of 6th, all of 7th mb of RDRAM
+// hi res color buffers use 1800kb (0x1C2000), reside in top of 6th, all of 7th
+// mb of RDRAM
 #define CFB_ADDR \
   (0x80700000 - SCREEN_WD * SCREEN_HT * SCREEN_BPP * FRAME_BUFFERS)
 #define CFB0_ADDR (CFB_ADDR)

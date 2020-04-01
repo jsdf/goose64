@@ -35,7 +35,7 @@ Texture preview:
 	================================
 */
 
-unsigned short Text_university_floor_green_diff[] = {
+unsigned short Text_university_floor_green_diff[] __attribute__((aligned (16))) = {
 	0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x6cdd,0x6cdd,0x845b,
 	0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,
 	0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,0x751f,
@@ -70,7 +70,7 @@ unsigned short Text_university_floor_green_diff[] = {
 	0x9c5d,0x9c5f,0x9c9f,0x9ca1,0x9ca1,0x9ca1,0x9ce3,0x9ce3,0x9ce3,0x9ce3,0x9ce3,0x9ce3,0x9ce3,0x9ce3,0x9ce3,0x9ce3,0x9ce3,0x9ce3,0x9ca3,0x9ca1,0x9c9f,0x9ce1,0x9ce1,0x9ce1,0x9ce1,0x9ce1,0x9ce1,0x9ce1,0x9ce1,0x9ce1,0x9ce1,0x9c5d,
 };
 
-Vtx_tn Vtx_university_floor_mesh01_0[32] = {
+Vtx_tn Vtx_university_floor_mesh01_0[32] __attribute__((aligned (16))) = {
 	{-1939,     0,  3319, 0,    132,     68,     0,   127,     0, 0},
 	{-1798,     0,  2850, 0,    268,     97,     0,   127,     0, 0},
 	{-1939,     0,  2848, 0,    268,     68,     0,   127,     0, 0},
@@ -103,7 +103,7 @@ Vtx_tn Vtx_university_floor_mesh01_0[32] = {
 	{  615,     0,  2725, 0,    301,    523,     0,   127,     0, 0},
 	{-1802,     0,  3319, 0,    132,     96,     0,   127,     0, 0},
 	{-1941,     0,  -418, 0,   1141,     72,     0,   127,     0, 0},
-};Vtx_tn Vtx_university_floor_mesh01_1[32] = {
+};Vtx_tn Vtx_university_floor_mesh01_1[32] __attribute__((aligned (16))) = {
 	{-1727,     0,  -990, 0,   1297,    110,     0,   127,     0, 0},
 	{-1668,     0, -2944, 0,   1788,    120,     0,   127,     0, 0},
 	{-1943,     0, -2943, 0,   1788,     69,     0,   127,     0, 0},
@@ -136,7 +136,7 @@ Vtx_tn Vtx_university_floor_mesh01_0[32] = {
 	{-2004,     0,  -315, 0,   1107,   1132,     0,   127,     0, 0},
 	{-2004,     0,  2783, 0,    217,   1132,     0,   127,     0, 0},
 	{-1935,     0,  2695, 0,    242,   1142,     0,   127,     0, 0},
-};Vtx_tn Vtx_university_floor_mesh01_2[32] = {
+};Vtx_tn Vtx_university_floor_mesh01_2[32] __attribute__((aligned (16))) = {
 	{-1935,     0,  2695, 0,    242,   1142,     0,   127,     0, 0},
 	{-1758,     0,  2785, 0,    216,   1180,     0,   127,     0, 0},
 	{-1781,     0,  2696, 0,    242,   1176,     0,   127,     0, 0},
@@ -169,7 +169,7 @@ Vtx_tn Vtx_university_floor_mesh01_0[32] = {
 	{ -138,     0,  -221, 0,   1080,   1499,     0,   127,     0, 0},
 	{  358,     0,  -238, 0,   1085,   1591,     0,   127,     0, 0},
 	{ 1430,     0,  -305, 0,   1104,   1723,     0,   127,     0, 0},
-};Vtx_tn Vtx_university_floor_mesh01_3[32] = {
+};Vtx_tn Vtx_university_floor_mesh01_3[32] __attribute__((aligned (16))) = {
 	{ 1411,     0,  2562, 0,    281,   1722,     0,   127,     0, 0},
 	{  282,     0,  -308, 0,   1105,   1581,     0,     0,   127, 0},
 	{ 1455,     0,  2812, 0,    209,   1728,     0,     0,   127, 0},
@@ -202,7 +202,7 @@ Vtx_tn Vtx_university_floor_mesh01_0[32] = {
 	{-1802,     0,  3319, 0,     52,   1172,     0,   127,     0, 0},
 	{-1798,     0,  2850, 0,    198,   1172,     0,   127,     0, 0},
 	{ 1396,     0,  -417, 0,   1135,   1717,     0,   127,     0, 0},
-};Vtx_tn Vtx_university_floor_mesh01_4[32] = {
+};Vtx_tn Vtx_university_floor_mesh01_4[32] __attribute__((aligned (16))) = {
 	{-1941,     0,  -418, 0,   1135,   1144,     0,   127,     0, 0},
 	{-2004,     0,  -959, 0,   1285,   1132,     0,   127,     0, 0},
 	{-2004,     0,  -315, 0,   1107,   1132,     0,   127,     0, 0},
@@ -235,7 +235,7 @@ Vtx_tn Vtx_university_floor_mesh01_0[32] = {
 	{  473,     0, -1550, 0,   1463,   1593,     0,   127,     0, 0},
 	{  957,     0, -2652, 0,   1730,   1699,     0,   127,     0, 0},
 	{ 1129,     0, -2858, 0,   1808,   1746,     0,   127,     0, 0},
-};Vtx_tn Vtx_university_floor_mesh01_5[32] = {
+};Vtx_tn Vtx_university_floor_mesh01_5[32] __attribute__((aligned (16))) = {
 	{ 1361,     0, -2863, 0,   1809,   1781,     0,   127,     0, 0},
 	{ 1129,     0, -2858, 0,   1808,   1746,     0,   127,     0, 0},
 	{ 1175,     0, -2761, 0,   1781,   1751,     0,   127,     0, 0},
@@ -268,7 +268,7 @@ Vtx_tn Vtx_university_floor_mesh01_0[32] = {
 	{ 1843,     0, -3205, 0,   1909,   1898,     0,   127,     0, 0},
 	{ 1938,     0, -3300, 0,   1929,   1907,     0,   127,     0, 0},
 	{ 1843,     0, -3124, 0,   1881,   1898,     0,   127,     0, 0},
-};Vtx_tn Vtx_university_floor_mesh01_6[32] = {
+};Vtx_tn Vtx_university_floor_mesh01_6[32] __attribute__((aligned (16))) = {
 	{ 1843,     0, -3205, 0,   1909,   1898,     0,   127,     0, 0},
 	{-2004,     0, -3300, 0,   1929,   1132,     0,   127,     0, 0},
 	{-1943,     0, -3205, 0,   1909,   1141,     0,   127,     0, 0},
@@ -301,7 +301,7 @@ Vtx_tn Vtx_university_floor_mesh01_0[32] = {
 	{ 1836,     0,  2734, 0,    299,    739,     0,   127,     0, 0},
 	{ 1836,     0,  -217, 0,   1088,    739,     0,   127,     0, 0},
 	{ 1938,     0, -3300, 0,   1929,   1907,     0,   127,     0, 0},
-};Vtx_tn Vtx_university_floor_mesh01_7[32] = {
+};Vtx_tn Vtx_university_floor_mesh01_7[32] __attribute__((aligned (16))) = {
 	{-1689,     0,  3319, 0,    132,    110,     0,   127,     0, 0},
 	{ 1065,     0,  3319, 0,    132,    602,     0,   127,     0, 0},
 	{  734,     0,  2874, 0,    261,    544,     0,   127,     0, 0},
@@ -334,7 +334,7 @@ Vtx_tn Vtx_university_floor_mesh01_0[32] = {
 	{  515,     0, -1365, 0,   1370,    479,     0,   127,     0, 0},
 	{  282,     0,  -419, 0,   1141,    459,     0,   127,     0, 0},
 	{  119,     0,  -420, 0,   1141,    432,     0,   127,     0, 0},
-};Vtx_tn Vtx_university_floor_mesh01_8[14] = {
+};Vtx_tn Vtx_university_floor_mesh01_8[14] __attribute__((aligned (16))) = {
 	{-1935,     0,  -226, 0,   1081,   1142,     0,   127,     0, 0},
 	{-1412,     0,  -224, 0,   1081,   1248,     0,   127,     0, 0},
 	{-1391,     0,  -313, 0,   1107,   1252,     0,   127,     0, 0},
@@ -351,7 +351,7 @@ Vtx_tn Vtx_university_floor_mesh01_0[32] = {
 	{ 1396,     0, -3037, 0,   1857,   1799,     0,   127,     0, 0},
 };
 
-Gfx Vtx_university_floor_mesh01_dl[] = {
+Gfx Vtx_university_floor_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_university_floor_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -476,7 +476,7 @@ Gfx Vtx_university_floor_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_university_floor[] = {
+Gfx Wtx_university_floor[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_university_floor_green_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_university_floor_mesh01_dl),
@@ -485,6 +485,6 @@ Gfx Wtx_university_floor[] = {
 
 #define UNIVERSITY_FLOOR_MODEL_MESH_COUNT 1
 
-Gfx* university_floor_model_meshes[2] = {
+Gfx* university_floor_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_university_floor,
 };

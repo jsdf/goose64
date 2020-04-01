@@ -35,7 +35,7 @@ Texture preview:
 	........--::::::::::::::::::::::
 */
 
-unsigned short Text_characterrig_person_diff[] = {
+unsigned short Text_characterrig_person_diff[] __attribute__((aligned (16))) = {
 	0xde2d,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0x8353,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,
 	0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0x8353,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,
 	0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0xd5e9,0x8b51,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,
@@ -70,7 +70,7 @@ unsigned short Text_characterrig_person_diff[] = {
 	0x4189,0x4189,0x4189,0x4189,0x4189,0x4189,0x4189,0x4189,0x8353,0x8b11,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,0x8b0f,
 };
 
-Vtx_tn Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[12] = {
+Vtx_tn Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[12] __attribute__((aligned (16))) = {
 	{    3,    -3,    -1, 0,     80,   1885,   -23,   -87,    90, 0},
 	{   -4,    -5,   -10, 0,    271,   1748,    22,  -106,   -67, 0},
 	{   10,    -8,   -10, 0,    203,   1760,   -54,  -116,    -5, 0},
@@ -85,7 +85,7 @@ Vtx_tn Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[12] = {
 	{   19,    -5,    -9, 0,    178,   1738,     3,  -112,   -61, 0},
 };
 
-Gfx Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0], 12, 0),
 	gsSP2Triangles(0,1,2,0,3,1,4,0),
 	gsSP2Triangles(5,1,6,0,2,7,0,0),
@@ -100,14 +100,14 @@ Gfx Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkfoot_r_gkfoot_rmesh[] = {
+Gfx Wtx_characterrig_gkfoot_r_gkfoot_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[28] = {
+Vtx_tn Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[28] __attribute__((aligned (16))) = {
 	{    0,     1,    -4, 0,    990,   1237,   -18,    93,   -85, 0},
 	{   -3,   -11,   -22, 0,    990,   1237,  -102,    25,    72, 0},
 	{   -4,    -1,    -2, 0,    990,   1237,  -109,    65,   -15, 0},
@@ -138,7 +138,7 @@ Vtx_tn Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[28] = {
 	{   -3,   -11,   -22, 0,   1586,    373,  -102,    25,    72, 0},
 };
 
-Gfx Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0], 28, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,7,10,0),
@@ -161,14 +161,14 @@ Gfx Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkforearm_r_gkforearm_rmesh[] = {
+Gfx Wtx_characterrig_gkforearm_r_gkforearm_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[32] = {
+Vtx_tn Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   -9,    -7,    -1, 0,    270,    274,   -79,   -98,   -18, 0},
 	{  -12,     0,     4, 0,    339,    159,  -127,    -2,     1, 0},
 	{  -12,     0,     0, 0,    258,    165,  -122,   -30,   -24, 0},
@@ -201,7 +201,7 @@ Vtx_tn Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[32] = {
 	{   -1,     4,   -11, 0,     86,    177,    28,    75,   -99, 0},
 	{   -5,     4,   -11, 0,     95,    323,   -49,    92,   -73, 0},
 	{    8,     1,    -3, 0,    220,    253,   107,    58,   -34, 0},
-};Vtx_tn Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[32] = {
+};Vtx_tn Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[32] __attribute__((aligned (16))) = {
 	{   -5,     4,   -11, 0,     95,    323,   -49,    92,   -73, 0},
 	{    3,     6,    -6, 0,    183,    425,    39,    96,   -73, 0},
 	{   -1,     4,   -11, 0,     96,    369,    28,    75,   -99, 0},
@@ -236,7 +236,7 @@ Vtx_tn Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[32] = {
 	{    8,     0,     4, 0,    272,    282,   124,    23,    12, 0},
 };
 
-Gfx Vtx_characterrig_gkhead_gkheadmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkhead_gkheadmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,0,2,0,7,8,0,0),
@@ -268,14 +268,14 @@ Gfx Vtx_characterrig_gkhead_gkheadmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkhead_gkheadmesh[] = {
+Gfx Wtx_characterrig_gkhead_gkheadmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkhead_gkheadmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[18] = {
+Vtx_tn Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[18] __attribute__((aligned (16))) = {
 	{   -5,     1,    -1, 0,    990,   1237,  -123,     7,   -34, 0},
 	{   -1,     4,   -35, 0,   1485,   1237,    -2,   112,   -59, 0},
 	{   -6,     0,   -35, 0,    990,   1237,  -111,    -2,   -63, 0},
@@ -296,7 +296,7 @@ Vtx_tn Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[18] = {
 	{   -6,     0,   -35, 0,   1485,    742,  -111,    -2,   -63, 0},
 };
 
-Gfx Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0], 18, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,4,10,0),
@@ -310,14 +310,14 @@ Gfx Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkshin_r_gkshin_rmesh[] = {
+Gfx Wtx_characterrig_gkshin_r_gkshin_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[31] = {
+Vtx_tn Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[31] __attribute__((aligned (16))) = {
 	{   11,    -2,   -31, 0,   1012,    375,   122,   -31,    16, 0},
 	{   -1,   -11,   -19, 0,   1178,    257,     6,  -110,   -65, 0},
 	{    4,   -12,   -31, 0,    997,    267,    90,   -84,   -34, 0},
@@ -351,7 +351,7 @@ Vtx_tn Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[31] = {
 	{    7,    -3,   -35, 0,   1071,    508,    40,    12,  -120, 0},
 };
 
-Gfx Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0], 31, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -376,14 +376,14 @@ Gfx Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkthigh_r_gkthigh_rmesh[] = {
+Gfx Wtx_characterrig_gkthigh_r_gkthigh_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[32] = {
+Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[32] __attribute__((aligned (16))) = {
 	{  -11,     0,     3, 0,   1613,    232,  -125,    -3,    22, 0},
 	{   -6,   -12,    10, 0,   1624,    348,  -108,   -53,    42, 0},
 	{   -8,     0,    16, 0,   1682,    259,  -125,     0,    25, 0},
@@ -416,7 +416,7 @@ Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[32] = {
 	{  -10,   -15,   -17, 0,    990,   1237,   -63,  -107,    29, 0},
 	{  -11,     0,   -21, 0,   1485,   1237,  -127,     0,    -2, 0},
 	{  -10,    14,   -17, 0,   1397,    282,   -85,    79,    50, 0},
-};Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[32] = {
+};Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[32] __attribute__((aligned (16))) = {
 	{  -11,     0,     3, 0,   1613,    232,  -125,    -3,    22, 0},
 	{   -6,    11,    10, 0,   1624,    348,   -95,    84,    -5, 0},
 	{   -6,    12,     6, 0,   1574,    326,  -109,    66,    -2, 0},
@@ -449,7 +449,7 @@ Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[32] = {
 	{   -9,     2,   -34, 0,   1485,   1237,  -115,    15,   -54, 0},
 	{    3,     4,    25, 0,     96,    369,    88,    45,    78, 0},
 	{    3,    -5,    25, 0,     86,    177,    44,  -110,    45, 0},
-};Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[32] = {
+};Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[32] __attribute__((aligned (16))) = {
 	{   10,     0,    13, 0,   1639,    525,   112,   -33,    50, 0},
 	{    7,     0,    21, 0,   1718,    496,   104,   -35,    62, 0},
 	{    3,    -6,    21, 0,   1708,    430,    43,  -117,    25, 0},
@@ -484,7 +484,7 @@ Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[32] = {
 	{    3,     4,    25, 0,     96,    369,    88,    45,    78, 0},
 };
 
-Gfx Vtx_characterrig_gktorso_gktorsomesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gktorso_gktorsomesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(5,0,6,0,7,8,9,0),
@@ -534,14 +534,14 @@ Gfx Vtx_characterrig_gktorso_gktorsomesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gktorso_gktorsomesh[] = {
+Gfx Wtx_characterrig_gktorso_gktorsomesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gktorso_gktorsomesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[12] = {
+Vtx_tn Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[12] __attribute__((aligned (16))) = {
 	{    3,     3,    -1, 0,     80,   1885,   -22,    89,    87, 0},
 	{   -5,     4,   -10, 0,    271,   1748,   -74,   102,     8, 0},
 	{   -4,     2,    -1, 0,    416,   1885,   -18,    86,    90, 0},
@@ -556,7 +556,7 @@ Vtx_tn Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[12] = {
 	{   19,     4,   -10, 0,    178,   1738,    71,   -21,  -103, 0},
 };
 
-Gfx Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0], 12, 0),
 	gsSP2Triangles(0,1,2,0,1,3,4,0),
 	gsSP2Triangles(1,5,2,0,6,7,0,0),
@@ -571,14 +571,14 @@ Gfx Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkfoot_l_gkfoot_lrmesh[] = {
+Gfx Wtx_characterrig_gkfoot_l_gkfoot_lrmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[28] = {
+Vtx_tn Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[28] __attribute__((aligned (16))) = {
 	{   -3,    10,   -22, 0,    990,   1237,  -102,   -34,    68, 0},
 	{    0,    -2,    -4, 0,    990,   1237,   -55,  -111,   -30, 0},
 	{   -4,     0,    -2, 0,    990,   1237,  -121,    13,   -38, 0},
@@ -609,7 +609,7 @@ Vtx_tn Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[28] = {
 	{   -3,    10,   -22, 0,   1586,    373,  -102,   -34,    68, 0},
 };
 
-Gfx Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0], 28, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,8,9,10,0),
@@ -632,14 +632,14 @@ Gfx Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkforearm_l_gkforearm_lrmesh[] = {
+Gfx Wtx_characterrig_gkforearm_l_gkforearm_lrmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[18] = {
+Vtx_tn Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[18] __attribute__((aligned (16))) = {
 	{   -4,    -2,    -1, 0,    990,   1237,  -127,    -9,    -7, 0},
 	{    0,    -5,   -35, 0,   1485,   1237,   -13,  -111,   -61, 0},
 	{    1,    -8,    -2, 0,   1485,   1237,   -61,  -111,    16, 0},
@@ -660,7 +660,7 @@ Vtx_tn Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[18] = {
 	{    0,    -5,   -35, 0,    813,    445,   -13,  -111,   -61, 0},
 };
 
-Gfx Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0], 18, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,3,5,0),
@@ -674,14 +674,14 @@ Gfx Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkshin_l_gkshin_lmesh[] = {
+Gfx Wtx_characterrig_gkshin_l_gkshin_lmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[31] = {
+Vtx_tn Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[31] __attribute__((aligned (16))) = {
 	{    9,     0,   -31, 0,   1012,    375,   124,   -16,   -20, 0},
 	{   -2,    10,   -19, 0,   1178,    257,    37,   120,    16, 0},
 	{    8,     2,   -14, 0,   1193,    388,   113,    22,   -52, 0},
@@ -715,7 +715,7 @@ Vtx_tn Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[31] = {
 	{    2,    10,   -31, 0,    997,    267,   -31,   102,   -69, 0},
 };
 
-Gfx Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0], 31, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -740,14 +740,14 @@ Gfx Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkthigh_l_gkthigh_lmesh[] = {
+Gfx Wtx_characterrig_gkthigh_l_gkthigh_lmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[22] = {
+Vtx_tn Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[22] __attribute__((aligned (16))) = {
 	{    0,    -4,    -8, 0,   1550,    373,    37,    89,   -82, 0},
 	{    4,   -17,   -20, 0,   1586,    373,    84,    60,   -74, 0},
 	{    0,   -14,   -20, 0,   1585,    373,   -13,   107,   -67, 0},
@@ -772,7 +772,7 @@ Vtx_tn Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[22] = {
 	{   -4,   -17,   -18, 0,   1586,    372,  -127,     8,     1, 0},
 };
 
-Gfx Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0], 22, 0),
 	gsSP2Triangles(0,1,2,0,3,4,1,0),
 	gsSP2Triangles(5,6,7,0,8,4,9,0),
@@ -793,14 +793,14 @@ Gfx Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkbicep_r_gkbicep_rmesh[] = {
+Gfx Wtx_characterrig_gkbicep_r_gkbicep_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
 
-Vtx_tn Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[22] = {
+Vtx_tn Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[22] __attribute__((aligned (16))) = {
 	{    3,    15,   -20, 0,   1586,    373,   118,   -44,    12, 0},
 	{    5,     3,    -5, 0,   1555,    405,    98,   -20,   -78, 0},
 	{   -1,     4,    -8, 0,   1550,    373,    37,   -88,   -85, 0},
@@ -825,7 +825,7 @@ Vtx_tn Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[22] = {
 	{   -5,    17,   -18, 0,   1586,    372,  -126,   -13,    13, 0},
 };
 
-Gfx Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_dl[] = {
+Gfx Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSPVertex(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0], 22, 0),
 	gsSP2Triangles(0,1,2,0,1,3,4,0),
 	gsSP2Triangles(5,6,7,0,3,8,4,0),
@@ -846,7 +846,7 @@ Gfx Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx Wtx_characterrig_gkbicep_l_gkbicep_lrmesh[] = {
+Gfx Wtx_characterrig_gkbicep_l_gkbicep_lrmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_dl),
@@ -855,7 +855,7 @@ Gfx Wtx_characterrig_gkbicep_l_gkbicep_lrmesh[] = {
 
 #define CHARACTERRIG_MODEL_MESH_COUNT 12
 
-Gfx* characterrig_model_meshes[14] = {
+Gfx* characterrig_model_meshes[12] __attribute__((aligned (16))) = {
     Wtx_characterrig_gkfoot_r_gkfoot_rmesh,
     Wtx_characterrig_gkforearm_r_gkforearm_rmesh,
     Wtx_characterrig_gkhead_gkheadmesh,
