@@ -62,9 +62,16 @@ beginseg
 endseg
 
 beginseg
-  name  "collision"
+  name  "sprites"
   flags OBJECT
   after "models"
+  include "sprite_data.o"
+endseg
+
+beginseg
+  name  "collision"
+  flags OBJECT
+  after "sprites"
   include "university_map_collision.o"
 endseg
 
@@ -109,6 +116,7 @@ beginwave
 	name	"goose"
   include "code"
   include "models"
+  include "sprites"
   include "collision" 
   include "memheap"
   include "pbank"

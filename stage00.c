@@ -27,6 +27,7 @@
 #include "physics.h"
 #include "renderer.h"
 #include "sound.h"
+#include "sprite.h"
 #include "trace.h"
 #include "vec2d.h"
 #include "vec3d.h"
@@ -109,6 +110,19 @@ PhysWorldData physWorldData;
 void drawWorldObjects(Dynamic* dynamicp);
 void soundCheck(void);
 void Rom2Ram(void*, void*, s32);
+int screenProject(Vec3d* obj,
+                  MtxF modelMatrix,
+                  MtxF projMatrix,
+                  ViewportF viewport,
+                  Vec3d* win);
+void drawSprite(unsigned short* sprData,
+                int sprWidth,
+                int sprHeight,
+                int x,
+                int y,
+                int width,
+                int height,
+                int centered);
 
 #define OBJ_START_VAL 1000
 
@@ -134,6 +148,9 @@ void initStage00() {
   // load in the models segment into higher memory
   Rom2Ram(_modelsSegmentRomStart, _modelsSegmentStart,
           _modelsSegmentRomEnd - _modelsSegmentRomStart);
+  // load in the sprites segment into higher memory
+  Rom2Ram(_spritesSegmentRomStart, _spritesSegmentStart,
+          _spritesSegmentRomEnd - _spritesSegmentRomStart);
   // load in the collision segment into higher memory
   Rom2Ram(_collisionSegmentRomStart, _collisionSegmentStart,
           _collisionSegmentRomEnd - _collisionSegmentRomStart);
@@ -396,7 +413,8 @@ void makeDL00() {
 #endif
 #if CONSOLE_SHOW_CULLING
       nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "culled=%d", objectsCulled) 0 nuDebConCPuts(0, conbuf);
+      sprintf(conbuf, "culled=%d", objectsCulled);
+      nuDebConCPuts(0, conbuf);
 #endif
 #if CONSOLE_SHOW_CAMERA
       debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
@@ -920,6 +938,43 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
     gDPPipeSync(glistp++);
   }
+
+  {
+    ViewportF viewport = {0, 0, SCREEN_WD, SCREEN_HT};
+    float width = 64;
+    float height = 64;
+    Vec3d center;
+    Vec3d projected;
+    MtxF modelViewMtxF;
+    MtxF projectionMtxF;
+
+    guMtxL2F(modelViewMtxF, &dynamicp->camera);
+    guMtxL2F(projectionMtxF, &dynamicp->projection);
+    for (i = 0; i < visibleObjectsCount; i++) {
+      obj = visibleObjDistance[i].obj;
+      Game_getObjCenter(obj, &center);
+      center.y += 75;
+      if (!obj->animState) {
+        continue;
+      }
+      screenProject(&center, modelViewMtxF, projectionMtxF, viewport,
+                    &projected);
+
+      // render sprites
+      drawSprite(getSpriteForSpriteType(HonkSprite,
+                                        Sprite_frameCycle(HONK_SPRITE_FRAMES,
+                                                          /*sprite frame
+                                                          duration*/
+                                                          10, game->tick)),
+
+                 32, 32,                                // texture dimensions
+                 projected.x, SCREEN_HT - projected.y,  // draw at pos, invert y
+                 RES_SCALE_X(width), RES_SCALE_Y(height), TRUE
+
+      );
+    }
+  }
+
   // if (nuScRetraceCounter % 60 == 0) {
   //   debugPrintf("[");
   //   for (i = 0; i < visibleObjectsCount; i++) {
@@ -977,4 +1032,90 @@ void Rom2Ram(void* from_addr, void* to_addr, s32 seq_size) {
     seq_size++;
 
   nuPiReadRom((u32)from_addr, to_addr, seq_size);
+}
+
+void drawSprite(unsigned short* sprData,
+                int sprWidth,
+                int sprHeight,
+                int atX,
+                int atY,
+                int width,
+                int height,
+                int centered) {
+  int x = atX + (centered ? -(width / 2) : 0);
+  int y = atY + (centered ? -(height / 2) : 0);
+
+  gDPLoadTextureBlock(glistp++, sprData, G_IM_FMT_RGBA, G_IM_SIZ_16b, sprWidth,
+                      sprHeight, 0, G_TX_WRAP | G_TX_NOMIRROR,
+                      G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_NOLOD, G_TX_NOLOD);
+  gDPSetTexturePersp(glistp++, G_TP_NONE);
+  gDPSetAlphaCompare(glistp++, G_AC_THRESHOLD);
+  gDPSetCombineMode(glistp++, G_CC_MODULATERGBA_PRIM, G_CC_MODULATERGBA_PRIM);
+  gDPSetRenderMode(glistp++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
+  // TODO: clip rectangle and offset+scale tex coords so we can render partly
+  // offscreen textures
+  gSPTextureRectangle(
+      glistp++,
+      (int)(x) << 2,           // upper left x,
+      (int)(y) << 2,           // upper left y
+      (int)(x + width) << 2,   // lower right x,
+      (int)(y + height) << 2,  // lower right y,
+      G_TX_RENDERTILE,         // tile
+      // upper left s, t
+      // when using gSPTextureRectangleFlip, these args are flipped
+      0 << 5, 0 << 5,
+      // change in s,t for each change in screen space x,y.
+      // smaller values = larger scaling
+      // when using gSPTextureRectangleFlip, these args are flipped
+      ((float)sprWidth / (float)width) * (1 << 10),
+      ((float)sprHeight / (float)height) * (1 << 10));
+
+  gDPPipeSync(glistp++);
+}
+
+void mulMtxFVecF(MtxF matrix, float* in /*[4]*/, float* out /*[4]*/) {
+  int i;
+
+  for (i = 0; i < 4; i++) {
+    out[i] = in[0] * matrix[0][i] +  //  0, 1, 2, 3
+             in[1] * matrix[1][i] +  //  4, 5, 6, 7,
+             in[2] * matrix[2][i] +  //  8, 9,10, 9,
+             in[3] * matrix[3][i];   // 12,13,14,15,
+  }
+}
+
+// like gluProject()
+int screenProject(Vec3d* obj,
+                  MtxF modelMatrix,
+                  MtxF projMatrix,
+                  ViewportF viewport,
+                  Vec3d* win) {
+  float in[4];
+  float out[4];
+
+  in[0] = obj->x;
+  in[1] = obj->y;
+  in[2] = obj->z;
+  in[3] = 1.0;
+  mulMtxFVecF(modelMatrix, in, out);
+  mulMtxFVecF(projMatrix, out, in);
+
+  if (in[3] == 0.0)
+    return FALSE;
+  in[0] /= in[3];
+  in[1] /= in[3];
+  in[2] /= in[3];
+  /* Map x, y and z to range 0-1 */
+  in[0] = in[0] * 0.5 + 0.5;
+  in[1] = in[1] * 0.5 + 0.5;
+  in[2] = in[2] * 0.5 + 0.5;
+
+  /* Map x,y to viewport */
+  in[0] = in[0] * viewport[2] + viewport[0];
+  in[1] = in[1] * viewport[3] + viewport[1];
+
+  win->x = in[0];
+  win->y = in[1];
+  win->z = in[2];
+  return TRUE;
 }

@@ -12,6 +12,9 @@
 #define SCREEN_WD_MAX 640
 #define XSCALE_MAX 0x400
 
+#define SCREEN_WD_HI 640
+#define SCREEN_HT_HI 480
+
 // 2bpp = 16 bit color
 #define SCREEN_BPP 2
 /* The screen size  */
@@ -49,6 +52,9 @@
 #define CFB2_ADDR (CFB1_ADDR + SCREEN_WD * SCREEN_HT * SCREEN_BPP)
 #endif
 
+#define RES_SCALE_X(x) ((float)x / (float)SCREEN_WD_HI * (float)SCREEN_WD)
+#define RES_SCALE_Y(y) ((float)y / (float)SCREEN_HT_HI * (float)SCREEN_HT)
+
 /* The maximum length of the display list of one task  */
 #define GFX_GLIST_LEN 2048
 
@@ -65,6 +71,14 @@ typedef struct {
 
   Mtx objTransforms[MAX_WORLD_OBJECTS];
 } Dynamic;
+
+typedef float ViewportF[4];
+
+/*
+rotation/scale is from mtx[0][0] to mtx[2][2]
+translation (13-15) is from mtx[3][0] to mtx[3][2]
+ */
+typedef float MtxF[4][4];
 
 /*-------------------------------- parameter---------------------------------*/
 extern Dynamic gfx_dynamic[];

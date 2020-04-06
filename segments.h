@@ -5,6 +5,7 @@
 
 // define stuff like _modelsSegmentRomStart
 EXTERN_SEGMENT(models);
+EXTERN_SEGMENT(sprites);
 EXTERN_SEGMENT(collision);
 
 EXTERN_SEGMENT(wbank);

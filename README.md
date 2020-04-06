@@ -1,5 +1,8 @@
 # goose64
 
+this is a demake of untitled goose game for the nintendo 64
+
+
 ## install dependencies
 ```
 brew install glm lua
@@ -37,7 +40,20 @@ which produces the rom file goose64.n64
 
 ## generate n64 header files from the OBJ models
 ```
-./rebuild_models.sh # edit to reference models to rebuild
+./rebuild_models.sh
+```
+
+## generate n64 header files for sprites
+make sure you have pillow installed
+
+```bash
+pip install pillow
+```
+
+then, to rebuild sprites
+
+```bash
+./sprites.sh 
 ```
 
 ## export map object data
