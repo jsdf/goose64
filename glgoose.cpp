@@ -127,6 +127,8 @@ float profAvgPath = 0;
 
 ObjModel models[MAX_MODEL_TYPE];
 
+std::vector<GLuint> sprites[MAX_SPRITE_TYPE];
+
 char* GooseMeshTypeStrings[] = {
     "goosebody_goosebodymesh",      //
     "goosehead_gooseheadmesh",      //
@@ -153,6 +155,23 @@ char* CharacterMeshTypeStrings[] = {
     "gkthigh.r_gkthigh_rmesh",      // characterthigh_r_characterthigh_rmesh
 };
 
+std::vector<glm::vec3> spriteVertices = {
+    {0.0f, 1.0f, 0.0f},  //
+    {1.0f, 0.0f, 0.0f},  //
+    {0.0f, 0.0f, 0.0f},  //
+    {0.0f, 1.0f, 0.0f},  //
+    {1.0f, 1.0f, 0.0f},  //
+    {1.0f, 0.0f, 0.0f},  //
+};
+std::vector<glm::vec2> spriteUVs = {
+    {0.0f, 1.0f},  //
+    {1.0f, 0.0f},  //
+    {0.0f, 0.0f},  //
+    {0.0f, 1.0f},  //
+    {1.0f, 1.0f},  //
+    {1.0f, 0.0f},  //
+};
+
 int debugPathfindingFrom = 3;
 int debugPathfindingTo = 8;
 Graph* pathfindingGraph = &university_map_graph;
@@ -169,6 +188,13 @@ void loadModel(ModelType modelType, char* modelfile, char* texfile) {
   // meshes to match
   loadOBJ(modelfile, models[modelType], N64_SCALE_FACTOR);
   models[modelType].texture = loadBMP_custom(texfile);
+}
+
+void loadSprite(SpriteType spriteType, std::vector<std::string> texfiles) {
+  std::for_each(
+      texfiles.begin(), texfiles.end(), [spriteType](std::string& texfile) {
+        sprites[spriteType].push_back(loadBMP_custom(texfile.c_str()));
+      });
 }
 
 void screenCoordsToWorld(Vec3d* screenPos, Vec3d* result) {
@@ -518,7 +544,7 @@ void drawString(const char* string, int x, int y) {
   glLoadIdentity();
   w = glutGet(GLUT_WINDOW_WIDTH);
   h = glutGet(GLUT_WINDOW_HEIGHT);
-  glOrtho(0, w, 0, h, -1, 1);
+  glOrtho(0, glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 1);
 
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
@@ -531,13 +557,12 @@ void drawString(const char* string, int x, int y) {
   for (c = string; *c != '\0'; c++) {
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
   }
+  glPopMatrix();  // GL_MODELVIEW
 
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
   glMatrixMode(GL_PROJECTION);
-  glPopMatrix();
-  glMatrixMode(GL_MODELVIEW);
-  glPopAttrib();
+  glPopMatrix();  // GL_PROJECTION
+
+  glPopAttrib();  // GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT
 }
 
 void drawStringAtPoint(const char* string, Vec3d* pos, int centered) {
@@ -553,6 +578,68 @@ void drawStringAtPoint(const char* string, Vec3d* pos, int centered) {
 
   drawString(string, screen.x - (centered ? (stringLength * 8 / 2) : 0.0),
              screen.y);
+}
+
+void drawSprite(SpriteType spriteType,
+                int frame,
+                int x,
+                int y,
+                int width,
+                int height) {
+  const char* c;
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
+               GL_POLYGON_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_CULL_FACE);
+
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(0, glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 1);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+  glDisable(GL_LIGHTING);
+
+  glTranslatef(x, y, 0);
+
+  glScalef(width, height, 1);
+
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, sprites[spriteType].at(frame));
+  glBegin(GL_TRIANGLES);
+  for (int ivert = 0; ivert < spriteVertices.size(); ++ivert) {
+    glTexCoord2d(spriteUVs[ivert].x, spriteUVs[ivert].y);
+    glVertex3f(spriteVertices[ivert].x, spriteVertices[ivert].y,
+               spriteVertices[ivert].z);
+  }
+  glEnd();
+
+  glPopMatrix();  // GL_MODELVIEW
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();  // GL_PROJECTION
+
+  glPopAttrib();  // GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT |
+                  // GL_POLYGON_BIT
+}
+
+void drawSpriteAtPoint(SpriteType spriteType,
+                       int frame,
+                       int width,
+                       int height,
+                       Vec3d* pos,
+                       int centered) {
+  Vec3d screen;  // x, y, zdepth
+  bool success = worldCoordsToScreen(pos, &screen);
+  if (!success) {
+    return;
+  }
+
+  drawSprite(spriteType, frame, screen.x - (centered ? width / 2.0 : 0.0),
+             screen.y - (centered ? height / 2.0 : 0.0), width, height);
 }
 
 void drawMarker(float r, float g, float b, float radius) {
@@ -1587,6 +1674,19 @@ void renderScene(void) {
     drawGameObject(obj);
   }
 
+  // draw sprite attachments
+  for (i = 0; i < visibleObjectsCount; i++) {
+    GameObject* obj = (visibleObjDistanceDescending + i)->obj;
+
+    if (obj->animState) {
+      AnimationBoneSpriteAttachment& sprAttachment =
+          obj->animState->spriteAttachment;
+
+      drawSpriteAtPoint(sprAttachment.spriteType, 0, 100, 100, &obj->position,
+                        TRUE);
+    }
+  }
+
 #if USE_LIGHTING
   glEnable(GL_LIGHTING);
 #endif
@@ -2105,6 +2205,9 @@ int main(int argc, char** argv) {
   loadModel(WatergrassModel, "watergrass.obj", "watergrass.bmp");
   loadModel(ReedModel, "reed.obj", "reed.bmp");
   loadModel(LilypadModel, "lilypad.obj", "lilypad.bmp");
+
+  loadSprite(NoneSprite, {"testspr.bmp"});
+  // loadSprite(HonkSprite, {"honk1spr.bmp", "honk2spr.bmp", "honk3spr.bmp"});
 
 #if ENABLE_NODEGRAPH_EDITOR
   nodeGraph.load(pathfindingGraph);
