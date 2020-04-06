@@ -1,4 +1,3 @@
-#include <nusys.h>
 
 #include "constants.h"
 
@@ -26,7 +25,7 @@ u16 strcon(u8* str1, u8* str2, u8* dst, u16 max_len) {
   return len;
 }
 
-#define NU_PI_CART_BLOCK_READ_SIZE 0x4000 /* cart read block size */
+#define EVD_PI_CART_BLOCK_READ_SIZE 0x4000 /* cart read block size */
 
 void evdPiReadRom(u32 rom_addr, void* buf_ptr, u32 size) {
   OSIoMesg dmaIoMesgBuf;
@@ -41,7 +40,7 @@ void evdPiReadRom(u32 rom_addr, void* buf_ptr, u32 size) {
   osCreateMesgQueue(&dmaMesgQ, &dmaMesgBuf, 1);
 
   while (size) {
-    if (size > NU_PI_CART_BLOCK_READ_SIZE) {
+    if (size > EVD_PI_CART_BLOCK_READ_SIZE) {
     } else {
       readSize = size;
     }
@@ -69,7 +68,7 @@ void evdPiWriteRom(u32 rom_addr, void* buf_ptr, u32 size) {
   osCreateMesgQueue(&dmaMesgQ, &dmaMesgBuf, 1);
 
   while (size) {
-    if (size > NU_PI_CART_BLOCK_READ_SIZE) {
+    if (size > EVD_PI_CART_BLOCK_READ_SIZE) {
     } else {
       writeSize = size;
     }
