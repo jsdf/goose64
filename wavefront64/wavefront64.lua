@@ -118,15 +118,16 @@ function w64_main()
 end
 
 function w64_initSprite(argument)
-	local sprfilename = string.match(argument, "([A-Za-z0-9]+)")
-	local bmp = w64_loadBitmap(sprfilename..".bmp")
-	return sprfilename, bmp 
+	local bmp_Path = argument;
+	local bmp_Name = string.match(bmp_Path, "([^.\\/]+).bmp$")
+	local bmp = w64_loadBitmap(bmp_Path)
+	return bmp_Name, bmp 
 end
 
 function w64_loadBitmap(image_file_name)
-	bmp = bitmap.from_file(image_file_name)
+	bmp, errmsg = bitmap.from_file(image_file_name)
 	if(bmp==nil) then
-		err("ERROR: File "..image_file_name.." doesn't exist, or file isn't a bitmap")
+		err("ERROR: File "..image_file_name.." doesn't exist, or file isn't a bitmap: "..errmsg)
 	else
 		print("BMP File "..image_file_name.." found.")
 	end
