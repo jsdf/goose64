@@ -50,7 +50,8 @@
 #define CONSOLE_SHOW_TRACING 0
 #define CONSOLE_SHOW_CULLING 0
 #define CONSOLE_SHOW_CAMERA 0
-#define CONSOLE_SHOW_RCP_TASKS 1
+#define CONSOLE_SHOW_SOUND 1
+#define CONSOLE_SHOW_RCP_TASKS 0
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
 #define SOUND_TEST 1
@@ -139,6 +140,8 @@ Lights1 sun_light = gdSPDefLights1(120,
 Lights0 amb_light = gdSPDefLights0(200, 200, 200 /*  ambient light */);
 
 static musHandle sndHandle = 0;
+static float sndPitch = 10.5;  // i don't fucking know :((
+static int sndNumber = 0;
 
 /* The initialization of stage 0 */
 void initStage00() {
@@ -438,6 +441,11 @@ void makeDL00() {
               usbLoggerState.usbLoggerOverflow, usbLoggerState.countDone,
               usbLoggerState.writeError);
       nuDebConCPuts(0, conbuf);
+#endif
+
+#if CONSOLE_SHOW_SOUND
+      debugPrintFloat(4, consoleOffset++, "snd=%.0f", sndNumber);
+      debugPrintFloat(4, consoleOffset++, "pitch=%f", sndPitch);
 #endif
     }
     nuDebConTextPos(0, 4, consoleOffset++);
@@ -996,26 +1004,33 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
 /* Provide playback and control of audio by the button of the controller */
 void soundCheck(void) {
-  static int snd_no = 0;
-
   /* The order in which audio is played can be determined using the right and
    * left sides of the cross key. */
-  if ((contdata[0].trigger & L_JPAD) || (contdata[0].trigger & R_JPAD)) {
-    if (snd_no)
+  if ((contdata[0].trigger & L_JPAD) || (contdata[0].trigger & R_JPAD) ||
+      contdata[0].trigger & U_JPAD || contdata[0].trigger & D_JPAD) {
+    if (sndNumber)
       nuAuStlSndPlayerSndStop(sndHandle, 0);
 
     if (contdata[0].trigger & L_JPAD) {
-      snd_no--;
-      if (snd_no < 1)
-        snd_no = MAX_SOUND_TYPE;
-    } else {
-      snd_no++;
-      if (snd_no > MAX_SOUND_TYPE)
-        snd_no = 1;
+      sndNumber--;
+      if (sndNumber < 1)
+        sndNumber = MAX_SOUND_TYPE - 1;
+    } else if (contdata[0].trigger & R_JPAD) {
+      sndNumber++;
+      if (sndNumber > MAX_SOUND_TYPE - 1)
+        sndNumber = 1;
+    } else if (contdata[0].trigger & U_JPAD) {
+      sndPitch += 0.5;
+      if (sndPitch > 12.0)
+        sndPitch = -12.0;
+    } else if (contdata[0].trigger & D_JPAD) {
+      sndPitch -= 0.5;
+      if (sndPitch < -12.0)
+        sndPitch = 12.0;
     }
 
-    sndHandle = nuAuStlSndPlayerPlay(snd_no);
-    nuAuStlSndPlayerSetSndPitch(sndHandle, 6);
+    sndHandle = nuAuStlSndPlayerPlay(sndNumber - 1);
+    nuAuStlSndPlayerSetSndPitch(sndHandle, sndPitch);
   }
 }
 

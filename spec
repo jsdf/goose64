@@ -87,21 +87,21 @@ endseg
 beginseg
   name "pbank"
   flags RAW
-  include "honks.ptr"
+  include "sounds/offhonks.ptr"
 endseg
 
 /* sample data - wave bank */
 beginseg
   name "wbank"
   flags RAW
-  include "honks.wbk"
+  include "sounds/offhonks.wbk"
 endseg
  
 /* sfx data */
 beginseg
   name "sfx"
   flags RAW
-  include "honks.bfx"
+  include "sounds/sfx.bfx"
 endseg
 
 beginseg

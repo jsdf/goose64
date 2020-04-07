@@ -27,7 +27,7 @@ model_headers = set([obj[:-3] + "h" for obj in obj_model_files])
 full_rebuild_deps = glob.glob("Makefile") + [
     header for header in glob.glob("*.h") if header not in model_headers
 ]
-link_deps = glob.glob("spec")
+link_deps = glob.glob("spec") + glob.glob("sounds/*.*")
 
 c_files_mtimes = get_mtimes_map(c_files)
 full_rebuild_deps_mtimes = get_mtimes_map(full_rebuild_deps)
