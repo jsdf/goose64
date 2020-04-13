@@ -7,41 +7,56 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		732EC52A2412219800CCCA81 /* compat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 732EC5282412219700CCCA81 /* compat.cpp */; };
-		732EC52D2412275D00CCCA81 /* university_map_graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 732EC52B2412275D00CCCA81 /* university_map_graph.cpp */; };
 		732EC5322413783C00CCCA81 /* nodegraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 732EC5312413783C00CCCA81 /* nodegraph.cpp */; };
-		732EC5372413798300CCCA81 /* pathfinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 732EC5362413798300CCCA81 /* pathfinding.cpp */; };
 		733266C8235EAA7600907B30 /* glgoose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266C7235EAA7600907B30 /* glgoose.cpp */; };
-		733266E4235EAB8200907B30 /* vec3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266D5235EAB8100907B30 /* vec3d.cpp */; };
-		733266E6235EAB8200907B30 /* gameobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266D7235EAB8100907B30 /* gameobject.cpp */; };
 		733266E7235EAB8200907B30 /* objloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266D9235EAB8100907B30 /* objloader.cpp */; };
-		733266E8235EAB8200907B30 /* vec2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266DA235EAB8100907B30 /* vec2d.cpp */; };
-		733266E9235EAB8200907B30 /* renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266DE235EAB8100907B30 /* renderer.cpp */; };
-		733266EA235EAB8200907B30 /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266E1235EAB8100907B30 /* game.cpp */; };
-		733266EB235EAB8200907B30 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266E2235EAB8100907B30 /* input.cpp */; };
 		733266EC235EAB8200907B30 /* texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266E3235EAB8200907B30 /* texture.cpp */; };
-		733266F0235EC53400907B30 /* character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 733266EF235EC53400907B30 /* character.cpp */; };
 		734E1B1223556A8300FBF3CC /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 734E1B1123556A8300FBF3CC /* OpenGL.framework */; };
 		734E1B1423556A8800FBF3CC /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 734E1B1323556A8800FBF3CC /* GLUT.framework */; };
-		73735E58235FE9C40048C9EC /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E57235FE9C40048C9EC /* player.cpp */; };
-		73735E5A235FE9E80048C9EC /* gameutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E59235FE9E80048C9EC /* gameutils.cpp */; };
-		73735E5C235FEB930048C9EC /* modeltype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5B235FEB930048C9EC /* modeltype.cpp */; };
-		73735E5E23600F730048C9EC /* characterstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5D23600F730048C9EC /* characterstate.cpp */; };
-		73735E6023600FD00048C9EC /* item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73735E5F23600FD00048C9EC /* item.cpp */; };
-		73996978242497AC00E671B5 /* frustum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73996976242497AC00E671B5 /* frustum.cpp */; };
-		73A093502389088400C53E85 /* physics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73A0934E2389088400C53E85 /* physics.cpp */; };
-		73A6BA11241F37B100C67C12 /* trace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73A6BA0F241F37B100C67C12 /* trace.cpp */; };
-		73D1784E23BF173800AC253C /* university_map_collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73D1784D23BF173700AC253C /* university_map_collision.cpp */; };
-		73D9004F2411DEFF00F96350 /* pathfinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73D9004E2411DEFF00F96350 /* pathfinding.cpp */; };
 		73E1066A23B0146600DE8673 /* imgui_impl_glut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066623B0146600DE8673 /* imgui_impl_glut.cpp */; };
 		73E1066B23B0146600DE8673 /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066723B0146600DE8673 /* imgui.cpp */; };
 		73E1066C23B0146600DE8673 /* imgui_impl_opengl2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066923B0146600DE8673 /* imgui_impl_opengl2.cpp */; };
 		73E1066F23B014A600DE8673 /* imgui_widgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066D23B014A600DE8673 /* imgui_widgets.cpp */; };
 		73E1067023B014A600DE8673 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066E23B014A600DE8673 /* imgui_draw.cpp */; };
-		73E1067323B483A400DE8673 /* collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1067123B483A300DE8673 /* collision.cpp */; };
-		73E90496238B326100CF5D2F /* animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E90494238B326100CF5D2F /* animation.cpp */; };
-		73E9049923944EE700CF5D2F /* rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E9049823944EE700CF5D2F /* rotation.cpp */; };
+		73F13D1424452D7300BEC5D0 /* item.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1324452D7300BEC5D0 /* item.c */; };
+		73F13D3824452F1500BEC5D0 /* gameobject.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1724452F1100BEC5D0 /* gameobject.c */; };
+		73F13D3924452F1500BEC5D0 /* modeltype.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1824452F1200BEC5D0 /* modeltype.c */; };
+		73F13D3A24452F1500BEC5D0 /* trace.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1924452F1200BEC5D0 /* trace.c */; };
+		73F13D3C24452F1500BEC5D0 /* item.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1B24452F1200BEC5D0 /* item.c */; };
+		73F13D3E24452F1500BEC5D0 /* pathfinding.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1D24452F1200BEC5D0 /* pathfinding.c */; };
+		73F13D4024452F1500BEC5D0 /* character.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1F24452F1200BEC5D0 /* character.c */; };
+		73F13D4124452F1500BEC5D0 /* sprite.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2024452F1200BEC5D0 /* sprite.c */; };
+		73F13D4224452F1500BEC5D0 /* vec2d.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2124452F1200BEC5D0 /* vec2d.c */; };
+		73F13D4424452F1500BEC5D0 /* renderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2324452F1300BEC5D0 /* renderer.c */; };
+		73F13D4524452F1500BEC5D0 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2424452F1300BEC5D0 /* game.c */; };
+		73F13D4624452F1500BEC5D0 /* animation.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2524452F1300BEC5D0 /* animation.c */; };
+		73F13D4724452F1500BEC5D0 /* university_map_graph.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2624452F1300BEC5D0 /* university_map_graph.c */; };
+		73F13D4824452F1500BEC5D0 /* gameutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2724452F1300BEC5D0 /* gameutils.c */; };
+		73F13D4A24452F1500BEC5D0 /* physics.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2924452F1300BEC5D0 /* physics.c */; };
+		73F13D4C24452F1500BEC5D0 /* compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2B24452F1300BEC5D0 /* compat.c */; };
+		73F13D4D24452F1500BEC5D0 /* rotation.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2C24452F1300BEC5D0 /* rotation.c */; };
+		73F13D4E24452F1500BEC5D0 /* university_map_collision.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2D24452F1400BEC5D0 /* university_map_collision.c */; };
+		73F13D5024452F1500BEC5D0 /* vec3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2F24452F1400BEC5D0 /* vec3d.c */; };
+		73F13D5324452F1500BEC5D0 /* frustum.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D3224452F1400BEC5D0 /* frustum.c */; };
+		73F13D5424452F1500BEC5D0 /* characterstate.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D3324452F1400BEC5D0 /* characterstate.c */; };
+		73F13D5624452F1500BEC5D0 /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D3524452F1400BEC5D0 /* input.c */; };
+		73F13D5724452F1500BEC5D0 /* collision.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D3624452F1400BEC5D0 /* collision.c */; };
+		73F13D5824452F1500BEC5D0 /* player.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D3724452F1500BEC5D0 /* player.c */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		73E55093244531190040E450 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = sourcecode.c;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFiles = (
+			);
+			script = "# <com.apple.compilers.gcc>\n";
+		};
+/* End PBXBuildRule section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		73881962234D854C0057630E /* Copy Files */ = {
@@ -57,55 +72,34 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7300A9AA23A9F79C00CD6A5B /* characteranimtypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = characteranimtypes.h; path = ../characteranimtypes.h; sourceTree = "<group>"; };
-		7300A9AB23A9F7A900CD6A5B /* character_anim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = character_anim.h; path = ../character_anim.h; sourceTree = "<group>"; };
-		732EC5282412219700CCCA81 /* compat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = compat.cpp; path = ../compat.cpp; sourceTree = "<group>"; };
-		732EC5292412219800CCCA81 /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compat.h; path = ../compat.h; sourceTree = "<group>"; };
-		732EC52B2412275D00CCCA81 /* university_map_graph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = university_map_graph.cpp; path = ../university_map_graph.cpp; sourceTree = "<group>"; };
-		732EC52C2412275D00CCCA81 /* university_map_graph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = university_map_graph.h; path = ../university_map_graph.h; sourceTree = "<group>"; };
+		7300A9AA23A9F79C00CD6A5B /* characteranimtypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = characteranimtypes.h; path = ../characteranimtypes.h; sourceTree = "<group>"; };
+		7300A9AB23A9F7A900CD6A5B /* character_anim.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = character_anim.h; path = ../character_anim.h; sourceTree = "<group>"; };
+		732EC5292412219800CCCA81 /* compat.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = compat.h; path = ../compat.h; sourceTree = "<group>"; };
+		732EC52C2412275D00CCCA81 /* university_map_graph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = university_map_graph.h; path = ../university_map_graph.h; sourceTree = "<group>"; };
 		732EC5302413783C00CCCA81 /* nodegraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = nodegraph.hpp; sourceTree = "<group>"; };
 		732EC5312413783C00CCCA81 /* nodegraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nodegraph.cpp; sourceTree = "<group>"; };
-		732EC533241378E400CCCA81 /* pathfinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pathfinding.h; path = ../pathfinding.h; sourceTree = "<group>"; };
-		732EC5362413798300CCCA81 /* pathfinding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pathfinding.cpp; path = ../pathfinding.cpp; sourceTree = "<group>"; };
-		733266BE235CFB2C00907B30 /* renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = renderer.h; path = ../renderer.h; sourceTree = "<group>"; };
-		733266C4235D0C2B00907B30 /* input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = input.h; path = ../input.h; sourceTree = "<group>"; };
+		732EC533241378E400CCCA81 /* pathfinding.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = pathfinding.h; path = ../pathfinding.h; sourceTree = "<group>"; };
+		733266BE235CFB2C00907B30 /* renderer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = renderer.h; path = ../renderer.h; sourceTree = "<group>"; };
 		733266C7235EAA7600907B30 /* glgoose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glgoose.cpp; path = ../glgoose.cpp; sourceTree = "<group>"; };
-		733266D5235EAB8100907B30 /* vec3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vec3d.cpp; path = ../vec3d.cpp; sourceTree = "<group>"; };
-		733266D6235EAB8100907B30 /* renderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = renderer.c; path = ../renderer.c; sourceTree = "<group>"; };
-		733266D7235EAB8100907B30 /* gameobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gameobject.cpp; path = ../gameobject.cpp; sourceTree = "<group>"; };
-		733266D8235EAB8100907B30 /* vec3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec3d.h; path = ../vec3d.h; sourceTree = "<group>"; };
+		733266D6235EAB8100907B30 /* renderer.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = renderer.c; path = ../renderer.c; sourceTree = "<group>"; };
+		733266D8235EAB8100907B30 /* vec3d.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = vec3d.h; path = ../vec3d.h; sourceTree = "<group>"; };
 		733266D9235EAB8100907B30 /* objloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = objloader.cpp; path = ../gl/objloader.cpp; sourceTree = "<group>"; };
-		733266DA235EAB8100907B30 /* vec2d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vec2d.cpp; path = ../vec2d.cpp; sourceTree = "<group>"; };
-		733266DB235EAB8100907B30 /* input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = input.h; path = ../input.h; sourceTree = "<group>"; };
-		733266DC235EAB8100907B30 /* vec2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec2d.h; path = ../vec2d.h; sourceTree = "<group>"; };
-		733266DD235EAB8100907B30 /* texture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = texture.hpp; path = ../gl/texture.hpp; sourceTree = "<group>"; };
-		733266DE235EAB8100907B30 /* renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = renderer.cpp; path = ../renderer.cpp; sourceTree = "<group>"; };
-		733266E0235EAB8100907B30 /* objloader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = objloader.hpp; path = ../gl/objloader.hpp; sourceTree = "<group>"; };
-		733266E1235EAB8100907B30 /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = game.cpp; path = ../game.cpp; sourceTree = "<group>"; };
-		733266E2235EAB8100907B30 /* input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = input.cpp; path = ../input.cpp; sourceTree = "<group>"; };
+		733266DB235EAB8100907B30 /* input.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = input.h; path = ../input.h; sourceTree = "<group>"; };
+		733266DC235EAB8100907B30 /* vec2d.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = vec2d.h; path = ../vec2d.h; sourceTree = "<group>"; };
+		733266DD235EAB8100907B30 /* texture.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = texture.hpp; path = ../gl/texture.hpp; sourceTree = "<group>"; };
+		733266E0235EAB8100907B30 /* objloader.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = objloader.hpp; path = ../gl/objloader.hpp; sourceTree = "<group>"; };
 		733266E3235EAB8200907B30 /* texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = texture.cpp; path = ../gl/texture.cpp; sourceTree = "<group>"; };
-		733266ED235EAD0B00907B30 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = game.h; path = ../game.h; sourceTree = "<group>"; };
-		733266EE235EC53400907B30 /* character.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = character.h; path = ../character.h; sourceTree = "<group>"; };
-		733266EF235EC53400907B30 /* character.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = character.cpp; path = ../character.cpp; sourceTree = "<group>"; };
+		733266ED235EAD0B00907B30 /* game.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = game.h; path = ../game.h; sourceTree = "<group>"; };
+		733266EE235EC53400907B30 /* character.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = character.h; path = ../character.h; sourceTree = "<group>"; };
 		734E1B1123556A8300FBF3CC /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		734E1B1323556A8800FBF3CC /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
-		734E1B2223556F4A00FBF3CC /* gameobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gameobject.h; path = ../gameobject.h; sourceTree = "<group>"; };
-		73735E57235FE9C40048C9EC /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = player.cpp; path = ../player.cpp; sourceTree = "<group>"; };
-		73735E59235FE9E80048C9EC /* gameutils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = gameutils.cpp; path = ../gameutils.cpp; sourceTree = "<group>"; };
-		73735E5B235FEB930048C9EC /* modeltype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = modeltype.cpp; path = ../modeltype.cpp; sourceTree = "<group>"; };
-		73735E5D23600F730048C9EC /* characterstate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = characterstate.cpp; path = ../characterstate.cpp; sourceTree = "<group>"; };
-		73735E5F23600FD00048C9EC /* item.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = item.cpp; path = ../item.cpp; sourceTree = "<group>"; };
-		73735E6123600FF10048C9EC /* item.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = item.h; path = ../item.h; sourceTree = "<group>"; };
+		734E1B2223556F4A00FBF3CC /* gameobject.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = gameobject.h; path = ../gameobject.h; sourceTree = "<group>"; };
+		73735E6123600FF10048C9EC /* item.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = item.h; path = ../item.h; sourceTree = "<group>"; };
 		73881964234D854C0057630E /* goose64glut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = goose64glut; sourceTree = BUILT_PRODUCTS_DIR; };
-		73996976242497AC00E671B5 /* frustum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = frustum.cpp; path = ../frustum.cpp; sourceTree = "<group>"; };
-		73996977242497AC00E671B5 /* frustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = frustum.h; path = ../frustum.h; sourceTree = "<group>"; };
-		73A0934E2389088400C53E85 /* physics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = physics.cpp; path = ../physics.cpp; sourceTree = "<group>"; };
-		73A0934F2389088400C53E85 /* physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = physics.h; path = ../physics.h; sourceTree = "<group>"; };
+		73996977242497AC00E671B5 /* frustum.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = frustum.h; path = ../frustum.h; sourceTree = "<group>"; };
+		73A0934F2389088400C53E85 /* physics.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = physics.h; path = ../physics.h; sourceTree = "<group>"; };
 		73A2C3C42362720B0036BCCB /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
-		73A6BA0F241F37B100C67C12 /* trace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = trace.cpp; path = ../trace.cpp; sourceTree = "<group>"; };
-		73A6BA10241F37B100C67C12 /* trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trace.h; path = ../trace.h; sourceTree = "<group>"; };
-		73D1784D23BF173700AC253C /* university_map_collision.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = university_map_collision.cpp; path = ../university_map_collision.cpp; sourceTree = "<group>"; };
-		73D9004E2411DEFF00F96350 /* pathfinding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pathfinding.cpp; path = ../pathfinding.cpp; sourceTree = "<group>"; };
+		73A6BA10241F37B100C67C12 /* trace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = trace.h; path = ../trace.h; sourceTree = "<group>"; };
 		73E1066423B0146500DE8673 /* imgui_impl_glut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imgui_impl_glut.h; path = ../imgui/examples/imgui_impl_glut.h; sourceTree = "<group>"; };
 		73E1066523B0146500DE8673 /* imgui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imgui.h; path = ../imgui/imgui.h; sourceTree = "<group>"; };
 		73E1066623B0146600DE8673 /* imgui_impl_glut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_impl_glut.cpp; path = ../imgui/examples/imgui_impl_glut.cpp; sourceTree = "<group>"; };
@@ -114,12 +108,33 @@
 		73E1066923B0146600DE8673 /* imgui_impl_opengl2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_impl_opengl2.cpp; path = ../imgui/examples/imgui_impl_opengl2.cpp; sourceTree = "<group>"; };
 		73E1066D23B014A600DE8673 /* imgui_widgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_widgets.cpp; path = ../imgui/imgui_widgets.cpp; sourceTree = "<group>"; };
 		73E1066E23B014A600DE8673 /* imgui_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_draw.cpp; path = ../imgui/imgui_draw.cpp; sourceTree = "<group>"; };
-		73E1067123B483A300DE8673 /* collision.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = collision.cpp; path = ../collision.cpp; sourceTree = "<group>"; };
-		73E1067223B483A400DE8673 /* collision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = collision.h; path = ../collision.h; sourceTree = "<group>"; };
-		73E90494238B326100CF5D2F /* animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animation.cpp; path = ../animation.cpp; sourceTree = "<group>"; };
-		73E90495238B326100CF5D2F /* animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = animation.h; path = ../animation.h; sourceTree = "<group>"; };
-		73E9049723944EE600CF5D2F /* rotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rotation.h; path = ../rotation.h; sourceTree = "<group>"; };
-		73E9049823944EE700CF5D2F /* rotation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rotation.cpp; path = ../rotation.cpp; sourceTree = "<group>"; };
+		73E1067223B483A400DE8673 /* collision.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = collision.h; path = ../collision.h; sourceTree = "<group>"; };
+		73E90495238B326100CF5D2F /* animation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = animation.h; path = ../animation.h; sourceTree = "<group>"; };
+		73E9049723944EE600CF5D2F /* rotation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = rotation.h; path = ../rotation.h; sourceTree = "<group>"; };
+		73F13D1324452D7300BEC5D0 /* item.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = item.c; path = ../item.c; sourceTree = "<group>"; };
+		73F13D1724452F1100BEC5D0 /* gameobject.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = gameobject.c; path = ../gameobject.c; sourceTree = "<group>"; };
+		73F13D1824452F1200BEC5D0 /* modeltype.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = modeltype.c; path = ../modeltype.c; sourceTree = "<group>"; };
+		73F13D1924452F1200BEC5D0 /* trace.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = trace.c; path = ../trace.c; sourceTree = "<group>"; };
+		73F13D1B24452F1200BEC5D0 /* item.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = item.c; path = ../item.c; sourceTree = "<group>"; };
+		73F13D1D24452F1200BEC5D0 /* pathfinding.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = pathfinding.c; path = ../pathfinding.c; sourceTree = "<group>"; };
+		73F13D1F24452F1200BEC5D0 /* character.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = character.c; path = ../character.c; sourceTree = "<group>"; };
+		73F13D2024452F1200BEC5D0 /* sprite.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = sprite.c; path = ../sprite.c; sourceTree = "<group>"; };
+		73F13D2124452F1200BEC5D0 /* vec2d.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = vec2d.c; path = ../vec2d.c; sourceTree = "<group>"; };
+		73F13D2324452F1300BEC5D0 /* renderer.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = renderer.c; path = ../renderer.c; sourceTree = "<group>"; };
+		73F13D2424452F1300BEC5D0 /* game.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = game.c; path = ../game.c; sourceTree = "<group>"; };
+		73F13D2524452F1300BEC5D0 /* animation.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = animation.c; path = ../animation.c; sourceTree = "<group>"; };
+		73F13D2624452F1300BEC5D0 /* university_map_graph.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = university_map_graph.c; path = ../university_map_graph.c; sourceTree = "<group>"; };
+		73F13D2724452F1300BEC5D0 /* gameutils.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = gameutils.c; path = ../gameutils.c; sourceTree = "<group>"; };
+		73F13D2924452F1300BEC5D0 /* physics.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = physics.c; path = ../physics.c; sourceTree = "<group>"; };
+		73F13D2B24452F1300BEC5D0 /* compat.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = compat.c; path = ../compat.c; sourceTree = "<group>"; };
+		73F13D2C24452F1300BEC5D0 /* rotation.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = rotation.c; path = ../rotation.c; sourceTree = "<group>"; };
+		73F13D2D24452F1400BEC5D0 /* university_map_collision.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = university_map_collision.c; path = ../university_map_collision.c; sourceTree = "<group>"; };
+		73F13D2F24452F1400BEC5D0 /* vec3d.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = vec3d.c; path = ../vec3d.c; sourceTree = "<group>"; };
+		73F13D3224452F1400BEC5D0 /* frustum.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = frustum.c; path = ../frustum.c; sourceTree = "<group>"; };
+		73F13D3324452F1400BEC5D0 /* characterstate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = characterstate.c; path = ../characterstate.c; sourceTree = "<group>"; };
+		73F13D3524452F1400BEC5D0 /* input.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = input.c; path = ../input.c; sourceTree = "<group>"; };
+		73F13D3624452F1400BEC5D0 /* collision.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = collision.c; path = ../collision.c; sourceTree = "<group>"; };
+		73F13D3724452F1500BEC5D0 /* player.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = player.c; path = ../player.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,57 +173,57 @@
 		7388195B234D854C0057630E = {
 			isa = PBXGroup;
 			children = (
-				73735E5F23600FD00048C9EC /* item.cpp */,
-				73735E59235FE9E80048C9EC /* gameutils.cpp */,
-				733266E1235EAB8100907B30 /* game.cpp */,
-				734E1B2223556F4A00FBF3CC /* gameobject.h */,
-				733266E2235EAB8100907B30 /* input.cpp */,
-				733266C4235D0C2B00907B30 /* input.h */,
 				733266C7235EAA7600907B30 /* glgoose.cpp */,
-				733266D7235EAB8100907B30 /* gameobject.cpp */,
-				733266DB235EAB8100907B30 /* input.h */,
-				733266EF235EC53400907B30 /* character.cpp */,
-				73D1784D23BF173700AC253C /* university_map_collision.cpp */,
-				73A6BA0F241F37B100C67C12 /* trace.cpp */,
-				73A6BA10241F37B100C67C12 /* trace.h */,
-				732EC5282412219700CCCA81 /* compat.cpp */,
-				732EC5292412219800CCCA81 /* compat.h */,
-				73996976242497AC00E671B5 /* frustum.cpp */,
-				73996977242497AC00E671B5 /* frustum.h */,
-				732EC52B2412275D00CCCA81 /* university_map_graph.cpp */,
-				732EC52C2412275D00CCCA81 /* university_map_graph.h */,
-				73E1067123B483A300DE8673 /* collision.cpp */,
-				732EC52F2413783C00CCCA81 /* nodegraph */,
-				73D9004E2411DEFF00F96350 /* pathfinding.cpp */,
-				73E1067223B483A400DE8673 /* collision.h */,
-				733266EE235EC53400907B30 /* character.h */,
-				733266D9235EAB8100907B30 /* objloader.cpp */,
-				733266ED235EAD0B00907B30 /* game.h */,
-				73E1066323B0144500DE8673 /* imgui */,
 				733266E0235EAB8100907B30 /* objloader.hpp */,
-				7300A9AB23A9F7A900CD6A5B /* character_anim.h */,
-				733266D6235EAB8100907B30 /* renderer.c */,
-				7300A9AA23A9F79C00CD6A5B /* characteranimtypes.h */,
-				73E90494238B326100CF5D2F /* animation.cpp */,
-				732EC5362413798300CCCA81 /* pathfinding.cpp */,
-				73E9049823944EE700CF5D2F /* rotation.cpp */,
-				73E9049723944EE600CF5D2F /* rotation.h */,
-				73E90495238B326100CF5D2F /* animation.h */,
-				73A0934E2389088400C53E85 /* physics.cpp */,
-				73A0934F2389088400C53E85 /* physics.h */,
-				73735E5D23600F730048C9EC /* characterstate.cpp */,
-				732EC533241378E400CCCA81 /* pathfinding.h */,
-				73735E6123600FF10048C9EC /* item.h */,
-				733266DE235EAB8100907B30 /* renderer.cpp */,
-				73735E5B235FEB930048C9EC /* modeltype.cpp */,
-				73735E57235FE9C40048C9EC /* player.cpp */,
+				733266D9235EAB8100907B30 /* objloader.cpp */,
+				732EC52F2413783C00CCCA81 /* nodegraph */,
+				73E1066323B0144500DE8673 /* imgui */,
 				733266E3235EAB8200907B30 /* texture.cpp */,
 				733266DD235EAB8100907B30 /* texture.hpp */,
-				733266DA235EAB8100907B30 /* vec2d.cpp */,
+				73A6BA10241F37B100C67C12 /* trace.h */,
+				732EC5292412219800CCCA81 /* compat.h */,
+				73996977242497AC00E671B5 /* frustum.h */,
+				732EC52C2412275D00CCCA81 /* university_map_graph.h */,
+				7300A9AA23A9F79C00CD6A5B /* characteranimtypes.h */,
+				73E9049723944EE600CF5D2F /* rotation.h */,
+				73E90495238B326100CF5D2F /* animation.h */,
+				73A0934F2389088400C53E85 /* physics.h */,
+				732EC533241378E400CCCA81 /* pathfinding.h */,
+				73735E6123600FF10048C9EC /* item.h */,
 				733266DC235EAB8100907B30 /* vec2d.h */,
-				733266D5235EAB8100907B30 /* vec3d.cpp */,
 				733266D8235EAB8100907B30 /* vec3d.h */,
 				733266BE235CFB2C00907B30 /* renderer.h */,
+				7300A9AB23A9F7A900CD6A5B /* character_anim.h */,
+				734E1B2223556F4A00FBF3CC /* gameobject.h */,
+				73E1067223B483A400DE8673 /* collision.h */,
+				733266EE235EC53400907B30 /* character.h */,
+				733266ED235EAD0B00907B30 /* game.h */,
+				733266DB235EAB8100907B30 /* input.h */,
+				73F13D2724452F1300BEC5D0 /* gameutils.c */,
+				73F13D3524452F1400BEC5D0 /* input.c */,
+				73F13D1324452D7300BEC5D0 /* item.c */,
+				73F13D2924452F1300BEC5D0 /* physics.c */,
+				73F13D3724452F1500BEC5D0 /* player.c */,
+				733266D6235EAB8100907B30 /* renderer.c */,
+				73F13D2524452F1300BEC5D0 /* animation.c */,
+				73F13D1F24452F1200BEC5D0 /* character.c */,
+				73F13D3324452F1400BEC5D0 /* characterstate.c */,
+				73F13D3624452F1400BEC5D0 /* collision.c */,
+				73F13D2B24452F1300BEC5D0 /* compat.c */,
+				73F13D3224452F1400BEC5D0 /* frustum.c */,
+				73F13D2424452F1300BEC5D0 /* game.c */,
+				73F13D1724452F1100BEC5D0 /* gameobject.c */,
+				73F13D1B24452F1200BEC5D0 /* item.c */,
+				73F13D1824452F1200BEC5D0 /* modeltype.c */,
+				73F13D1D24452F1200BEC5D0 /* pathfinding.c */,
+				73F13D2324452F1300BEC5D0 /* renderer.c */,
+				73F13D2C24452F1300BEC5D0 /* rotation.c */,
+				73F13D2024452F1200BEC5D0 /* sprite.c */,
+				73F13D1924452F1200BEC5D0 /* trace.c */,
+				73F13D2D24452F1400BEC5D0 /* university_map_collision.c */,
+				73F13D2624452F1300BEC5D0 /* university_map_graph.c */,
+				73F13D2124452F1200BEC5D0 /* vec2d.c */,
+				73F13D2F24452F1400BEC5D0 /* vec3d.c */,
 				73881965234D854C0057630E /* Products */,
 				734E1B1023556A8300FBF3CC /* Frameworks */,
 			);
@@ -249,6 +264,7 @@
 				73881962234D854C0057630E /* Copy Files */,
 			);
 			buildRules = (
+				73E55093244531190040E450 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -294,38 +310,39 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73F13D3C24452F1500BEC5D0 /* item.c in Sources */,
+				73F13D4424452F1500BEC5D0 /* renderer.c in Sources */,
 				733266C8235EAA7600907B30 /* glgoose.cpp in Sources */,
-				733266E4235EAB8200907B30 /* vec3d.cpp in Sources */,
-				733266EB235EAB8200907B30 /* input.cpp in Sources */,
-				733266EA235EAB8200907B30 /* game.cpp in Sources */,
+				73F13D3A24452F1500BEC5D0 /* trace.c in Sources */,
+				73F13D5424452F1500BEC5D0 /* characterstate.c in Sources */,
+				73F13D4124452F1500BEC5D0 /* sprite.c in Sources */,
 				73E1066A23B0146600DE8673 /* imgui_impl_glut.cpp in Sources */,
-				73996978242497AC00E671B5 /* frustum.cpp in Sources */,
+				73F13D1424452D7300BEC5D0 /* item.c in Sources */,
 				73E1067023B014A600DE8673 /* imgui_draw.cpp in Sources */,
-				73735E58235FE9C40048C9EC /* player.cpp in Sources */,
-				73A6BA11241F37B100C67C12 /* trace.cpp in Sources */,
-				733266E6235EAB8200907B30 /* gameobject.cpp in Sources */,
-				732EC52A2412219800CCCA81 /* compat.cpp in Sources */,
-				73D9004F2411DEFF00F96350 /* pathfinding.cpp in Sources */,
-				73735E5A235FE9E80048C9EC /* gameutils.cpp in Sources */,
-				733266F0235EC53400907B30 /* character.cpp in Sources */,
+				73F13D4D24452F1500BEC5D0 /* rotation.c in Sources */,
+				73F13D4524452F1500BEC5D0 /* game.c in Sources */,
+				73F13D5024452F1500BEC5D0 /* vec3d.c in Sources */,
 				73E1066B23B0146600DE8673 /* imgui.cpp in Sources */,
+				73F13D4224452F1500BEC5D0 /* vec2d.c in Sources */,
+				73F13D4824452F1500BEC5D0 /* gameutils.c in Sources */,
+				73F13D5624452F1500BEC5D0 /* input.c in Sources */,
 				732EC5322413783C00CCCA81 /* nodegraph.cpp in Sources */,
-				733266E9235EAB8200907B30 /* renderer.cpp in Sources */,
+				73F13D4724452F1500BEC5D0 /* university_map_graph.c in Sources */,
+				73F13D5324452F1500BEC5D0 /* frustum.c in Sources */,
 				73E1066F23B014A600DE8673 /* imgui_widgets.cpp in Sources */,
+				73F13D4624452F1500BEC5D0 /* animation.c in Sources */,
+				73F13D5724452F1500BEC5D0 /* collision.c in Sources */,
+				73F13D5824452F1500BEC5D0 /* player.c in Sources */,
+				73F13D3924452F1500BEC5D0 /* modeltype.c in Sources */,
+				73F13D4C24452F1500BEC5D0 /* compat.c in Sources */,
 				73E1066C23B0146600DE8673 /* imgui_impl_opengl2.cpp in Sources */,
-				73735E5C235FEB930048C9EC /* modeltype.cpp in Sources */,
-				73E90496238B326100CF5D2F /* animation.cpp in Sources */,
+				73F13D4E24452F1500BEC5D0 /* university_map_collision.c in Sources */,
+				73F13D4024452F1500BEC5D0 /* character.c in Sources */,
+				73F13D4A24452F1500BEC5D0 /* physics.c in Sources */,
 				733266E7235EAB8200907B30 /* objloader.cpp in Sources */,
-				73735E5E23600F730048C9EC /* characterstate.cpp in Sources */,
-				73E1067323B483A400DE8673 /* collision.cpp in Sources */,
-				732EC52D2412275D00CCCA81 /* university_map_graph.cpp in Sources */,
-				73735E6023600FD00048C9EC /* item.cpp in Sources */,
-				732EC5372413798300CCCA81 /* pathfinding.cpp in Sources */,
-				733266E8235EAB8200907B30 /* vec2d.cpp in Sources */,
-				73E9049923944EE700CF5D2F /* rotation.cpp in Sources */,
-				73D1784E23BF173800AC253C /* university_map_collision.cpp in Sources */,
 				733266EC235EAB8200907B30 /* texture.cpp in Sources */,
-				73A093502389088400C53E85 /* physics.cpp in Sources */,
+				73F13D3E24452F1500BEC5D0 /* pathfinding.c in Sources */,
+				73F13D3824452F1500BEC5D0 /* gameobject.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

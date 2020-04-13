@@ -32,6 +32,8 @@ void Player_init(Player* self, GameObject* obj) {
   self->animState.attachment.offset.x = 14;
   self->animState.attachment.offset.z = -2;
   self->animState.attachment.rotation.x = 90;
+  self->animState.spriteAttachment.offset.x = 14;
+  self->animState.spriteAttachment.offset.z = -2;
   self->lastPickupTick = 0;
 }
 

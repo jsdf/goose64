@@ -5,6 +5,7 @@
 #include "modeltype.h"
 #include "n64compat.h"
 #include "rotation.h"
+#include "sprite.h"
 #include "vec3d.h"
 
 // max num bones per character
@@ -33,14 +34,24 @@ typedef struct AnimationBoneAttachment {
   EulerDegrees rotation;
 } AnimationBoneAttachment;
 
+typedef struct AnimationBoneSpriteAttachment {
+  int boneIndex;
+  SpriteType spriteType;
+  int startTick;
+  Vec3d offset;
+} AnimationBoneSpriteAttachment;
+
 typedef struct AnimationState {
   int state;
   float progress;
-  AnimationBoneAttachment attachment;
   // for each bone, used for the n64 renderer
   Mtx animMeshTransform[MAX_ANIM_MESH_PARTS];
   // same but for attachment (there can only be one)
   Mtx attachmentTransform;
+  Mtx attachmentSpriteTransform;
+
+  AnimationBoneAttachment attachment;
+  AnimationBoneSpriteAttachment spriteAttachment;
 } AnimationState;
 
 typedef struct AnimationInterpolation {
@@ -52,6 +63,8 @@ typedef struct AnimationInterpolation {
 void AnimationState_init(AnimationState* self);
 
 void AnimationBoneAttachment_init(AnimationBoneAttachment* self);
+
+void AnimationBoneSpriteAttachment_init(AnimationBoneSpriteAttachment* self);
 
 void AnimationInterpolation_calc(AnimationInterpolation* self,
                                  AnimationState* state,
