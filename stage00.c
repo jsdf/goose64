@@ -46,11 +46,11 @@
 #include "ed64io_usb.h"
 
 #define CONSOLE_ED64LOG_DEBUG 0
-#define CONSOLE_SHOW_PROFILING 0
+#define CONSOLE_SHOW_PROFILING 1
 #define CONSOLE_SHOW_TRACING 0
 #define CONSOLE_SHOW_CULLING 0
 #define CONSOLE_SHOW_CAMERA 0
-#define CONSOLE_SHOW_SOUND 1
+#define CONSOLE_SHOW_SOUND 0
 #define CONSOLE_SHOW_RCP_TASKS 0
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
@@ -769,8 +769,11 @@ void drawWorldObjects(Dynamic* dynamicp) {
   gDPSetCycleType(glistp++, twoCycleMode ? G_CYC_2CYCLE : G_CYC_1CYCLE);
 
   // z-buffered, antialiased triangles
+  //
+#if !RENDERER_PAINTERS_ALGORITHM
   gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
   gSPSetGeometryMode(glistp++, G_ZBUFFER);
+#endif
 
   gSPSetLights0(glistp++, amb_light);
 
@@ -805,13 +808,30 @@ void drawWorldObjects(Dynamic* dynamicp) {
         break;
     }
 
+    gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
 #if RENDERER_PAINTERS_ALGORITHM
+    // if (FALSE) {
     if (Renderer_isZBufferedGameObject(obj)) {
+#if ANTIALIASING
       gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+#else
+      gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+#endif
+      gSPSetGeometryMode(glistp++, G_ZBUFFER);
+      // } else if (FALSE) {
+    } else if (Renderer_isZWriteGameObject(obj)) {
+#if ANTIALIASING
+      gDPSetRenderMode(glistp++, G_RM_AA_ZUPD_OPA_SURF, G_RM_AA_ZUPD_OPA_SURF2);
+#else
+      gDPSetRenderMode(glistp++, G_RM_ZUPD_OPA_SURF, G_RM_ZUPD_OPA_SURF2);
+#endif
       gSPSetGeometryMode(glistp++, G_ZBUFFER);
     } else {
+#if ANTIALIASING
       gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
-      gSPClearGeometryMode(glistp++, G_ZBUFFER);
+#else
+      gDPSetRenderMode(glistp++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+#endif
     }
 #endif
 

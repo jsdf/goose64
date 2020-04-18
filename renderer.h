@@ -7,7 +7,7 @@
 
 // when painter's alg enabled we change render order and disable z buffer for
 // some objects that don't need it
-#define RENDERER_PAINTERS_ALGORITHM 0
+#define RENDERER_PAINTERS_ALGORITHM 1
 
 typedef struct RendererSortDistance {
   GameObject* obj;
@@ -15,6 +15,9 @@ typedef struct RendererSortDistance {
 } RendererSortDistance;
 
 int Renderer_isZBufferedGameObject(GameObject* obj);
+int Renderer_isZWriteGameObject(GameObject* obj);
+int Renderer_isBackgroundGameObject(GameObject* obj);
+
 int Renderer_isLitGameObject(GameObject* obj);
 int Renderer_isAnimatedGameObject(GameObject* obj);
 

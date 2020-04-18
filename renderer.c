@@ -17,13 +17,20 @@
 
 int Renderer_isZBufferedGameObject(GameObject* obj) {
   switch (obj->modelType) {
-    case GroundModel:
-    case WaterModel:
     case GooseModel:
     case GardenerCharacterModel:
     case BushModel:
-    case WatergrassModel:
-    case ReedModel:
+      // case WatergrassModel:
+      // case ReedModel:
+      return TRUE;
+    default:
+      return FALSE;
+  }
+}
+int Renderer_isZWriteGameObject(GameObject* obj) {
+  switch (obj->modelType) {
+    // case GroundModel:
+    case WaterModel:
       return TRUE;
     default:
       return FALSE;
@@ -34,9 +41,9 @@ int Renderer_isBackgroundGameObject(GameObject* obj) {
   switch (obj->modelType) {
     case GroundModel:
     case WaterModel:
-      return FALSE;
-    default:
       return TRUE;
+    default:
+      return FALSE;
   }
 }
 
@@ -63,9 +70,9 @@ int Renderer_isAnimatedGameObject(GameObject* obj) {
 }
 
 float Renderer_gameobjectSortDist(GameObject* obj) {
-  if (!Renderer_isBackgroundGameObject(obj)) {
+  if (Renderer_isBackgroundGameObject(obj)) {
     // always consider this far away
-    return 10000.0F + obj->id;  // add object id to achieve stable sorting
+    return 10000.0F - obj->id;  // add object id to achieve stable sorting
   }
 
   return Vec3d_distanceTo(&obj->position, &Game_get()->viewPos);

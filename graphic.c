@@ -174,7 +174,9 @@ void gfxInit(void) {
   /* Activate the graphic thread  */
   nuGfxThreadStart();
 
-  viMode = osViModeTable[HIGH_RESOLUTION ? OS_VI_NTSC_HAF1 : OS_VI_NTSC_LAN1];
+  viMode = osViModeTable[HIGH_RESOLUTION ? (ANTIALIASING ? OS_VI_NTSC_HAF1
+                                                         : OS_VI_NTSC_HPF1)
+                                         : OS_VI_NTSC_LAN1];
 #if HIGH_RESOLUTION_HALF_Y
   viMode = osViModeTable[OS_VI_NTSC_LAN1];
   /* Change width, xScale, and origin */

@@ -23,8 +23,10 @@
 
 #if HIGH_RESOLUTION_HALF_Y
 #define SCREEN_HT 240
+#define ANTIALIASING 1
 #else
 #define SCREEN_HT 480
+#define ANTIALIASING 0
 #endif
 
 #define FRAME_BUFFERS 3
@@ -41,6 +43,7 @@
 #else  // low resolution, 320x240
 #define SCREEN_WD 320
 #define SCREEN_HT 240
+#define ANTIALIASING 1
 #define FRAME_BUFFERS 3
 // in lowest usable ram, uses 150kb
 #define ZBUFFER_ADDR 0x80000400
@@ -57,6 +60,21 @@
 
 /* The maximum length of the display list of one task  */
 #define GFX_GLIST_LEN 2048
+
+// render mode to write to z buffer but not depth compare when rendering
+#define RM_AA_ZUPD_OPA_SURF(clk)                                      \
+  AA_EN | Z_UPD | IM_RD | CVG_DST_CLAMP | ZMODE_OPA | ALPHA_CVG_SEL | \
+      GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+
+#define G_RM_AA_ZUPD_OPA_SURF RM_AA_ZUPD_OPA_SURF(1)
+#define G_RM_AA_ZUPD_OPA_SURF2 RM_AA_ZUPD_OPA_SURF(2)
+
+#define RM_ZUPD_OPA_SURF(clk)                        \
+  Z_UPD | CVG_DST_FULL | ALPHA_CVG_SEL | ZMODE_OPA | \
+      GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+
+#define G_RM_ZUPD_OPA_SURF RM_ZUPD_OPA_SURF(1)
+#define G_RM_ZUPD_OPA_SURF2 RM_ZUPD_OPA_SURF(2)
 
 /*-------------------------- define structure ------------------------------ */
 /* The structure of the projection-matrix  */
