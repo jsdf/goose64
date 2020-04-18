@@ -113,4 +113,5 @@ void stage00(int pendingGfx) {
   Trace_addEvent(MainCPUTraceEvent, profStartFrame, profEndFrame);
   Trace_addEvent(MainUpdateTraceEvent, profStartUpdate, profEndFrame);
   profilingAccumulated[MainCPUTraceEvent] += profEndFrame - profStartFrame;
+  profilingCounts[MainCPUTraceEvent]++;
 }

@@ -39,6 +39,7 @@ typedef struct TraceEvent {
 extern TraceEvent traceEvents[TRACE_EVENT_BUFFER_SIZE];
 
 extern float profilingAccumulated[MAX_TRACE_EVENT_TYPE];
+extern int profilingCounts[MAX_TRACE_EVENT_TYPE];
 
 void Trace_addEvent(short type, float start, float end);
 void Trace_clear();

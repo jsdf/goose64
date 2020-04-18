@@ -88,6 +88,7 @@ int frameCounterCurFrames;
 int frameCounterLastFrames;
 
 /* profiling */
+int totalUpdates;
 float profAvgCharacters;
 float profAvgPhysics;
 float profAvgDraw;
@@ -181,6 +182,7 @@ void initStage00() {
 
   frameCounterLastTime = 0;
   frameCounterCurFrames = 0;
+  totalUpdates = 0;
   profAvgCharacters = 0;
   profAvgPhysics = 0;
   profAvgDraw = 0;
@@ -210,6 +212,7 @@ void initStage00() {
   for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
     profilingAverages[i] = 0;
     profilingAccumulated[i] = 0;
+    profilingCounts[i] = 0;
   }
 
   debugPrintfSync("getModelDisplayList at %p\n", getModelDisplayList);
@@ -264,6 +267,7 @@ void traceRCP() {
   }
   // debugPrintf("\n");
   profilingAccumulated[RDPTaskTraceEvent] += longestTaskTime;
+  profilingCounts[RDPTaskTraceEvent]++;
 }
 
 /* Make the display list and activate the task */
@@ -386,7 +390,7 @@ void makeDL00() {
       // debugPrintFloat(4, consoleOffset++, "char=%3.2fms", profAvgCharacters);
       // debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profAvgPhysics);
       // debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profAvgDraw);
-      // debugPrintFloat(4, consoleOffset++, "path=%3.2fms", profAvgPath);
+      // debugPrintFloat(0, consoleOffset++, "path=%3.2fms", profAvgPath);
       debugPrintFloat(4, consoleOffset++, "cpu=%3.2fms",
                       profilingAverages[MainCPUTraceEvent]);
       debugPrintFloat(4, consoleOffset++, "rdp=%3.2fms",
@@ -552,6 +556,10 @@ void finishRecordingTrace() {
 void updateGame00(void) {
   int i;
   Game* game;
+
+  totalUpdates++;
+  traceRCP();  // record rcp perf from prev frame
+
   game = Game_get();
 
   Vec2d_origin(&input.direction);
@@ -619,8 +627,6 @@ void updateGame00(void) {
     finishRecordingTrace();
   }
 
-  traceRCP();
-
   if (usbEnabled) {
 #if LOG_TRACES
     if (loggingTrace) {
@@ -631,7 +637,7 @@ void updateGame00(void) {
 
   Game_update(&input);
 
-  // if (nuScRetraceCounter % VSYNC_FPS * FRAME_SKIP == 0) {
+  // if (totalUpdates % 60 == 0) {
   //   debugPrintfSync("retrace=%d\n", nuScRetraceCounter);
   // }
 
@@ -644,20 +650,24 @@ void updateGame00(void) {
     usbResult = usbLoggerFlush();
   }
 
-  if (nuScRetraceCounter % VSYNC_FPS == 0) {
-    // calc averages for last VSYNC_FPS frames
-    profAvgCharacters = game->profTimeCharacters / VSYNC_FPS;
+  if (totalUpdates % 60 == 0) {
+    // calc averages for last 60 updates
+    profAvgCharacters = game->profTimeCharacters / 60;
     game->profTimeCharacters = 0.0f;
-    profAvgPhysics = game->profTimePhysics / VSYNC_FPS;
+    profAvgPhysics = game->profTimePhysics / 60;
     game->profTimePhysics = 0.0f;
-    profAvgDraw = game->profTimeDraw / VSYNC_FPS;
+    profAvgDraw = game->profTimeDraw / 60;
     game->profTimeDraw = 0.0f;
-    profAvgPath = game->profTimePath / VSYNC_FPS;
+    profAvgPath = game->profTimePath / 60;
     game->profTimePath = 0.0f;
 
     for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
-      profilingAverages[i] = profilingAccumulated[i] / VSYNC_FPS;
+      profilingAverages[i] =
+          profilingCounts[i] == 0
+              ? 0
+              : profilingAccumulated[i] / (float)profilingCounts[i];
       profilingAccumulated[i] = 0;
+      profilingCounts[i] = 0;
     }
   }
 }
