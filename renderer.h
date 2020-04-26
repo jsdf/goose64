@@ -32,4 +32,11 @@ int Renderer_cullVisibility(GameObject* worldObjects,
                             int* worldObjectsVisibility,
                             Frustum* frustum,
                             AABB* localAABBs);
+
+void Renderer_calcIntersecting(int* objectsIntersecting,
+                               int objectsCount,
+                               RendererSortDistance* sortedObjects,
+                               AABB* localAABBs);
+
+AABB Renderer_getWorldAABB(AABB* localAABBs, GameObject* obj);
 #endif /* !RENDERER_H_ */

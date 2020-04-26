@@ -55,6 +55,7 @@
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
 #define SOUND_TEST 1
+#define DRAW_SPRITES 0
 
 typedef enum RenderMode {
   ToonFlatShadingRenderMode,
@@ -234,6 +235,7 @@ void debugPrintFloat(int x, int y, char* format, float value) {
   nuDebConCPuts(0, conbuf);
 }
 
+#ifdef NU_DEBUG
 void traceRCP() {
   int i;
   float longestTaskTime = 0;
@@ -269,6 +271,7 @@ void traceRCP() {
   profilingAccumulated[RDPTaskTraceEvent] += longestTaskTime;
   profilingCounts[RDPTaskTraceEvent]++;
 }
+#endif
 
 /* Make the display list and activate the task */
 void makeDL00() {
@@ -403,6 +406,7 @@ void makeDL00() {
       nuDebConCPuts(0, conbuf);
 #endif
 #if CONSOLE_SHOW_RCP_TASKS
+#ifdef NU_DEBUG
       {
         int tskIdx;
         for (tskIdx = 0; tskIdx < nuDebTaskPerfPtr->gfxTaskCnt; tskIdx++) {
@@ -417,6 +421,7 @@ void makeDL00() {
           nuDebConCPuts(0, conbuf);
         }
       }
+#endif
 #endif
 #if CONSOLE_SHOW_CULLING
       nuDebConTextPos(0, 4, consoleOffset++);
@@ -558,7 +563,9 @@ void updateGame00(void) {
   Game* game;
 
   totalUpdates++;
+#ifdef NU_DEBUG
   traceRCP();  // record rcp perf from prev frame
+#endif
 
   game = Game_get();
 
@@ -735,6 +742,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   AnimationBoneAttachment* attachment;
   RendererSortDistance* visibleObjDistance;
   int* worldObjectsVisibility;
+  int* intersectingObjects;
   int visibleObjectsCount;
   int visibilityCulled = 0;
   float profStartSort, profStartIter, profStartAnim;
@@ -764,6 +772,12 @@ void drawWorldObjects(Dynamic* dynamicp) {
                               worldObjectsVisibility, visibleObjectsCount,
                               visibleObjDistance);
   Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
+
+  // boolean of whether an object intersects another (for z buffer optimization)
+  intersectingObjects = (int*)malloc((visibleObjectsCount) * sizeof(int));
+  invariant(intersectingObjects);
+  Renderer_calcIntersecting(intersectingObjects, visibleObjectsCount,
+                            visibleObjDistance, university_map_bounds);
 
   gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
   gDPSetCycleType(glistp++, twoCycleMode ? G_CYC_2CYCLE : G_CYC_1CYCLE);
@@ -810,28 +824,31 @@ void drawWorldObjects(Dynamic* dynamicp) {
 
     gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
 #if RENDERER_PAINTERS_ALGORITHM
-    // if (FALSE) {
-    if (Renderer_isZBufferedGameObject(obj)) {
-#if ANTIALIASING
-      gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
-#else
-      gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
-#endif
-      gSPSetGeometryMode(glistp++, G_ZBUFFER);
-      // } else if (FALSE) {
-    } else if (Renderer_isZWriteGameObject(obj)) {
-#if ANTIALIASING
-      gDPSetRenderMode(glistp++, G_RM_AA_ZUPD_OPA_SURF, G_RM_AA_ZUPD_OPA_SURF2);
-#else
-      gDPSetRenderMode(glistp++, G_RM_ZUPD_OPA_SURF, G_RM_ZUPD_OPA_SURF2);
-#endif
-      gSPSetGeometryMode(glistp++, G_ZBUFFER);
+    if (intersectingObjects[obj->id] ||
+        // animated game objects have concave shapes, need z buffering
+        Renderer_isAnimatedGameObject(obj)) {
+      if (Renderer_isZBufferedGameObject(obj)) {
+        if (ANTIALIASING) {
+          gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+        } else {
+          gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+        }
+        gSPSetGeometryMode(glistp++, G_ZBUFFER);
+      } else /*if (Renderer_isZWriteGameObject(obj))*/ {
+        if (ANTIALIASING) {
+          gDPSetRenderMode(glistp++, G_RM_AA_ZUPD_OPA_SURF,
+                           G_RM_AA_ZUPD_OPA_SURF2);
+        } else {
+          gDPSetRenderMode(glistp++, G_RM_ZUPD_OPA_SURF, G_RM_ZUPD_OPA_SURF2);
+        }
+        gSPSetGeometryMode(glistp++, G_ZBUFFER);
+      }
     } else {
-#if ANTIALIASING
-      gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
-#else
-      gDPSetRenderMode(glistp++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
-#endif
+      if (ANTIALIASING) {
+        gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
+      } else {
+        gDPSetRenderMode(glistp++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+      }
     }
 #endif
 
@@ -977,6 +994,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
     gDPPipeSync(glistp++);
   }
 
+#if DRAW_SPRITES
   {
     ViewportF viewport = {0, 0, SCREEN_WD, SCREEN_HT};
     float width = 64;
@@ -1012,6 +1030,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
       );
     }
   }
+#endif
 
   // if (nuScRetraceCounter % 60 == 0) {
   //   debugPrintf("[");
@@ -1026,6 +1045,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   //   debugPrintf("]\n");
   // }
 
+  free(intersectingObjects);
   free(visibleObjDistance);
   free(worldObjectsVisibility);
 

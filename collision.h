@@ -53,6 +53,8 @@ float Triangle_comparePoint(Triangle* triangle, Vec3d* point);
 
 void AABB_fromTriangle(Triangle* triangle, AABB* result);
 
+int Collision_intersectAABBAABB(AABB* a, AABB* b);
+
 int Collision_sphereTriangleIsSeparated(Triangle* triangle,
                                         Vec3d* sphereCenter,
                                         double sphereRadius);

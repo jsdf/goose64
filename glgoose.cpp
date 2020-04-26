@@ -69,8 +69,9 @@
 #define DEBUG_COLLISION_SPATIAL_HASH_TRIS 0
 #define DEBUG_COLLISION_MESH_AABB 0
 
-#define DEBUG_AABB 1
-#define DEBUG_FRUSTUM 1
+#define DEBUG_AABB 0
+#define DEBUG_FRUSTUM 0
+#define DEBUG_ZBUFFER_INTERSECTING 1
 
 #define DEBUG_PATHFINDING_GRAPH 0
 #define DEBUG_PATHFINDING 0
@@ -78,6 +79,7 @@
 
 #define DEBUG_PROFILING 0
 
+#define USE_SPRITES 0
 #define USE_LIGHTING 1
 #define USE_LIGHTING_STATIC_ONLY 1
 #define USE_FLAT_SHADING 1
@@ -295,10 +297,7 @@ void drawGUI() {
       ImGui::InputInt("subtype", (int*)&obj->subtype, 0, 1,
                       ImGuiInputTextFlags_ReadOnly);
 
-      AABB* localAABB = localAABBs + obj->id;
-      AABB worldAABB = *localAABB;
-      Vec3d_add(&worldAABB.min, &obj->position);
-      Vec3d_add(&worldAABB.max, &obj->position);
+      AABB worldAABB = Renderer_getWorldAABB(localAABBs, obj);
 
       ImGui::InputFloat3("worldAABB.min", (float*)&worldAABB.min, "%.3f",
                          ImGuiInputTextFlags_ReadOnly);
@@ -445,10 +444,8 @@ void drawGUI() {
     if (obj) {
       {
         ImGui::Text("frustum test results for obj=%d", obj->id);
-        AABB* localAABB = localAABBs + obj->id;
-        AABB worldAABB = *localAABB;
-        Vec3d_add(&worldAABB.min, &obj->position);
-        Vec3d_add(&worldAABB.max, &obj->position);
+
+        AABB worldAABB = Renderer_getWorldAABB(localAABBs, obj);
 
         ImGui::Text("boxInFrustum: %s",
                     FrustumTestResultStrings[Frustum_boxInFrustum(&frustum,
@@ -1641,15 +1638,20 @@ void renderScene(void) {
 
   // only alloc space for num visible objects
   int visibleObjectsCount = game->worldObjectsCount - visibilityCulled;
-  RendererSortDistance* visibleObjDistanceDescending =
-      (RendererSortDistance*)malloc((visibleObjectsCount) *
-                                    sizeof(RendererSortDistance));
-  if (!visibleObjDistanceDescending) {
-    debugPrintf("failed to alloc visibleObjDistanceDescending");
+  RendererSortDistance* visibleObjDist = (RendererSortDistance*)malloc(
+      (visibleObjectsCount) * sizeof(RendererSortDistance));
+  if (!visibleObjDist) {
+    debugPrintf("failed to alloc visibleObjDist");
   }
   Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
                               worldObjectsVisibility, visibleObjectsCount,
-                              visibleObjDistanceDescending);
+                              visibleObjDist);
+
+  // boolean of whether an object intersects another (for z buffer optimization)
+  int* intersectingObjects = (int*)malloc((visibleObjectsCount) * sizeof(int));
+  invariant(intersectingObjects);
+  Renderer_calcIntersecting(intersectingObjects, visibleObjectsCount,
+                            visibleObjDist, university_map_bounds);
 
 #if USE_LIGHTING
   enableLighting();
@@ -1664,7 +1666,7 @@ void renderScene(void) {
 #endif
   // render visible objects
   for (i = 0; i < visibleObjectsCount; i++) {
-    GameObject* obj = (visibleObjDistanceDescending + i)->obj;
+    GameObject* obj = (visibleObjDist + i)->obj;
 #if DEBUG_LOG_RENDER
     printf("draw obj %d %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n", obj->id,
            ModelTypeStrings[obj->modelType],
@@ -1674,9 +1676,11 @@ void renderScene(void) {
     drawGameObject(obj);
   }
 
+#if USE_SPRITES
+
   // draw sprite attachments
   for (i = 0; i < visibleObjectsCount; i++) {
-    GameObject* obj = (visibleObjDistanceDescending + i)->obj;
+    GameObject* obj = (visibleObjDist + i)->obj;
 
     if (obj->animState) {
       AnimationBoneSpriteAttachment& sprAttachment =
@@ -1686,6 +1690,7 @@ void renderScene(void) {
                         TRUE);
     }
   }
+#endif
 
 #if USE_LIGHTING
   glEnable(GL_LIGHTING);
@@ -1702,10 +1707,7 @@ void renderScene(void) {
 #if DEBUG_AABB
   for (i = 0; i < game->worldObjectsCount; i++) {
     GameObject* obj = game->worldObjects + i;
-    AABB* localAABB = localAABBs + i;
-    AABB worldAABB = *localAABB;
-    Vec3d_add(&worldAABB.min, &obj->position);
-    Vec3d_add(&worldAABB.max, &obj->position);
+    AABB worldAABB = Renderer_getWorldAABB(localAABBs, obj);
     glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
@@ -1749,6 +1751,19 @@ void renderScene(void) {
                       &obj->position, TRUE);
 
 #endif
+  }
+#endif
+
+#if DEBUG_ZBUFFER_INTERSECTING
+  {
+    for (int i = 0; i < visibleObjectsCount; ++i) {
+      GameObject* obj = (visibleObjDist + i)->obj;
+      AABB worldAABB = Renderer_getWorldAABB(localAABBs, obj);
+      drawAABB(&worldAABB);
+      drawStringAtPoint(
+          intersectingObjects[i] ? "ZB:Intersecting" : "ZB:Disjoint",
+          &obj->position, TRUE);
+    }
   }
 #endif
 
@@ -1858,7 +1873,8 @@ void renderScene(void) {
   ImGuiIO& io = ImGui::GetIO();
   ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
-  free(visibleObjDistanceDescending);
+  free(intersectingObjects);
+  free(visibleObjDist);
   free(worldObjectsVisibility);
 
   game->profTimeDraw += (CUR_TIME_MS() - profStartDraw);

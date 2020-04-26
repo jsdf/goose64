@@ -5,6 +5,7 @@
 #include <stdio.h>
 #endif
 #include <assert.h>
+#include <stdlib.h>
 
 #include <stdlib.h>
 #include "ed64io_usb.h"
@@ -15,10 +16,15 @@
 
 #define RENDERER_FRUSTUM_CULLING 1
 
+inline int Renderer_isDynamicObject(GameObject* obj) {
+  return obj->physBody != NULL;
+}
+
 int Renderer_isZBufferedGameObject(GameObject* obj) {
+  if (Renderer_isDynamicObject(obj))
+    return TRUE;
+
   switch (obj->modelType) {
-    case GooseModel:
-    case GardenerCharacterModel:
     case BushModel:
       // case WatergrassModel:
       // case ReedModel:
@@ -89,6 +95,83 @@ int Renderer_sortWorldComparatorFn(const void* a, const void* b) {
   return ((RendererSortDistance*)a)->distance -
          ((RendererSortDistance*)b)->distance;
 #endif
+}
+
+AABB Renderer_getWorldAABB(AABB* localAABBs, GameObject* obj) {
+  AABB* localAABB = localAABBs + obj->id;
+  AABB worldAABB = *localAABB;
+
+  Vec3d_add(&worldAABB.min, &obj->position);
+  Vec3d_add(&worldAABB.max, &obj->position);
+  return worldAABB;
+}
+
+typedef struct GameObjectAABB {
+  int index;
+  AABB aabb;
+} GameObjectAABB;
+
+void Renderer_calcIntersecting(
+    int* objectsIntersecting,  // the result, keyed by index in sorted objects
+    int objectsCount,
+    RendererSortDistance* sortedObjects,
+    AABB* localAABBs) {
+  int i, k;
+  int zWriteObjectsCount, zBufferedObjectsCount;
+  GameObjectAABB* zWriteObjects;
+  GameObjectAABB* zBufferedObjects;
+  GameObject* obj;
+  GameObjectAABB* zWriteAABB;
+  GameObjectAABB* zBufferedAABB;
+  GameObjectAABB* otherZBufferedAABB;
+
+  zWriteObjectsCount = 0;
+  zBufferedObjectsCount = 0;
+  zWriteObjects =
+      (GameObjectAABB*)malloc((objectsCount) * sizeof(GameObjectAABB));
+  zBufferedObjects =
+      (GameObjectAABB*)malloc((objectsCount) * sizeof(GameObjectAABB));
+  invariant(zWriteObjects);
+  invariant(zBufferedObjects);
+
+  for (i = 0; i < objectsCount; ++i) {
+    obj = (sortedObjects + i)->obj;
+    objectsIntersecting[i] = FALSE;
+    if (Renderer_isZWriteGameObject(obj)) {
+      zWriteObjects[zWriteObjectsCount] =
+          (GameObjectAABB){i, Renderer_getWorldAABB(localAABBs, obj)};
+      zWriteObjectsCount++;
+    } else if (Renderer_isZBufferedGameObject(obj)) {
+      zBufferedObjects[zBufferedObjectsCount] =
+          (GameObjectAABB){i, Renderer_getWorldAABB(localAABBs, obj)};
+      zBufferedObjectsCount++;
+    }
+  }
+  for (i = 0; i < zBufferedObjectsCount; ++i) {
+    zBufferedAABB = &zBufferedObjects[i];
+
+    for (k = 0; k < zWriteObjectsCount; ++k) {
+      zWriteAABB = &zWriteObjects[k];
+      if (Collision_intersectAABBAABB(&zBufferedAABB->aabb,
+                                      &zWriteAABB->aabb)) {
+        objectsIntersecting[zBufferedAABB->index] = TRUE;
+        objectsIntersecting[zWriteAABB->index] = TRUE;
+      }
+    }
+    for (k = 0; k < zBufferedObjectsCount; ++k) {
+      if (i == k)
+        continue;
+      otherZBufferedAABB = &zBufferedObjects[k];
+      if (Collision_intersectAABBAABB(&zBufferedAABB->aabb,
+                                      &otherZBufferedAABB->aabb)) {
+        objectsIntersecting[zBufferedAABB->index] = TRUE;
+        objectsIntersecting[otherZBufferedAABB->index] = TRUE;
+      }
+    }
+  }
+
+  free(zWriteObjects);
+  free(zBufferedObjects);
 }
 
 int Renderer_cullVisibility(GameObject* worldObjects,

@@ -6,7 +6,14 @@ NUSYSLIBDIR  = $(N64KITDIR)/nusys/lib
 NUSTDINCDIR = $(N64KITDIR)/nustd/include
 NUSTDLIBDIR = $(N64KITDIR)/nustd/lib
 
+# this improves CPU perf (but we're usually RDP-bound)
+# OPTIMIZE = y 
+
+ifdef OPTIMIZE
+NUAUDIOLIB = -lnualstl_n -ln_gmus -ln_gaudio_sc
+else
 NUAUDIOLIB = -lnualstl_n_d -ln_gmus_d -ln_gaudio_sc
+endif
 
 LIB = $(ROOT)/usr/lib
 LPR = $(LIB)/PR
@@ -15,13 +22,28 @@ CC  = gcc
 LD  = ld
 MAKEROM = mild
 
-LCDEFS =	-DNU_DEBUG -DN_AUDIO -DF3DEX_GBI_2 -D__N64__
+LCDEFS = -DN_AUDIO -DF3DEX_GBI_2 -D__N64__
+ifndef OPTIMIZE
+LCDEFS += -DNU_DEBUG
+endif
+
 LCINCS =	-I. -nostdinc -I- -I$(NUSTDINCDIR) -I$(NUSYSINCDIR) -I$(ROOT)/usr/include/PR
 LCOPTS =	-G 0
-# the order of $(NUAUDIOLIB) and -lgultra_d matter :|
-LDFLAGS = $(MKDEPOPT) -L$(LIB)  -L$(NUSYSLIBDIR) -L$(NUSTDLIBDIR) $(NUAUDIOLIB) -lnusys_d -lnustd_d -lgultra_d -L$(GCCDIR)/mipse/lib -lkmc
 
+ifdef OPTIMIZE
+CORELIBS = -lnusys -lnustd -lgultra 
+else
+CORELIBS = -lnusys_d -lnustd_d -lgultra_d 
+endif
+
+# the order of $(NUAUDIOLIB) and -lgultra_d (CORELIBS) matter :|
+LDFLAGS = $(MKDEPOPT) -L$(LIB)  -L$(NUSYSLIBDIR) -L$(NUSTDLIBDIR) $(NUAUDIOLIB) $(CORELIBS) -L$(GCCDIR)/mipse/lib -lkmc
+
+ifdef OPTIMIZE
+OPTIMIZER =	-O2
+else
 OPTIMIZER =	-g
+endif
 
 APP =		goose64.out
 
@@ -49,10 +71,10 @@ include $(COMMONRULES)
 
 $(CODESEGMENT):	$(CODEOBJECTS) Makefile $(HFILES)
 # use -M to print memory map from ld
-		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS) -M
+		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS) 
 
 $(TARGETS):	$(OBJECTS)
 # use -m to print memory map from mild
-		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E -m
+		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E 
 		makemask $(TARGETS) 
 
