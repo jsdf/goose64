@@ -1,15 +1,14 @@
-/* 
+/*
  * File:   errors.h
  * Author: KRIK
  *
  * Created on 14 Май 2011 г., 7:17
  */
 
-#ifndef _ERRORS_H
-#define	_ERRORS_H
+#ifndef _ED64IO_ERRORS_H
+#define _ED64IO_ERRORS_H
 
-
-#define EVD_ERROR_FIFO_TIMEOUT 90; 
+#define EVD_ERROR_FIFO_TIMEOUT 90;
 #define EVD_ERROR_MMC_TIMEOUT 91;
 
 #define BOOT_UPD_ERR_WRONG_SIZE 95
@@ -43,8 +42,6 @@
 #define ERR_EEPROM 147
 #define ERR_NO_FAV_SPACE 150
 
-
-
 #define DISK_ERR_INIT 50
 
 #define DISK_ERR_RD1 62
@@ -66,5 +63,4 @@
 
 #define SD_INIT_ERROR 80
 
-#endif	/* _ERRORS_H */
-
+#endif /* _ED64IO_ERRORS_H */

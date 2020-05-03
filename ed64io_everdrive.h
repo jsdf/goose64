@@ -5,10 +5,11 @@
  * Created on 22 јпрель 2011 г., 20:46
  */
 
-#ifndef _EVERDRIVE_H
-#define _EVERDRIVE_H
+#ifndef _ED64IO_EVERDRIVE_H
+#define _ED64IO_EVERDRIVE_H
 
-#include <nusys.h>
+#include <ultra64.h>
+
 #include "ed64io_types.h"
 
 #define OS_VER "1.29"
@@ -118,4 +119,4 @@ u8 evd_mmcOpenRead(u32 addr);
 u8 evd_mmcReadNextBlock(void *dat);
 void evd_mmcCloseRW();
  */
-#endif /* _EVERDRIVE_H */
+#endif /* _ED64IO_EVERDRIVE_H */

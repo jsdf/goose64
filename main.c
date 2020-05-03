@@ -8,6 +8,7 @@
 
 #include <PR/os_convert.h>
 #include "ed64io_everdrive.h"
+#include "ed64io_fault.h"
 #include "ed64io_usb.h"
 #include "graphic.h"
 #include "mem_heap.h"
@@ -57,6 +58,9 @@ int systemHeapMemoryInit(void) {
 --------------------------*/
 void mainproc(void) {
   evd_init();
+
+  // start thread which will catch and log errors
+  ed64StartFaultHandlerThread(NU_MAIN_THREAD_PRI);
 
   /* The initialization of graphic  */
   // nuGfxInit();

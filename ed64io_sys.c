@@ -1,11 +1,9 @@
 
-#include "constants.h"
+#include "ed64io_everdrive.h"
 
 #include "ed64io_sys.h"
 
 #include "ed64io_errors.h"
-#include "ed64io_everdrive.h"
-#include "ed64io_types.h"
 #include "ed64io_usb.h"
 
 u16 strcon(u8* str1, u8* str2, u8* dst, u16 max_len) {
@@ -25,7 +23,7 @@ u16 strcon(u8* str1, u8* str2, u8* dst, u16 max_len) {
   return len;
 }
 
-#define EVD_PI_CART_BLOCK_READ_SIZE 0x4000 /* cart read block size */
+#define NU_PI_CART_BLOCK_READ_SIZE 0x4000 /* cart read block size */
 
 void evdPiReadRom(u32 rom_addr, void* buf_ptr, u32 size) {
   OSIoMesg dmaIoMesgBuf;
@@ -40,7 +38,7 @@ void evdPiReadRom(u32 rom_addr, void* buf_ptr, u32 size) {
   osCreateMesgQueue(&dmaMesgQ, &dmaMesgBuf, 1);
 
   while (size) {
-    if (size > EVD_PI_CART_BLOCK_READ_SIZE) {
+    if (size > NU_PI_CART_BLOCK_READ_SIZE) {
     } else {
       readSize = size;
     }
@@ -68,7 +66,7 @@ void evdPiWriteRom(u32 rom_addr, void* buf_ptr, u32 size) {
   osCreateMesgQueue(&dmaMesgQ, &dmaMesgBuf, 1);
 
   while (size) {
-    if (size > EVD_PI_CART_BLOCK_READ_SIZE) {
+    if (size > NU_PI_CART_BLOCK_READ_SIZE) {
     } else {
       writeSize = size;
     }
@@ -125,9 +123,9 @@ void dma_write_s(void* ram_address,
 
 // blocking sleep
 void sleep(u32 ms) {
-  u32 current_ms = CUR_TIME_MS();
+  u32 current_ms = OS_CYCLES_TO_USEC(osGetTime()) / 1000.0;
 
-  while (CUR_TIME_MS() - current_ms < ms)
+  while ((OS_CYCLES_TO_USEC(osGetTime()) / 1000.0) - current_ms < ms)
     ;
 }
 

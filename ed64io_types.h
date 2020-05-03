@@ -1,12 +1,12 @@
-/* 
+/*
  * File:   types.h
  * Author: KRIK
  *
  * Created on 16 јпрель 2011 г., 2:24
  */
 
-#ifndef _TYPES_H
-#define	_TYPES_H
+#ifndef _ED64IO_TYPES_H
+#define _ED64IO_TYPES_H
 
 #define u8 unsigned char
 #define u16 unsigned short
@@ -23,6 +23,4 @@
 #define s32 long
 #define s64 long long
 
-
-#endif	/* _TYPES_H */
-
+#endif /* _ED64IO_TYPES_H */

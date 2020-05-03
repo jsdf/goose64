@@ -5,12 +5,15 @@
  * Created on 22 јпрель 2011 г., 20:46
  */
 
-#ifndef _FIFO_H
-#define _FIFO_H
+#ifndef _ED64IO_USB_H
+#define _ED64IO_USB_H
 
 #include "ed64io_types.h"
 int usbLoggerLog(const char* str);
-int usbLoggerFlush();
+
+int ed64AsyncLoggerFlush();
+// for backwards compat
+#define usbLoggerFlush ed64AsyncLoggerFlush
 
 typedef struct UsbLoggerState {
   int fifoWriteState;
@@ -31,4 +34,6 @@ void ed64Printf(const char* fmt, ...);
 
 void ed64PrintfSync(const char* fmt, ...);
 
-#endif /* _FIFO_H */
+void ed64PrintfSync2(const char* fmt, ...);
+
+#endif /* _ED64IO_USB_H */
