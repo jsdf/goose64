@@ -95,3 +95,5 @@ trace.html
 trace_*.html
 
 buildcache.json
+
+disassembly.txt
