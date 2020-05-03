@@ -21,7 +21,7 @@ NUSYSINCDIR=${N64KITDIR}/nusys/include
 NUSTDINCDIR=${N64KITDIR}/nustd/include
 # NUSTDLIBDIR=${N64KITDIR}/nustd/lib
 
-LCDEFS="-DNU_DEBUG -DF3DEX_GBI_2"
+LCDEFS="-DNU_DEBUG -DF3DEX_GBI_2 -DN_AUDIO  -D__N64__"
 LCINCS="-I. -I${NUSYSINCDIR}  -I${NUSTDINCDIR} -I${ROOT}/usr/include/PR"
 LCOPTS="-G 0"
 # LDFLAGS="-L${LIB} -L${NUSYSLIBDIR} -L${NUSTDLIBDIR}  -lnusys_d -lgultra_d" # -L${GCCDIR}/mipse/lib -lkmc
@@ -30,4 +30,4 @@ CFLAGS="${LCDEFS} ${LCINCS} ${LCOPTS} ${GCCFLAG} ${OPTIMIZER}"
 
 
 
-$CC $CFLAGS -g renderer.c
+$CC $CFLAGS -g $@

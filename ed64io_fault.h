@@ -6,4 +6,7 @@
 
 void ed64StartFaultHandlerThread(int mainThreadPri);
 
+void ed64PrintStackTrace(OSThread* t, int framesToSkip);
+void ed64SendFaultMessage(OSThread* t);
+
 #endif /* _ED64IO_FAULT_H */

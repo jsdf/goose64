@@ -138,6 +138,10 @@
   if (!(expression)) {                                                 \
     debugPrintfSync("assertion failed in %s at %s:%d\n", __FUNCTION__, \
                     __FILE__, __LINE__);                               \
+    {                                                                  \
+      u64 intentionallyCrash;                                          \
+      intentionallyCrash = *(u64*)1;                                   \
+    }                                                                  \
     while (TRUE) {                                                     \
     }                                                                  \
   }

@@ -24,6 +24,10 @@ static char errMessage[256];
 static char* errFmtEntry[65536];
 static char* logFmtEntry[65536];
 
+#define MAX_STACK_TRACE 100
+
+static void* stackTraceReturnAddresses[MAX_STACK_TRACE];
+
 static OSMesgQueue faultMsgQ;
 static OSMesg faultMsgBuf;
 
@@ -117,6 +121,68 @@ static regDesc_t fpcsrDesc[] = {{FPCSR_FS, FPCSR_FS, "FS"},
                                 {FPCSR_RM_MASK, FPCSR_RM_RM, "RM"},
                                 {0, 0, ""}};
 
+// http://yosefk.com/blog/getting-the-call-stack-without-a-frame-pointer.html
+
+/* get previous stack pointer and return address
+   given the current ones */
+int getPrevStackPointerAndReturnAddress(void** prev_sp,
+                                        void** prev_ra,
+                                        void* sp,
+                                        void* ra) {
+  unsigned* wra = (unsigned*)ra;
+  int spofft;
+  /* scan towards the beginning of the function -
+     addui sp,sp,spofft should be the first command */
+  while ((*wra >> 16) != 0x27bd) {
+    /* test for "scanned too much" elided */
+    wra--;
+  }
+  spofft = ((int)*wra << 16) >> 16; /* sign-extend */
+  *prev_sp = (char*)sp - spofft;
+  /* now scan forward for sw r31,raofft(sp) */
+  while (wra < (unsigned*)ra) {
+    if ((*wra >> 16) == 0xafbf) {
+      int raofft = ((int)*wra << 16) >> 16; /* sign */
+      *prev_ra = *(void**)((char*)sp + raofft);
+      return 1;
+    }
+    wra++;
+  }
+  return 0; /* failed to find where ra is saved */
+}
+
+int getCallStackNoFp(u64 sp_val, u64 ra_val) {
+  void* sp = (void*)(u32)sp_val; /* stack pointer from thread state */
+  void* ra = (void*)(u32)ra_val; /* return address from thread state */
+
+  int i = 0;
+  while (getPrevStackPointerAndReturnAddress(&sp, &ra, sp, ra)) {
+    if (i < MAX_STACK_TRACE) {
+      stackTraceReturnAddresses[i++] = ra;
+    }
+  }
+  return i; /* stack size */
+}
+
+void ed64PrintStackTrace(OSThread* t, int framesToSkip) {
+  __OSThreadContext* tc = &t->context;
+
+  int stackTraceSize = getCallStackNoFp(tc->sp, tc->ra);
+  PRINTF("stacktrace:\n");
+  if (framesToSkip == 0) {
+    PRINTF("%08x ", (u32)(tc->pc));
+    PRINTF("%08x ", (u32)(tc->ra));
+  }
+  {
+    int i;
+    for (i = framesToSkip; i < stackTraceSize; ++i) {
+      PRINTF("%08x ", (u32)stackTraceReturnAddresses[i]);
+    }
+  }
+
+  PRINTF("\n");
+}
+
 void printFaultData(OSThread* t) {
   __OSThreadContext* tc = &t->context;
 
@@ -161,6 +227,8 @@ void printFaultData(OSThread* t) {
   // PRINTF("d20 %.15e\td22 %.15e\n", tc->fp20.d, tc->fp22.d);
   // PRINTF("d24 %.15e\td26 %.15e\n", tc->fp24.d, tc->fp26.d);
   // PRINTF("d28 %.15e\td30 %.15e\n", tc->fp28.d, tc->fp30.d);
+
+  ed64PrintStackTrace(t, 0);
 }
 
 static void printRegister(u32 regValue, char* regName, regDesc_t* regDesc) {
@@ -193,23 +261,36 @@ int startedfaultproc = 0;
  */
 static void faultproc(char* argv) {
   OSMesg msg;
-  static OSThread *curr, *last;
+  static OSThread* curr;
   startedfaultproc = 1;
 
 #if DEBUGPRINT
   PRINTF("=> faultproc started...\n");
 #endif
 
-  last = (OSThread*)NULL;
-  (void)osRecvMesg(&faultMsgQ, (OSMesg*)&msg, OS_MESG_BLOCK);
+  while (1) {
+    (void)osRecvMesg(&faultMsgQ, (OSMesg*)&msg, OS_MESG_BLOCK);
 #if DEBUGPRINT
-  PRINTF("=> faultproc - got a fault message...\n");
+    PRINTF("=> faultproc - got a fault message...\n");
 #endif
 
-  /* This routine returns the most recent faulted thread */
-  curr = __osGetCurrFaultedThread();
-  if (curr) {
-    printFaultData(curr);
+    if (msg == NULL) {
+      // an actual fault
+
+      /* This routine returns the most recent faulted thread */
+      curr = __osGetCurrFaultedThread();
+
+      if (curr) {
+        printFaultData(curr);
+      }
+      break;
+    } else {
+      // just reusing the fault handler code to print a stack trace of the
+      // thread structure passed as the message
+      curr = (OSThread*)msg;
+      msg = NULL;
+      ed64PrintStackTrace(curr, 1);
+    }
   }
 
 #if DEBUGPRINT
@@ -229,6 +310,8 @@ void ed64StartFaultHandlerThread(int mainThreadPri) {
    */
   osCreateMesgQueue(&faultMsgQ, &faultMsgBuf, 1);
 
+  faultEventMsg = NULL;
+
   osSetEventMesg(OS_EVENT_FAULT, &faultMsgQ, NULL);
   osCreateThread(&faultThread, /*id*/ 23, (void (*)(void*))faultproc,
                  /*argv*/ NULL, faultThreadStack + ED64IO_FAULT_STACKSIZE / 8,
@@ -245,4 +328,14 @@ void ed64StartFaultHandlerThread(int mainThreadPri) {
            faultThread.state);
 #endif
   }
+}
+
+// this doesn't work very well because it captures the stack trace to the
+// location after the callsite, which is not always useful
+void ed64SendFaultMessage(OSThread* t) {
+  faultEventMsg = (OSMesg)t;
+  osSendMesg(&faultMsgQ, faultEventMsg, OS_MESG_NOBLOCK);
+  faultEventMsg = NULL;
+  sleep(1000);
+  PRINTF("done");
 }
