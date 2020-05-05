@@ -1,3 +1,4 @@
+#!/bin/bash
 set -eu
 
 INVALIDATED_FILES=`python3 get_changed_files.py`
@@ -8,4 +9,6 @@ if [ -n "$INVALIDATED_FILES" ]; then
   done
 
 fi
-  /Applications/Wine\ Stable.app/Contents/Resources/wine/bin/wine cmd /c compile.bat
+
+
+wine cmd /c compile.bat
