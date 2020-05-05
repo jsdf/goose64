@@ -72,6 +72,7 @@
 #define DEBUG_AABB 0
 #define DEBUG_FRUSTUM 0
 #define DEBUG_ZBUFFER_INTERSECTING 1
+#define DEBUG_PAINTERS_ALGORITHM_SEPARATING_PLANE 1
 
 #define DEBUG_PATHFINDING_GRAPH 0
 #define DEBUG_PATHFINDING 0
@@ -460,6 +461,57 @@ void drawGUI() {
                           &frustum, &worldAABB, i)]);
         }
       }
+
+#if DEBUG_PAINTERS_ALGORITHM_SEPARATING_PLANE
+      if (obj) {
+        GameObject* a = game->player.goose;
+        GameObject* b = selectedObject;
+        RendererSortDistance sortDistA, sortDistB;
+        Plane separatingPlane;
+        Vec3d aCenter, bCenter, aClosestPoint, bClosestPoint,
+            aReallyClosestPoint, bReallyClosestPoint;
+        Game_getObjCenter(a, &aCenter);
+        Game_getObjCenter(b, &bCenter);
+        AABB aabbA = Renderer_getWorldAABB(localAABBs, a);
+        AABB aabbB = Renderer_getWorldAABB(localAABBs, b);
+        sortDistA = (RendererSortDistance){
+            /*obj*/ game->player.goose,
+            /*distance*/ 0,
+            /*worldAABB*/
+            Renderer_getWorldAABB(localAABBs, game->player.goose)};
+        sortDistB = (RendererSortDistance){
+            /*obj*/ selectedObject,
+            /*distance*/ 0,
+            /*worldAABB*/ Renderer_getWorldAABB(localAABBs, selectedObject)};
+        int aCloser = Renderer_isCloserBySeparatingPlane(&sortDistA, &sortDistB,
+                                                         &game->viewPos);
+
+        Renderer_closestPointOnAABB(&aabbA, &bCenter, &aClosestPoint);
+        Renderer_closestPointOnAABB(&aabbB, &aCenter, &bClosestPoint);
+
+        Renderer_closestPointOnAABB(&aabbA, &bClosestPoint,
+                                    &aReallyClosestPoint);
+        Renderer_closestPointOnAABB(&aabbB, &aClosestPoint,
+                                    &bReallyClosestPoint);
+
+        Renderer_getSeparatingPlane(&aReallyClosestPoint, &bReallyClosestPoint,
+                                    &separatingPlane);
+
+        float planeToADist = Plane_distance(&separatingPlane, &aCenter);
+        float planeToViewDist =
+            Plane_distance(&separatingPlane, &game->viewPos);
+
+        ImGui::InputFloat3("aCenter", (float*)&aCenter, "%.3f");
+        ImGui::InputFloat3("separatingPlane.point",
+                           (float*)&separatingPlane.point, "%.3f");
+        ImGui::InputFloat("planeToADist", (float*)&planeToADist, 0.1, 1.0,
+                          "%.3f", ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputFloat("planeToViewDist", (float*)&planeToViewDist, 0.1, 1.0,
+                          "%.3f", ImGuiInputTextFlags_ReadOnly);
+        ImGui::Text(aCloser == -1 ? "goose is closer than selectedObject"
+                                  : "goose is NOT closer than selectedObject");
+      }
+#endif
     }
 
     if (ImGui::CollapsingHeader("Camera++")) {
@@ -648,6 +700,13 @@ void drawMarker(float r, float g, float b, float radius) {
   glColor3f(r, g, b);  // red
   glutWireSphere(/*radius*/ radius, /*slices*/ 10, /*stacks*/ 10);
   glPopAttrib();
+}
+
+void drawMarkerAtPoint(float r, float g, float b, float radius, Vec3d* pos) {
+  glPushMatrix();
+  glTranslatef(pos->x, pos->y, pos->z);
+  drawMarker(r, g, b, radius);
+  glPopMatrix();
 }
 
 void drawLine(Vec3d* start, Vec3d* end) {
@@ -1111,7 +1170,7 @@ void enableLighting() {
   glEnable(GL_COLOR_MATERIAL);
 }
 
-void drawGameObject(GameObject* obj) {
+void drawGameObject(GameObject* obj, bool useZBuffering) {
   Vec3d pos, centroidOffset;
   pos = obj->position;
   centroidOffset = modelTypesProperties[obj->modelType].centroidOffset;
@@ -1124,11 +1183,15 @@ void drawGameObject(GameObject* obj) {
            modelTypesProperties[obj->modelType].scale);
 
   if (obj->modelType != NoneModel) {
-    if (Renderer_isZBufferedGameObject(obj)) {
+#if RENDERER_PAINTERS_ALGORITHM
+    if (useZBuffering) {
       glEnable(GL_DEPTH_TEST);
     } else {
-      glEnable(GL_DEPTH_TEST);
+      glDisable(GL_DEPTH_TEST);
     }
+#else
+    glEnable(GL_DEPTH_TEST);
+#endif
 #if USE_LIGHTING_STATIC_ONLY
     if (Renderer_isLitGameObject(obj)) {
       glEnable(GL_LIGHTING);
@@ -1175,6 +1238,50 @@ void drawAABB(AABB* aabb) {
   glEnd();
 }
 
+void drawAABBColored(AABB* aabb, float r, float g, float b) {
+  glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+  glColor3f(r, g, b);
+  drawAABB(aabb);
+  glPopAttrib();
+}
+
+void drawPlane(Plane* plane, Vec3d* up) {
+  glPushAttrib(GL_LIGHTING_BIT | GL_TEXTURE_BIT | GL_CURRENT_BIT);
+  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
+
+  Vec3d third;
+  Vec3d_cross(&plane->normal, up, &third);
+
+  glPushMatrix();
+  glTranslatef(plane->point.x, plane->point.y, plane->point.z);
+  drawMarker(0.5f * 0.8, 0.0f, 0.0f, 1);
+  glPopMatrix();
+
+  Vec3d normalScaled = plane->normal;
+  Vec3d_mulScalar(&normalScaled, 10);
+  Vec3d_add(&normalScaled, &plane->point);
+  glColor3f(0, 0, 1);
+  drawLine(&plane->point, &normalScaled);
+
+  Vec3d upScaled = *up;
+  Vec3d_mulScalar(&upScaled, 10);
+  Vec3d_add(&upScaled, &plane->point);
+  glColor3f(1, 0, 0);
+  drawLine(&plane->point, &upScaled);
+
+  Vec3d thirdScaled = third;
+  Vec3d_mulScalar(&thirdScaled, 10);
+  Vec3d_add(&thirdScaled, &plane->point);
+  glColor3f(0, 1, 0);
+  drawLine(&plane->point, &thirdScaled);
+
+  glPopAttrib();
+}
+
 void drawSpatialHashCell(int cellBaseX, int cellBaseY) {
   AABB cellAABB;
   cellAABB.min.x = SpatialHash_gridToUnitsForDimension(
@@ -1187,8 +1294,8 @@ void drawSpatialHashCell(int cellBaseX, int cellBaseY) {
   cellAABB.max.y = 0;
   cellAABB.max.z = -SpatialHash_gridToUnitsForDimension(
       cellBaseY + 1, physWorldData.worldMeshSpatialHash);
-  glColor3f(1.0, 1.0, 0.0);
-  drawAABB(&cellAABB);
+
+  drawAABBColored(&cellAABB, 1.0, 1.0, 0.0);
 }
 
 void spatialHashTraversalVisitor(int x, int y, void* traversalState) {
@@ -1317,14 +1424,16 @@ void drawCollisionMesh() {
       AABB triangleAABB;
       AABB_fromTriangle(tri, &triangleAABB);
 
-      glColor3f(1.0, 1.0, 0.0);  // yellow
 #if DEBUG_COLLISION_SPATIAL_HASH_RAYCAST
       if (Collision_testSegmentAABBCollision(&selectedObjCenter, &testRayEnd,
                                              &triangleAABB)) {
-        glColor3f(1.0, 0.0, 0.0);  // red, collision
+        drawAABBColored(&triangleAABB, 1.0, 0.0, 0.0);  // red, collision
+      } else {
+        drawAABBColored(&triangleAABB, 1.0, 1.0, 0.0);  // yellow
       }
+#else
+      drawAABBColored(&triangleAABB, 1.0, 1.0, 0.0);  // yellow
 #endif
-      drawAABB(&triangleAABB);
     }
 #endif
   }
@@ -1590,7 +1699,9 @@ void renderScene(void) {
 
   game = Game_get();
 
-  glClearColor(0, 0, 0, 1);
+  // glClearColor(0, 0, 0, 1);
+
+  glClearColor(112 / 255.0, 158 / 255.0, 122 / 255.0, 1);
   // Clear Color and Depth Buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Use the Projection Matrix
@@ -1645,7 +1756,8 @@ void renderScene(void) {
   }
   Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
                               worldObjectsVisibility, visibleObjectsCount,
-                              visibleObjDist);
+                              visibleObjDist, &game->viewPos,
+                              university_map_bounds);
 
   // boolean of whether an object intersects another (for z buffer optimization)
   int* intersectingObjects = (int*)malloc((visibleObjectsCount) * sizeof(int));
@@ -1673,7 +1785,14 @@ void renderScene(void) {
            Vec3d_distanceTo(&(obj->position), &viewPos), obj->position.x,
            obj->position.y, obj->position.z);
 #endif
-    drawGameObject(obj);
+    drawGameObject(
+        obj,
+        // useZBuffering
+        intersectingObjects[i] ||
+            // animated game objects have concave shapes, need z buffering
+            Renderer_isAnimatedGameObject(obj)
+
+    );
   }
 
 #if USE_SPRITES
@@ -1708,13 +1827,7 @@ void renderScene(void) {
   for (i = 0; i < game->worldObjectsCount; i++) {
     GameObject* obj = game->worldObjects + i;
     AABB worldAABB = Renderer_getWorldAABB(localAABBs, obj);
-    glPushAttrib(GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-    glColor3f(0.8, 0.8, 0.8);  // white
-    drawAABB(&worldAABB);
-    glPopAttrib();
+    drawAABBColored(&worldAABB, 0.8, 0.8, 0.8);
 
 #if DEBUG_FRUSTUM
     FrustumTestResult frustumTestResult;
@@ -1754,12 +1867,65 @@ void renderScene(void) {
   }
 #endif
 
+#if DEBUG_PAINTERS_ALGORITHM_SEPARATING_PLANE
+  if (selectedObject) {
+    GameObject* a = game->player.goose;
+    GameObject* b = selectedObject;
+    Plane separatingPlane;
+    Vec3d aCenter, bCenter, aClosestPoint, bClosestPoint, aReallyClosestPoint,
+        bReallyClosestPoint;
+    AABB aabbA = Renderer_getWorldAABB(localAABBs, a);
+    AABB aabbB = Renderer_getWorldAABB(localAABBs, b);
+    float planeToADist, planeToViewDist;
+    Game_getObjCenter(a, &aCenter);
+    Game_getObjCenter(b, &bCenter);
+    if (Renderer_isDynamicObject(a)) {
+      aClosestPoint = aCenter;
+    } else {
+      Renderer_closestPointOnAABB(&aabbA, &bCenter, &aClosestPoint);
+    }
+    if (Renderer_isDynamicObject(b)) {
+      bClosestPoint = bCenter;
+    } else {
+      Renderer_closestPointOnAABB(&aabbB, &aCenter, &bClosestPoint);
+    }
+
+    if (Renderer_isDynamicObject(a)) {
+      aReallyClosestPoint = aCenter;
+    } else {
+      Renderer_closestPointOnAABB(&aabbA, &bClosestPoint, &aReallyClosestPoint);
+    }
+    if (Renderer_isDynamicObject(b)) {
+      bReallyClosestPoint = bCenter;
+    } else {
+      Renderer_closestPointOnAABB(&aabbB, &aClosestPoint, &bReallyClosestPoint);
+    }
+
+    Renderer_getSeparatingPlane(&aReallyClosestPoint, &bReallyClosestPoint,
+                                &separatingPlane);
+
+    drawPlane(&separatingPlane, &upVector);
+    drawMotionVectorLine(&aReallyClosestPoint, &bReallyClosestPoint);
+
+    drawMotionVectorLine(&aCenter, &separatingPlane.point);
+
+    drawTriNormal(&separatingPlane.normal, &separatingPlane.point);
+
+    Vec3d closestPointOnPlane;
+    Plane_pointClosestPoint(&separatingPlane, &aReallyClosestPoint,
+                            &closestPointOnPlane);
+    drawMarkerAtPoint(1, 1, 0, 1, &closestPointOnPlane);
+  }
+
+#endif
+
 #if DEBUG_ZBUFFER_INTERSECTING
   {
     for (int i = 0; i < visibleObjectsCount; ++i) {
       GameObject* obj = (visibleObjDist + i)->obj;
       AABB worldAABB = Renderer_getWorldAABB(localAABBs, obj);
-      drawAABB(&worldAABB);
+
+      drawAABBColored(&worldAABB, 0.8, 0.8, 0.8);  // grey
       drawStringAtPoint(
           intersectingObjects[i] ? "ZB:Intersecting" : "ZB:Disjoint",
           &obj->position, TRUE);

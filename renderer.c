@@ -4,10 +4,12 @@
 #ifndef __N64__
 #include <stdio.h>
 #endif
+#ifdef __N64__
+#include <PR/os_internal.h>
+#endif
 #include <assert.h>
 #include <stdlib.h>
 
-#include <stdlib.h>
 #include "ed64io_usb.h"
 #include "frustum.h"
 #include "game.h"
@@ -16,12 +18,14 @@
 
 #define RENDERER_FRUSTUM_CULLING 1
 
-inline int Renderer_isDynamicObject(GameObject* obj) {
+int Renderer_isDynamicObject(GameObject* obj) {
   return obj->physBody != NULL;
 }
 
 int Renderer_isZBufferedGameObject(GameObject* obj) {
   if (Renderer_isDynamicObject(obj))
+    return TRUE;
+  if (Renderer_isAnimatedGameObject(obj))
     return TRUE;
 
   switch (obj->modelType) {
@@ -75,26 +79,147 @@ int Renderer_isAnimatedGameObject(GameObject* obj) {
   }
 }
 
-float Renderer_gameobjectSortDist(GameObject* obj) {
+float Renderer_gameobjectSortDist(GameObject* obj, Vec3d* viewPos) {
   if (Renderer_isBackgroundGameObject(obj)) {
     // always consider this far away
     return 10000.0F - obj->id;  // add object id to achieve stable sorting
   }
 
-  return Vec3d_distanceTo(&obj->position, &Game_get()->viewPos);
+  return Vec3d_distanceTo(&obj->position, viewPos);
 }
 
-int Renderer_sortWorldComparatorFn(const void* a, const void* b) {
-#if RENDERER_PAINTERS_ALGORITHM
-  // sort far to near for painters algorithm
-  return ((RendererSortDistance*)b)->distance -
-         ((RendererSortDistance*)a)->distance;
+void Renderer_closestPointOnAABB(AABB* b,
+                                 /* sourcePoint*/ Vec3d* p,
+                                 /* result */ Vec3d* q) {
+  float v;
+  v = p->x;
+  if (v < b->min.x)
+    v = b->min.x;  // v = max(v, b->min.x)
+  if (v > b->max.x)
+    v = b->max.x;  // v = min(v, b->max.x)
+  q->x = v;
+  v = p->y;
+  if (v < b->min.y)
+    v = b->min.y;  // v = max(v, b->min.y)
+  if (v > b->max.y)
+    v = b->max.y;  // v = min(v, b->max.y)
+  q->y = v;
+  v = p->z;
+  if (v < b->min.z)
+    v = b->min.z;  // v = max(v, b->min.z)
+  if (v > b->max.z)
+    v = b->max.z;  // v = min(v, b->max.z)
+  q->z = v;
+}
 
-#else
+void Renderer_getSeparatingPlane(Vec3d* a, Vec3d* b, Plane* separatingPlane) {
+  Vec3d halfwayPoint, aToBDirection;
+  halfwayPoint = *a;
+  Vec3d_add(&halfwayPoint, b);
+  Vec3d_divScalar(&halfwayPoint, 2);
+
+  Vec3d_directionTo(a, b, &aToBDirection);
+  aToBDirection.y = 0;  // only separate on x,z
+  if (fabsf(aToBDirection.x) > fabsf(aToBDirection.z)) {
+    aToBDirection.z = 0;
+  } else {
+    aToBDirection.x = 0;
+  }
+
+  Plane_setNormalAndPoint(separatingPlane, &aToBDirection, &halfwayPoint);
+}
+
+// currently this somehow causes the game to crash when touching a BushModel ??
+int Renderer_isCloserBySeparatingPlane(RendererSortDistance* a,
+                                       RendererSortDistance* b,
+                                       Vec3d* viewPos) {
+  Plane separatingPlane;
+  Vec3d aCenter, bCenter, aClosestPoint, bClosestPoint, aReallyClosestPoint,
+      bReallyClosestPoint;
+  float planeToADist, planeToBDist, planeToViewDist;
+  invariant(a->obj != NULL);
+  invariant(b->obj != NULL);
+
+  Game_getObjCenter(a->obj, &aCenter);
+  Game_getObjCenter(b->obj, &bCenter);
+
+  // dumb heuristic
+  if (Renderer_isDynamicObject(a->obj)) {
+    aClosestPoint = aCenter;
+  } else {
+    Renderer_closestPointOnAABB(&a->worldAABB, &bCenter, &aClosestPoint);
+  }
+  if (Renderer_isDynamicObject(b->obj)) {
+    bClosestPoint = bCenter;
+  } else {
+    Renderer_closestPointOnAABB(&b->worldAABB, &aCenter, &bClosestPoint);
+  }
+
+  if (Renderer_isDynamicObject(a->obj)) {
+    aReallyClosestPoint = aCenter;
+  } else {
+    Renderer_closestPointOnAABB(&a->worldAABB, &bClosestPoint,
+                                &aReallyClosestPoint);
+  }
+  if (Renderer_isDynamicObject(b->obj)) {
+    bReallyClosestPoint = bCenter;
+  } else {
+    Renderer_closestPointOnAABB(&b->worldAABB, &aClosestPoint,
+                                &bReallyClosestPoint);
+  }
+
+  Renderer_getSeparatingPlane(&aReallyClosestPoint, &bReallyClosestPoint,
+                              &separatingPlane);
+
+  planeToADist = Plane_distance(&separatingPlane, &aCenter);
+  planeToBDist = Plane_distance(&separatingPlane, &bCenter);
+  planeToViewDist = Plane_distance(&separatingPlane, viewPos);
+
+  if ((planeToADist < 0.0) == (planeToBDist < 0.0)) {
+    // if A is on the same side of plane as B, probably intersecting
+    return 0;
+  } else {
+    if ((planeToADist < 0.0) == (planeToViewDist < 0.0)) {
+      // if A is on the same side of plane as the view, A closer than B
+      return -1;
+    } else {
+      // B closer than A
+      return 1;
+    }
+  }
+}
+
+// global variable because qsort's API sucks lol
+Vec3d sortWorldComparatorFn_viewPos;
+
+int Renderer_sortWorldComparatorFnPaintersSeparatingPlane(const void* a,
+                                                          const void* b) {
+  RendererSortDistance* sortA = (RendererSortDistance*)a;
+  RendererSortDistance* sortB = (RendererSortDistance*)b;
+  // sort far to near for painters algorithm
+
+  if (Renderer_isBackgroundGameObject(sortA->obj) ||
+      Renderer_isBackgroundGameObject(sortB->obj)) {
+    return sortB->distance - sortA->distance;
+  }
+
+  return -Renderer_isCloserBySeparatingPlane(sortA, sortB,
+                                             &sortWorldComparatorFn_viewPos);
+}
+
+int Renderer_sortWorldComparatorFnPaintersSimple(const void* a, const void* b) {
+  RendererSortDistance* sortA = (RendererSortDistance*)a;
+  RendererSortDistance* sortB = (RendererSortDistance*)b;
+
+  // sort far to near for painters algorithm
+  return sortB->distance - sortA->distance;
+}
+
+int Renderer_sortWorldComparatorFnZBuffer(const void* a, const void* b) {
+  RendererSortDistance* sortA = (RendererSortDistance*)a;
+  RendererSortDistance* sortB = (RendererSortDistance*)b;
   // sort near to far, so we benefit from zbuffer fast bailout
-  return ((RendererSortDistance*)a)->distance -
-         ((RendererSortDistance*)b)->distance;
-#endif
+  return sortA->distance - sortB->distance;
 }
 
 AABB Renderer_getWorldAABB(AABB* localAABBs, GameObject* obj) {
@@ -116,6 +241,7 @@ void Renderer_calcIntersecting(
     int objectsCount,
     RendererSortDistance* sortedObjects,
     AABB* localAABBs) {
+#if RENDERER_PAINTERS_ALGORITHM
   int i, k;
   int zWriteObjectsCount, zBufferedObjectsCount;
   GameObjectAABB* zWriteObjects;
@@ -172,6 +298,13 @@ void Renderer_calcIntersecting(
 
   free(zWriteObjects);
   free(zBufferedObjects);
+#else
+  int i;
+  // no-op impl which just marks all objects as potentially intersecting
+  for (i = 0; i < objectsCount; ++i) {
+    objectsIntersecting[i] = TRUE;
+  }
+#endif
 }
 
 int Renderer_cullVisibility(GameObject* worldObjects,
@@ -184,7 +317,12 @@ int Renderer_cullVisibility(GameObject* worldObjects,
   int visibilityCulled = 0;
   for (i = 0; i < worldObjectsCount; i++) {
     obj = worldObjects + i;
-    if (obj->modelType == NoneModel || !obj->visible) {
+    if (obj->modelType == NoneModel || !obj->visible
+#if FAKE_GROUND
+        || obj->modelType == GroundModel
+#endif
+
+    ) {
       worldObjectsVisibility[i] = FALSE;
       visibilityCulled++;
       continue;
@@ -220,9 +358,12 @@ void Renderer_sortVisibleObjects(GameObject* worldObjects,
                                  int worldObjectsCount,
                                  int* worldObjectsVisibility,
                                  int visibleObjectsCount,
-                                 RendererSortDistance* result) {
+                                 RendererSortDistance* result,
+                                 Vec3d* viewPos,
+                                 AABB* localAABBs) {
   int i;
   RendererSortDistance* sortDist;
+
   int visibleObjectIndex = 0;
   for (i = 0; i < worldObjectsCount; ++i) {
     // only add visible objects, compacting results array
@@ -231,12 +372,30 @@ void Renderer_sortVisibleObjects(GameObject* worldObjects,
       invariant(visibleObjectIndex < visibleObjectsCount);
       sortDist = result + visibleObjectIndex;
       sortDist->obj = worldObjects + i;
-      sortDist->distance = Renderer_gameobjectSortDist(sortDist->obj);
+      sortDist->distance = Renderer_gameobjectSortDist(sortDist->obj, viewPos);
+
+#if RENDERER_PAINTERS_ALGORITHM
+      sortDist->worldAABB = Renderer_getWorldAABB(localAABBs, sortDist->obj);
+#endif
 
       visibleObjectIndex++;
     }
   }
 
+  invariant(visibleObjectIndex == visibleObjectsCount);
+
+  // used for painters algo
+  sortWorldComparatorFn_viewPos = *viewPos;
+#if RENDERER_PAINTERS_ALGORITHM
+#if 1
   qsort(result, visibleObjectsCount, sizeof(RendererSortDistance),
-        Renderer_sortWorldComparatorFn);
+        Renderer_sortWorldComparatorFnPaintersSeparatingPlane);
+#else
+  qsort(result, visibleObjectsCount, sizeof(RendererSortDistance),
+        Renderer_sortWorldComparatorFnPaintersSimple);
+#endif
+#else
+  qsort(result, visibleObjectsCount, sizeof(RendererSortDistance),
+        Renderer_sortWorldComparatorFnZBuffer);
+#endif
 }

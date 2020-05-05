@@ -232,19 +232,19 @@ ReedModel, // modelType
 0, // subtype
 },
 {30, // object id (Lilypad.inst)
-{-1584.975220, -63.613274, -1989.747559}, // position
+{-1584.975220, -62.969212, -1989.747559}, // position
 {0.000000, 0.000000, 0.000000}, // rotation
 LilypadModel, // modelType
 0, // subtype
 },
 {31, // object id (Lilypad.inst.001)
-{-1507.698730, -63.613274, -2013.217163}, // position
+{-1507.698730, -62.969212, -2013.217163}, // position
 {0.000000, 123.995268, 0.000000}, // rotation
 LilypadModel, // modelType
 0, // subtype
 },
 {32, // object id (Lilypad.inst.002)
-{-1592.382568, -63.613274, -2030.158569}, // position
+{-1592.382568, -62.969212, -2030.158569}, // position
 {0.000000, -40.211082, 0.000000}, // rotation
 LilypadModel, // modelType
 0, // subtype

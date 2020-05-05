@@ -308,8 +308,12 @@ void makeDL00() {
   /* Initialize RCP */
   gfxRCPInit();
 
-  /* Clear the frame and Z-buffer */
+/* Clear the frame and Z-buffer */
+#if RENDERER_FAKE_GROUND
+  gfxClearCfb(GPACK_RGBA5551(112, 158, 122, 1));
+#else
   gfxClearCfb(GPACK_RGBA5551(0, 0, 0, 1));
+#endif
 
   Frustum_setCamInternals(&frustum, fovy, aspect, nearPlane, farPlane);
 
@@ -770,7 +774,8 @@ void drawWorldObjects(Dynamic* dynamicp) {
   profStartSort = CUR_TIME_MS();
   Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
                               worldObjectsVisibility, visibleObjectsCount,
-                              visibleObjDistance);
+                              visibleObjDistance, &game->viewPos,
+                              university_map_bounds);
   Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
 
   // boolean of whether an object intersects another (for z buffer optimization)
@@ -823,11 +828,14 @@ void drawWorldObjects(Dynamic* dynamicp) {
     }
 
     gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-#if RENDERER_PAINTERS_ALGORITHM
-    if (intersectingObjects[obj->id] ||
+    invariant(i < visibleObjectsCount);
+    invariant(obj != NULL);
+    if (!RENDERER_PAINTERS_ALGORITHM ||  // always z buffer
+        intersectingObjects[i] ||
         // animated game objects have concave shapes, need z buffering
         Renderer_isAnimatedGameObject(obj)) {
-      if (Renderer_isZBufferedGameObject(obj)) {
+      if (!RENDERER_PAINTERS_ALGORITHM ||  // always z buffer
+          Renderer_isZBufferedGameObject(obj)) {
         if (ANTIALIASING) {
           gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
         } else {
@@ -850,7 +858,6 @@ void drawWorldObjects(Dynamic* dynamicp) {
         gDPSetRenderMode(glistp++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
       }
     }
-#endif
 
     switch (renderModeSetting) {
       case ToonFlatShadingRenderMode:

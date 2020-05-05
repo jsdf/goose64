@@ -24,7 +24,7 @@ void Plane_setNormalAndPoint(Plane* self, Vec3d* normal, Vec3d* point) {
   Vec3d_normalise(&self->normal);
   self->point = *point;
 
-  self->d = -(Vec3d_dot(normal, point));
+  self->d = -(Vec3d_dot(&self->normal, &self->point));
 }
 
 void Plane_set3Points(Plane* self, Vec3d* v1, Vec3d* v2, Vec3d* v3) {
@@ -44,6 +44,24 @@ void Plane_set3Points(Plane* self, Vec3d* v1, Vec3d* v2, Vec3d* v3) {
 
 float Plane_distance(Plane* self, Vec3d* p) {
   return (self->d + Vec3d_dot(&self->normal, p));
+}
+
+void Plane_pointClosestPoint(Plane* p, Vec3d* q, Vec3d* result) {
+  // float t = Dot(p.n, q) - p.d;
+  // return q - t * p.n;
+
+  Vec3d tmp;
+  float t = Vec3d_dot(&p->normal, q) + p->d;
+
+  *result = *q;
+  tmp = p->normal;
+  Vec3d_mulScalar(&tmp, t);
+  Vec3d_sub(result, &tmp);
+}
+
+float Plane_distPointToPlane(Plane* p, Vec3d* q) {
+  // return Dot(q, p.n) - p.d; if plane equation normalized (||p.n||==1)
+  return (Vec3d_dot(&p->normal, q) + p->d) / Vec3d_dot(&p->normal, &p->normal);
 }
 
 // based on

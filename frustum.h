@@ -6,9 +6,9 @@
 #include "vec3d.h"
 
 typedef struct Plane {
-  Vec3d normal;
+  Vec3d normal;  // Plane normal. Points x on the plane satisfy Dot(n,x) = -d
   Vec3d point;
-  float d;
+  float d;  // d = -dot(n,p) for a given point p on the plane
 } Plane;
 
 typedef enum FrustumPlanes {
@@ -39,6 +39,11 @@ typedef struct Frustum {
 } Frustum;
 
 float Plane_distance(Plane* self, Vec3d* p);
+
+void Plane_setNormalAndPoint(Plane* self, Vec3d* normal, Vec3d* point);
+
+float Plane_distPointToPlane(Plane* p, Vec3d* q);
+void Plane_pointClosestPoint(Plane* p, Vec3d* q, Vec3d* result);
 
 void Frustum_setCamInternals(Frustum* self,
                              float fovy,
