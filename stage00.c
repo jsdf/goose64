@@ -55,7 +55,7 @@
 #define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
 #define SOUND_TEST 1
-#define DRAW_SPRITES 0
+#define DRAW_SPRITES 1
 
 typedef enum RenderMode {
   ToonFlatShadingRenderMode,
@@ -1126,7 +1126,7 @@ void drawSprite(unsigned short* sprData,
   gDPSetRenderMode(glistp++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
   // TODO: clip rectangle and offset+scale tex coords so we can render partly
   // offscreen textures
-  gSPTextureRectangle(
+  gSPScisTextureRectangle(
       glistp++,
       (int)(x) << 2,           // upper left x,
       (int)(y) << 2,           // upper left y
