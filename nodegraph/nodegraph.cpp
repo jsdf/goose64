@@ -151,7 +151,7 @@ bool NodeGraph::save(std::string path, std::string name) {
   fout_c << "#include \"" << name << ".h\"\n\n";
 
   /*
-  Node university_map_graphNodes[] = {
+  Node garden_map_graphNodes[] = {
       {0, {10.0000000, 10.0000000, 100.0000000}},
   ...
   };
@@ -163,8 +163,8 @@ bool NodeGraph::save(std::string path, std::string name) {
   fout_c << "};\n\n";
 
   /*
-  int university_map_graph_edges_node0[] = {1, 2, 4, 21};
-  int university_map_graph_edges_node1[] = {0, 2};
+  int garden_map_graph_edges_node0[] = {1, 2, 4, 21};
+  int garden_map_graph_edges_node1[] = {0, 2};
   ...
    */
   std::vector<std::set<int, std::less<int>>> nodesEdges;
@@ -187,9 +187,9 @@ bool NodeGraph::save(std::string path, std::string name) {
   fout_c << "\n";
 
   /*
-  EdgeList university_map_graphEdges[] = {
-      {/ *size* / 4, university_map_graph_edges_node0},
-      {/ *size* / 2, university_map_graph_edges_node1},
+  EdgeList garden_map_graphEdges[] = {
+      {/ *size* / 4, garden_map_graph_edges_node0},
+      {/ *size* / 2, garden_map_graph_edges_node1},
     ...
   };
    */
@@ -204,10 +204,10 @@ bool NodeGraph::save(std::string path, std::string name) {
   fout_c << "};\n\n";
 
   /*
-  Graph university_map_graph = {
-      UNIVERSITY_MAP_GRAPH_SIZE,  // int size;
-      university_map_graphNodes,  // Node* nodes;
-      university_map_graphEdges,  // EdgeList* edges;
+  Graph garden_map_graph = {
+      GARDEN_MAP_GRAPH_SIZE,  // int size;
+      garden_map_graphNodes,  // Node* nodes;
+      garden_map_graphEdges,  // EdgeList* edges;
   };
    */
   fout_c << "Graph " << name << " = {\n";
@@ -218,8 +218,8 @@ bool NodeGraph::save(std::string path, std::string name) {
 
   /*
   NodeState
-      university_map_graph_pathfinding_node_states[UNIVERSITY_MAP_GRAPH_SIZE];
-  int university_map_graph_pathfinding_result[UNIVERSITY_MAP_GRAPH_SIZE];
+      garden_map_graph_pathfinding_node_states[GARDEN_MAP_GRAPH_SIZE];
+  int garden_map_graph_pathfinding_result[GARDEN_MAP_GRAPH_SIZE];
    */
   fout_c << "NodeState " << name << "_pathfinding_node_states[" << nameUpper
          << "_SIZE];\n";
@@ -227,14 +227,14 @@ bool NodeGraph::save(std::string path, std::string name) {
          << "_SIZE];\n\n";
 
   /*
-  PathfindingState university_map_graph_pathfinding_state = {
+  PathfindingState garden_map_graph_pathfinding_state = {
       NULL,                                          // Node* start;
       NULL,                                          // Node* end;
-      university_map_graph_pathfinding_node_states,  // NodeState* nodeStates;
-      UNIVERSITY_MAP_GRAPH_SIZE,                     // int nodeStateSize;
+      garden_map_graph_pathfinding_node_states,  // NodeState* nodeStates;
+      GARDEN_MAP_GRAPH_SIZE,                     // int nodeStateSize;
       0,                                             // int open;
-      university_map_graph_pathfinding_result,       // int* result;
-      UNIVERSITY_MAP_GRAPH_SIZE,                     // int resultSize;
+      garden_map_graph_pathfinding_result,       // int* result;
+      GARDEN_MAP_GRAPH_SIZE,                     // int resultSize;
   };
    */
   fout_c << "PathfindingState " << name << "_pathfinding_state = {\n";

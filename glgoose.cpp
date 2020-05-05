@@ -41,9 +41,9 @@
 #include "renderer.h"
 #include "vec3d.h"
 
-#include "university_map.h"
-#include "university_map_collision.h"
-#include "university_map_graph.h"
+#include "garden_map.h"
+#include "garden_map_collision.h"
+#include "garden_map_graph.h"
 
 #include "character_anim.h"
 #include "goose_anim.h"
@@ -110,9 +110,9 @@ bool keysDown[127];
 Input input;
 GameObject* selectedObject = NULL;
 
-PhysWorldData physWorldData = {university_map_collision_collision_mesh,
-                               UNIVERSITY_MAP_COLLISION_LENGTH,
-                               &university_map_collision_collision_mesh_hash,
+PhysWorldData physWorldData = {garden_map_collision_collision_mesh,
+                               GARDEN_MAP_COLLISION_LENGTH,
+                               &garden_map_collision_collision_mesh_hash,
                                /*gravity*/ -9.8 * N64_SCALE_FACTOR,
                                /*viscosity*/ 0.05,
                                /*waterHeight*/ WATER_HEIGHT};
@@ -177,13 +177,13 @@ std::vector<glm::vec2> spriteUVs = {
 
 int debugPathfindingFrom = 3;
 int debugPathfindingTo = 8;
-Graph* pathfindingGraph = &university_map_graph;
-PathfindingState* pathfindingState = &university_map_graph_pathfinding_state;
+Graph* pathfindingGraph = &garden_map_graph;
+PathfindingState* pathfindingState = &garden_map_graph_pathfinding_state;
 
 static NodeGraph nodeGraph = NodeGraph();
 static int selectedNode = -1;
 
-AABB* localAABBs = university_map_bounds;
+AABB* localAABBs = garden_map_bounds;
 static int frustumCulled = 0;
 
 void loadModel(ModelType modelType, char* modelfile, char* texfile) {
@@ -576,8 +576,8 @@ void drawGUI() {
   }
 
 #if ENABLE_NODEGRAPH_EDITOR
-  drawNodeGraphGUI(nodeGraph, goosePos, "university_map_graph",
-                   "university_map_graph", selectedNode);
+  drawNodeGraphGUI(nodeGraph, goosePos, "garden_map_graph", "garden_map_graph",
+                   selectedNode);
 #endif
 
   ImGui::End();
@@ -1321,9 +1321,9 @@ void drawCollisionMesh() {
 
   // draw all tris wireframes
   float triColor;
-  for (i = 0, tri = university_map_collision_collision_mesh;
-       i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
-    triColor = (i / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
+  for (i = 0, tri = garden_map_collision_collision_mesh;
+       i < GARDEN_MAP_COLLISION_LENGTH; i++, tri++) {
+    triColor = (i / (float)GARDEN_MAP_COLLISION_LENGTH);
     glColor3f(0.0f, triColor, 1.0f - triColor);
     glBegin(GL_LINE_LOOP);
     glVertex3f(tri->a.x, tri->a.y, tri->a.z);
@@ -1380,9 +1380,8 @@ void drawCollisionMesh() {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       for (i = 0; i < spatialHashResultsCount; i++) {
-        tri = university_map_collision_collision_mesh + spatialHashResults[i];
-        triColor =
-            (spatialHashResults[i] / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
+        tri = garden_map_collision_collision_mesh + spatialHashResults[i];
+        triColor = (spatialHashResults[i] / (float)GARDEN_MAP_COLLISION_LENGTH);
 
         glColor4f(0.0f, triColor * 0.8, (1.0f - triColor) * 0.8, 0.3);
         glBegin(GL_TRIANGLES);
@@ -1420,7 +1419,7 @@ void drawCollisionMesh() {
 
 #if DEBUG_COLLISION_MESH_AABB || DEBUG_COLLISION_SPATIAL_HASH_RAYCAST
     for (i = 0; i < spatialHashResultsCount; i++) {
-      tri = university_map_collision_collision_mesh + spatialHashResults[i];
+      tri = garden_map_collision_collision_mesh + spatialHashResults[i];
       AABB triangleAABB;
       AABB_fromTriangle(tri, &triangleAABB);
 
@@ -1446,7 +1445,7 @@ void drawCollisionMesh() {
         testCollisionResults.begin();
 
     while (collIter != testCollisionResults.end()) {
-      tri = university_map_collision_collision_mesh + collIter->first;
+      tri = garden_map_collision_collision_mesh + collIter->first;
 
       if (testCollisionResult == collIter->first) {
         glColor4f(1.0f, 0.0f, 0.0f, 0.3);
@@ -1466,9 +1465,9 @@ void drawCollisionMesh() {
 
 // draw tri labels & normals
 #if DEBUG_COLLISION_MESH_MORE
-  for (i = 0, tri = university_map_collision_collision_mesh;
-       i < UNIVERSITY_MAP_COLLISION_LENGTH; i++, tri++) {
-    triColor = (i / (float)UNIVERSITY_MAP_COLLISION_LENGTH);
+  for (i = 0, tri = garden_map_collision_collision_mesh;
+       i < GARDEN_MAP_COLLISION_LENGTH; i++, tri++) {
+    triColor = (i / (float)GARDEN_MAP_COLLISION_LENGTH);
     Triangle_getCentroid(tri, &triCentroid);
     Triangle_getNormal(tri, &triNormal);
 
@@ -1754,16 +1753,15 @@ void renderScene(void) {
   if (!visibleObjDist) {
     debugPrintf("failed to alloc visibleObjDist");
   }
-  Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
-                              worldObjectsVisibility, visibleObjectsCount,
-                              visibleObjDist, &game->viewPos,
-                              university_map_bounds);
+  Renderer_sortVisibleObjects(
+      game->worldObjects, game->worldObjectsCount, worldObjectsVisibility,
+      visibleObjectsCount, visibleObjDist, &game->viewPos, garden_map_bounds);
 
   // boolean of whether an object intersects another (for z buffer optimization)
   int* intersectingObjects = (int*)malloc((visibleObjectsCount) * sizeof(int));
   invariant(intersectingObjects);
   Renderer_calcIntersecting(intersectingObjects, visibleObjectsCount,
-                            visibleObjDist, university_map_bounds);
+                            visibleObjDist, garden_map_bounds);
 
 #if USE_LIGHTING
   enableLighting();
@@ -2259,9 +2257,8 @@ void testCollision() {
     SphereTriangleCollision result;
     testCollisionTrace = TRUE;
     Collision_testMeshSphereCollision(
-        university_map_collision_collision_mesh,
-        UNIVERSITY_MAP_COLLISION_LENGTH, &objCenter, objRadius,
-        physWorldData.worldMeshSpatialHash, &result);
+        garden_map_collision_collision_mesh, GARDEN_MAP_COLLISION_LENGTH,
+        &objCenter, objRadius, physWorldData.worldMeshSpatialHash, &result);
     testCollisionTrace = FALSE;
   } else {
     testCollisionResult = -1;
@@ -2308,7 +2305,7 @@ int main(int argc, char** argv) {
   Game* game;
   GameObject* obj;
 
-  Game_init(university_map_data, UNIVERSITY_MAP_COUNT, &physWorldData);
+  Game_init(garden_map_data, GARDEN_MAP_COUNT, &physWorldData);
 
   game = Game_get();
   game->pathfindingGraph = pathfindingGraph;
@@ -2329,7 +2326,7 @@ int main(int argc, char** argv) {
            obj->position.z);
   }
 
-  invariant(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
+  invariant(GARDEN_MAP_COUNT <= MAX_WORLD_OBJECTS);
 
   // init GLUT and create window
   glutInit(&argc, argv);
@@ -2372,8 +2369,8 @@ int main(int argc, char** argv) {
 
   // Load models. This has to be after OpenGL init because it creates textures
   loadModel(GooseModel, "gooserig.obj", "goosetex.bmp");
-  loadModel(UniFloorModel, "university_floor.obj", "green.bmp");
-  loadModel(UniBldgModel, "university_bldg.obj", "redbldg.bmp");
+  loadModel(UniFloorModel, "garden_floor.obj", "green.bmp");
+  loadModel(UniBldgModel, "garden_bldg.obj", "redbldg.bmp");
   loadModel(BushModel, "bush.obj", "bush.bmp");
   loadModel(FlagpoleModel, "flagpole.obj", "flagpole.bmp");
   loadModel(GardenerCharacterModel, "characterrig.obj", "person.bmp");

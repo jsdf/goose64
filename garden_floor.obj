@@ -1,6 +1,6 @@
 # Blender v2.80 (sub 75) OBJ File: ''
 # www.blender.org
-mtllib university_floor.mtl
+mtllib garden_floor.mtl
 o UniFloor_Plane
 v -66.768532 0.000000 114.078125
 v 64.623253 0.000000 114.078125

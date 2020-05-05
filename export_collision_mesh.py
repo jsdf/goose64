@@ -29,7 +29,7 @@ before exporting:
 # we scale the models up by this much to avoid n64 fixed point precision issues
 N64_SCALE_FACTOR = 30
 
-filename_base = "university_map"
+filename_base = "garden_map"
 filename = filename_base + "_collision"
 
 # name without numerical suffix like .001

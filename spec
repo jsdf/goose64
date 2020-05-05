@@ -72,7 +72,7 @@ beginseg
   name  "collision"
   flags OBJECT
   after "sprites"
-  include "university_map_collision.o"
+  include "garden_map_collision.o"
 endseg
 
 beginseg

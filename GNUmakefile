@@ -26,11 +26,11 @@ CFLAGS = $(LCDEFS) $(LCINCS) $(LCOPTS) $(GCCFLAG) $(OPTIMIZER)
 
 ED64CODEFILES = ed64io_usb.c ed64io_sys.c ed64io_everdrive.c ed64io_fault.c
 
-CODEFILES   =   main.c stage00.c graphic.c gfxinit.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c  pathfinding.c frustum.c  university_map_graph.c sprite.c $(ED64CODEFILES)
+CODEFILES   =   main.c stage00.c graphic.c gfxinit.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c  pathfinding.c frustum.c  garden_map_graph.c sprite.c $(ED64CODEFILES)
 
 CODEOBJECTS = $(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
 
-DATAFILES   = mem_heap.c trace.c university_map_collision.c models.c sprite_data.c
+DATAFILES   = mem_heap.c trace.c garden_map_collision.c models.c sprite_data.c
 DATAOBJECTS = $(DATAFILES:.c=.o)
 
 CODESEGMENT = codesegment.o

@@ -7,7 +7,7 @@
 
 // when painter's alg enabled we change render order and disable z buffer for
 // some objects that don't need it
-#define RENDERER_PAINTERS_ALGORITHM 1
+#define RENDERER_PAINTERS_ALGORITHM 0
 #define RENDERER_FAKE_GROUND 1
 
 typedef struct RendererSortDistance {

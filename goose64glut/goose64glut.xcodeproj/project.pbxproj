@@ -30,12 +30,12 @@
 		73F13D4424452F1500BEC5D0 /* renderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2324452F1300BEC5D0 /* renderer.c */; };
 		73F13D4524452F1500BEC5D0 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2424452F1300BEC5D0 /* game.c */; };
 		73F13D4624452F1500BEC5D0 /* animation.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2524452F1300BEC5D0 /* animation.c */; };
-		73F13D4724452F1500BEC5D0 /* university_map_graph.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2624452F1300BEC5D0 /* university_map_graph.c */; };
+		73F13D4724452F1500BEC5D0 /* garden_map_graph.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2624452F1300BEC5D0 /* garden_map_graph.c */; };
 		73F13D4824452F1500BEC5D0 /* gameutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2724452F1300BEC5D0 /* gameutils.c */; };
 		73F13D4A24452F1500BEC5D0 /* physics.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2924452F1300BEC5D0 /* physics.c */; };
 		73F13D4C24452F1500BEC5D0 /* compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2B24452F1300BEC5D0 /* compat.c */; };
 		73F13D4D24452F1500BEC5D0 /* rotation.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2C24452F1300BEC5D0 /* rotation.c */; };
-		73F13D4E24452F1500BEC5D0 /* university_map_collision.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2D24452F1400BEC5D0 /* university_map_collision.c */; };
+		73F13D4E24452F1500BEC5D0 /* garden_map_collision.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2D24452F1400BEC5D0 /* garden_map_collision.c */; };
 		73F13D5024452F1500BEC5D0 /* vec3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D2F24452F1400BEC5D0 /* vec3d.c */; };
 		73F13D5324452F1500BEC5D0 /* frustum.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D3224452F1400BEC5D0 /* frustum.c */; };
 		73F13D5424452F1500BEC5D0 /* characterstate.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D3324452F1400BEC5D0 /* characterstate.c */; };
@@ -75,7 +75,7 @@
 		7300A9AA23A9F79C00CD6A5B /* characteranimtypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = characteranimtypes.h; path = ../characteranimtypes.h; sourceTree = "<group>"; };
 		7300A9AB23A9F7A900CD6A5B /* character_anim.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = character_anim.h; path = ../character_anim.h; sourceTree = "<group>"; };
 		732EC5292412219800CCCA81 /* compat.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = compat.h; path = ../compat.h; sourceTree = "<group>"; };
-		732EC52C2412275D00CCCA81 /* university_map_graph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = university_map_graph.h; path = ../university_map_graph.h; sourceTree = "<group>"; };
+		732EC52C2412275D00CCCA81 /* garden_map_graph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = garden_map_graph.h; path = ../garden_map_graph.h; sourceTree = "<group>"; };
 		732EC5302413783C00CCCA81 /* nodegraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = nodegraph.hpp; sourceTree = "<group>"; };
 		732EC5312413783C00CCCA81 /* nodegraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nodegraph.cpp; sourceTree = "<group>"; };
 		732EC533241378E400CCCA81 /* pathfinding.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = pathfinding.h; path = ../pathfinding.h; sourceTree = "<group>"; };
@@ -123,12 +123,12 @@
 		73F13D2324452F1300BEC5D0 /* renderer.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = renderer.c; path = ../renderer.c; sourceTree = "<group>"; };
 		73F13D2424452F1300BEC5D0 /* game.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = game.c; path = ../game.c; sourceTree = "<group>"; };
 		73F13D2524452F1300BEC5D0 /* animation.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = animation.c; path = ../animation.c; sourceTree = "<group>"; };
-		73F13D2624452F1300BEC5D0 /* university_map_graph.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = university_map_graph.c; path = ../university_map_graph.c; sourceTree = "<group>"; };
+		73F13D2624452F1300BEC5D0 /* garden_map_graph.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = garden_map_graph.c; path = ../garden_map_graph.c; sourceTree = "<group>"; };
 		73F13D2724452F1300BEC5D0 /* gameutils.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = gameutils.c; path = ../gameutils.c; sourceTree = "<group>"; };
 		73F13D2924452F1300BEC5D0 /* physics.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = physics.c; path = ../physics.c; sourceTree = "<group>"; };
 		73F13D2B24452F1300BEC5D0 /* compat.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = compat.c; path = ../compat.c; sourceTree = "<group>"; };
 		73F13D2C24452F1300BEC5D0 /* rotation.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = rotation.c; path = ../rotation.c; sourceTree = "<group>"; };
-		73F13D2D24452F1400BEC5D0 /* university_map_collision.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = university_map_collision.c; path = ../university_map_collision.c; sourceTree = "<group>"; };
+		73F13D2D24452F1400BEC5D0 /* garden_map_collision.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = garden_map_collision.c; path = ../garden_map_collision.c; sourceTree = "<group>"; };
 		73F13D2F24452F1400BEC5D0 /* vec3d.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = vec3d.c; path = ../vec3d.c; sourceTree = "<group>"; };
 		73F13D3224452F1400BEC5D0 /* frustum.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = frustum.c; path = ../frustum.c; sourceTree = "<group>"; };
 		73F13D3324452F1400BEC5D0 /* characterstate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = characterstate.c; path = ../characterstate.c; sourceTree = "<group>"; };
@@ -183,7 +183,7 @@
 				73A6BA10241F37B100C67C12 /* trace.h */,
 				732EC5292412219800CCCA81 /* compat.h */,
 				73996977242497AC00E671B5 /* frustum.h */,
-				732EC52C2412275D00CCCA81 /* university_map_graph.h */,
+				732EC52C2412275D00CCCA81 /* garden_map_graph.h */,
 				7300A9AA23A9F79C00CD6A5B /* characteranimtypes.h */,
 				73E9049723944EE600CF5D2F /* rotation.h */,
 				73E90495238B326100CF5D2F /* animation.h */,
@@ -220,8 +220,8 @@
 				73F13D2C24452F1300BEC5D0 /* rotation.c */,
 				73F13D2024452F1200BEC5D0 /* sprite.c */,
 				73F13D1924452F1200BEC5D0 /* trace.c */,
-				73F13D2D24452F1400BEC5D0 /* university_map_collision.c */,
-				73F13D2624452F1300BEC5D0 /* university_map_graph.c */,
+				73F13D2D24452F1400BEC5D0 /* garden_map_collision.c */,
+				73F13D2624452F1300BEC5D0 /* garden_map_graph.c */,
 				73F13D2124452F1200BEC5D0 /* vec2d.c */,
 				73F13D2F24452F1400BEC5D0 /* vec3d.c */,
 				73881965234D854C0057630E /* Products */,
@@ -327,7 +327,7 @@
 				73F13D4824452F1500BEC5D0 /* gameutils.c in Sources */,
 				73F13D5624452F1500BEC5D0 /* input.c in Sources */,
 				732EC5322413783C00CCCA81 /* nodegraph.cpp in Sources */,
-				73F13D4724452F1500BEC5D0 /* university_map_graph.c in Sources */,
+				73F13D4724452F1500BEC5D0 /* garden_map_graph.c in Sources */,
 				73F13D5324452F1500BEC5D0 /* frustum.c in Sources */,
 				73E1066F23B014A600DE8673 /* imgui_widgets.cpp in Sources */,
 				73F13D4624452F1500BEC5D0 /* animation.c in Sources */,
@@ -336,7 +336,7 @@
 				73F13D3924452F1500BEC5D0 /* modeltype.c in Sources */,
 				73F13D4C24452F1500BEC5D0 /* compat.c in Sources */,
 				73E1066C23B0146600DE8673 /* imgui_impl_opengl2.cpp in Sources */,
-				73F13D4E24452F1500BEC5D0 /* university_map_collision.c in Sources */,
+				73F13D4E24452F1500BEC5D0 /* garden_map_collision.c in Sources */,
 				73F13D4024452F1500BEC5D0 /* character.c in Sources */,
 				73F13D4A24452F1500BEC5D0 /* physics.c in Sources */,
 				733266E7235EAB8200907B30 /* objloader.cpp in Sources */,

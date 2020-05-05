@@ -1,14 +1,13 @@
 
-#ifndef UNIVERSITY_MAP_COLLISION_H
-#define UNIVERSITY_MAP_COLLISION_H 1
-#include "constants.h"
+#ifndef GARDEN_MAP_COLLISION_H
+#define GARDEN_MAP_COLLISION_H 1
 #include "collision.h"
+#include "constants.h"
 
+extern Triangle garden_map_collision_collision_mesh[];
 
-extern Triangle university_map_collision_collision_mesh[];
+#define GARDEN_MAP_COLLISION_LENGTH 188
 
-#define UNIVERSITY_MAP_COLLISION_LENGTH 188
+extern SpatialHash garden_map_collision_collision_mesh_hash;
 
-extern SpatialHash university_map_collision_collision_mesh_hash;
-
-#endif /* UNIVERSITY_MAP_COLLISION_H */
+#endif /* GARDEN_MAP_COLLISION_H */

@@ -36,9 +36,9 @@
 #include "segments.h"
 
 // map
-#include "university_map.h"
-#include "university_map_collision.h"
-#include "university_map_graph.h"
+#include "garden_map.h"
+#include "garden_map_collision.h"
+#include "garden_map_graph.h"
 // anim data
 #include "character_anim.h"
 #include "goose_anim.h"
@@ -171,9 +171,9 @@ void initStage00() {
   debugPrintfSync("audio heap used=%d, free=%d\n", nuAuStlHeapGetUsed(),
                   nuAuStlHeapGetFree());
 
-  physWorldData = (PhysWorldData){university_map_collision_collision_mesh,
-                                  UNIVERSITY_MAP_COLLISION_LENGTH,
-                                  &university_map_collision_collision_mesh_hash,
+  physWorldData = (PhysWorldData){garden_map_collision_collision_mesh,
+                                  GARDEN_MAP_COLLISION_LENGTH,
+                                  &garden_map_collision_collision_mesh_hash,
                                   /*gravity*/ -9.8 * N64_SCALE_FACTOR,
                                   /*viscosity*/ 0.05,
                                   /*waterHeight*/ WATER_HEIGHT};
@@ -199,14 +199,14 @@ void initStage00() {
   Vec3d_init(&viewRot, 0.0F, 0.0F, 0.0F);
   Input_init(&input);
 
-  Game_init(university_map_data, UNIVERSITY_MAP_COUNT, &physWorldData);
+  Game_init(garden_map_data, GARDEN_MAP_COUNT, &physWorldData);
 
-  invariant(UNIVERSITY_MAP_COUNT <= MAX_WORLD_OBJECTS);
+  invariant(GARDEN_MAP_COUNT <= MAX_WORLD_OBJECTS);
 
   game = Game_get();
 
-  game->pathfindingGraph = &university_map_graph;
-  game->pathfindingState = &university_map_graph_pathfinding_state;
+  game->pathfindingGraph = &garden_map_graph;
+  game->pathfindingState = &garden_map_graph_pathfinding_state;
 
   lastFrameTime = CUR_TIME_MS();
 
@@ -760,7 +760,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   profStartFrustum = CUR_TIME_MS();
   visibilityCulled = Renderer_cullVisibility(
       game->worldObjects, game->worldObjectsCount, worldObjectsVisibility,
-      &frustum, university_map_bounds);
+      &frustum, garden_map_bounds);
   objectsCulled = visibilityCulled;
 
   Trace_addEvent(DrawFrustumCullTraceEvent, profStartFrustum, CUR_TIME_MS());
@@ -775,14 +775,14 @@ void drawWorldObjects(Dynamic* dynamicp) {
   Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
                               worldObjectsVisibility, visibleObjectsCount,
                               visibleObjDistance, &game->viewPos,
-                              university_map_bounds);
+                              garden_map_bounds);
   Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
 
   // boolean of whether an object intersects another (for z buffer optimization)
   intersectingObjects = (int*)malloc((visibleObjectsCount) * sizeof(int));
   invariant(intersectingObjects);
   Renderer_calcIntersecting(intersectingObjects, visibleObjectsCount,
-                            visibleObjDistance, university_map_bounds);
+                            visibleObjDistance, garden_map_bounds);
 
   gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
   gDPSetCycleType(glistp++, twoCycleMode ? G_CYC_2CYCLE : G_CYC_1CYCLE);

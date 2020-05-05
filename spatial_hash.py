@@ -466,4 +466,4 @@ def test(filepath):
 
 
 if __name__ == "__main__":
-    test("university_map_collision.json")
+    test("garden_map_collision.json")
