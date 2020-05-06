@@ -142,8 +142,6 @@
       u64 intentionallyCrash;                                          \
       intentionallyCrash = *(u64*)1;                                   \
     }                                                                  \
-    while (TRUE) {                                                     \
-    }                                                                  \
   }
 #else
 #define invariant(expression) assert(expression)

@@ -191,13 +191,16 @@ int Renderer_isCloserBySeparatingPlane(RendererSortDistance* a,
 
 // global variable because qsort's API sucks lol
 Vec3d sortWorldComparatorFn_viewPos;
-
+int sortIterations = 0;
 int Renderer_sortWorldComparatorFnPaintersSeparatingPlane(const void* a,
                                                           const void* b) {
   RendererSortDistance* sortA = (RendererSortDistance*)a;
   RendererSortDistance* sortB = (RendererSortDistance*)b;
+#ifdef DEBUG
+  sortIterations++;
+  invariant(sortIterations < 1000);
+#endif
   // sort far to near for painters algorithm
-
   if (Renderer_isBackgroundGameObject(sortA->obj) ||
       Renderer_isBackgroundGameObject(sortB->obj)) {
     return sortB->distance - sortA->distance;
@@ -388,6 +391,7 @@ void Renderer_sortVisibleObjects(GameObject* worldObjects,
   sortWorldComparatorFn_viewPos = *viewPos;
 #if RENDERER_PAINTERS_ALGORITHM
 #if 1
+  sortIterations = 0;
   qsort(result, visibleObjectsCount, sizeof(RendererSortDistance),
         Renderer_sortWorldComparatorFnPaintersSeparatingPlane);
 #else

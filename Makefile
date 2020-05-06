@@ -24,7 +24,7 @@ MAKEROM = mild
 
 LCDEFS = -DN_AUDIO -DF3DEX_GBI_2 -D__N64__
 ifndef OPTIMIZE
-LCDEFS += -DNU_DEBUG
+LCDEFS += -DNU_DEBUG -DDEBUG
 endif
 
 LCINCS =	-I. -nostdinc -I- -I$(NUSTDINCDIR) -I$(NUSYSINCDIR) -I$(ROOT)/usr/include/PR
