@@ -214,12 +214,14 @@ void screenCoordsToWorld(Vec3d* screenPos, Vec3d* result) {
   Vec3d_init(result, res[0], res[1], res[2]);
 }
 
-bool worldCoordsToScreen(Vec3d* pos, Vec3d* result) {
+bool worldCoordsToScreen(Vec3d* pos,
+                         Vec3d* result,
+                         GLdouble* modelview,
+                         GLdouble* projection) {
   GLdouble scr[3];
 
-  bool success =
-      gluProject(pos->x, pos->y, pos->z, lastModelView, lastProjection,
-                 lastViewport, &scr[0], &scr[1], &scr[2]);
+  bool success = gluProject(pos->x, pos->y, pos->z, modelview, projection,
+                            lastViewport, &scr[0], &scr[1], &scr[2]);
 
   int screenSizeX = lastViewport[2];
   int screenSizeY = lastViewport[3];
@@ -614,9 +616,21 @@ void drawString(const char* string, int x, int y) {
   glPopAttrib();  // GL_TRANSFORM_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT
 }
 
-void drawStringAtPoint(const char* string, Vec3d* pos, int centered) {
+void drawStringAtPointLocalOrWorld(const char* string,
+                                   Vec3d* pos,
+                                   int centered,
+                                   int local) {
   Vec3d screen;  // x, y, zdepth
-  bool success = worldCoordsToScreen(pos, &screen);
+  bool success;
+  if (local) {
+    GLdouble modelview[16];
+    GLdouble projection[16];
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+    glGetDoublev(GL_PROJECTION_MATRIX, projection);
+    success = worldCoordsToScreen(pos, &screen, modelview, projection);
+  } else {
+    success = worldCoordsToScreen(pos, &screen, lastModelView, lastProjection);
+  }
   if (!success) {
     return;
   }
@@ -627,6 +641,17 @@ void drawStringAtPoint(const char* string, Vec3d* pos, int centered) {
 
   drawString(string, screen.x - (centered ? (stringLength * 8 / 2) : 0.0),
              screen.y);
+}
+
+void drawStringAtPoint(const char* string, Vec3d* pos, int centered) {
+  drawStringAtPointLocalOrWorld(string, pos, centered, FALSE);
+}
+
+void drawStringAtPointLocal(const char* string, int centered) {
+  Vec3d pos;
+  Vec3d_origin(&pos);
+
+  drawStringAtPointLocalOrWorld(string, &pos, centered, TRUE);
 }
 
 void drawSprite(SpriteType spriteType,
@@ -682,7 +707,8 @@ void drawSpriteAtPoint(SpriteType spriteType,
                        Vec3d* pos,
                        int centered) {
   Vec3d screen;  // x, y, zdepth
-  bool success = worldCoordsToScreen(pos, &screen);
+  bool success =
+      worldCoordsToScreen(pos, &screen, lastModelView, lastProjection);
   if (!success) {
     return;
   }
@@ -1104,12 +1130,10 @@ void drawModel(GameObject* obj) {
 
       // overlay text
       glPushMatrix();
-      Vec3d animFrameGlobalPos;
-      Vec3d_origin(&animFrameGlobalPos);
-      drawStringAtPoint(
-          getMeshNameForModelMeshPart(obj->modelType, animFrame.object),
-          &animFrameGlobalPos, FALSE);
+      drawStringAtPointLocal(
+          getMeshNameForModelMeshPart(obj->modelType, animFrame.object), FALSE);
       glPopMatrix();
+
 #endif
 
       glPopMatrix();
@@ -1698,9 +1722,12 @@ void renderScene(void) {
 
   game = Game_get();
 
-  // glClearColor(0, 0, 0, 1);
-
+#if RENDERER_FAKE_GROUND
   glClearColor(112 / 255.0, 158 / 255.0, 122 / 255.0, 1);
+#else
+  glClearColor(0, 0, 0, 1);
+#endif
+
   // Clear Color and Depth Buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Use the Projection Matrix
