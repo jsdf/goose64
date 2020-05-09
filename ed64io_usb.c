@@ -1,6 +1,5 @@
 
 
-#include <stdarg.h>
 #include <string.h>
 
 #include "ed64io_everdrive.h"
@@ -164,6 +163,10 @@ void ed64PrintfSync2(const char* fmt, ...) {
   while (ed64AsyncLoggerFlush() != -1) {
     sleep(1);
   }
+}
+
+void ed64VPrintfSync2(const char* fmt, va_list ap) {
+  _Printf((void (*)(void*))_PrintfImplUSBAsync, 0, fmt, ap);
 }
 
 void ed64Assert(int expression) {

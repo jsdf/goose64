@@ -9,6 +9,7 @@
 #include <PR/os_convert.h>
 #include "ed64io_everdrive.h"
 #include "ed64io_fault.h"
+#include "ed64io_os_error.h"
 #include "ed64io_usb.h"
 #include "graphic.h"
 #include "mem_heap.h"
@@ -61,6 +62,9 @@ void mainproc(void) {
 
   // start thread which will catch and log errors
   ed64StartFaultHandlerThread(NU_MAIN_THREAD_PRI);
+
+  // handler for libultra errors
+  ed64RegisterOSErrorHandler();
 
   /* The initialization of graphic  */
   // nuGfxInit();
