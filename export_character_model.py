@@ -17,8 +17,8 @@ Works best when mesh origins align with bone origins. To fix broken transforms/p
 - to improve further, for each part, select bone in pose mode and choose "Snap Cursor to Selected" then select the child object and "Set Origin" > "Origin to 3d Cursor"
 """
 
-# export_rel_path = "../gooserig.obj" # export goose
-export_rel_path = "../characterrig.obj"  # export character
+export_rel_path = "../gooserig.obj"  # export goose
+# export_rel_path = "../characterrig.obj"  # export character
 
 blend_file_path = bpy.data.filepath
 directory = os.path.dirname(blend_file_path)
@@ -31,11 +31,12 @@ assert (
     len(bpy.context.selected_objects) > 0
 ), "No objects selected, you must select some objects to use this script"
 
-objects = []
+bpy.ops.ed.undo_push()
+
 for obj in bpy.context.selected_objects:
     print("saving", obj.matrix_world)
-    objects.append((obj, obj.matrix_world.copy()))
     obj.matrix_world = mathutils.Matrix()
+    obj.animation_data_clear()
 
 bpy.ops.export_scene.obj(
     filepath=target_file,
@@ -63,6 +64,4 @@ bpy.ops.export_scene.obj(
     path_mode="STRIP",
 )
 
-for obj, original_position in objects:
-    print("restoring", original_position)
-    obj.matrix_world = original_position
+bpy.ops.ed.undo()
