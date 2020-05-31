@@ -23,9 +23,15 @@ LD  = ld
 MAKEROM = mild
 
 LCDEFS = -DN_AUDIO -DF3DEX_GBI_2 -D__N64__
+
 ifndef OPTIMIZE
 LCDEFS += -DNU_DEBUG -DDEBUG
 endif
+
+ifdef ED64
+LCDEFS += -DED64
+endif
+
 
 LCINCS =	-I. -nostdinc -I- -I$(NUSTDINCDIR) -I$(NUSYSINCDIR) -I$(ROOT)/usr/include/PR
 LCOPTS =	-G 0
@@ -51,9 +57,13 @@ TARGETS =	goose64.n64
 
 HFILES =	main.h graphic.h testingCube.h vec3d.h vec2d.h gameobject.h game.h modeltype.h renderer.h input.h character.h player.h gameutils.h gametypes.h item.h animation.h physics.h rotation.h collision.h garden_map_collision.h pathfinding.h trace.h frustum.h garden_map_graph.h
 
-ED64CODEFILES = ed64io_usb.c ed64io_sys.c ed64io_everdrive.c ed64io_fault.c
+ED64CODEFILES = ed64io_usb.c ed64io_sys.c ed64io_everdrive.c ed64io_fault.c ed64io_os_error.c
 
-CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c  pathfinding.c frustum.c  garden_map_graph.c sprite.c $(ED64CODEFILES)
+CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c  pathfinding.c frustum.c  garden_map_graph.c sprite.c
+
+ifdef ED64
+CODEFILES  += $(ED64CODEFILES)
+endif
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
 

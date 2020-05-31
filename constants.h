@@ -105,13 +105,22 @@
 #endif
 
 #ifdef __N64__
+#ifdef ED64
 #define debugPrintf ed64Printf
+#else
+#define debugPrintf(args...)
+#endif
 #else
 #define debugPrintf printf
 #endif
 
 #ifdef __N64__
+
+#ifdef ED64
 #define debugPrintfSync ed64PrintfSync
+#else
+#define debugPrintfSync(args...)
+#endif
 #else
 #define debugPrintfSync printf
 #endif

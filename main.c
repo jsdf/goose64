@@ -38,16 +38,16 @@ int systemHeapMemoryInit(void) {
   if (initHeapResult == -1) {
     die("failed to init heap\n");
   } else {
-    ed64PrintfSync("init heap success, allocated=%d\n", MEM_HEAP_SIZE);
+    debugPrintfSync("init heap success, allocated=%d\n", MEM_HEAP_SIZE);
   }
 
   if (osGetMemSize() == 0x00800000) {
-    ed64PrintfSync("have expansion pack\n");
+    debugPrintfSync("have expansion pack\n");
     nuPiReadRom((u32)_traceSegmentRomStart, _traceSegmentStart,
                 (u32)_traceSegmentRomEnd - (u32)_traceSegmentRomStart);
     bzero(_traceSegmentBssStart, _traceSegmentBssEnd - _traceSegmentBssStart);
 
-    ed64PrintfSync("init trace buffer at %p\n", _traceSegmentStart);
+    debugPrintfSync("init trace buffer at %p\n", _traceSegmentStart);
   } else {
     die("expansion pack missing\n");
   }
@@ -58,6 +58,7 @@ int systemHeapMemoryInit(void) {
         Main
 --------------------------*/
 void mainproc(void) {
+#ifdef ED64
   evd_init();
 
   // start thread which will catch and log errors
@@ -65,6 +66,7 @@ void mainproc(void) {
 
   // handler for libultra errors
   ed64RegisterOSErrorHandler();
+#endif
 
   /* The initialization of graphic  */
   // nuGfxInit();

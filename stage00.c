@@ -442,6 +442,7 @@ void makeDL00() {
 #endif
 
 #if CONSOLE_ED64LOG_DEBUG
+#ifdef ED64
       usbLoggerGetState(&usbLoggerState);
       nuDebConTextPos(0, 4, consoleOffset++);
       sprintf(conbuf, "usb=%d,res=%d,st=%d,id=%d,mqsz=%d", usbEnabled,
@@ -454,6 +455,7 @@ void makeDL00() {
               usbLoggerState.usbLoggerOverflow, usbLoggerState.countDone,
               usbLoggerState.writeError);
       nuDebConCPuts(0, conbuf);
+#endif
 #endif
 
 #if CONSOLE_SHOW_SOUND
@@ -525,6 +527,7 @@ void checkDebugControls(Game* game) {
 void logTraceChunk() {
   int i;
   int printedFirstItem;
+#if ED64
 
   printedFirstItem = FALSE;
   if (usbLoggerBufferRemaining() < 120) {
@@ -549,6 +552,7 @@ void logTraceChunk() {
     logTraceStartOffset = 0;
     Trace_clear();
   }
+#endif
 }
 
 void startRecordingTrace() {
@@ -658,7 +662,9 @@ void updateGame00(void) {
       logTraceChunk();
     }
 #endif
-    usbResult = usbLoggerFlush();
+#ifdef ED64
+    usbResult = ed64AsyncLoggerFlush();
+#endif
   }
 
   if (totalUpdates % 60 == 0) {
