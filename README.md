@@ -2,16 +2,6 @@
 
 this is a demake of untitled goose game for the nintendo 64
 
-
-## install dependencies
-```
-brew install glm lua
-
-```
-
-## build for macOS
-open the goose64glut project with xcode, build and run
-
 ## build for emulator/console
 
 install wine from https://wiki.winehq.org/Download
@@ -36,9 +26,37 @@ then build the rom with
 
 which produces the rom file goose64.n64
 
+environment variables which affect the build:
+
+- `OPTIMIZE=1`: enable gcc optimization and use non-debug versions of sdk libraries
+- `ED64=1`: build with everdrive64 logging support (see [ed64log](https://github.com/jsdf/ed64log)). don't use unless running on an everdrive64
+
+
+## build for macOS
+
+this repo also includes an opengl based version of the game, which runs on macOS
+
+install dependencies:
+```
+# eg. using homebrew on macOS
+brew install glm
+```
+
+then open the goose64glut project with xcode, build and run
+
 
 ## regenerate n64 header files from the OBJ models
 if you update .obj model files:
+
+first make sure you have lua installed
+
+```
+# eg. using homebrew on macOS
+brew install lua
+```
+
+then, to rebuild model header files
+
 ```
 ./rebuild_models.sh
 ```
@@ -46,7 +64,7 @@ if you update .obj model files:
 ## regenerate n64 header files for sprites
 if you update any texture files:
 
-make sure you have pillow installed
+make sure you have python and pillow installed
 
 ```bash
 pip install pillow

@@ -6,6 +6,8 @@ NUSYSLIBDIR  = $(N64KITDIR)/nusys/lib
 NUSTDINCDIR = $(N64KITDIR)/nustd/include
 NUSTDLIBDIR = $(N64KITDIR)/nustd/lib
 
+-include ./localdefs
+
 # this improves CPU perf (but we're usually RDP-bound)
 # OPTIMIZE = y 
 

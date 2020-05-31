@@ -97,3 +97,6 @@ trace_*.html
 buildcache.json
 
 disassembly.txt
+
+# makefile variable overrides
+localdefs
