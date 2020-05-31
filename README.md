@@ -16,10 +16,9 @@ open the goose64glut project with xcode, build and run
 
 install wine from https://wiki.winehq.org/Download
 
-it needs to be in your Applications folder, eg.
+make sure the `wine` command is on your PATH. if using Wine Stable on macOS you can symlink it:
 ```
-
-/Applications/Wine Stable.app
+ln -s /Applications/Wine\ Stable.app/Contents/Resources/wine/bin/wine /usr/local/bin/wine
 ```
 
 install the n64 sdk into the root of the wine C: drive so you have eg.
@@ -38,12 +37,15 @@ then build the rom with
 which produces the rom file goose64.n64
 
 
-## generate n64 header files from the OBJ models
+## regenerate n64 header files from the OBJ models
+if you update .obj model files:
 ```
 ./rebuild_models.sh
 ```
 
-## generate n64 header files for sprites
+## regenerate n64 header files for sprites
+if you update any texture files:
+
 make sure you have pillow installed
 
 ```bash
