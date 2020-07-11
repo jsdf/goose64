@@ -2,7 +2,6 @@
 #include "ed64io_everdrive.h"
 #include "ed64io_types.h"
 
-#include <stdio.h>
 #include "ed64io_errors.h"
 #include "ed64io_sys.h"
 
@@ -94,7 +93,7 @@ void evd_init() {
   sd_mode = 0;
   dma_busy_callback = 0;
 
-  sleep(1);
+  evd_sleep(1);
   val = regs_ptr[0];
 
   spi_cfg = (0 << SPI_CFG_SPD0) | (1 << SPI_CFG_SPD1) | (1 << SPI_CFG_SS);
@@ -149,7 +148,7 @@ u8 evd_fifoTxe() {
 u8 evd_isDmaBusy() {
   u16 val;
   // volatile u32 i;
-  sleep(1);
+  evd_sleep(1);
   if (dma_busy_callback != 0)
     dma_busy_callback();
   // regs_ptr[REG_STATE]++;
@@ -231,7 +230,7 @@ u8 evd_fifoRd(void* buff, u16 blocks) {
 
   while (evd_isDmaBusy())
     ;
-  dma_read_s(buff, (0xb0000000 + ram_buff_addr * 2048), len);
+  dma_read_s(buff, (0xb0000000 + ram_buff_addr * 2048), len, FALSE);
   if (evd_isDmaTimeout())
     return EVD_ERROR_FIFO_TIMEOUT;
 

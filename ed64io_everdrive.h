@@ -63,6 +63,7 @@ u8 evd_fifoTxe();
 u8 evd_isDmaBusy();
 u8 evd_isDmaTimeout();
 u8 evd_fifoRd(void* buff, u16 blocks);
+u8 evd_fifoRdBlock(void* buff, u16 blocks, int usePolling);
 u8 evd_fifoWr(void* buff, u16 blocks);
 
 typedef struct evd_fifoWrNonblockState {

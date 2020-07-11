@@ -4,15 +4,23 @@
 
 #include <ultra64.h>
 
+#include <string.h>
+
 #include "ed64io_sys.h"
 #include "ed64io_usb.h"
 
+#include "ed64io_everdrive.h"
 #include "ed64io_fault.h"
 
 #define PRINTF ed64PrintfSync2
-#define MSG_FAULT 0x10
-
 #define DEBUGPRINT 0
+#if DEBUGPRINT
+#define DBGPRINT ed64PrintfSync2
+#else
+#define DBGPRINT(args...)
+#endif
+
+#define MSG_FAULT 0x10
 
 typedef struct {
   u32 mask;
@@ -20,19 +28,38 @@ typedef struct {
   char* string;
 } regDesc_t;
 
-static char errMessage[256];
-static char* errFmtEntry[65536];
-static char* logFmtEntry[65536];
+enum DebuggerPacketType { NonePacket, RegistersPacket, ThreadPacket };
 
 #define MAX_STACK_TRACE 100
 
 static void* stackTraceReturnAddresses[MAX_STACK_TRACE];
 
+#define MAX_STOPPED_THREADS 200
+static int stoppedThreadsCount = 0;
+static OSThread* stoppedThreads[MAX_STOPPED_THREADS];
+static u16 stoppedThreadsStates[MAX_STOPPED_THREADS];
+
 static OSMesgQueue faultMsgQ;
 static OSMesg faultMsgBuf;
+static int faultThreadPri;
+
+static OSThread faultThread;
+static char faultThreadStack[ED64IO_FAULT_STACKSIZE];
+
+int startedfaultproc = 0;
+
+static OSMesg breakMsg = (OSMesg)0xaaaaaaaa;
 
 static void printRegister(u32 regValue, char* regName, regDesc_t* regDesc);
 static void printFaultData(OSThread* t);
+
+static void setBreakpoint(u32* addr1, u32* addr2);
+
+static int doSingleStep(int thread, u32* instptr);
+static void clearBreakpoint(void);
+
+static void walkFaultedThreads(void);
+static void printThreads(void);
 
 static regDesc_t causeDesc[] = {
     {CAUSE_BD, CAUSE_BD, "BD"},
@@ -130,11 +157,19 @@ int getPrevStackPointerAndReturnAddress(void** prev_sp,
                                         void* sp,
                                         void* ra) {
   unsigned* wra = (unsigned*)ra;
+  unsigned* k0base = (unsigned*)K0BASE;
   int spofft;
+
+  if (wra < k0base) {
+    return 0;
+  }
   /* scan towards the beginning of the function -
      addui sp,sp,spofft should be the first command */
   while ((*wra >> 16) != 0x27bd) {
-    /* test for "scanned too much" elided */
+    /* test for "scanned too much" */
+    if (wra < k0base) {
+      return 0;
+    }
     wra--;
   }
   spofft = ((int)*wra << 16) >> 16; /* sign-extend */
@@ -154,12 +189,11 @@ int getPrevStackPointerAndReturnAddress(void** prev_sp,
 int getCallStackNoFp(u64 sp_val, u64 ra_val) {
   void* sp = (void*)(u32)sp_val; /* stack pointer from thread state */
   void* ra = (void*)(u32)ra_val; /* return address from thread state */
-
   int i = 0;
-  while (getPrevStackPointerAndReturnAddress(&sp, &ra, sp, ra)) {
-    if (i < MAX_STACK_TRACE) {
-      stackTraceReturnAddresses[i++] = ra;
-    }
+
+  while (i < MAX_STACK_TRACE &&
+         getPrevStackPointerAndReturnAddress(&sp, &ra, sp, ra) && ra != 0) {
+    stackTraceReturnAddresses[i++] = ra;
   }
   return i; /* stack size */
 }
@@ -183,8 +217,22 @@ void ed64PrintStackTrace(OSThread* t, int framesToSkip) {
   PRINTF("\n");
 }
 
+// the compiler is confused because there's a type called s8 but also
+// a struct member called s8 so we have to rename the member to _s8
+typedef struct {
+  u64 at, v0, v1, a0, a1, a2, a3;
+  u64 t0, t1, t2, t3, t4, t5, t6, t7;
+  u64 s0, s1, s2, s3, s4, s5, s6, s7;
+  u64 t8, t9, gp, sp, _s8, ra;
+  u64 lo, hi;
+  u32 sr, pc, cause, badvaddr, rcp;
+  u32 fpcsr;
+  __OSfp fp0, fp2, fp4, fp6, fp8, fp10, fp12, fp14;
+  __OSfp fp16, fp18, fp20, fp22, fp24, fp26, fp28, fp30;
+} __OSThreadContextHack;
+
 void printFaultData(OSThread* t) {
-  __OSThreadContext* tc = &t->context;
+  __OSThreadContextHack* tc = (__OSThreadContextHack*)&t->context;
 
   PRINTF("\nFault in thread %d:\n\n", t->id);
   PRINTF("epc\t\t0x%08x\n", tc->pc);
@@ -202,9 +250,8 @@ void printFaultData(OSThread* t) {
   PRINTF("s3 0x%016llx s4 0x%016llx s5 0x%016llx\n", tc->s3, tc->s4, tc->s5);
   PRINTF("s6 0x%016llx s7 0x%016llx t8 0x%016llx\n", tc->s6, tc->s7, tc->t8);
   PRINTF("t9 0x%016llx gp 0x%016llx sp 0x%016llx\n", tc->t9, tc->gp, tc->sp);
-  // for some reason the compiler barfs on tc->s8
-  // PRINTF("s8 0x%016llx ra 0x%016llx\n\n", tc->s8, tc->ra);
-  PRINTF("ra 0x%016llx\n\n", tc->ra);
+  // hack for tc->s8
+  PRINTF("s8 0x%016llx ra 0x%016llx\n\n", tc->_s8, tc->ra);
 
   printRegister(tc->fpcsr, "fpcsr", fpcsrDesc);
 
@@ -231,6 +278,36 @@ void printFaultData(OSThread* t) {
   ed64PrintStackTrace(t, 0);
 }
 
+typedef struct RegistersState {
+  u64 at, v0, v1, a0, a1, a2, a3;
+  u64 t0, t1, t2, t3, t4, t5, t6, t7;
+  u64 s0, s1, s2, s3, s4, s5, s6, s7;
+  u64 t8, t9, gp, sp, _s8, ra;
+  u32 id;
+} RegistersState;
+
+static void sendRegisters(OSThread* t) {
+  __OSThreadContextHack* tc = (__OSThreadContextHack*)&t->context;
+
+  RegistersState reg = (RegistersState){
+      tc->at, tc->v0, tc->v1, tc->a0,  tc->a1, tc->a2, tc->a3, tc->t0,
+      tc->t1, tc->t2, tc->t3, tc->t4,  tc->t5, tc->t6, tc->t7, tc->s0,
+      tc->s1, tc->s2, tc->s3, tc->s4,  tc->s5, tc->s6, tc->s7, tc->t8,
+      tc->t9, tc->gp, tc->sp, tc->_s8, tc->ra,
+      t->id,  // thread id
+  };
+
+  ed64SendBinaryData(&reg, RegistersPacket, sizeof(RegistersState));
+}
+
+static void sendStack(OSThread* t) {
+  //   __OSThreadContextHack* tc = (__OSThreadContextHack*)&t->context;
+  //   int size =
+  // tc->sp - tc->_s8
+
+  //   ed64SendBinaryData(&reg, RegistersPacket, sizeof(RegistersState));
+}
+
 static void printRegister(u32 regValue, char* regName, regDesc_t* regDesc) {
   int first = 1;
 
@@ -249,11 +326,59 @@ static void printRegister(u32 regValue, char* regName, regDesc_t* regDesc) {
   PRINTF(">\n");
 }
 
-static OSThread faultThread;
-static char faultThreadStack[ED64IO_FAULT_STACKSIZE];
-static OSMesg faultEventMsg;
+extern OSThread* __osGetActiveQueue(void);
 
-int startedfaultproc = 0;
+static u16 getThreadStateForDebugger(OSThread* tptr) {
+  int i;
+  if (tptr->state != OS_STATE_STOPPED) {
+    return tptr->state;
+  }
+  for (i = 0; i < stoppedThreadsCount; ++i) {
+    if (stoppedThreads[i] == tptr) {
+      // this is a user thread stopped by the debugger, return the state it was
+      // in before it was stopped
+      return stoppedThreadsStates[i];
+    }
+  }
+  // actually stopped
+  return tptr->state;
+}
+
+static void stopUserThreads() {
+  register OSThread* tptr = __osGetActiveQueue();
+  int i;
+  OSThread* curThread = &faultThread;
+
+  if (stoppedThreadsCount > 0) {
+    return;
+  }
+
+  while (tptr->priority != -1) {
+    if (stoppedThreadsCount == MAX_STOPPED_THREADS) {
+      break;
+    }
+    if (tptr->priority > 0 && tptr->priority < 128 && tptr != curThread) {
+      int stateBeforeStopping = tptr->state;
+      osStopThread(tptr);
+      if (tptr->state != OS_STATE_STOPPED) {
+        DBGPRINT("Couldn't stop thread %d\n", tptr->id);
+      } else {
+        i = stoppedThreadsCount++;
+        stoppedThreads[i] = tptr;
+        stoppedThreadsStates[i] = stateBeforeStopping;
+      }
+    }
+    tptr = tptr->tlnext;
+  }
+}
+
+static void resumeUserThreads() {
+  int i;
+  for (i = 0; i < stoppedThreadsCount; ++i) {
+    osStartThread(stoppedThreads[i]);
+  }
+  stoppedThreadsCount = 0;
+}
 
 /*
  * Fault handler: simply waits for the fault message, gets the current
@@ -264,17 +389,20 @@ static void faultproc(char* argv) {
   static OSThread* curr;
   startedfaultproc = 1;
 
-#if DEBUGPRINT
-  PRINTF("=> faultproc started...\n");
-#endif
+  DBGPRINT("=> faultproc started...\n");
 
   while (1) {
     (void)osRecvMesg(&faultMsgQ, (OSMesg*)&msg, OS_MESG_BLOCK);
-#if DEBUGPRINT
-    PRINTF("=> faultproc - got a fault message...\n");
-#endif
+    DBGPRINT("=> faultproc - got a fault message... %x\n", msg);
 
-    if (msg == NULL) {
+    if (msg == breakMsg) {
+      clearBreakpoint();
+#ifdef ED64IO_DEBUGGER
+      walkFaultedThreads();
+#else
+      printThreads();
+#endif
+    } else if (msg == NULL) {
       // an actual fault
 
       /* This routine returns the most recent faulted thread */
@@ -283,19 +411,18 @@ static void faultproc(char* argv) {
       if (curr) {
         printFaultData(curr);
       }
+      printThreads();
       break;
     } else {
       // just reusing the fault handler code to print a stack trace of the
       // thread structure passed as the message
       curr = (OSThread*)msg;
-      msg = NULL;
       ed64PrintStackTrace(curr, 1);
+      printThreads();
     }
   }
 
-#if DEBUGPRINT
-  PRINTF("=> faultproc reached end...\n");
-#endif
+  DBGPRINT("=> faultproc reached end...\n");
   while (1) {
   }
 }
@@ -305,37 +432,440 @@ static void faultproc(char* argv) {
  * info
  */
 void ed64StartFaultHandlerThread(int mainThreadPri) {
-  /*
-   * Create message queue and thread structures for fault handling thread
-   */
+  int currentThreadOriginalPri = osGetThreadPri(NULL);
+
+  // we rely on the PI manager so we must be lower pri than it is
+  faultThreadPri = OS_PRIORITY_PIMGR - 1;
+
+  // set current thread to same pri as new thread to make sure this is the
+  // thread we'll return to after creation
+  osSetThreadPri(NULL, faultThreadPri - 1);
+
+  // Create message queue and thread structures for fault handling thread
   osCreateMesgQueue(&faultMsgQ, &faultMsgBuf, 1);
 
-  faultEventMsg = NULL;
-
   osSetEventMesg(OS_EVENT_FAULT, &faultMsgQ, NULL);
-  osCreateThread(&faultThread, /*id*/ 23, (void (*)(void*))faultproc,
-                 /*argv*/ NULL, faultThreadStack + ED64IO_FAULT_STACKSIZE / 8,
+  osSetEventMesg(OS_EVENT_CPU_BREAK, &faultMsgQ, breakMsg);
 
-                 /*priority*/ (OSPri)mainThreadPri);
-#if DEBUGPRINT
-  PRINTF("=> ed64StartFaultHandlerThread - starting fault thread...\n");
-#endif
+  DBGPRINT("creating fault thread with pri=%d, current thread pri=%d\n",
+           faultThreadPri, currentThreadOriginalPri);
+
+  osCreateThread(&faultThread, /*id*/ 60, (void (*)(void*))faultproc,
+                 /*argv*/ NULL, faultThreadStack + ED64IO_FAULT_STACKSIZE / 8,
+                 /*priority*/ (OSPri)faultThreadPri);
+
+  DBGPRINT("=> ed64StartFaultHandlerThread - starting fault thread...\n");
   osStartThread(&faultThread);
 
   if (startedfaultproc) {
-#if DEBUGPRINT
-    PRINTF("=> returned from osStartThread(&faultThread); state=%d\n",
-           faultThread.state);
-#endif
+    DBGPRINT("=> returned from osStartThread(&faultThread); state=%d\n",
+             faultThread.state);
+
+    // drop current thread back to its correct priority
+    osSetThreadPri(NULL, currentThreadOriginalPri);
   }
 }
 
-// this doesn't work very well because it captures the stack trace to the
-// location after the callsite, which is not always useful
-void ed64SendFaultMessage(OSThread* t) {
-  faultEventMsg = (OSMesg)t;
-  osSendMesg(&faultMsgQ, faultEventMsg, OS_MESG_NOBLOCK);
-  faultEventMsg = NULL;
-  sleep(1000);
-  PRINTF("done");
+typedef struct {
+  u32* breakAddress;
+  u32 oldInstruction;
+} Breakpoint;
+
+#define BREAK_INSTRUCTION_MASK 0xfc00003f
+/*
+  The following macro defines a breakpoint instruction with a
+  built in breakpoint number. Thus, we always know which
+  breakpoint was hit as soon as the break occurs, saving the
+  time and trouble of actually looking it up. We add 16 to the
+  break number to stay away from compiler-defined breaks and
+  user set breaks.
+*/
+
+#define breakinst(n) (0x0d | (((n + 16) & 0xfffff) << 6))
+
+#define NUM_BREAKPOINTS 2
+static Breakpoint breakpoints[NUM_BREAKPOINTS]; /* the CPU breaks */
+static Breakpoint altBreak;                     /* the other temp break */
+
+void ed64SetBreakpoint(u32* address) {
+  setBreakpoint(address, NULL);
+}
+
+// takes 2 args so in the case of a branch we can set both at the same time
+static void setBreakpoint(u32* addr1, u32* addr2) {
+  DBGPRINT("Set temp BP at %08x", addr1);
+  if (addr2)
+    DBGPRINT(" and %08x", addr2);
+  DBGPRINT("\n");
+
+  breakpoints[0].oldInstruction = *addr1;
+  *addr1 = breakinst(0);
+  osWritebackDCache(addr1, 4);
+  osInvalICache(addr1, 4);
+  breakpoints[0].breakAddress = addr1;
+  if (addr2) {
+    altBreak.oldInstruction = *addr2;
+    *addr2 = breakinst(0);
+    osWritebackDCache(addr2, 4);
+    osInvalICache(addr2, 4);
+    altBreak.breakAddress = addr2;
+  }
+}
+
+static void clearBreakpoint(void) {
+  u32 inst;
+
+  if (breakpoints[0].breakAddress) {
+    DBGPRINT("clearBreakpoint at %08x\n", breakpoints[0].breakAddress);
+    /* Check to make sure one was really there */
+
+    inst = *breakpoints[0].breakAddress;
+    if ((inst & BREAK_INSTRUCTION_MASK) == 0xd) {
+      *breakpoints[0].breakAddress = breakpoints[0].oldInstruction;
+      osWritebackDCache(breakpoints[0].breakAddress, 4);
+      osInvalICache(breakpoints[0].breakAddress, 4);
+    }
+    breakpoints[0].breakAddress = 0;
+  }
+  if (altBreak.breakAddress) {
+    DBGPRINT("clearBreakpoint at %08x\n", altBreak.breakAddress);
+    inst = *altBreak.breakAddress;
+    if ((inst & BREAK_INSTRUCTION_MASK) == 0xd) {
+      *altBreak.breakAddress = altBreak.oldInstruction;
+      osWritebackDCache(altBreak.breakAddress, 4);
+      osInvalICache(altBreak.breakAddress, 4);
+    }
+    altBreak.breakAddress = 0;
+  }
+}
+
+static int isJumpInstruction(u32 inst) {
+  switch ((inst >> 26) & 0x3f) {
+    case 0x0:  // jump register
+      if ((((inst >> 5) & 0x7fff) == 0) && ((inst & 0x3f) == 8))
+        return 1;
+
+      // jump and link register
+      if ((((inst >> 16) & 0x1f) == 0) && ((inst & 0x7ff) == 9))
+        return 1;
+      break;
+
+    case 0x2:  // jump
+    case 0x3:  // jump and link
+      return 1;
+  }
+  return 0;
+}
+
+extern u32 __rmonGetBranchTarget(int, int, char*);
+
+static int doSingleStep(int thread, u32* instptr) {
+  u32 branchTarget;
+  branchTarget =
+      __rmonGetBranchTarget(/*METHOD_NORMAL*/ 0, thread, (char*)instptr);
+  if (branchTarget & 3) {
+    setBreakpoint(instptr + 1, 0);
+  }
+
+  else if (branchTarget == (u32)instptr)
+    return 0;
+  else if (isJumpInstruction(*instptr) || (branchTarget == (u32)(instptr + 2)))
+    setBreakpoint((u32*)branchTarget, 0);
+  else
+    setBreakpoint((u32*)branchTarget, instptr + 2);
+  return 1;
+}
+
+extern OSThread* __osRunningThread;
+
+extern OSThread* __osRunQueue;
+
+static char* threadStateStrings[] = {"stopped", "runnable", "running",
+                                     "waiting", "invalid"};
+
+static char* getThreadStateName(int state) {
+  switch (state) {
+    case OS_STATE_STOPPED:
+      return threadStateStrings[0];
+    case OS_STATE_RUNNABLE:
+      return threadStateStrings[1];
+    case OS_STATE_RUNNING:
+      return threadStateStrings[2];
+    case OS_STATE_WAITING:
+      return threadStateStrings[3];
+  }
+  return threadStateStrings[4];
+}
+
+// TODO: this code keeps breaking. figure out how to safely traverse thread list
+static void printThreads(void) {
+  // register OSThread* tptr = __osRunQueue;
+  // register OSThread* tptr = __osRunningThread;
+  register OSThread* tptr = __osGetActiveQueue();
+  OSThread* startPtr = tptr;
+  PRINTF("printing threads\n");
+
+  while (TRUE) {
+    if (tptr->priority == -1 || tptr->id < 0) {
+      break;  // hack to unbreak this code for now
+      // this is the sentinel marking the end of the thread list, skip over it
+      tptr = tptr->tlnext;
+      continue;
+    }
+    if (tptr->id == 0) {
+      PRINTF("OS Thread at %08x [%s] pri=%d pc=%08x\n", tptr,
+             getThreadStateName(getThreadStateForDebugger(tptr)),
+             tptr->priority, tptr->context.pc);
+    } else {
+      PRINTF("Thread %d [%s] pri=%d pc=%08x\n", tptr->id,
+             getThreadStateName(getThreadStateForDebugger(tptr)),
+             tptr->priority, tptr->context.pc);
+    }
+    // ed64PrintStackTrace(tptr, 0);
+
+    tptr = tptr->tlnext;
+    // the thread queue is a circular list so we need to break out once we get
+    // back to the start
+    if (tptr == startPtr) {
+      break;
+    }
+  }
+
+  PRINTF("done\n");
+}
+
+typedef struct ThreadStateMessage {
+  // using u32 for these so struct fields all have 32bit alignment
+  u32 id, state, priority;
+  u32 pc, ra;
+  // u32 stacktrace[100];
+} ThreadStateMessage;
+
+// static void sendRegisters(OSThread* t) {
+//   __OSThreadContextHack* tc = (__OSThreadContextHack*)&t->context;
+// }
+
+// includes extra space at the end for the stacktrace
+#define THREADSTATE_MESSAGE_MAX_SIZE \
+  sizeof(ThreadStateMessage) + (100 * sizeof(u32))
+
+static void sendThreadStates() {
+  register OSThread* tptr = __osGetActiveQueue();
+  OSThread* startPtr = tptr;
+  u8 message[THREADSTATE_MESSAGE_MAX_SIZE];
+
+  while (TRUE) {
+    if (tptr->priority == -1 || tptr->id < 0) {
+      break;
+    }
+    // skip OS threads
+    if (tptr->id != 0 && tptr->id < 255 && tptr != &faultThread) {
+      {
+        u8* messageEnd = message;  // ptr to where we're adding the next field
+        __OSThreadContext* tc = &tptr->context;
+        ThreadStateMessage threadState;
+
+        int stackTraceSize = getCallStackNoFp(tc->sp, tc->ra);
+        // PRINTF("sendThreadStates thread %d\n", tptr->id);
+        threadState = (ThreadStateMessage){
+            tptr->id,
+            getThreadStateForDebugger(tptr),  // state
+            // tptr->state,
+            tptr->priority,
+            tptr->context.pc,
+            tc->ra,
+        };
+
+        *((ThreadStateMessage*)messageEnd) = threadState;
+        messageEnd += sizeof(ThreadStateMessage);
+
+        {
+          int i;
+          for (i = 0; i < stackTraceSize; ++i) {
+            *((u32*)messageEnd) = (u32)stackTraceReturnAddresses[i];
+            messageEnd += sizeof(u32);
+            // threadState.stacktrace[i] = (u32)stackTraceReturnAddresses[i];
+          }
+        }
+
+        // PRINTF("ed64SendBinaryData for threadstate %d type=%d length=%d\n",
+        //        tptr->id, ThreadPacket, messageEnd - message);
+        if (messageEnd - message > THREADSTATE_MESSAGE_MAX_SIZE) {
+          PRINTF("sendThreadStates memory corruption (%d bytes)\n",
+                 (messageEnd - message) - THREADSTATE_MESSAGE_MAX_SIZE);
+        }
+        ed64SendBinaryData(message, ThreadPacket, messageEnd - message);
+        // if (ed64SendBinaryData(message, ThreadPacket, messageEnd - message))
+        // {
+        //   // PRINTF("ed64SendBinaryData failed\n");
+        // } else {
+        //   // PRINTF("ed64SendBinaryData success\n");
+        // }
+      }
+    }
+    // ed64PrintStackTrace(tptr, 0);
+    tptr = tptr->tlnext;
+    // the thread queue is a circular list so we need to break out once we get
+    // back to the start
+    if (tptr == startPtr) {
+      break;
+    }
+  }
+}
+
+static void dumpThreads() {
+  register OSThread* tptr = __osGetActiveQueue();
+  OSThread* startPtr = tptr;
+
+  while (ed64AsyncLoggerFlush() != -1) {
+    evd_sleep(1);
+  }
+  while (TRUE) {
+    if (tptr->priority == -1 || tptr->id < 0) {
+      break;  // hack to unbreak this code for now
+      // this is the sentinel marking the end of the thread list, skip over it
+      tptr = tptr->tlnext;
+      continue;
+    }
+    if (tptr->id != 0) {
+      ed64Printf("EDBG=thread %d %s %d %08x ", tptr->id,
+                 getThreadStateName(getThreadStateForDebugger(tptr)),
+                 tptr->priority, tptr->context.pc);
+      {
+        __OSThreadContext* tc = &tptr->context;
+
+        int stackTraceSize = getCallStackNoFp(tc->sp, tc->ra);
+
+        ed64Printf("%08x ", (u32)(tc->pc));
+        ed64Printf("%08x ", (u32)(tc->ra));
+        {
+          int i;
+          for (i = 0; i < stackTraceSize; ++i) {
+            ed64Printf("%08x ", (u32)stackTraceReturnAddresses[i]);
+          }
+        }
+
+        ed64Printf("\n");
+        while (ed64AsyncLoggerFlush() != -1) {
+          evd_sleep(1);
+        }
+      }
+    }
+    // ed64PrintStackTrace(tptr, 0);
+
+    tptr = tptr->tlnext;
+    // the thread queue is a circular list so we need to break out once we get
+    // back to the start
+    if (tptr == startPtr) {
+      break;
+    }
+  }
+}
+
+int ed64DebuggerUsbListener(OSThread* tptr);
+
+static void walkFaultedThreads(void) {
+  register OSThread* tptr = __osGetActiveQueue();
+  OSThread* threadAtBreakpoint = NULL;
+
+  // find thread at breakpoint (currently we can only handle one at a time)
+  while (tptr->priority != -1) {
+    if (tptr->priority > OS_PRIORITY_IDLE &&
+        tptr->priority <= OS_PRIORITY_APPMAX) {
+      if (tptr->flags & OS_FLAG_CPU_BREAK) {
+        threadAtBreakpoint = tptr;
+      }
+    }
+    tptr = tptr->tlnext;
+  }
+
+  if (threadAtBreakpoint) {
+    tptr = threadAtBreakpoint;
+    // first, if any threads are at a breakpoint, we need to stop all user
+    // threads so they don't interfere the debugger, or get out of sync with the
+    // thread being debugged
+    stopUserThreads();
+
+    // thread at a breakpoint
+    DBGPRINT("Brk in thread %d @ %08x, inst %08x\r\n", tptr->id,
+             tptr->context.pc, *(int*)tptr->context.pc);
+
+    printFaultData(tptr);
+
+    PRINTF("EDBG=break %d\n", tptr->id);
+    PRINTF("dumpThreads\n");
+    dumpThreads();
+    PRINTF("sendThreadStates \n");
+    sendThreadStates();
+    PRINTF("sendRegisters\n");
+    sendRegisters(tptr);
+    PRINTF("stopping  \n");
+
+    // don't allow user threads to continue while debugger is active
+    // stopUserThreads();
+
+    // poll for command from debugger client
+    while (!ed64DebuggerUsbListener(tptr)) {
+      evd_sleep(1000);
+    }
+    DBGPRINT("continuing\n");
+  }
+}
+
+#define USB_BUFFER_SIZE 128
+
+int ed64DebuggerUsbListener(OSThread* tptr) {
+  char cmd;
+  u32 usb_rx_buff32[USB_BUFFER_SIZE];
+  char* usb_rx_buff8 = (char*)usb_rx_buff32;
+  memset(usb_rx_buff8, 0, USB_BUFFER_SIZE * 4);
+
+  if (evd_fifoRxf())  // when pin low, receive buffer not empty yet
+    return FALSE;
+
+  DBGPRINT("starting read\n");
+  // returns timeout error, at which time we just try again
+  while (evd_fifoRd(usb_rx_buff32, 1)) {
+    DBGPRINT("sleeping\n");
+    evd_sleep(100);
+  }
+  DBGPRINT("dma read done\n");
+
+  DBGPRINT("message: %c%c%c%c\n", usb_rx_buff8[0], usb_rx_buff8[1],
+           usb_rx_buff8[2], usb_rx_buff8[3]);
+
+  if (usb_rx_buff8[0] != 'C' || usb_rx_buff8[1] != 'M' ||
+      usb_rx_buff8[2] != 'D') {
+    PRINTF("invalid message\n");
+    return FALSE;
+  }
+
+  cmd = usb_rx_buff8[3];
+  DBGPRINT("got command: '%c'\n", cmd);
+
+  switch (cmd) {
+    case 'b': {
+      u32 breakpointAddr = *((u32*)usb_rx_buff32 + 1);  // start + 4 bytes (u32)
+      PRINTF("set breakpoint at: 0x%x\n", breakpointAddr);
+      setBreakpoint((u32*)breakpointAddr, NULL);
+      resumeUserThreads();
+      return TRUE;
+    }
+    case 's':
+      PRINTF("single step, thread=%d pc=%x\n", tptr->id, tptr->context.pc);
+      if (doSingleStep(tptr->id, (u32*)tptr->context.pc) != 1) {
+        PRINTF("failed to set single step\n");
+      }
+      resumeUserThreads();
+      return TRUE;
+    case 'r':
+      PRINTF("resuming normal execution\n");
+      // don't set another breakpoint
+      resumeUserThreads();
+      return TRUE;
+    default:
+      PRINTF("invalid command: '%c'\n", cmd);
+  }
+
+  return FALSE;
 }

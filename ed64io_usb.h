@@ -11,7 +11,6 @@
 #include <stdarg.h>
 
 #include "ed64io_types.h"
-int usbLoggerLog(const char* str);
 
 int ed64AsyncLoggerFlush();
 // for backwards compat
@@ -39,5 +38,7 @@ void ed64PrintfSync(const char* fmt, ...);
 void ed64PrintfSync2(const char* fmt, ...);
 
 void ed64VPrintfSync2(const char* fmt, va_list ap);
+
+int ed64SendBinaryData(const void* data, u16 type, u16 length);
 
 #endif /* _ED64IO_USB_H */
