@@ -49,10 +49,10 @@
 #ifdef __N64__
 #include <PR/gu.h>
 #ifndef RAND
-#define RAND(x) (guRandom() % x) /* random number between 0 to x */
+#define RAND(x) (guRandom() % (x)) /* random number between 0 to x */
 #endif
 #else
-#define RAND(x) (rand() % x) /* random number between 0 to x */
+#define RAND(x) (rand() % (x)) /* random number between 0 to x */
 #endif
 
 #ifdef __N64__

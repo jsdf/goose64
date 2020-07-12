@@ -46,13 +46,13 @@
 #include "ed64io_usb.h"
 
 #define CONSOLE_ED64LOG_DEBUG 0
-#define CONSOLE_SHOW_PROFILING 1
+#define CONSOLE_SHOW_PROFILING 0
 #define CONSOLE_SHOW_TRACING 0
 #define CONSOLE_SHOW_CULLING 0
 #define CONSOLE_SHOW_CAMERA 0
-#define CONSOLE_SHOW_SOUND 0
+#define CONSOLE_SHOW_SOUND 1
 #define CONSOLE_SHOW_RCP_TASKS 0
-#define LOG_TRACES 1
+#define LOG_TRACES 0
 #define CONTROLLER_DEAD_ZONE 0.1
 #define SOUND_TEST 1
 #define DRAW_SPRITES 1
@@ -144,6 +144,7 @@ Lights0 amb_light = gdSPDefLights0(200, 200, 200 /*  ambient light */);
 static musHandle sndHandle = 0;
 static float sndPitch = 10.5;  // i don't fucking know :((
 static int sndNumber = 0;
+static int honkSoundRange = Honk5Sound - Honk1Sound;
 
 /* The initialization of stage 0 */
 void initStage00() {
@@ -609,6 +610,19 @@ void updateGame00(void) {
     }
     if (contdata[0].button & R_TRIG) {
       input.zoomOut = TRUE;
+    }
+
+    if (contdata[0].trigger & L_CBUTTONS) {
+      // TODO: trigger this sound from inside the player state machine
+      sndNumber = RAND(honkSoundRange) + Honk1Sound;
+      // this cuts out any previous honk
+      // TODO: prevent overlapping honks?
+      if (sndHandle != 0) {
+        nuAuStlSndPlayerSndStop(sndHandle, 0);
+      }
+      sndPitch = 10.5;  // hand tuned... the sample tuning is fucked
+      sndHandle = nuAuStlSndPlayerPlay(sndNumber);
+      nuAuStlSndPlayerSetSndPitch(sndHandle, sndPitch);
     }
 
     if (contdata[0].trigger & U_CBUTTONS) {
