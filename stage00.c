@@ -168,7 +168,7 @@ void initStage00() {
   /* Read and register the sound effects. */
   nuAuStlSndPlayerDataSet((u8*)SFX_START, SFX_END - SFX_START);
 
-  debugPrintfSync("audio heap used=%d, free=%d\n", nuAuStlHeapGetUsed(),
+  ed64PrintfSync2("audio heap used=%d, free=%d\n", nuAuStlHeapGetUsed(),
                   nuAuStlHeapGetFree());
 
   physWorldData = (PhysWorldData){garden_map_collision_collision_mesh,
@@ -216,7 +216,7 @@ void initStage00() {
     profilingCounts[i] = 0;
   }
 
-  debugPrintfSync("getModelDisplayList at %p\n", getModelDisplayList);
+  ed64PrintfSync2("getModelDisplayList at %p\n", getModelDisplayList);
 
   debugPrintf("good morning\n");
 }
@@ -254,18 +254,18 @@ void traceRCP() {
     //      nuDebTaskPerfPtr->gfxTaskTime[i].rspStart) /
     //         1000.0);
 
-    Trace_addEvent(RSPTaskTraceEvent,
-                   nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f,
-                   nuDebTaskPerfPtr->gfxTaskTime[i].rspEnd / 1000.0f);
+    // pulled out to a variable so the modern compiler doesn't
+    // generate broken code
+    NUDebTaskTime gfxTaskTime = nuDebTaskPerfPtr->gfxTaskTime[i];
 
-    Trace_addEvent(RDPTaskTraceEvent,
-                   nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f,
-                   nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd / 1000.0f);
+    Trace_addEvent(RSPTaskTraceEvent, gfxTaskTime.rspStart / 1000.0f,
+                   gfxTaskTime.rspEnd / 1000.0f);
 
-    longestTaskTime =
-        MAX(longestTaskTime,
-            ((nuDebTaskPerfPtr->gfxTaskTime[i].rdpEnd) / 1000.0f -
-             (nuDebTaskPerfPtr->gfxTaskTime[i].rspStart / 1000.0f)));
+    Trace_addEvent(RDPTaskTraceEvent, gfxTaskTime.rspStart / 1000.0f,
+                   gfxTaskTime.rdpEnd / 1000.0f);
+
+    longestTaskTime = MAX(longestTaskTime, ((gfxTaskTime.rdpEnd) / 1000.0f -
+                                            (gfxTaskTime.rspStart / 1000.0f)));
   }
   // debugPrintf("\n");
   profilingAccumulated[RDPTaskTraceEvent] += longestTaskTime;

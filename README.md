@@ -31,6 +31,7 @@ environment variables which affect the build:
 - `OPTIMIZE=1`: enable gcc optimization and use non-debug versions of sdk libraries
 - `ED64=1`: build with everdrive64 logging support (see [ed64log](https://github.com/jsdf/ed64log)). don't use unless running on an everdrive64
 
+you can also create a file called `localdefs.makefile` containing any variables to override in the build, and it will be automatically included by the makefile.
 
 ## build for macOS
 

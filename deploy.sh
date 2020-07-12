@@ -39,6 +39,7 @@ retry loader64 -v --pifboot
 
 # tail the logger
 if [ -z "${PROFILE-}" ]; then
+  echo "press ctrl+C to exit"
   ed64log
 else
   echo "press ctrl+C to end capture and show trace"

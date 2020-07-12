@@ -1,47 +1,33 @@
+# makefile for modern toolchain
+
 # currently doesn't seem to produce working build
 # to use this, first source ~/code/n64cc/env.sh
 # then use make
+# ROOT="${SDK_BASE_DIR}/ultra"
+# N64KITDIR="${SDK_BASE_DIR}/nintendo/n64kit"
 
-DRIVE_C = /Users/jfriend/.wine/drive_c
-ROOT = $(DRIVE_C)/ultra
-CC = mips64-elf-gcc
-LD = mips64-elf-ld
-INC = $(ROOT)/usr/include
-EXEGCC_INC = $(ROOT)/GCC/MIPSE/INCLUDE
+# set up modern toolchain (gcc, etc)
+include ./modern.makefile
 
-LIB = $(ROOT)/usr/lib
 
-N64KITDIR = $(DRIVE_C)/nintendo/n64kit
-NUSYSINCDIR = $(N64KITDIR)/nusys/include
-NUSYSLIBDIR = $(N64KITDIR)/nusys/lib
-NUSTDINCDIR = $(N64KITDIR)/nustd/include
-NUSTDLIBDIR = $(N64KITDIR)/nustd/lib
+LCINCS = -I. -I./include -I$(GCCINCDIR) -I$(NUSYSINCDIR) -I$(NUSTDINCDIR) -I$(ROOT)/usr/include/PR -I$(INC) -I$(EXEGCC_INC)
+LCOPTS =	-G 0 -std=gnu90 -nostdinc -Wno-comment -Werror-implicit-function-declaration 
 
-LCDEFS = -DNU_DEBUG -DF3DEX_GBI_2 -DN_AUDIO  -D__N64__
-LCINCS = -I. -I$(NUSYSINCDIR)  -I$(NUSTDINCDIR) -I$(ROOT)/usr/include/PR
-LCOPTS = -G 0
-LDFLAGS = -L$(LIB) -L$(NUSYSLIBDIR) -L$(NUSTDLIBDIR)  -lnusys_d -lgultra_d # -L$(GCCDIR)/mipse/lib -lkm
-GCCFLAG = -c -I$(INC) -I$(EXEGCC_INC) -D_MIPS_SZLONG=32 -D_MIPS_SZINT=32 -D_LANGUAGE_C -D_ULTRA64 -D__EXTENSIONS__ -mabi=32 -march=vr4300 -mtune=vr4300
-CFLAGS = $(LCDEFS) $(LCINCS) $(LCOPTS) $(GCCFLAG) $(OPTIMIZER)
+# load the lists of source files and flag-driven defines & libs
+include ./common.makefile
 
-ED64CODEFILES = ed64io_usb.c ed64io_sys.c ed64io_everdrive.c ed64io_fault.c
 
-CODEFILES   =   main.c stage00.c graphic.c gfxinit.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c  pathfinding.c frustum.c  garden_map_graph.c sprite.c $(ED64CODEFILES)
+CFLAGS = $(LCDEFS) $(LCINCS) $(LCOPTS) $(OPTIMIZER) 
 
-CODEOBJECTS = $(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
+# the order of $(NUAUDIOLIB) and -lgultra_d (CORELIBS) matter :|
+LDFLAGS = $(MKDEPOPT) -L$(LIB)  -L$(NUSYSLIBDIR) -L$(NUSTDLIBDIR) $(NUAUDIOLIB) $(CORELIBS) -L$(GCCLIBDIR) -lgcc
 
-DATAFILES   = mem_heap.c trace.c garden_map_collision.c models.c sprite_data.c
-DATAOBJECTS = $(DATAFILES:.c=.o)
-
-CODESEGMENT = codesegment.o
-
-OBJECTS = $(CODESEGMENT) $(MODELSSEGMENT) $(DATAOBJECTS)
 
 
 default:        $(TARGETS)
 
-# include $(COMMONRULES)
-.c.o:
+.c.o: 
+	# to print resolved include paths, add -M flag
 	$(CC) $(CFLAGS) $<
 
 clean: 
@@ -51,10 +37,11 @@ clean:
 clobber:
 	rm -f *.o *.n64 *.out
 
-
 $(CODESEGMENT): $(CODEOBJECTS) GNUMakefile $(HFILES)
 # use -M to print memory map from ld
 	$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS) 
 
+$(TARGETS):	$(OBJECTS) spec $(CODESEGMENT)
+	$(MAKEROM) -I$(NUSYSINCDIR) -r $(TARGETS) -s 16 -e $(APP)    spec # -d  -m 
+	makemask $(TARGETS)
 
-$CC $CFLAGS -g $@

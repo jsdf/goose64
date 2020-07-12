@@ -10,5 +10,8 @@ if [ -n "$INVALIDATED_FILES" ]; then
 
 fi
 
-
-wine cmd /c compile.bat
+if [[ $1 == 'modern' ]]; then
+  ./build_modern.sh cached
+else
+  wine cmd /c compile.bat
+fi

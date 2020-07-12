@@ -106,6 +106,7 @@
 
 #ifdef __N64__
 #ifdef ED64
+#include "ed64io.h"
 #define debugPrintf ed64Printf
 #else
 #define debugPrintf(args...)

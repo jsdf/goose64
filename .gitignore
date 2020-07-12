@@ -99,4 +99,5 @@ buildcache.json
 disassembly.txt
 
 # makefile variable overrides
-localdefs
+localdefs.makefile
+*.dasm

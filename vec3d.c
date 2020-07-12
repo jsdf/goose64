@@ -4,8 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 #ifdef __N64__
 #include <gu.h>
+#include <malloc.h>
 #endif
 
 Vec3d* Vec3d_alloc(float x, float y, float z) {

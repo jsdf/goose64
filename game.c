@@ -12,6 +12,10 @@
 #endif
 
 #include <stdlib.h>
+#ifdef __N64__
+#include <malloc.h>
+#endif
+
 // game
 #include "character.h"
 #include "constants.h"

@@ -7,13 +7,18 @@
 #include <nualstl_n.h>
 
 #include <PR/os_convert.h>
-#include "ed64io_everdrive.h"
-#include "ed64io_fault.h"
-#include "ed64io_os_error.h"
-#include "ed64io_usb.h"
+#include "ed64io.h"
 #include "graphic.h"
 #include "mem_heap.h"
 #include "trace.h"
+
+// #define DEBUGSTARTUP
+
+#ifdef DEBUGSTARTUP
+#define DBGPRINT ed64PrintfSync2
+#else
+#define DBGPRINT(args...)
+#endif
 
 /* The global variable  */
 NUContData contdata[1]; /* Read data of 1 controller  */
@@ -38,16 +43,16 @@ int systemHeapMemoryInit(void) {
   if (initHeapResult == -1) {
     die("failed to init heap\n");
   } else {
-    debugPrintfSync("init heap success, allocated=%d\n", MEM_HEAP_SIZE);
+    ed64PrintfSync2("init heap success, allocated=%d\n", MEM_HEAP_SIZE);
   }
 
   if (osGetMemSize() == 0x00800000) {
-    debugPrintfSync("have expansion pack\n");
+    ed64PrintfSync2("have expansion pack\n");
     nuPiReadRom((u32)_traceSegmentRomStart, _traceSegmentStart,
                 (u32)_traceSegmentRomEnd - (u32)_traceSegmentRomStart);
     bzero(_traceSegmentBssStart, _traceSegmentBssEnd - _traceSegmentBssStart);
 
-    debugPrintfSync("init trace buffer at %p\n", _traceSegmentStart);
+    ed64PrintfSync2("init trace buffer at %p\n", _traceSegmentStart);
   } else {
     die("expansion pack missing\n");
   }
@@ -58,33 +63,42 @@ int systemHeapMemoryInit(void) {
         Main
 --------------------------*/
 void mainproc(void) {
-#ifdef ED64
+  // start everdrive communication
   evd_init();
 
-  // start thread which will catch and log errors
-  ed64StartFaultHandlerThread(NU_MAIN_THREAD_PRI);
-
-  // handler for libultra errors
+  // register libultra error handler
   ed64RegisterOSErrorHandler();
-#endif
 
-  /* The initialization of graphic  */
-  // nuGfxInit();
-  gfxInit();
+  // start thread which will catch and log errors
+  ed64StartFaultHandlerThread(NU_GFX_TASKMGR_THREAD_PRI);
 
+  DBGPRINT("hello\n");
+
+  DBGPRINT("systemHeapMemoryInit\n");
   systemHeapMemoryInit();
 
   /* The initialization of the controller manager  */
   contPattern = nuContInit();
 
   /* The initialization of audio */
+  DBGPRINT("nuAuStlInit\n");
   nuAuStlInit();
 
+  /* The initialization of graphic  */
+  // nuGfxInit();
+  DBGPRINT("gfxInit\n");
+  gfxInit();
+
   /* The initialization for stage00()  */
+  DBGPRINT("initStage00\n");
   initStage00();
+
   /* Register call-back  */
+  DBGPRINT("nuGfxFuncSet\n");
   nuGfxFuncSet((NUGfxFunc)stage00);
+
   /* The screen display is ON */
+  DBGPRINT("nuGfxDisplayOn\n");
   nuGfxDisplayOn();
 
   while (1)
@@ -112,7 +126,7 @@ void stage00(int pendingGfx) {
       skippedGfxTime = CUR_TIME_MS();
       Trace_addEvent(SkippedGfxTaskTraceEvent, skippedGfxTime,
                      skippedGfxTime + 16.0f);
-      // debugPrintfSync("dropped frame %d\n", nuScRetraceCounter / FRAME_SKIP);
+      // ed64PrintfSync2("dropped frame %d\n", nuScRetraceCounter / FRAME_SKIP);
     }
   }
 

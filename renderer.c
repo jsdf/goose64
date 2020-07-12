@@ -8,7 +8,11 @@
 #include <PR/os_internal.h>
 #endif
 #include <assert.h>
+
 #include <stdlib.h>
+#ifdef __N64__
+#include <malloc.h>
+#endif
 
 #include "ed64io_usb.h"
 #include "frustum.h"
