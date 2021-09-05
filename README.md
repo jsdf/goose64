@@ -2,6 +2,12 @@
 
 this is a demake of untitled goose game for the nintendo 64
 
+## get it
+
+download the [most recent N64 ROM build here](src/goose64.n64)
+
+run it in your favorite emulator or flashcart
+
 ## build for emulator/console
 
 install wine from https://wiki.winehq.org/Download
