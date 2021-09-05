@@ -13,7 +13,7 @@
     },
  
 
-    "SublimeLinter.linters.clang.args": "-ferror-limit=10000 -Wall -fsyntax-only -fno-caret-diagnostics -std=c89 -pedantic  -Wno-missing-braces -Wno-deprecated-declarations -Wno-long-long -Wno-comment -Wno-constant-conversion -D__N64__=1 -D_LANGUAGE_C=1 -D_MIPS_SZLONG=64 -include ultra64.h -DF3DEX_GBI_2 -include \"PR/gbi.h\"",
+    "SublimeLinter.linters.clang.args": "-DED64 -ferror-limit=10000 -Wall -fsyntax-only -fno-caret-diagnostics -std=c89 -pedantic  -Wno-missing-braces -Wno-deprecated-declarations -Wno-long-long -Wno-comment -Wno-constant-conversion -D__N64__=1 -D_LANGUAGE_C=1 -D_MIPS_SZLONG=64 -include ultra64.h -DF3DEX_GBI_2 -include \"PR/gbi.h\"",
     "SublimeLinter.linters.clang.I": [
       "${folder}",
       "${file_path}",
@@ -22,7 +22,7 @@
       "/Users/jfriend/.wine/drive_c/ultra/usr/include"
     ],
  
-    "SublimeLinter.linters.clang++.args":  "-ferror-limit=10000 -Wall -fsyntax-only -fno-caret-diagnostics  -Wno-missing-braces -Wno-deprecated-declarations -Wno-long-long -Wno-comment -D__N64__=1 -D_LANGUAGE_C=1 -D_MIPS_SZLONG=64 -include ultra64.h -DF3DEX_GBI_2 -include \"PR/gbi.h\"",
+    "SublimeLinter.linters.clang++.args":  "-DED64 -ferror-limit=10000 -Wall -fsyntax-only -fno-caret-diagnostics  -Wno-missing-braces -Wno-deprecated-declarations -Wno-long-long -Wno-comment -D__N64__=1 -D_LANGUAGE_C=1 -D_MIPS_SZLONG=64 -include ultra64.h -DF3DEX_GBI_2 -include \"PR/gbi.h\"",
     "SublimeLinter.linters.clang++.I": [
       "${folder}",
       "${file_path}",

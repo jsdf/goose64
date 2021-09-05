@@ -33,7 +33,9 @@ $(CODESEGMENT):	$(CODEOBJECTS) Makefile $(HFILES)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS) 
 
 $(TARGETS):	$(OBJECTS)
-		# use -m to print memory map from mild
-		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E  -m
+# use -m to print memory map from mild
+		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP) -E
 		makemask $(TARGETS) 
 
+showinc:
+		gcc  -M $(CFLAGS) main.c

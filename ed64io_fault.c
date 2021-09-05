@@ -59,7 +59,6 @@ static int doSingleStep(int thread, u32* instptr);
 static void clearBreakpoint(void);
 
 static void walkFaultedThreads(void);
-static void printThreads(void);
 
 static regDesc_t causeDesc[] = {
     {CAUSE_BD, CAUSE_BD, "BD"},
@@ -400,7 +399,7 @@ static void faultproc(char* argv) {
 #ifdef ED64IO_DEBUGGER
       walkFaultedThreads();
 #else
-      printThreads();
+      ed64PrintThreads(FALSE);
 #endif
     } else if (msg == NULL) {
       // an actual fault
@@ -411,14 +410,14 @@ static void faultproc(char* argv) {
       if (curr) {
         printFaultData(curr);
       }
-      printThreads();
+      ed64PrintThreads(FALSE);
       break;
     } else {
       // just reusing the fault handler code to print a stack trace of the
       // thread structure passed as the message
       curr = (OSThread*)msg;
       ed64PrintStackTrace(curr, 1);
-      printThreads();
+      ed64PrintThreads(FALSE);
     }
   }
 
@@ -482,6 +481,8 @@ typedef struct {
 */
 
 #define breakinst(n) (0x0d | (((n + 16) & 0xfffff) << 6))
+
+#define breakinst_no_offset(n) (0x0d | (((n)&0xfffff) << 6))
 
 #define NUM_BREAKPOINTS 2
 static Breakpoint breakpoints[NUM_BREAKPOINTS]; /* the CPU breaks */
@@ -598,7 +599,7 @@ static char* getThreadStateName(int state) {
 }
 
 // TODO: this code keeps breaking. figure out how to safely traverse thread list
-static void printThreads(void) {
+void ed64PrintThreads(int withStackTrace) {
   // register OSThread* tptr = __osRunQueue;
   // register OSThread* tptr = __osRunningThread;
   register OSThread* tptr = __osGetActiveQueue();
@@ -621,7 +622,9 @@ static void printThreads(void) {
              getThreadStateName(getThreadStateForDebugger(tptr)),
              tptr->priority, tptr->context.pc);
     }
-    // ed64PrintStackTrace(tptr, 0);
+    if (withStackTrace) {
+      ed64PrintStackTrace(tptr, 0);
+    }
 
     tptr = tptr->tlnext;
     // the thread queue is a circular list so we need to break out once we get
@@ -804,9 +807,15 @@ static void walkFaultedThreads(void) {
     // don't allow user threads to continue while debugger is active
     // stopUserThreads();
 
-    // poll for command from debugger client
-    while (!ed64DebuggerUsbListener(tptr)) {
-      evd_sleep(1000);
+    // if the current instruction is `break 1000`, automatically resume
+    if (*(int*)tptr->context.pc == breakinst_no_offset(1000)) {
+      // *(int*)tptr->context.pc = 0; // replace current instruction with nop
+      tptr->context.pc += 4;  // advance PC past the breakpoint
+    } else {
+      // poll for command from debugger client
+      while (!ed64DebuggerUsbListener(tptr)) {
+        evd_sleep(1000);
+      }
     }
     DBGPRINT("continuing\n");
   }

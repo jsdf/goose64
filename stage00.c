@@ -43,7 +43,7 @@
 #include "character_anim.h"
 #include "goose_anim.h"
 
-#include "ed64io_usb.h"
+#include "ed64io.h"
 
 #define CONSOLE_ED64LOG_DEBUG 0
 #define CONSOLE_SHOW_PROFILING 0
@@ -142,9 +142,11 @@ Lights1 sun_light = gdSPDefLights1(120,
 Lights0 amb_light = gdSPDefLights0(200, 200, 200 /*  ambient light */);
 
 static musHandle sndHandle = 0;
+static musHandle seqHandle = 0;
 static float sndPitch = 10.5;  // i don't fucking know :((
 static int sndNumber = 0;
 static int honkSoundRange = Honk5Sound - Honk1Sound;
+static int seqPlaying = FALSE;
 
 /* The initialization of stage 0 */
 void initStage00() {
@@ -169,7 +171,9 @@ void initStage00() {
   /* Read and register the sound effects. */
   nuAuStlSndPlayerDataSet((u8*)SFX_START, SFX_END - SFX_START);
 
-  ed64PrintfSync2("audio heap used=%d, free=%d\n", nuAuStlHeapGetUsed(),
+  nuAuStlSeqPlayerDataSet(0, (u8*)SONG_START, SONG_END - SONG_START);
+
+  debugPrintfSync("audio heap used=%d, free=%d\n", nuAuStlHeapGetUsed(),
                   nuAuStlHeapGetFree());
 
   physWorldData = (PhysWorldData){garden_map_collision_collision_mesh,
@@ -217,7 +221,13 @@ void initStage00() {
     profilingCounts[i] = 0;
   }
 
-  ed64PrintfSync2("getModelDisplayList at %p\n", getModelDisplayList);
+#ifdef ED64
+  // start a thread to watch the totalUpdates value
+  // if it doesn't change each second, we've crashed
+  ed64StartWatchdogThread(&totalUpdates, 1000);
+
+  debugPrintfSync("getModelDisplayList at %p\n", getModelDisplayList);
+#endif
 
   debugPrintf("good morning\n");
 }
@@ -620,9 +630,25 @@ void updateGame00(void) {
       if (sndHandle != 0) {
         nuAuStlSndPlayerSndStop(sndHandle, 0);
       }
-      sndPitch = 10.5;  // hand tuned... the sample tuning is fucked
+      // sndPitch = 10.5;  // hand tuned... the sample tuning is fucked
+      sndPitch = 0;
       sndHandle = nuAuStlSndPlayerPlay(sndNumber);
       nuAuStlSndPlayerSetSndPitch(sndHandle, sndPitch);
+    }
+
+    if (contdata[0].trigger & R_CBUTTONS) {
+      if (seqPlaying) {
+        debugPrintf("stop playing seq\n");
+        nuAuStlSeqPlayerStop(/*frames until stop*/ 0);
+        seqPlaying = FALSE;
+        seqHandle = 0;
+      } else {
+        debugPrintf("start playing seq\n");
+        seqHandle = nuAuStlSeqPlayerPlay(/*seq player num*/ NU_AU_SEQ_PLAYER0);
+        nuAuStlSeqPlayerSetMasterVol(/*max*/ 0x7fff);
+        MusHandleSetVolume(seqHandle, /* 200% */ 0x100);
+        seqPlaying = TRUE;
+      }
     }
 
     if (contdata[0].trigger & U_CBUTTONS) {
@@ -798,7 +824,8 @@ void drawWorldObjects(Dynamic* dynamicp) {
                               garden_map_bounds);
   Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
 
-  // boolean of whether an object intersects another (for z buffer optimization)
+  // boolean of whether an object intersects another (for z buffer
+  // optimization)
   intersectingObjects = (int*)malloc((visibleObjectsCount) * sizeof(int));
   invariant(intersectingObjects);
   Renderer_calcIntersecting(intersectingObjects, visibleObjectsCount,
@@ -956,7 +983,8 @@ void drawWorldObjects(Dynamic* dynamicp) {
               &animFrame     // the resultant interpolated animation frame
           );
         }
-        // Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp, CUR_TIME_MS());
+        // Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp,
+        // CUR_TIME_MS());
 
         // push matrix with the blender to n64 coord rotation, then mulitply
         // it by the model's rotation and offset
@@ -1050,8 +1078,9 @@ void drawWorldObjects(Dynamic* dynamicp) {
                                                           duration*/
                                                           10, game->tick)),
 
-                 32, 32,                                // texture dimensions
-                 projected.x, SCREEN_HT - projected.y,  // draw at pos, invert y
+                 32, 32,  // texture dimensions
+                 projected.x,
+                 SCREEN_HT - projected.y,  // draw at pos, invert y
                  RES_SCALE_X(width), RES_SCALE_Y(height), TRUE
 
       );

@@ -10,4 +10,6 @@
 
 #include "ed64io_os_error.h"
 
+#include "ed64io_watchdog.h"
+
 #endif /* _ED64IO_H */

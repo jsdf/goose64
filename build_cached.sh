@@ -10,8 +10,10 @@ if [ -n "$INVALIDATED_FILES" ]; then
 
 fi
 
-if [[ $1 == 'modern' ]]; then
+if [[ ${1-''} == 'modern' ]]; then
   ./build_modern.sh cached
 else
+  # rm -f *.out
+  # rm -f *.n64
   wine cmd /c compile.bat
 fi

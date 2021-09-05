@@ -266,6 +266,21 @@ void ed64PrintfSync2(const char* fmt, ...) {
   }
 }
 
+// to make osSyncPrintf work:
+// __printfunc = ed64PrintFuncImpl;
+void* ed64PrintFuncImpl(void* str, register const char* buf, register int n) {
+  void* ret = _PrintfImplUSBAsync(str, buf, n);
+  // wait for previous flush to finish, and drain logger buffer
+  while (ed64AsyncLoggerFlush() != -1) {
+    evd_sleep(1);
+  }
+  // flush current and wait
+  while (ed64AsyncLoggerFlush() != -1) {
+    evd_sleep(1);
+  }
+  return ret;
+}
+
 // same but with takes varargs pointer as an arg
 void ed64VPrintfSync2(const char* fmt, va_list ap) {
   _Printf((void (*)(void*))_PrintfImplUSBAsync, 0, fmt, ap);

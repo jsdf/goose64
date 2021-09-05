@@ -80,7 +80,7 @@ DerivedData/
 
 
 
-*.n64
+./*.n64
 *.blend1
 
 imgui.ini

@@ -31,17 +31,15 @@ function retry {
 # loader64 can be found here: https://github.com/jsdf/loader64
  
 # upload rom
-retry loader64 -v --write --file "$romfile"
+retry loader64 --skip-test -v --write --file "$romfile"
 
 sleep 1;
 # boot rom that was uploaded
-retry loader64 -v --pifboot
+retry loader64 --skip-test -v --pifboot
 
-# tail the logger
-if [ -z "${PROFILE-}" ]; then
-  echo "press ctrl+C to exit"
-  ed64log
-else
+if [ -n "${DEBUGGER-}" ]; then
+  NODE_ENV=development ed64debugger
+elif [ -n "${PROFILE-}" ]; then
   echo "press ctrl+C to end capture and show trace"
   ed64log > trace.log
   echo ""
@@ -50,4 +48,8 @@ else
   echo "converting trace to html"
   $CATAPULT/tracing/bin/trace2html trace.json --output=trace.html
   open trace.html
+else
+# tail the logger
+  echo "press ctrl+C to exit"
+  ed64log
 fi

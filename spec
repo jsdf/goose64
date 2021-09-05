@@ -87,21 +87,28 @@ endseg
 beginseg
   name "pbank"
   flags RAW
-  include "sounds/offhonks.ptr"
+  include "sounds/b1n12ft.ptr"
 endseg
 
 /* sample data - wave bank */
 beginseg
   name "wbank"
   flags RAW
-  include "sounds/offhonks.wbk"
+  include "sounds/b1n12ft.wbk"
 endseg
  
 /* sfx data */
 beginseg
   name "sfx"
   flags RAW
-  include "sounds/sfx.bfx"
+  include "sounds/b1n12ft.bfx"
+endseg
+ 
+/* song data */
+beginseg
+  name "song"
+  flags RAW
+  include "sounds/b1n12ft.bin"
 endseg
 
 beginseg
@@ -122,5 +129,6 @@ beginwave
   include "pbank"
   include "wbank"
   include "sfx"
+  include "song"
   include "trace"
 endwave

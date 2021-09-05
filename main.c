@@ -7,7 +7,9 @@
 #include <nualstl_n.h>
 
 #include <PR/os_convert.h>
+#ifdef ED64
 #include "ed64io.h"
+#endif
 #include "graphic.h"
 #include "mem_heap.h"
 #include "trace.h"
@@ -15,7 +17,7 @@
 // #define DEBUGSTARTUP
 
 #ifdef DEBUGSTARTUP
-#define DBGPRINT ed64PrintfSync2
+#define DBGPRINT debugPrintfSync
 #else
 #define DBGPRINT(args...)
 #endif
@@ -43,34 +45,40 @@ int systemHeapMemoryInit(void) {
   if (initHeapResult == -1) {
     die("failed to init heap\n");
   } else {
-    ed64PrintfSync2("init heap success, allocated=%d\n", MEM_HEAP_SIZE);
+    debugPrintfSync("init heap success, allocated=%d\n", MEM_HEAP_SIZE);
   }
 
   if (osGetMemSize() == 0x00800000) {
-    ed64PrintfSync2("have expansion pack\n");
+    debugPrintfSync("have expansion pack\n");
     nuPiReadRom((u32)_traceSegmentRomStart, _traceSegmentStart,
                 (u32)_traceSegmentRomEnd - (u32)_traceSegmentRomStart);
     bzero(_traceSegmentBssStart, _traceSegmentBssEnd - _traceSegmentBssStart);
 
-    ed64PrintfSync2("init trace buffer at %p\n", _traceSegmentStart);
+    debugPrintfSync("init trace buffer at %p\n", _traceSegmentStart);
   } else {
     die("expansion pack missing\n");
   }
   return 0;
 }
 
+extern void* __printfunc;
 /*------------------------
         Main
 --------------------------*/
 void mainproc(void) {
+#ifdef ED64
   // start everdrive communication
   evd_init();
 
   // register libultra error handler
-  ed64RegisterOSErrorHandler();
+  // ed64RegisterOSErrorHandler();
 
   // start thread which will catch and log errors
   ed64StartFaultHandlerThread(NU_GFX_TASKMGR_THREAD_PRI);
+
+  // overwrite osSyncPrintf impl
+  __printfunc = (void*)ed64PrintFuncImpl;
+#endif
 
   DBGPRINT("hello\n");
 
@@ -83,6 +91,11 @@ void mainproc(void) {
   /* The initialization of audio */
   DBGPRINT("nuAuStlInit\n");
   nuAuStlInit();
+  // nuAuStlInit() also does:
+  // nuAuStlSeqPlayerInit(
+  //   NU_AU_SEQ_PLAYER0,
+  //   NU_AU_SONG_SIZE /*16kb*/
+  // );
 
   /* The initialization of graphic  */
   // nuGfxInit();
@@ -126,7 +139,7 @@ void stage00(int pendingGfx) {
       skippedGfxTime = CUR_TIME_MS();
       Trace_addEvent(SkippedGfxTaskTraceEvent, skippedGfxTime,
                      skippedGfxTime + 16.0f);
-      // ed64PrintfSync2("dropped frame %d\n", nuScRetraceCounter / FRAME_SKIP);
+      // debugPrintfSync("dropped frame %d\n", nuScRetraceCounter / FRAME_SKIP);
     }
   }
 

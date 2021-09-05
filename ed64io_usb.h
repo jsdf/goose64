@@ -41,4 +41,6 @@ void ed64VPrintfSync2(const char* fmt, va_list ap);
 
 int ed64SendBinaryData(const void* data, u16 type, u16 length);
 
+void* ed64PrintFuncImpl(void* str, register const char* buf, register int n);
+
 #endif /* _ED64IO_USB_H */

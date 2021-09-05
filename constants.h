@@ -14,6 +14,11 @@
 #define CONSOLE 1
 #define NU_PERF_BAR 0
 
+#ifdef RELEASE
+#undef CONSOLE
+#undef NU_PERF_BAR
+#endif
+
 #define WATER_HEIGHT -70.0
 
 #define CONST_PI 3.14159265358979323846
