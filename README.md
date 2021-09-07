@@ -10,12 +10,11 @@ run it in your favorite emulator or flashcart
 
 ## build for emulator/console
 
-install wine from https://wiki.winehq.org/Download
+### install the n64 sdk
 
-make sure the `wine` command is on your PATH. if using Wine Stable on macOS you can symlink it:
-```
-ln -s /Applications/Wine\ Stable.app/Contents/Resources/wine/bin/wine /usr/local/bin/wine
-```
+windows instructions: https://n64squid.com/homebrew/n64-sdk/
+macOS/linux instructions: https://www.retroreversing.com/n64-sdk-setup
+on linux/macOS you'll need to make sure the `wine` command is available on your PATH
 
 install the n64 sdk into the root of the wine C: drive so you have eg.
 ```
@@ -24,13 +23,24 @@ C:\nintendo
 ```
 etc.
 
-then build the rom with
+
+### building the game
+
+to build the rom (all commands should be run in the `src` directory of this repo):
+
+linux/macOS:
 
 ```
 ./build.sh
 ```
 
-which produces the rom file goose64.n64
+windows:
+
+```
+compile.bat
+```
+
+this produces the rom file goose64.n64
 
 environment variables which affect the build:
 
@@ -39,7 +49,7 @@ environment variables which affect the build:
 
 you can also create a file called `localdefs.makefile` containing any variables to override in the build, and it will be automatically included by the makefile.
 
-## build for macOS
+## build for macOS native executable
 
 this repo also includes an opengl based version of the game, which runs on macOS
 
