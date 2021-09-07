@@ -13,11 +13,12 @@ run it with your favorite emulator or flashcart
 ### install the n64 sdk
 
 windows instructions: https://n64squid.com/homebrew/n64-sdk/
-macOS/linux instructions: https://www.retroreversing.com/n64-sdk-setup
-on linux you'll need to make sure the `wine` command is available on your PATH
-on macOS you'll need to use crossover (a commercial version of wine)
 
-install the n64 sdk into the root of the wine C: drive so you have eg.
+macOS/linux instructions: https://www.retroreversing.com/n64-sdk-setup
+
+on linux you'll need to use wine to run the n64 compiler, on macOS you'll need to use crossover (a commercial version of wine)
+
+install the n64 sdk into the root of the C: drive (or wine C: drive) so you have eg.
 ```
 C:\ultra
 C:\nintendo
