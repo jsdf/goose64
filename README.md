@@ -6,7 +6,7 @@ this is a demake of untitled goose game for the nintendo 64
 
 download the [most recent N64 ROM build here](src/goose64.n64)
 
-run it in your favorite emulator or flashcart
+run it with your favorite emulator or flashcart
 
 ## build for emulator/console
 
@@ -14,7 +14,8 @@ run it in your favorite emulator or flashcart
 
 windows instructions: https://n64squid.com/homebrew/n64-sdk/
 macOS/linux instructions: https://www.retroreversing.com/n64-sdk-setup
-on linux/macOS you'll need to make sure the `wine` command is available on your PATH
+on linux you'll need to make sure the `wine` command is available on your PATH
+on macOS you'll need to use crossover (a commercial version of wine)
 
 install the n64 sdk into the root of the wine C: drive so you have eg.
 ```
@@ -26,21 +27,17 @@ etc.
 
 ### building the game
 
-to build the rom (all commands should be run in the `src` directory of this repo):
+all commands should be run in the `src` directory of this repo
 
-linux/macOS:
-
-```
-./build.sh
-```
-
-windows:
+to build the rom, in the wine/crossover command prompt (e.g. cmd.exe) run:
 
 ```
 compile.bat
 ```
 
-this produces the rom file goose64.n64
+this produces the rom file `goose64.n64` which you can then run with your favorite emulator or flashcart
+
+to subsequently rebuild after making any changes to the code you'll first need to delete any .o object files (we're using an ancient version of make which doesn't do that for you). on linux you can use `./build.sh` to do this. an example for macOS/crossover can be found in `crossover_build.sh`. 
 
 environment variables which affect the build:
 

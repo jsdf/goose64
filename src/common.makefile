@@ -2,7 +2,13 @@
 
 # include overrides file from local repo
 ifndef RELEASE
--include ./localdefs.makefile
+# not using -include method because it doesn't work in old make version
+ifneq ("$(wildcard localdefs.makefile)","")
+$(info using localdefs.makefile)
+include localdefs.makefile
+else
+$(info no localdefs.makefile)
+endif
 endif
 
 # this improves CPU perf (but we're usually RDP-bound)
