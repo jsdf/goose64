@@ -2,6 +2,8 @@
 
 this is a demake of untitled goose game for the nintendo 64
 
+![screenshot of the goose in the lake in the game running on the mupen64plus emulator](screenshot.png)
+
 ## get it
 
 download the [most recent N64 ROM build here](src/goose64.n64)
