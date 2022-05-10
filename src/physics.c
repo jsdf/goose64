@@ -196,7 +196,7 @@ int PhysBehavior_bodyBodyCollisionResponse(PhysBody* body,
         hasCollision = TRUE;
 
         distance = sqrtf(distanceSquared);
-        overlap = radii - distance - 0.5;
+        overlap = radii - distance/* - 0.5*/;
         /* Total mass. */
         mt = body->mass + otherBody->mass;
         /* Distribute collision responses. */

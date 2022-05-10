@@ -123,6 +123,33 @@ void Euler_fromEulerDegrees(Euler* radians, EulerDegrees* degrees) {
   radians->z = degToRad(degrees->z);
 }
 
+#ifdef MATH_OPT
+static float Math_copysign(float x, float y) {
+  return ((x < 0 && y > 0) || (x > 0 && y < 0)) ? -x : x;
+}
+
+void Euler_setFromQuaternion(Euler* angles, Quaternion *q) {
+  float sinp;
+  float siny_cosp;
+  float cosy_cosp;
+  // roll (x-axis rotation)
+  float sinr_cosp = 2 * (q->w * q->x + q->y * q->z);
+  float cosr_cosp = 1 - 2 * (q->x * q->x + q->y * q->y);
+  angles->x = atan2f(sinr_cosp, cosr_cosp);
+
+  // pitch (y-axis rotation)
+  sinp = 2 * (q->w * q->y - q->z * q->x);
+  if (fabsf(sinp) >= 1)
+    angles->y = Math_copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+  else
+    angles->y = asinf(sinp);
+
+  // yaw (z-axis rotation)
+  siny_cosp = 2 * (q->w * q->z + q->x * q->y);
+  cosy_cosp = 1 - 2 * (q->y * q->y + q->z * q->z);
+  angles->z = atan2f(siny_cosp, cosy_cosp);
+}
+#else
 void Euler_setFromQuaternion(Euler* self, Quaternion* quaternion) {
   Matrix4 matrix;
 
@@ -130,6 +157,7 @@ void Euler_setFromQuaternion(Euler* self, Quaternion* quaternion) {
 
   Euler_setFromRotationMatrix(self, &matrix);
 }
+#endif
 
 // TODO: maybe delete. don't think this is used anywhere
 void Quaternion_setFromRotationMatrix(Quaternion* self, Matrix4* m) {
@@ -190,19 +218,20 @@ void Quaternion_fromEuler(Quaternion* self, Euler* euler) {
   //  20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
   //  content/SpinCalc.m
 
-  c1 = cosf(x / 2.0f);
-  c2 = cosf(y / 2.0f);
-  c3 = cosf(z / 2.0f);
+  c1 = cosf(x * 0.5f);
+  c2 = cosf(y * 0.5f);
+  c3 = cosf(z * 0.5f);
 
-  s1 = sinf(x / 2.0f);
-  s2 = sinf(y / 2.0f);
-  s3 = sinf(z / 2.0f);
+  s1 = sinf(x * 0.5f);
+  s2 = sinf(y * 0.5f);
+  s3 = sinf(z * 0.5f);
 
   self->x = s1 * c2 * c3 + c1 * s2 * s3;
   self->y = c1 * s2 * c3 - s1 * c2 * s3;
   self->z = c1 * c2 * s3 + s1 * s2 * c3;
   self->w = c1 * c2 * c3 - s1 * s2 * s3;
 }
+
 
 float Quaternion_length(Quaternion* self) {
   return sqrtf(self->x * self->x + self->y * self->y + self->z * self->z +
