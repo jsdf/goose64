@@ -18,7 +18,6 @@
 		73E1066C23B0146600DE8673 /* imgui_impl_opengl2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066923B0146600DE8673 /* imgui_impl_opengl2.cpp */; };
 		73E1066F23B014A600DE8673 /* imgui_widgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066D23B014A600DE8673 /* imgui_widgets.cpp */; };
 		73E1067023B014A600DE8673 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73E1066E23B014A600DE8673 /* imgui_draw.cpp */; };
-		73F13D1424452D7300BEC5D0 /* item.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1324452D7300BEC5D0 /* item.c */; };
 		73F13D3824452F1500BEC5D0 /* gameobject.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1724452F1100BEC5D0 /* gameobject.c */; };
 		73F13D3924452F1500BEC5D0 /* modeltype.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1824452F1200BEC5D0 /* modeltype.c */; };
 		73F13D3A24452F1500BEC5D0 /* trace.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D1924452F1200BEC5D0 /* trace.c */; };
@@ -43,33 +42,6 @@
 		73F13D5724452F1500BEC5D0 /* collision.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D3624452F1400BEC5D0 /* collision.c */; };
 		73F13D5824452F1500BEC5D0 /* player.c in Sources */ = {isa = PBXBuildFile; fileRef = 73F13D3724452F1500BEC5D0 /* player.c */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXBuildRule section */
-		73E55093244531190040E450 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.proxy.script;
-			fileType = sourcecode.c;
-			inputFiles = (
-			);
-			isEditable = 1;
-			outputFiles = (
-			);
-			script = "# <com.apple.compilers.gcc>\n";
-		};
-/* End PBXBuildRule section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		73881962234D854C0057630E /* Copy Files */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			name = "Copy Files";
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		7300A9AA23A9F79C00CD6A5B /* characteranimtypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = characteranimtypes.h; path = ../characteranimtypes.h; sourceTree = "<group>"; };
@@ -261,10 +233,8 @@
 			buildPhases = (
 				73881960234D854C0057630E /* Sources */,
 				73881961234D854C0057630E /* Frameworks */,
-				73881962234D854C0057630E /* Copy Files */,
 			);
 			buildRules = (
-				73E55093244531190040E450 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -279,7 +249,7 @@
 		7388195C234D854C0057630E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1100;
+				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = jsdf;
 				TargetAttributes = {
 					73881963234D854C0057630E = {
@@ -317,7 +287,6 @@
 				73F13D5424452F1500BEC5D0 /* characterstate.c in Sources */,
 				73F13D4124452F1500BEC5D0 /* sprite.c in Sources */,
 				73E1066A23B0146600DE8673 /* imgui_impl_glut.cpp in Sources */,
-				73F13D1424452D7300BEC5D0 /* item.c in Sources */,
 				73E1067023B014A600DE8673 /* imgui_draw.cpp in Sources */,
 				73F13D4D24452F1500BEC5D0 /* rotation.c in Sources */,
 				73F13D4524452F1500BEC5D0 /* game.c in Sources */,
@@ -375,6 +344,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -433,6 +403,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -462,6 +433,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -483,6 +455,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
