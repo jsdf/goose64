@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: flagpole
 Texture preview:
@@ -207,8 +209,8 @@ Vtx_tn Vtx_flagpole_mesh01_0[32] __attribute__((aligned (16))) = {
 	{  264,    -1,   109, 0,   1195,   1487,    89,     0,    89, 0},
 };
 
-Gfx Vtx_flagpole_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_flagpole_mesh01_0[0], 32, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_flagpole_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,3,5,0,13,6,8,0),
@@ -254,19 +256,117 @@ Gfx Vtx_flagpole_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSP2Triangles(25,26,27,0,28,29,30,0),
 	gsSP1Triangle(0,3,1,0),
 	gsSPVertex(&Vtx_flagpole_mesh01_4[0], 3, 0),
-	gsSP1Triangle(0,1,2,0),
+	gsSP1Triangle(0,1,2,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	flagpole,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_flagpole[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_flagpole_flagpole_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_flagpole_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_flagpole[] = {
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),9,10,11},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),12,3,5},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),13,6,8},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),14,9,11},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),15,16,3},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),17,18,6},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),19,20,9},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),21,15,3},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),22,17,6},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),23,19,9},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),24,25,1},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),26,27,15},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),28,29,17},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),30,31,19},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),0,24,1},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),3,16,4},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),6,18,7},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),9,20,10},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),15,27,16},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),17,29,18},
+	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),19,31,20},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),0,1,2},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),3,4,5},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),6,7,8},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),9,10,4},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),11,12,7},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),13,14,1},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),15,9,4},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),16,11,7},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),17,18,19},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),14,20,1},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),21,22,14},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),23,24,9},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),25,26,11},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),22,27,14},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),24,28,9},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),26,29,11},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),30,31,22},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),9,28,10},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),11,29,12},
+	{(Vtx*)(&Vtx_flagpole_mesh01_1[0]),14,27,20},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),0,1,2},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),3,4,5},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),6,7,8},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),1,9,2},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),4,10,5},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),11,12,4},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),13,14,15},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),16,17,6},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),18,19,1},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),12,20,4},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),21,16,6},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),22,18,1},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),23,24,16},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),25,26,18},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),27,28,12},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),29,23,16},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),30,25,18},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),31,27,12},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),6,17,7},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),1,19,9},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),4,20,10},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),16,24,17},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),18,26,19},
+	{(Vtx*)(&Vtx_flagpole_mesh01_2[0]),12,28,20},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),0,1,2},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),3,0,4},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),5,6,7},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),8,9,10},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),11,12,13},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),2,14,4},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),15,16,17},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),18,19,20},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),21,22,23},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),2,1,24},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),25,26,27},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),28,29,30},
+	{(Vtx*)(&Vtx_flagpole_mesh01_3[0]),0,3,1},
+	{(Vtx*)(&Vtx_flagpole_mesh01_4[0]),0,1,2}
+};
+
+MeshInfo MeshInfo_flagpole[] = {&Tris_flagpole[0],82,&Text_flagpole_flagpole_diff[0]};
+
 
 #define FLAGPOLE_MODEL_MESH_COUNT 1
 
+MeshInfo* flagpole_meshinfos[1] = {
+    MeshInfo_flagpole,
+};
+#ifdef __N64__
 Gfx* flagpole_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_flagpole,
 };
+#endif

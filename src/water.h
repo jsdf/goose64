@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: water
 Texture preview:
@@ -81,21 +83,39 @@ Vtx_tn Vtx_water_Water_Plane_003_mesh01_0[8] __attribute__((aligned (16))) = {
 	{  615,     0,  -499, 0,    745,    192,     0,   127,     0, 0},
 };
 
-Gfx Vtx_water_Water_Plane_003_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_water_Water_Plane_003_mesh01_0[0], 8, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_water_Water_Plane_003_mesh01_0[0], 8, 0),
 	gsSP2Triangles(0,1,2,0,3,4,1,0),
 	gsSP2Triangles(1,5,3,0,5,1,0,0),
 	gsSP2Triangles(0,2,6,0,1,4,2,0),
-	gsSP1Triangle(0,6,7,0),
+	gsSP1Triangle(0,6,7,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	water_Water_Plane_003,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_water_Water_Plane_003[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_water_water_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_water_Water_Plane_003_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_water_Water_Plane_003[] = {
+	{(Vtx*)(&Vtx_water_Water_Plane_003_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_water_Water_Plane_003_mesh01_0[0]),3,4,1},
+	{(Vtx*)(&Vtx_water_Water_Plane_003_mesh01_0[0]),1,5,3},
+	{(Vtx*)(&Vtx_water_Water_Plane_003_mesh01_0[0]),5,1,0},
+	{(Vtx*)(&Vtx_water_Water_Plane_003_mesh01_0[0]),0,2,6},
+	{(Vtx*)(&Vtx_water_Water_Plane_003_mesh01_0[0]),1,4,2},
+	{(Vtx*)(&Vtx_water_Water_Plane_003_mesh01_0[0]),0,6,7}
+};
+
+MeshInfo MeshInfo_water_Water_Plane_003[] = {&Tris_water_Water_Plane_003[0],7,&Text_water_water_diff[0]};
+
 
 Vtx_tn Vtx_water_Water_001_Plane_001_mesh01_0[7] __attribute__((aligned (16))) = {
 	{ -786,     0,   239, 0,   1792,   1839,     0,   127,     0, 0},
@@ -107,20 +127,36 @@ Vtx_tn Vtx_water_Water_001_Plane_001_mesh01_0[7] __attribute__((aligned (16))) =
 	{ -906,     0,   252, 0,   1810,   1980,     0,   127,     0, 0},
 };
 
-Gfx Vtx_water_Water_001_Plane_001_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_water_Water_001_Plane_001_mesh01_0[0], 7, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_water_Water_001_Plane_001_mesh01_0[0], 7, 0),
 	gsSP2Triangles(0,1,2,0,2,3,0,0),
 	gsSP2Triangles(1,0,4,0,5,3,2,0),
-	gsSP1Triangle(3,6,0,0),
+	gsSP1Triangle(3,6,0,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	water_Water_001_Plane_001,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_water_Water_001_Plane_001[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_water_water_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_water_Water_001_Plane_001_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_water_Water_001_Plane_001[] = {
+	{(Vtx*)(&Vtx_water_Water_001_Plane_001_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_water_Water_001_Plane_001_mesh01_0[0]),2,3,0},
+	{(Vtx*)(&Vtx_water_Water_001_Plane_001_mesh01_0[0]),1,0,4},
+	{(Vtx*)(&Vtx_water_Water_001_Plane_001_mesh01_0[0]),5,3,2},
+	{(Vtx*)(&Vtx_water_Water_001_Plane_001_mesh01_0[0]),3,6,0}
+};
+
+MeshInfo MeshInfo_water_Water_001_Plane_001[] = {&Tris_water_Water_001_Plane_001[0],5,&Text_water_water_diff[0]};
+
 
 Vtx_tn Vtx_water_Water_002_Plane_004_mesh01_0[16] __attribute__((aligned (16))) = {
 	{ -549,     0,   -24, 0,   1413,   1556,     0,   127,     0, 0},
@@ -141,23 +177,46 @@ Vtx_tn Vtx_water_Water_002_Plane_004_mesh01_0[16] __attribute__((aligned (16))) 
 	{ -240,     0,  -393, 0,    863,   1197,     0,   127,     0, 0},
 };
 
-Gfx Vtx_water_Water_002_Plane_004_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_water_Water_002_Plane_004_mesh01_0[0], 16, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_water_Water_002_Plane_004_mesh01_0[0], 16, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(1,6,2,0,7,8,9,0),
 	gsSP2Triangles(0,10,11,0,0,9,1,0),
 	gsSP2Triangles(12,2,6,0,9,13,7,0),
 	gsSP2Triangles(13,3,5,0,7,13,5,0),
-	gsSP2Triangles(11,14,0,0,0,15,10,0),
+	gsSP2Triangles(11,14,0,0,0,15,10,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	water_Water_002_Plane_004,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_water_Water_002_Plane_004[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_water_water_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_water_Water_002_Plane_004_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_water_Water_002_Plane_004[] = {
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),1,6,2},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),7,8,9},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),0,10,11},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),0,9,1},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),12,2,6},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),9,13,7},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),13,3,5},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),7,13,5},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),11,14,0},
+	{(Vtx*)(&Vtx_water_Water_002_Plane_004_mesh01_0[0]),0,15,10}
+};
+
+MeshInfo MeshInfo_water_Water_002_Plane_004[] = {&Tris_water_Water_002_Plane_004[0],12,&Text_water_water_diff[0]};
+
 
 Vtx_tn Vtx_water_Water_003_Plane_005_mesh01_0[9] __attribute__((aligned (16))) = {
 	{   49,     0,  -521, 0,    714,    857,     0,   127,     0, 0},
@@ -171,21 +230,39 @@ Vtx_tn Vtx_water_Water_003_Plane_005_mesh01_0[9] __attribute__((aligned (16))) =
 	{  303,    -4,   157, 0,   1654,    820,     0,   126,    -1, 0},
 };
 
-Gfx Vtx_water_Water_003_Plane_005_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_water_Water_003_Plane_005_mesh01_0[0], 9, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_water_Water_003_Plane_005_mesh01_0[0], 9, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,6,2,1,0),
 	gsSP2Triangles(0,5,1,0,5,0,3,0),
-	gsSP1Triangle(6,8,2,0),
+	gsSP1Triangle(6,8,2,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	water_Water_003_Plane_005,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_water_Water_003_Plane_005[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_water_water_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_water_Water_003_Plane_005_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_water_Water_003_Plane_005[] = {
+	{(Vtx*)(&Vtx_water_Water_003_Plane_005_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_water_Water_003_Plane_005_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_water_Water_003_Plane_005_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_water_Water_003_Plane_005_mesh01_0[0]),6,2,1},
+	{(Vtx*)(&Vtx_water_Water_003_Plane_005_mesh01_0[0]),0,5,1},
+	{(Vtx*)(&Vtx_water_Water_003_Plane_005_mesh01_0[0]),5,0,3},
+	{(Vtx*)(&Vtx_water_Water_003_Plane_005_mesh01_0[0]),6,8,2}
+};
+
+MeshInfo MeshInfo_water_Water_003_Plane_005[] = {&Tris_water_Water_003_Plane_005[0],7,&Text_water_water_diff[0]};
+
 
 Vtx_tn Vtx_water_Water_004_Plane_006_mesh01_0[10] __attribute__((aligned (16))) = {
 	{  578,     0,  -100, 0,      0,      0,     0,     0,   127, 0},
@@ -200,24 +277,50 @@ Vtx_tn Vtx_water_Water_004_Plane_006_mesh01_0[10] __attribute__((aligned (16))) 
 	{   49,     0,  -521, 0,    714,    857,     0,   127,     0, 0},
 };
 
-Gfx Vtx_water_Water_004_Plane_006_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_water_Water_004_Plane_006_mesh01_0[0], 10, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_water_Water_004_Plane_006_mesh01_0[0], 10, 0),
 	gsSP2Triangles(0,1,2,0,0,1,3,0),
 	gsSP2Triangles(4,5,6,0,3,7,6,0),
 	gsSP2Triangles(7,4,6,0,6,8,3,0),
-	gsSP1Triangle(8,9,3,0),
+	gsSP1Triangle(8,9,3,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	water_Water_004_Plane_006,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_water_Water_004_Plane_006[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_water_water_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_water_Water_004_Plane_006_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_water_Water_004_Plane_006[] = {
+	{(Vtx*)(&Vtx_water_Water_004_Plane_006_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_water_Water_004_Plane_006_mesh01_0[0]),0,1,3},
+	{(Vtx*)(&Vtx_water_Water_004_Plane_006_mesh01_0[0]),4,5,6},
+	{(Vtx*)(&Vtx_water_Water_004_Plane_006_mesh01_0[0]),3,7,6},
+	{(Vtx*)(&Vtx_water_Water_004_Plane_006_mesh01_0[0]),7,4,6},
+	{(Vtx*)(&Vtx_water_Water_004_Plane_006_mesh01_0[0]),6,8,3},
+	{(Vtx*)(&Vtx_water_Water_004_Plane_006_mesh01_0[0]),8,9,3}
+};
+
+MeshInfo MeshInfo_water_Water_004_Plane_006[] = {&Tris_water_Water_004_Plane_006[0],7,&Text_water_water_diff[0]};
+
 
 #define WATER_MODEL_MESH_COUNT 5
 
+MeshInfo* water_meshinfos[5] = {
+    MeshInfo_water_Water_Plane_003,
+    MeshInfo_water_Water_001_Plane_001,
+    MeshInfo_water_Water_002_Plane_004,
+    MeshInfo_water_Water_003_Plane_005,
+    MeshInfo_water_Water_004_Plane_006,
+};
+#ifdef __N64__
 Gfx* water_model_meshes[5] __attribute__((aligned (16))) = {
     Wtx_water_Water_Plane_003,
     Wtx_water_Water_001_Plane_001,
@@ -225,3 +328,4 @@ Gfx* water_model_meshes[5] __attribute__((aligned (16))) = {
     Wtx_water_Water_003_Plane_005,
     Wtx_water_Water_004_Plane_006,
 };
+#endif

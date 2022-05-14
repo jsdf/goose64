@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: testingCube
 Texture preview:
@@ -87,26 +89,54 @@ Vtx_tn Vtx_testingCube_mesh01_0[14] __attribute__((aligned (16))) = {
 	{   30,    30,   -30, 0,    990,      0,     0,     0,  -127, 0},
 };
 
-Gfx Vtx_testingCube_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_testingCube_mesh01_0[0], 14, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_testingCube_mesh01_0[0], 14, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,7,5,1,0),
 	gsSP2Triangles(5,4,2,0,9,2,4,0),
 	gsSP2Triangles(10,0,2,0,11,3,5,0),
 	gsSP2Triangles(12,6,8,0,8,7,1,0),
-	gsSP2Triangles(1,5,2,0,13,9,4,0),
+	gsSP2Triangles(1,5,2,0,13,9,4,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	testingCube,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_testingCube[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_testingCube_testCubeTex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_testingCube_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_testingCube[] = {
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),7,5,1},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),5,4,2},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),9,2,4},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),10,0,2},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),11,3,5},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),12,6,8},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),8,7,1},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),1,5,2},
+	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),13,9,4}
+};
+
+MeshInfo MeshInfo_testingCube[] = {&Tris_testingCube[0],12,&Text_testingCube_testCubeTex_diff[0]};
+
 
 #define TESTINGCUBE_MODEL_MESH_COUNT 1
 
+MeshInfo* testingCube_meshinfos[1] = {
+    MeshInfo_testingCube,
+};
+#ifdef __N64__
 Gfx* testingCube_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_testingCube,
 };
+#endif

@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: watergrass
 Texture preview:
@@ -81,20 +83,37 @@ Vtx_tn Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_0[8] __attribute__((al
 	{  -16,    53,    10, 0,    495,   1237,   -52,    12,  -116, 0},
 };
 
-Gfx Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_0[0], 8, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_0[0], 8, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(4,6,5,0,0,3,1,0),
-	gsSP2Triangles(3,0,4,0,4,7,6,0),
+	gsSP2Triangles(3,0,4,0,4,7,6,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	watergrass_Watergrass_002_inst_Cube_007,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_watergrass_Watergrass_002_inst_Cube_007[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_watergrass_watergrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_watergrass_Watergrass_002_inst_Cube_007[] = {
+	{(Vtx*)(&Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_0[0]),4,6,5},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_0[0]),0,3,1},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_0[0]),3,0,4},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_002_inst_Cube_007_mesh01_0[0]),4,7,6}
+};
+
+MeshInfo MeshInfo_watergrass_Watergrass_002_inst_Cube_007[] = {&Tris_watergrass_Watergrass_002_inst_Cube_007[0],6,&Text_watergrass_watergrass_diff[0]};
+
 
 Vtx_tn Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_0[8] __attribute__((aligned (16))) = {
 	{    2,   -10,    -9, 0,    495,    742,   -48,     4,  -118, 0},
@@ -107,20 +126,37 @@ Vtx_tn Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_0[8] __attribute__((al
 	{   13,    49,   -11, 0,    495,   1237,   -48,     4,  -118, 0},
 };
 
-Gfx Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_0[0], 8, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_0[0], 8, 0),
 	gsSP2Triangles(0,1,2,0,1,3,2,0),
 	gsSP2Triangles(4,3,5,0,0,6,1,0),
-	gsSP2Triangles(1,5,3,0,4,7,3,0),
+	gsSP2Triangles(1,5,3,0,4,7,3,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	watergrass_Watergrass_003_inst_Cube_008,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_watergrass_Watergrass_003_inst_Cube_008[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_watergrass_watergrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_watergrass_Watergrass_003_inst_Cube_008[] = {
+	{(Vtx*)(&Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_0[0]),1,3,2},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_0[0]),4,3,5},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_0[0]),0,6,1},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_0[0]),1,5,3},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_003_inst_Cube_008_mesh01_0[0]),4,7,3}
+};
+
+MeshInfo MeshInfo_watergrass_Watergrass_003_inst_Cube_008[] = {&Tris_watergrass_Watergrass_003_inst_Cube_008[0],6,&Text_watergrass_watergrass_diff[0]};
+
 
 Vtx_tn Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_0[8] __attribute__((aligned (16))) = {
 	{    3,    -9,    -8, 0,    495,    742,   -48,     4,  -118, 0},
@@ -133,20 +169,37 @@ Vtx_tn Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_0[8] __attribute__
 	{   16,    63,   -11, 0,    495,   1237,   -48,     4,  -118, 0},
 };
 
-Gfx Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_0[0], 8, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_0[0], 8, 0),
 	gsSP2Triangles(0,1,2,0,1,3,2,0),
 	gsSP2Triangles(4,3,5,0,0,6,1,0),
-	gsSP2Triangles(1,5,3,0,4,7,3,0),
+	gsSP2Triangles(1,5,3,0,4,7,3,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	watergrass_Watergrass_001_inst_001_Cube_021,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_watergrass_Watergrass_001_inst_001_Cube_021[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_watergrass_watergrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_watergrass_Watergrass_001_inst_001_Cube_021[] = {
+	{(Vtx*)(&Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_0[0]),1,3,2},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_0[0]),4,3,5},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_0[0]),0,6,1},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_0[0]),1,5,3},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_001_inst_001_Cube_021_mesh01_0[0]),4,7,3}
+};
+
+MeshInfo MeshInfo_watergrass_Watergrass_001_inst_001_Cube_021[] = {&Tris_watergrass_Watergrass_001_inst_001_Cube_021[0],6,&Text_watergrass_watergrass_diff[0]};
+
 
 Vtx_tn Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_0[8] __attribute__((aligned (16))) = {
 	{   -5,     5,     0, 0,    495,   1237,   -37,    13,  -121, 0},
@@ -159,26 +212,51 @@ Vtx_tn Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_0[8] __attribute__((al
 	{  -18,    56,    12, 0,    495,   1237,   -52,    12,  -116, 0},
 };
 
-Gfx Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_0[0], 8, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_0[0], 8, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(4,6,5,0,0,3,1,0),
-	gsSP2Triangles(3,0,4,0,4,7,6,0),
+	gsSP2Triangles(3,0,4,0,4,7,6,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	watergrass_Watergrass_inst_001_Cube_020,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_watergrass_Watergrass_inst_001_Cube_020[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_watergrass_watergrass_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_watergrass_Watergrass_inst_001_Cube_020[] = {
+	{(Vtx*)(&Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_0[0]),4,6,5},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_0[0]),0,3,1},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_0[0]),3,0,4},
+	{(Vtx*)(&Vtx_watergrass_Watergrass_inst_001_Cube_020_mesh01_0[0]),4,7,6}
+};
+
+MeshInfo MeshInfo_watergrass_Watergrass_inst_001_Cube_020[] = {&Tris_watergrass_Watergrass_inst_001_Cube_020[0],6,&Text_watergrass_watergrass_diff[0]};
+
 
 #define WATERGRASS_MODEL_MESH_COUNT 4
 
+MeshInfo* watergrass_meshinfos[4] = {
+    MeshInfo_watergrass_Watergrass_002_inst_Cube_007,
+    MeshInfo_watergrass_Watergrass_003_inst_Cube_008,
+    MeshInfo_watergrass_Watergrass_001_inst_001_Cube_021,
+    MeshInfo_watergrass_Watergrass_inst_001_Cube_020,
+};
+#ifdef __N64__
 Gfx* watergrass_model_meshes[4] __attribute__((aligned (16))) = {
     Wtx_watergrass_Watergrass_002_inst_Cube_007,
     Wtx_watergrass_Watergrass_003_inst_Cube_008,
     Wtx_watergrass_Watergrass_001_inst_001_Cube_021,
     Wtx_watergrass_Watergrass_inst_001_Cube_020,
 };
+#endif

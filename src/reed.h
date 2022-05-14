@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: reed
 Texture preview:
@@ -88,25 +90,50 @@ Vtx_tn Vtx_reed_mesh01_0[15] __attribute__((aligned (16))) = {
 	{    0,    43,     1, 0,    495,    656,   -81,    -1,   -99, 0},
 };
 
-Gfx Vtx_reed_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_reed_mesh01_0[0], 15, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_reed_mesh01_0[0], 15, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(6,12,9,0,3,13,4,0),
 	gsSP2Triangles(6,14,7,0,9,12,10,0),
-	gsSP1Triangle(6,8,12,0),
+	gsSP1Triangle(6,8,12,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	reed,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_reed[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_reed_reed_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_reed_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_reed[] = {
+	{(Vtx*)(&Vtx_reed_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_reed_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_reed_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_reed_mesh01_0[0]),9,10,11},
+	{(Vtx*)(&Vtx_reed_mesh01_0[0]),6,12,9},
+	{(Vtx*)(&Vtx_reed_mesh01_0[0]),3,13,4},
+	{(Vtx*)(&Vtx_reed_mesh01_0[0]),6,14,7},
+	{(Vtx*)(&Vtx_reed_mesh01_0[0]),9,12,10},
+	{(Vtx*)(&Vtx_reed_mesh01_0[0]),6,8,12}
+};
+
+MeshInfo MeshInfo_reed[] = {&Tris_reed[0],9,&Text_reed_reed_diff[0]};
+
 
 #define REED_MODEL_MESH_COUNT 1
 
+MeshInfo* reed_meshinfos[1] = {
+    MeshInfo_reed,
+};
+#ifdef __N64__
 Gfx* reed_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_reed,
 };
+#endif

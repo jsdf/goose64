@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: bush
 Texture preview:
@@ -134,8 +136,8 @@ Vtx_tn Vtx_bush_mesh01_0[32] __attribute__((aligned (16))) = {
 	{  -20,   -13,    29, 0,     67,    539,   -39,   -95,    76, 0},
 };
 
-Gfx Vtx_bush_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_bush_mesh01_0[0], 32, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_bush_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,13,14,0,14,15,16,0),
@@ -167,19 +169,95 @@ Gfx Vtx_bush_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSP2Triangles(9,26,17,0,18,24,19,0),
 	gsSP2Triangles(12,25,21,0,5,3,14,0),
 	gsSP2Triangles(22,21,19,0,7,13,25,0),
-	gsSP1Triangle(26,18,20,0),
+	gsSP1Triangle(26,18,20,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	bush,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_bush[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_bush_bush_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_bush_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_bush[] = {
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),9,10,11},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),12,13,14},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),14,15,16},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),14,13,15},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),13,9,15},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),11,17,18},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),11,10,17},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),10,6,17},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),8,19,20},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),8,7,19},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),7,21,19},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),5,22,23},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),5,4,22},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),4,0,22},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),2,24,25},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),2,1,24},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),1,12,24},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),26,13,12},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),26,27,13},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),27,9,13},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),28,10,9},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),28,29,10},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),29,6,10},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),30,7,6},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),30,31,7},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),31,21,7},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),27,28,9},
+	{(Vtx*)(&Vtx_bush_mesh01_0[0]),29,30,6},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),0,1,2},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),0,3,1},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),3,4,1},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),5,6,4},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),5,7,6},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),7,8,6},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),9,10,11},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),3,5,4},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),7,12,8},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),5,13,7},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),0,14,3},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),10,15,16},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),9,17,15},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),18,19,20},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),12,21,22},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),5,14,23},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),22,19,24},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),7,25,12},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),26,20,17},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),5,23,13},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),0,27,14},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),10,9,15},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),9,26,17},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),18,24,19},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),12,25,21},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),5,3,14},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),22,21,19},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),7,13,25},
+	{(Vtx*)(&Vtx_bush_mesh01_1[0]),26,18,20}
+};
+
+MeshInfo MeshInfo_bush[] = {&Tris_bush[0],60,&Text_bush_bush_diff[0]};
+
 
 #define BUSH_MODEL_MESH_COUNT 1
 
+MeshInfo* bush_meshinfos[1] = {
+    MeshInfo_bush,
+};
+#ifdef __N64__
 Gfx* bush_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_bush,
 };
+#endif

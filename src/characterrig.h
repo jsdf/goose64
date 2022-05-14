@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: characterrig
 Texture preview:
@@ -85,8 +87,8 @@ Vtx_tn Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[12] __attribute__((aligne
 	{   19,    -5,    -9, 0,    178,   1738,     3,  -112,   -61, 0},
 };
 
-Gfx Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0], 12, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0], 12, 0),
 	gsSP2Triangles(0,1,2,0,3,1,4,0),
 	gsSP2Triangles(5,1,6,0,2,7,0,0),
 	gsSP2Triangles(8,4,5,0,7,9,10,0),
@@ -96,16 +98,47 @@ Gfx Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_dl[] __attribute__((aligned (1
 	gsSP2Triangles(3,2,1,0,5,4,1,0),
 	gsSP2Triangles(2,11,7,0,7,11,9,0),
 	gsSP2Triangles(3,9,11,0,0,7,10,0),
-	gsSP2Triangles(3,8,10,0,6,0,8,0),
+	gsSP2Triangles(3,8,10,0,6,0,8,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkfoot_r_gkfoot_rmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkfoot_r_gkfoot_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkfoot_r_gkfoot_rmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),3,1,4},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),5,1,6},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),2,7,0},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),8,4,5},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),7,9,10},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),3,11,2},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),0,10,8},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),3,10,9},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),6,8,5},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),8,3,4},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),0,6,1},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),3,2,1},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),5,4,1},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),2,11,7},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),7,11,9},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),3,9,11},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),0,7,10},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),3,8,10},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),6,0,8}
+};
+
+MeshInfo MeshInfo_characterrig_gkfoot_r_gkfoot_rmesh[] = {&Tris_characterrig_gkfoot_r_gkfoot_rmesh[0],20,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[28] __attribute__((aligned (16))) = {
 	{    0,     1,    -4, 0,    990,   1237,   -18,    93,   -85, 0},
@@ -138,8 +171,8 @@ Vtx_tn Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[28] __attribute__((
 	{   -3,   -11,   -22, 0,   1586,    373,  -102,    25,    72, 0},
 };
 
-Gfx Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0], 28, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0], 28, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,7,10,0),
 	gsSP2Triangles(11,12,9,0,13,14,4,0),
@@ -157,16 +190,63 @@ Gfx Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_dl[] __attribute__((alig
 	gsSP2Triangles(13,15,21,0,18,20,21,0),
 	gsSP2Triangles(18,4,14,0,22,25,23,0),
 	gsSP2Triangles(24,10,0,0,25,2,9,0),
-	gsSP2Triangles(25,22,0,0,24,23,9,0),
+	gsSP2Triangles(25,22,0,0,24,23,9,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkforearm_r_gkforearm_rmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkforearm_r_gkforearm_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkforearm_r_gkforearm_rmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),9,7,10},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),11,12,9},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),13,14,4},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),3,15,13},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),16,15,17},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),16,4,18},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),19,20,14},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),13,21,19},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),18,21,15},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),18,14,20},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),22,23,24},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),24,0,22},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),25,9,23},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),25,0,2},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),24,9,10},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),0,26,1},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),3,13,4},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),6,10,7},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),9,12,7},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),11,27,12},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),13,19,14},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),3,17,15},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),16,18,15},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),16,5,4},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),19,21,20},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),13,15,21},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),18,20,21},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),18,4,14},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),22,25,23},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),24,10,0},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),25,2,9},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),25,22,0},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),24,23,9}
+};
+
+MeshInfo MeshInfo_characterrig_gkforearm_r_gkforearm_rmesh[] = {&Tris_characterrig_gkforearm_r_gkforearm_rmesh[0],36,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   -9,    -7,    -1, 0,    270,    274,   -79,   -98,   -18, 0},
@@ -236,8 +316,8 @@ Vtx_tn Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[32] __attribute__((aligned (1
 	{    8,     0,     4, 0,    272,    282,   124,    23,    12, 0},
 };
 
-Gfx Vtx_characterrig_gkhead_gkheadmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0], 32, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,0,2,0,7,8,0,0),
 	gsSP2Triangles(1,9,10,0,11,12,0,0),
@@ -264,16 +344,79 @@ Gfx Vtx_characterrig_gkhead_gkheadmesh_mesh01_dl[] __attribute__((aligned (16)))
 	gsSP2Triangles(3,28,4,0,1,7,6,0),
 	gsSP2Triangles(7,5,8,0,29,19,18,0),
 	gsSP2Triangles(9,12,10,0,4,30,8,0),
-	gsSP2Triangles(12,9,13,0,14,31,18,0),
+	gsSP2Triangles(12,9,13,0,14,31,18,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkhead_gkheadmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkhead_gkheadmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkhead_gkheadmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkhead_gkheadmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),6,0,2},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),7,8,0},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),1,9,10},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),11,12,0},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),13,14,15},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),16,17,18},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),12,9,19},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),20,18,21},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),22,23,24},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),15,21,25},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),23,26,24},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),1,27,2},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),28,3,29},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),6,27,30},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),31,14,13},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),0,19,1},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),3,13,4},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),6,7,0},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),1,19,9},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),19,0,12},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),0,8,11},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),25,4,15},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),4,13,15},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),20,16,18},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),15,20,21},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),28,13,3},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),6,2,27},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),13,28,31},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),3,4,5},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),6,7,8},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),9,10,11},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),4,8,5},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),12,13,14},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),15,16,17},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),14,18,19},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),17,16,20},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),21,22,23},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),9,11,24},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),25,26,27},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),3,5,7},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),0,7,1},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),3,28,4},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),1,7,6},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),7,5,8},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),29,19,18},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),9,12,10},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),4,30,8},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),12,9,13},
+	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),14,31,18}
+};
+
+MeshInfo MeshInfo_characterrig_gkhead_gkheadmesh[] = {&Tris_characterrig_gkhead_gkheadmesh[0],52,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[18] __attribute__((aligned (16))) = {
 	{   -5,     1,    -1, 0,    990,   1237,  -123,     7,   -34, 0},
@@ -296,8 +439,8 @@ Vtx_tn Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[18] __attribute__((aligne
 	{   -6,     0,   -35, 0,   1485,    742,  -111,    -2,   -63, 0},
 };
 
-Gfx Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0], 18, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0], 18, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,4,10,0),
 	gsSP2Triangles(11,12,13,0,11,0,3,0),
@@ -306,16 +449,45 @@ Gfx Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_dl[] __attribute__((aligned (1
 	gsSP2Triangles(3,16,4,0,6,17,7,0),
 	gsSP2Triangles(9,5,4,0,11,14,12,0),
 	gsSP2Triangles(11,13,0,0,12,15,0,0),
-	gsSP2Triangles(14,11,3,0,14,5,15,0),
+	gsSP2Triangles(14,11,3,0,14,5,15,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkshin_r_gkshin_rmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkshin_r_gkshin_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkshin_r_gkshin_rmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),9,4,10},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),11,12,13},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),11,0,3},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),12,0,13},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),14,3,5},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),14,15,12},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),0,15,1},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),3,16,4},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),6,17,7},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),9,5,4},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),11,14,12},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),11,13,0},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),12,15,0},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),14,11,3},
+	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),14,5,15}
+};
+
+MeshInfo MeshInfo_characterrig_gkshin_r_gkshin_rmesh[] = {&Tris_characterrig_gkshin_r_gkshin_rmesh[0],18,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[31] __attribute__((aligned (16))) = {
 	{   11,    -2,   -31, 0,   1012,    375,   122,   -31,    16, 0},
@@ -351,8 +523,8 @@ Vtx_tn Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[31] __attribute__((alig
 	{    7,    -3,   -35, 0,   1071,    508,    40,    12,  -120, 0},
 };
 
-Gfx Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0], 31, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0], 31, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,13,14,0,15,16,17,0),
@@ -372,16 +544,67 @@ Gfx Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_dl[] __attribute__((aligned 
 	gsSP2Triangles(28,29,14,0,25,27,17,0),
 	gsSP2Triangles(26,25,19,0,28,13,17,0),
 	gsSP2Triangles(23,2,11,0,22,24,11,0),
-	gsSP2Triangles(30,8,2,0,30,22,10,0),
+	gsSP2Triangles(30,8,2,0,30,22,10,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkthigh_r_gkthigh_rmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkthigh_r_gkthigh_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkthigh_r_gkthigh_rmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),9,10,11},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),12,13,14},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),15,16,17},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),1,18,19},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),0,7,12},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),20,12,14},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),21,15,17},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),13,12,7},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),21,17,13},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),22,23,24},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),25,26,27},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),26,28,27},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),29,18,14},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),28,14,13},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),25,17,19},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),26,19,18},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),28,17,27},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),23,11,24},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),22,11,10},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),30,2,23},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),30,10,8},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),0,12,1},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),3,15,4},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),9,21,10},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),15,3,16},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),20,1,12},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),22,30,23},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),26,29,28},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),29,26,18},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),28,29,14},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),25,27,17},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),26,25,19},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),28,13,17},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),23,2,11},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),22,24,11},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),30,8,2},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),30,22,10}
+};
+
+MeshInfo MeshInfo_characterrig_gkthigh_r_gkthigh_rmesh[] = {&Tris_characterrig_gkthigh_r_gkthigh_rmesh[0],40,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[32] __attribute__((aligned (16))) = {
 	{  -11,     0,     3, 0,   1613,    232,  -125,    -3,    22, 0},
@@ -484,8 +707,8 @@ Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[32] __attribute__((aligned 
 	{    3,     4,    25, 0,     96,    369,    88,    45,    78, 0},
 };
 
-Gfx Vtx_characterrig_gktorso_gktorsomesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0], 32, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(5,0,6,0,7,8,9,0),
 	gsSP2Triangles(9,10,11,0,12,13,14,0),
@@ -530,16 +753,111 @@ Gfx Vtx_characterrig_gktorso_gktorsomesh_mesh01_dl[] __attribute__((aligned (16)
 	gsSP2Triangles(29,30,16,0,16,15,26,0),
 	gsSP2Triangles(29,16,10,0,10,16,26,0),
 	gsSP2Triangles(19,5,20,0,5,8,20,0),
-	gsSP1Triangle(8,7,31,0),
+	gsSP1Triangle(8,7,31,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gktorso_gktorsomesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gktorso_gktorsomesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gktorso_gktorsomesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gktorso_gktorsomesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),5,0,6},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),7,8,9},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),9,10,11},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),12,13,14},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),10,15,11},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),2,16,17},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),11,16,1},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),18,13,19},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),20,5,21},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),22,23,24},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),25,26,7},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),3,25,7},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),27,7,9},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),28,29,30},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),0,31,6},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),27,11,1},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),0,4,1},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),3,27,4},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),5,4,0},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),7,26,8},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),9,8,10},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),12,19,13},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),2,1,16},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),11,15,16},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),20,3,5},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),27,3,7},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),1,4,27},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),27,9,11},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),2,3,4},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),5,6,7},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),8,9,6},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),10,11,12},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),13,9,14},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),15,16,1},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),16,14,1},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),11,17,12},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),4,18,19},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),20,21,22},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),23,7,24},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),3,23,25},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),26,5,3},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),27,28,29},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),29,18,24},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),30,11,31},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),14,8,26},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),0,15,1},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),2,26,3},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),0,2,4},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),5,8,6},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),8,14,9},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),16,13,14},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),11,30,17},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),4,3,18},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),23,5,7},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),3,5,23},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),26,8,5},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),18,23,24},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),29,28,18},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),26,2,1},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_1[0]),1,14,26},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),3,4,5},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),6,7,8},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),9,10,11},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),12,13,9},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),14,15,16},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),16,17,14},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),18,19,20},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),21,1,0},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),22,23,24},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),25,7,6},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),26,15,14},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),14,27,28},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),9,29,10},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),29,30,16},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),16,15,26},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),29,16,10},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),10,16,26},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),19,5,20},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),5,8,20},
+	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),8,7,31}
+};
+
+MeshInfo MeshInfo_characterrig_gktorso_gktorsomesh[] = {&Tris_characterrig_gktorso_gktorsomesh[0],84,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[12] __attribute__((aligned (16))) = {
 	{    3,     3,    -1, 0,     80,   1885,   -22,    89,    87, 0},
@@ -556,8 +874,8 @@ Vtx_tn Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[12] __attribute__((align
 	{   19,     4,   -10, 0,    178,   1738,    71,   -21,  -103, 0},
 };
 
-Gfx Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0], 12, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0], 12, 0),
 	gsSP2Triangles(0,1,2,0,1,3,4,0),
 	gsSP2Triangles(1,5,2,0,6,7,0,0),
 	gsSP2Triangles(8,5,4,0,9,6,10,0),
@@ -567,16 +885,47 @@ Gfx Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_dl[] __attribute__((aligned (
 	gsSP2Triangles(1,7,3,0,1,4,5,0),
 	gsSP2Triangles(6,11,7,0,9,11,6,0),
 	gsSP2Triangles(11,9,3,0,10,6,0,0),
-	gsSP2Triangles(3,9,10,0,8,0,2,0),
+	gsSP2Triangles(3,9,10,0,8,0,2,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkfoot_l_gkfoot_lrmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkfoot_l_gkfoot_lrmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkfoot_l_gkfoot_lrmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),1,3,4},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),1,5,2},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),6,7,0},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),8,5,4},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),9,6,10},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),11,3,7},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),10,0,8},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),3,10,8},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),8,2,5},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),8,4,3},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),0,7,1},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),1,7,3},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),1,4,5},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),6,11,7},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),9,11,6},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),11,9,3},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),10,6,0},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),3,9,10},
+	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),8,0,2}
+};
+
+MeshInfo MeshInfo_characterrig_gkfoot_l_gkfoot_lrmesh[] = {&Tris_characterrig_gkfoot_l_gkfoot_lrmesh[0],20,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[28] __attribute__((aligned (16))) = {
 	{   -3,    10,   -22, 0,    990,   1237,  -102,   -34,    68, 0},
@@ -609,8 +958,8 @@ Vtx_tn Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[28] __attribute__(
 	{   -3,    10,   -22, 0,   1586,    373,  -102,   -34,    68, 0},
 };
 
-Gfx Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0], 28, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0], 28, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,8,9,10,0),
 	gsSP2Triangles(9,11,10,0,12,13,3,0),
@@ -628,16 +977,63 @@ Gfx Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_dl[] __attribute__((ali
 	gsSP2Triangles(13,17,19,0,19,18,20,0),
 	gsSP2Triangles(20,18,12,0,21,24,22,0),
 	gsSP2Triangles(1,8,24,0,10,2,23,0),
-	gsSP2Triangles(23,2,1,0,24,8,10,0),
+	gsSP2Triangles(23,2,1,0,24,8,10,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkforearm_l_gkforearm_lrmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkforearm_l_gkforearm_lrmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkforearm_l_gkforearm_lrmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),8,9,10},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),9,11,10},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),12,13,3},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),4,14,15},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),14,16,15},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),16,3,5},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),17,18,19},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),13,19,14},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),19,20,14},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),20,12,3},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),21,22,23},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),1,24,21},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),10,23,22},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),23,1,21},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),24,10,22},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),0,25,1},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),3,13,4},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),6,26,7},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),8,7,9},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),9,27,11},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),12,17,13},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),4,13,14},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),14,20,16},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),16,20,3},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),17,12,18},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),13,17,19},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),19,18,20},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),20,18,12},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),21,24,22},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),1,8,24},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),10,2,23},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),23,2,1},
+	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),24,8,10}
+};
+
+MeshInfo MeshInfo_characterrig_gkforearm_l_gkforearm_lrmesh[] = {&Tris_characterrig_gkforearm_l_gkforearm_lrmesh[0],36,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[18] __attribute__((aligned (16))) = {
 	{   -4,    -2,    -1, 0,    990,   1237,  -127,    -9,    -7, 0},
@@ -660,8 +1056,8 @@ Vtx_tn Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[18] __attribute__((aligne
 	{    0,    -5,   -35, 0,    813,    445,   -13,  -111,   -61, 0},
 };
 
-Gfx Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0], 18, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0], 18, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,3,5,0),
 	gsSP2Triangles(10,11,12,0,11,0,12,0),
@@ -670,16 +1066,45 @@ Gfx Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_dl[] __attribute__((aligned (1
 	gsSP2Triangles(3,15,4,0,6,16,7,0),
 	gsSP2Triangles(9,17,3,0,10,13,11,0),
 	gsSP2Triangles(11,4,0,0,0,2,10,0),
-	gsSP2Triangles(13,5,4,0,2,5,13,0),
+	gsSP2Triangles(13,5,4,0,2,5,13,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkshin_l_gkshin_lmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkshin_l_gkshin_lmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkshin_l_gkshin_lmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),9,3,5},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),10,11,12},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),11,0,12},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),0,10,12},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),13,4,11},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),2,13,10},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),0,14,1},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),3,15,4},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),6,16,7},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),9,17,3},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),10,13,11},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),11,4,0},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),0,2,10},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),13,5,4},
+	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),2,5,13}
+};
+
+MeshInfo MeshInfo_characterrig_gkshin_l_gkshin_lmesh[] = {&Tris_characterrig_gkshin_l_gkshin_lmesh[0],18,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[31] __attribute__((aligned (16))) = {
 	{    9,     0,   -31, 0,   1012,    375,   124,   -16,   -20, 0},
@@ -715,8 +1140,8 @@ Vtx_tn Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[31] __attribute__((alig
 	{    2,    10,   -31, 0,    997,    267,   -31,   102,   -69, 0},
 };
 
-Gfx Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0], 31, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0], 31, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(2,12,13,0,14,15,4,0),
@@ -736,16 +1161,67 @@ Gfx Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_dl[] __attribute__((aligned 
 	gsSP2Triangles(27,13,12,0,24,16,20,0),
 	gsSP2Triangles(26,17,16,0,20,13,27,0),
 	gsSP2Triangles(11,30,21,0,9,11,23,0),
-	gsSP2Triangles(21,30,7,0,29,7,9,0),
+	gsSP2Triangles(21,30,7,0,29,7,9,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkthigh_l_gkthigh_lmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkthigh_l_gkthigh_lmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkthigh_l_gkthigh_lmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),9,10,11},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),2,12,13},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),14,15,4},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),1,16,17},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),0,2,8},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),18,2,1},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),19,20,14},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),13,8,2},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),19,13,20},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),21,22,23},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),24,25,26},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),26,27,28},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),28,17,26},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),27,12,28},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),24,20,25},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),26,16,24},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),20,27,25},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),11,21,23},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),9,23,22},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),21,7,29},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),29,9,22},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),0,30,1},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),3,14,4},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),9,19,10},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),14,20,15},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),18,12,2},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),21,29,22},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),26,25,27},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),28,12,17},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),27,13,12},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),24,16,20},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),26,17,16},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),20,13,27},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),11,30,21},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),9,11,23},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),21,30,7},
+	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),29,7,9}
+};
+
+MeshInfo MeshInfo_characterrig_gkthigh_l_gkthigh_lmesh[] = {&Tris_characterrig_gkthigh_l_gkthigh_lmesh[0],40,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[22] __attribute__((aligned (16))) = {
 	{    0,    -4,    -8, 0,   1550,    373,    37,    89,   -82, 0},
@@ -772,8 +1248,8 @@ Vtx_tn Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[22] __attribute__((alig
 	{   -4,   -17,   -18, 0,   1586,    372,  -127,     8,     1, 0},
 };
 
-Gfx Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0], 22, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0], 22, 0),
 	gsSP2Triangles(0,1,2,0,3,4,1,0),
 	gsSP2Triangles(5,6,7,0,8,4,9,0),
 	gsSP2Triangles(10,5,8,0,0,10,3,0),
@@ -789,16 +1265,59 @@ Gfx Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_dl[] __attribute__((aligned 
 	gsSP2Triangles(13,17,1,0,15,14,4,0),
 	gsSP2Triangles(15,6,17,0,14,16,1,0),
 	gsSP2Triangles(12,11,18,0,10,8,19,0),
-	gsSP2Triangles(9,12,19,0,10,18,11,0),
+	gsSP2Triangles(9,12,19,0,10,18,11,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkbicep_r_gkbicep_rmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkbicep_r_gkbicep_rmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkbicep_r_gkbicep_rmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),3,4,1},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),5,6,7},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),8,4,9},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),10,5,8},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),0,10,3},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),9,11,12},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),13,14,15},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),13,1,16},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),15,4,6},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),15,17,13},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),14,1,4},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),12,18,19},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),10,19,18},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),9,19,8},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),10,11,3},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),2,20,0},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),0,3,1},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),3,9,4},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),5,17,6},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),8,21,4},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),10,0,5},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),9,3,11},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),13,16,14},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),13,17,1},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),15,14,4},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),15,6,17},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),14,16,1},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),12,11,18},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),10,8,19},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),9,12,19},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),10,18,11}
+};
+
+MeshInfo MeshInfo_characterrig_gkbicep_r_gkbicep_rmesh[] = {&Tris_characterrig_gkbicep_r_gkbicep_rmesh[0],32,&Text_characterrig_person_diff[0]};
+
 
 Vtx_tn Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[22] __attribute__((aligned (16))) = {
 	{    3,    15,   -20, 0,   1586,    373,   118,   -44,    12, 0},
@@ -825,8 +1344,8 @@ Vtx_tn Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[22] __attribute__((ali
 	{   -5,    17,   -18, 0,   1586,    372,  -126,   -13,    13, 0},
 };
 
-Gfx Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0], 22, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0], 22, 0),
 	gsSP2Triangles(0,1,2,0,1,3,4,0),
 	gsSP2Triangles(5,6,7,0,3,8,4,0),
 	gsSP2Triangles(9,6,2,0,2,1,9,0),
@@ -842,19 +1361,77 @@ Gfx Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_dl[] __attribute__((aligned
 	gsSP2Triangles(13,0,14,0,5,3,12,0),
 	gsSP2Triangles(11,14,5,0,3,0,13,0),
 	gsSP2Triangles(16,18,17,0,4,16,10,0),
-	gsSP2Triangles(9,17,18,0,18,16,4,0),
+	gsSP2Triangles(9,17,18,0,18,16,4,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	characterrig_gkbicep_l_gkbicep_lrmesh,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_characterrig_gkbicep_l_gkbicep_lrmesh[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_characterrig_person_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_characterrig_gkbicep_l_gkbicep_lrmesh[] = {
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),1,3,4},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),5,6,7},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),3,8,4},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),9,6,2},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),2,1,9},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),10,9,1},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),11,12,13},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),13,14,11},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),5,12,15},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),11,5,15},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),3,13,12},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),16,17,10},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),4,10,1},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),9,18,8},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),18,4,8},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),2,19,20},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),20,0,2},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),1,0,3},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),5,14,6},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),3,21,8},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),9,8,6},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),10,17,9},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),11,15,12},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),13,0,14},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),5,3,12},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),11,14,5},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),3,0,13},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),16,18,17},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),4,16,10},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),9,17,18},
+	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),18,16,4}
+};
+
+MeshInfo MeshInfo_characterrig_gkbicep_l_gkbicep_lrmesh[] = {&Tris_characterrig_gkbicep_l_gkbicep_lrmesh[0],32,&Text_characterrig_person_diff[0]};
+
 
 #define CHARACTERRIG_MODEL_MESH_COUNT 12
 
+MeshInfo* characterrig_meshinfos[12] = {
+    MeshInfo_characterrig_gkfoot_r_gkfoot_rmesh,
+    MeshInfo_characterrig_gkforearm_r_gkforearm_rmesh,
+    MeshInfo_characterrig_gkhead_gkheadmesh,
+    MeshInfo_characterrig_gkshin_r_gkshin_rmesh,
+    MeshInfo_characterrig_gkthigh_r_gkthigh_rmesh,
+    MeshInfo_characterrig_gktorso_gktorsomesh,
+    MeshInfo_characterrig_gkfoot_l_gkfoot_lrmesh,
+    MeshInfo_characterrig_gkforearm_l_gkforearm_lrmesh,
+    MeshInfo_characterrig_gkshin_l_gkshin_lmesh,
+    MeshInfo_characterrig_gkthigh_l_gkthigh_lmesh,
+    MeshInfo_characterrig_gkbicep_r_gkbicep_rmesh,
+    MeshInfo_characterrig_gkbicep_l_gkbicep_lrmesh,
+};
+#ifdef __N64__
 Gfx* characterrig_model_meshes[12] __attribute__((aligned (16))) = {
     Wtx_characterrig_gkfoot_r_gkfoot_rmesh,
     Wtx_characterrig_gkforearm_r_gkforearm_rmesh,
@@ -869,3 +1446,4 @@ Gfx* characterrig_model_meshes[12] __attribute__((aligned (16))) = {
     Wtx_characterrig_gkbicep_r_gkbicep_rmesh,
     Wtx_characterrig_gkbicep_l_gkbicep_lrmesh,
 };
+#endif

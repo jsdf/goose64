@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: lilypad
 Texture preview:
@@ -86,26 +88,53 @@ Vtx_tn Vtx_lilypad_mesh01_0[13] __attribute__((aligned (16))) = {
 	{   -7,     0,    13, 0,    110,    215,     0,   127,     0, 0},
 };
 
-Gfx Vtx_lilypad_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_lilypad_mesh01_0[0], 13, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_lilypad_mesh01_0[0], 13, 0),
 	gsSP2Triangles(0,1,2,0,3,4,0,0),
 	gsSP2Triangles(4,5,0,0,5,6,0,0),
 	gsSP2Triangles(6,7,0,0,0,8,1,0),
 	gsSP2Triangles(9,3,0,0,10,11,0,0),
 	gsSP2Triangles(11,9,0,0,2,12,0,0),
-	gsSP1Triangle(12,10,0,0),
+	gsSP1Triangle(12,10,0,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	lilypad,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_lilypad[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_lilypad_lilypad_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_lilypad_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_lilypad[] = {
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),3,4,0},
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),4,5,0},
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),5,6,0},
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),6,7,0},
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),0,8,1},
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),9,3,0},
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),10,11,0},
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),11,9,0},
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),2,12,0},
+	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),12,10,0}
+};
+
+MeshInfo MeshInfo_lilypad[] = {&Tris_lilypad[0],11,&Text_lilypad_lilypad_diff[0]};
+
 
 #define LILYPAD_MODEL_MESH_COUNT 1
 
+MeshInfo* lilypad_meshinfos[1] = {
+    MeshInfo_lilypad,
+};
+#ifdef __N64__
 Gfx* lilypad_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_lilypad,
 };
+#endif

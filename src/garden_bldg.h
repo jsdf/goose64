@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: garden_bldg
 Texture preview:
@@ -100,8 +102,8 @@ Vtx_tn Vtx_garden_bldg_mesh01_0[27] __attribute__((aligned (16))) = {
 	{ -170,  -190,  -598, 0,   1061,   1200,     0,     0,  -127, 0},
 };
 
-Gfx Vtx_garden_bldg_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_garden_bldg_mesh01_0[0], 27, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_garden_bldg_mesh01_0[0], 27, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(10,12,13,0,14,0,15,0),
@@ -110,19 +112,53 @@ Gfx Vtx_garden_bldg_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSP2Triangles(0,22,1,0,3,23,4,0),
 	gsSP2Triangles(6,24,7,0,9,12,10,0),
 	gsSP2Triangles(14,22,0,0,4,23,16,0),
-	gsSP2Triangles(18,25,19,0,9,26,21,0),
+	gsSP2Triangles(18,25,19,0,9,26,21,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	garden_bldg,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_garden_bldg[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_garden_bldg_redbldg_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_garden_bldg_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_garden_bldg[] = {
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),9,10,11},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),10,12,13},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),14,0,15},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),4,16,17},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),18,19,20},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),9,21,12},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),21,13,12},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),0,22,1},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),3,23,4},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),6,24,7},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),9,12,10},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),14,22,0},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),4,23,16},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),18,25,19},
+	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),9,26,21}
+};
+
+MeshInfo MeshInfo_garden_bldg[] = {&Tris_garden_bldg[0],18,&Text_garden_bldg_redbldg_diff[0]};
+
 
 #define GARDEN_BLDG_MODEL_MESH_COUNT 1
 
+MeshInfo* garden_bldg_meshinfos[1] = {
+    MeshInfo_garden_bldg,
+};
+#ifdef __N64__
 Gfx* garden_bldg_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_garden_bldg,
 };
+#endif

@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: goose
 Texture preview:
@@ -328,8 +330,8 @@ Vtx_tn Vtx_goose_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   11,    46,   -25, 0,     54,   1171,   104,    58,   -41, 0},
 };
 
-Gfx Vtx_goose_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_goose_mesh01_0[0], 32, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_goose_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,8,9,10,0),
 	gsSP2Triangles(11,12,9,0,1,13,2,0),
@@ -395,19 +397,149 @@ Gfx Vtx_goose_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,13,14,0,15,16,17,0),
 	gsSP2Triangles(18,19,20,0,21,22,23,0),
-	gsSP1Triangle(3,24,4,0),
+	gsSP1Triangle(3,24,4,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	goose,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_goose[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_goose_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_goose_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_goose[] = {
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),3,4,5},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),6,7,8},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),8,9,10},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),11,12,9},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),1,13,2},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),14,15,0},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),16,17,5},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),18,19,20},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),21,22,23},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),24,25,26},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),27,5,24},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),28,29,30},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),5,17,3},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),17,16,31},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),30,29,12},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),16,5,27},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),27,24,26},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),0,15,1},
+	{(Vtx*)(&Vtx_goose_mesh01_0[0]),8,11,9},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),0,1,2},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),3,4,5},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),6,7,8},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),9,10,11},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),12,13,14},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),15,16,17},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),18,19,20},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),18,21,22},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),23,2,24},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),4,25,26},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),27,28,29},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),30,7,6},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),31,26,25},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),0,2,23},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),18,22,19},
+	{(Vtx*)(&Vtx_goose_mesh01_1[0]),4,26,5},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),0,1,2},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),3,4,5},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),6,7,8},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),9,10,11},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),12,13,14},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),15,16,17},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),18,19,20},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),21,22,23},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),24,25,26},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),27,0,2},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),28,29,30},
+	{(Vtx*)(&Vtx_goose_mesh01_2[0]),29,28,31},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),0,1,2},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),3,4,5},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),6,7,8},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),9,10,11},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),12,13,14},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),0,15,16},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),17,18,19},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),20,21,22},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),23,24,25},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),26,27,28},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),28,27,29},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),17,19,30},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),21,20,31},
+	{(Vtx*)(&Vtx_goose_mesh01_3[0]),23,26,24},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),0,1,2},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),3,4,5},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),6,7,8},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),9,10,11},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),12,13,14},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),15,12,4},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),16,17,18},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),19,20,21},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),12,22,23},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),24,25,26},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),27,28,29},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),5,30,3},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),17,31,18},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),3,15,4},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),9,27,10},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),15,13,12},
+	{(Vtx*)(&Vtx_goose_mesh01_4[0]),12,14,22},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),0,1,2},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),3,4,5},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),6,7,8},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),6,9,10},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),11,12,13},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),14,15,16},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),17,18,19},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),20,21,22},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),23,24,25},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),26,16,15},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),27,28,29},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),5,30,3},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),31,11,13},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),21,24,23},
+	{(Vtx*)(&Vtx_goose_mesh01_5[0]),6,8,9},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),0,1,2},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),3,4,5},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),6,7,8},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),9,10,11},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),12,13,14},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),14,15,12},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),16,17,18},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),19,20,21},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),22,23,24},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),25,26,27},
+	{(Vtx*)(&Vtx_goose_mesh01_6[0]),28,29,30},
+	{(Vtx*)(&Vtx_goose_mesh01_7[0]),0,1,2},
+	{(Vtx*)(&Vtx_goose_mesh01_7[0]),3,4,5},
+	{(Vtx*)(&Vtx_goose_mesh01_7[0]),6,7,8},
+	{(Vtx*)(&Vtx_goose_mesh01_7[0]),9,10,11},
+	{(Vtx*)(&Vtx_goose_mesh01_7[0]),12,13,14},
+	{(Vtx*)(&Vtx_goose_mesh01_7[0]),15,16,17},
+	{(Vtx*)(&Vtx_goose_mesh01_7[0]),18,19,20},
+	{(Vtx*)(&Vtx_goose_mesh01_7[0]),21,22,23},
+	{(Vtx*)(&Vtx_goose_mesh01_7[0]),3,24,4}
+};
+
+MeshInfo MeshInfo_goose[] = {&Tris_goose[0],114,&Text_goose_goosetex_diff[0]};
+
 
 #define GOOSE_MODEL_MESH_COUNT 1
 
+MeshInfo* goose_meshinfos[1] = {
+    MeshInfo_goose,
+};
+#ifdef __N64__
 Gfx* goose_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_goose,
 };
+#endif

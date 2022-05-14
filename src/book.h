@@ -1,3 +1,5 @@
+#include "mesh.h"
+
 /*
 Name: book
 Texture preview:
@@ -166,8 +168,8 @@ Vtx_tn Vtx_book_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   -7,     2,    12, 0,   1314,   1476,     0,   127,     0, 0},
 };
 
-Gfx Vtx_book_mesh01_dl[] __attribute__((aligned (16))) = {
-	gsSPVertex(&Vtx_book_mesh01_0[0], 32, 0),
+#ifdef __N64__
+Gfx Vtx_gsSPVertex(&Vtx_book_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,0,3,4,0),
 	gsSP2Triangles(5,6,7,0,7,8,5,0),
 	gsSP2Triangles(9,10,11,0,12,8,13,0),
@@ -200,19 +202,95 @@ Gfx Vtx_book_mesh01_dl[] __attribute__((aligned (16))) = {
 	gsSP2Triangles(10,12,11,0,13,14,15,0),
 	gsSP2Triangles(6,16,17,0,18,19,20,0),
 	gsSP2Triangles(21,10,9,0,22,23,24,0),
-	gsSP2Triangles(23,25,24,0,25,26,24,0),
+	gsSP2Triangles(23,25,24,0,25,26,24,0)_mesh01_dl[] __attribute__((aligned (16))) = {
+	book,
 	gsSPEndDisplayList(),
 };
+#endif
 
+
+#ifdef __N64__
 Gfx Wtx_book[] __attribute__((aligned (16))) = {
 	  gsDPLoadTextureBlock(Text_book_book_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_book_mesh01_dl),
 	  gsSPEndDisplayList()
 };
+#endif
+
+MeshTri Tris_book[] = {
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),0,1,2},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),0,3,4},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),5,6,7},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),7,8,5},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),9,10,11},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),12,8,13},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),9,14,15},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),16,17,18},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),15,19,20},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),21,13,7},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),5,22,2},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),2,23,0},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),24,25,26},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),27,28,25},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),29,30,28},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),18,31,16},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),15,3,9},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),0,4,1},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),0,9,3},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),7,13,8},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),9,0,10},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),9,11,14},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),15,14,19},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),5,8,22},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),24,27,25},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),27,29,28},
+	{(Vtx*)(&Vtx_book_mesh01_0[0]),21,7,6},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),0,1,2},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),3,4,5},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),6,7,8},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),9,10,11},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),6,12,13},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),0,14,15},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),16,17,3},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),18,10,19},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),20,21,22},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),5,4,1},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),23,24,25},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),24,26,25},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),26,27,25},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),28,9,29},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),0,15,23},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),3,17,11},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),8,7,30},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),3,31,4},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),11,17,9},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),9,17,29},
+	{(Vtx*)(&Vtx_book_mesh01_1[0]),18,11,10},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),0,1,2},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),3,4,5},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),6,7,8},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),9,10,11},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),10,12,11},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),13,14,15},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),6,16,17},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),18,19,20},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),21,10,9},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),22,23,24},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),23,25,24},
+	{(Vtx*)(&Vtx_book_mesh01_2[0]),25,26,24}
+};
+
+MeshInfo MeshInfo_book[] = {&Tris_book[0],60,&Text_book_book_diff[0]};
+
 
 #define BOOK_MODEL_MESH_COUNT 1
 
+MeshInfo* book_meshinfos[1] = {
+    MeshInfo_book,
+};
+#ifdef __N64__
 Gfx* book_model_meshes[1] __attribute__((aligned (16))) = {
     Wtx_book,
 };
+#endif
