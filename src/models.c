@@ -6,20 +6,7 @@
 #include "ed64io_usb.h"
 #include "modeltype.h"
 
-// models
-#include "book.h"
-#include "bush.h"
-#include "characterrig.h"
-#include "gooserig.h"
-#include "ground.h"
-#include "lilypad.h"
-#include "planter.h"
-#include "reed.h"
-#include "rocks.h"
-#include "testingCube.h"
-#include "wall.h"
-#include "water.h"
-#include "watergrass.h"
+#include "modellist.h"
 
 // map the mesh type enum (used by animation frames) to the mesh displaylists
 Gfx* GooseMeshList[8] = {

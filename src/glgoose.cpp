@@ -17,6 +17,8 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 // Dear Imgui
 #include "imgui/imgui.h"
@@ -47,6 +49,7 @@
 
 #include "character_anim.h"
 #include "goose_anim.h"
+#include "modellist.h"
 
 #define FREEVIEW_SPEED 0.2f
 
@@ -175,6 +178,9 @@ std::vector<glm::vec2> spriteUVs = {
     {1.0f, 0.0f},  //
 };
 
+static RendererZSortList zSortListBG;
+static RendererZSortList zSortListFG;
+
 int debugPathfindingFrom = 3;
 int debugPathfindingTo = 8;
 Graph* pathfindingGraph = &garden_map_graph;
@@ -253,6 +259,103 @@ std::string formatEuler(EulerDegrees* self) {
   return buffer;
 }
 
+glm::vec3 vtxToVec3(Vtx_tn* vtx)  {
+  return glm::vec3(vtx->ob[0],vtx->ob[1],vtx->ob[2]);
+}
+
+glm::vec3 getVertCentroidWorld(GameObject* obj, MeshTri*meshtri) {
+  glm::vec3 centroid = glm::vec3(0.);
+  for (int i = 0; i < 3; ++i)
+  {
+    Vtx_tn*vtx=(Vtx_tn*)&meshtri->vertTable[meshtri->tri[i]];
+    glm::vec3 vertToAdd = vtxToVec3(vtx);
+    centroid+=vertToAdd;
+  }
+
+  centroid *= 1./3.;
+  // std::string centroidString = glm::to_string(centroid);
+
+
+  glm::vec4 vertPos = glm::vec4(centroid, 1.0);
+  // std::string vertPosString = glm::to_string(vertPos);
+  
+  // apply transform stack
+
+  // glTranslatef(pos.x, pos.y, pos.z);
+  // glRotatef(obj->rotation.y, 0, 1, 0);
+  // glScalef(modelTypesProperties[obj->modelType].scale,
+  //          modelTypesProperties[obj->modelType].scale,
+  //          modelTypesProperties[obj->modelType].scale);
+
+  // https://learnopengl.com/Getting-started/Transformations
+  glm::vec3 objPos = glm::vec3(obj->position.x,obj->position.y,obj->position.z);
+  // std::string objPosString = glm::to_string(objPos);
+  glm::mat4 transToWorld = glm::translate(
+          glm::mat4(1.0f),
+          objPos);
+
+  transToWorld = glm::rotate(
+      transToWorld,
+      glm::radians(obj->rotation.y),
+      glm::vec3(0, 1, 0)
+  );
+  transToWorld = glm::scale(
+      transToWorld,
+      glm::vec3(modelTypesProperties[obj->modelType].scale)
+  );
+
+  glm::vec3 updatedVertPos = glm::vec3(transToWorld * vertPos);
+  // std::string updatedVertPosString = glm::to_string(updatedVertPos);
+
+  return updatedVertPos;
+}
+
+static bool debugZSortForeground = true;
+void drawZSortListUI() {
+  RendererZSortList*list = debugZSortForeground?&zSortListFG:&zSortListBG;
+
+
+  ImGui::Begin("ZSortList");  // Create a window
+
+  ImGui::Checkbox("Foreground", &debugZSortForeground);
+
+
+  int bucketIdx = 0;
+  for (bucketIdx = list->count-1; bucketIdx >=0; --bucketIdx) {
+    RendererZSortBucket*bucket=&list->buckets[bucketIdx];
+    if (bucket->count==0) {
+      continue;
+    }
+    ImGui::Text("-- bucket %d / %d items / %.1f-%.1f ---", bucketIdx, bucket->count,
+                list->near + list->bucketSize * bucketIdx,
+                list->near + list->bucketSize * bucketIdx + 1);
+    for (int i = 0; i < bucket->count; ++i)
+    {
+      RendererZSortItem*item = &bucket->items[i];
+      GameObject*obj = item->obj;
+
+      Vec3d pos;
+      pos = obj->position; 
+
+
+      glm::vec3 vertCentroid = getVertCentroidWorld(obj,item->meshtri);
+      Vec3d*viewPos = &Game_get()->viewPos;
+
+      char itemLabel[96];
+      sprintf(itemLabel, "%d %s: %.1f {%5.1f,%5.1f,%5.1f} {%5.1f,%5.1f,%5.1f}", obj->id,
+              ModelTypeStrings[obj->modelType],
+              glm::distance(glm::vec3(viewPos->x, viewPos->y, viewPos->z),
+                            vertCentroid), vertCentroid[0], vertCentroid[1], vertCentroid[2], obj->position.x, obj->position.y, obj->position.z);
+      if (ImGui::Selectable(itemLabel, selectedObject == obj)) {
+        selectedObject = obj;
+      }
+    } 
+ 
+  }
+
+  ImGui::End();
+}
+
 void drawGUI() {
   Game* game = Game_get();
   GameObject* obj = selectedObject;
@@ -272,6 +375,10 @@ void drawGUI() {
     }
   }
   ImGui::End();
+
+#if RENDERER_PAINTERS_ALGORITHM
+  drawZSortListUI();
+#endif
 
   ImGui::Begin("Object Inspector");  // Create a window
 
@@ -728,11 +835,15 @@ void drawMarker(float r, float g, float b, float radius) {
   glPopAttrib();
 }
 
-void drawMarkerAtPoint(float r, float g, float b, float radius, Vec3d* pos) {
+void drawMarkerAtPoint(float r, float g, float b, float radius, float x, float y, float z) {
   glPushMatrix();
-  glTranslatef(pos->x, pos->y, pos->z);
+  glTranslatef(x, y, z);
   drawMarker(r, g, b, radius);
   glPopMatrix();
+}
+
+void drawMarkerAtPoint(float r, float g, float b, float radius, Vec3d* pos) {
+  drawMarkerAtPoint(r,g,b,radius,pos->x, pos->y, pos->z);
 }
 
 void drawLine(Vec3d* start, Vec3d* end) {
@@ -1194,10 +1305,9 @@ void enableLighting() {
   glEnable(GL_COLOR_MATERIAL);
 }
 
-void drawGameObject(GameObject* obj, bool useZBuffering) {
-  Vec3d pos, centroidOffset;
+void drawGameObject(GameObject* obj) {
+  Vec3d pos;
   pos = obj->position;
-  centroidOffset = modelTypesProperties[obj->modelType].centroidOffset;
 
   glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
@@ -1207,15 +1317,7 @@ void drawGameObject(GameObject* obj, bool useZBuffering) {
            modelTypesProperties[obj->modelType].scale);
 
   if (obj->modelType != NoneModel) {
-#if RENDERER_PAINTERS_ALGORITHM
-    if (useZBuffering) {
-      glEnable(GL_DEPTH_TEST);
-    } else {
-      glDisable(GL_DEPTH_TEST);
-    }
-#else
     glEnable(GL_DEPTH_TEST);
-#endif
 #if USE_LIGHTING_STATIC_ONLY
     if (Renderer_isLitGameObject(obj)) {
       glEnable(GL_LIGHTING);
@@ -1710,6 +1812,128 @@ void drawNodeGraph() {
   glPopAttrib();
 }
 
+void debugLogRender(GameObject*obj, Game* game) {
+    printf("draw obj %d %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n", obj->id,
+           ModelTypeStrings[obj->modelType],
+           Vec3d_distanceTo(&(obj->position), &game->viewPos), obj->position.x,
+           obj->position.y, obj->position.z);
+}
+
+
+MeshInfo* getModelMeshInfo(ModelType modelType, int subtype) {
+  switch (modelType) {
+    case BushModel:
+      invariant(subtype < BUSH_MODEL_MESH_COUNT);
+      return bush_meshinfos[subtype];
+    case BookItemModel:
+      invariant(subtype < BOOK_MODEL_MESH_COUNT);
+      return book_meshinfos[subtype];
+    case WallModel:
+      invariant(subtype < WALL_MODEL_MESH_COUNT);
+      return wall_meshinfos[subtype];
+    case PlanterModel:
+      invariant(subtype < PLANTER_MODEL_MESH_COUNT);
+      return planter_meshinfos[subtype];
+    case GroundModel:
+      invariant(subtype < GROUND_MODEL_MESH_COUNT);
+      return ground_meshinfos[subtype];
+    case RockModel:
+      invariant(subtype < ROCKS_MODEL_MESH_COUNT);
+      return rocks_meshinfos[subtype];
+    case WaterModel:
+      invariant(subtype < WATER_MODEL_MESH_COUNT);
+      return water_meshinfos[subtype];
+    case WatergrassModel:
+      invariant(subtype < WATERGRASS_MODEL_MESH_COUNT);
+      return watergrass_meshinfos[subtype];
+    case ReedModel:
+      invariant(subtype < REED_MODEL_MESH_COUNT);
+      return reed_meshinfos[subtype];
+    case LilypadModel:
+      invariant(subtype < LILYPAD_MODEL_MESH_COUNT);
+      return lilypad_meshinfos[subtype];
+    default:
+      return testingCube_meshinfos[0];
+  }
+}
+
+float meshTriDistCallback(GameObject* obj, MeshTri*meshtri, Vec3d*viewPos) {
+  glm::vec3 centroidWorld = getVertCentroidWorld(obj,meshtri);
+  
+
+  return glm::distance(glm::vec3(viewPos->x,viewPos->y,viewPos->z), centroidWorld);
+}
+
+void insertObjIntoZSortList(RendererZSortList* list, GameObject*obj, Vec3d* viewPos) {
+  MeshInfo* meshinfo = getModelMeshInfo(obj->modelType, obj->subtype);
+  for (int i = 0; i < meshinfo->triCount; ++i)
+  {
+    RendererZSortList_insertMeshTri(list, obj, meshinfo->tris + i, viewPos, meshTriDistCallback);
+  }
+}
+
+void drawMeshTri(MeshTri * meshtri, int id, int bucketIdx, float bucketDist) {
+  int verthash = meshtri->tri[0]+meshtri->tri[1]+meshtri->tri[2];
+  glColor3f((verthash % 6)/6.* 1.0f,(verthash % 9)/9.* 1.0f,(verthash % 4)/4.* 1.0f);  // random per tri
+  // glColor3f((id % 6)/6.* 1.0f,(id % 9)/9.* 1.0f,(id % 4)/4.* 1.0f);  // random per obj
+  // glColor3f((bucketIdx % 6)/6.* 1.0f,(bucketIdx % 9)/9.* 1.0f,(bucketIdx % 4)/4.* 1.0f);  // random per bucket
+  // glColor3f(1.-bucketDist,1.-bucketDist,1.-bucketDist);  // depth
+  // glEnable(GL_TEXTURE_2D);
+  // glBindTexture(GL_TEXTURE_2D, texture);
+  glBegin(GL_TRIANGLES);
+  for (int ivert = 0; ivert < 3; ++ivert) {
+    // glTexCoord2d(mesh.uvs[ivert].x, mesh.uvs[ivert].y);
+    // glNormal3f(mesh.normals[ivert].x, mesh.normals[ivert].y,
+    //            mesh.normals[ivert].z);
+    //            TODO: not yolo this type conversion
+    Vtx_tn * vert = (Vtx_tn*)meshtri->vertTable + meshtri->tri[ivert];
+    glVertex3f(vert->ob[0], vert->ob[1], vert->ob[2]);
+  }
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+}
+ 
+
+void drawZSortListTris(RendererZSortList*list) {
+  int bucketIdx = 0;
+  for (bucketIdx = list->count-1; bucketIdx >=0; --bucketIdx) {
+    RendererZSortBucket*bucket=&list->buckets[bucketIdx];
+    for (int i = 0; i < bucket->count; ++i)
+    {
+      RendererZSortItem*item = &bucket->items[i];
+      GameObject*obj = item->obj;
+
+      Vec3d pos;
+      pos = obj->position;
+ 
+      glPushMatrix();
+      glTranslatef(pos.x, pos.y, pos.z);
+      glRotatef(obj->rotation.y, 0, 1, 0);
+      glScalef(modelTypesProperties[obj->modelType].scale,
+               modelTypesProperties[obj->modelType].scale,
+               modelTypesProperties[obj->modelType].scale);
+
+      if (obj->modelType != NoneModel) {
+
+#if USE_LIGHTING_STATIC_ONLY
+        if (Renderer_isLitGameObject(obj)) {
+          glEnable(GL_LIGHTING);
+        } else {
+          glDisable(GL_LIGHTING);
+        }
+#endif
+        drawMeshTri(item->meshtri, obj->id,bucketIdx, (float)bucketIdx/(float)list->count);
+      }
+      glPopMatrix(); 
+
+      glm::vec3 vertCentroid = getVertCentroidWorld(obj,item->meshtri);
+      Vec3d point;
+      Vec3d_init(&point, vertCentroid[0],vertCentroid[1],vertCentroid[2]);
+      drawMarkerAtPoint(1.,1.,1.,1.,&point);
+    }
+  }
+}
+
 void renderScene(void) {
   int i;
   Game* game;
@@ -1801,24 +2025,77 @@ void renderScene(void) {
 #if DEBUG_LOG_RENDER
   printf("draw start\n");
 #endif
+
+#if RENDERER_PAINTERS_ALGORITHM
+  // extra passes for painter mode
+  
+  float frustumLength = farPlane-nearPlane;
+  // background pass
+  RendererZSortList_init(&zSortListBG, nearPlane+(frustumLength/8), farPlane-(frustumLength/4));
+  for (i = 0; i < visibleObjectsCount; i++) {
+    GameObject* obj = (visibleObjDist + i)->obj;
+    if (!Renderer_isBackgroundGameObject(obj)) {
+      continue;
+    }
+#if DEBUG_LOG_RENDER
+    debugLogRender(obj, game);
+#endif
+    insertObjIntoZSortList(&zSortListBG, obj, &game->viewPos);
+  }
+  // draw background
+  {
+    // write depth buffer but don't test. assumes more recent is closer 
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS); 
+    drawZSortListTris(&zSortListBG);
+  }
+
+  // foreground
+  RendererZSortList_init(&zSortListFG, nearPlane+(frustumLength/8), farPlane-(frustumLength/4)); 
+  for (i = 0; i < visibleObjectsCount; i++) {
+    GameObject* obj = (visibleObjDist + i)->obj;
+    if (Renderer_isBackgroundGameObject(obj) || Renderer_isAnimatedGameObject(obj) || intersectingObjects[i]) {
+      continue;
+    }
+#if DEBUG_LOG_RENDER
+    debugLogRender(obj, game);
+#endif
+    insertObjIntoZSortList(&zSortListFG, obj, &game->viewPos);
+  }
+  // draw foreground
+  {
+    // write depth buffer but don't test. assumes more recent is closer 
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS); 
+    drawZSortListTris(&zSortListFG);
+  }
+
+  // done with zsort objects
+
+#endif // #if RENDERER_PAINTERS_ALGORITHM
   // render visible objects
   for (i = 0; i < visibleObjectsCount; i++) {
     GameObject* obj = (visibleObjDist + i)->obj;
-#if DEBUG_LOG_RENDER
-    printf("draw obj %d %s dist=%.3f {x:%.3f, y:%.3f, z:%.3f}\n", obj->id,
-           ModelTypeStrings[obj->modelType],
-           Vec3d_distanceTo(&(obj->position), &viewPos), obj->position.x,
-           obj->position.y, obj->position.z);
-#endif
-    drawGameObject(
-        obj,
-        // useZBuffering
-        intersectingObjects[i] ||
+#if RENDERER_PAINTERS_ALGORITHM
+    // in painters mode, only objects requiring zbuffering are rendered in
+    // this pass. otherwise all are rendered.
+    if (
+      !((intersectingObjects[i] &&!Renderer_isBackgroundGameObject(obj))|| 
             // animated game objects have concave shapes, need z buffering
-            Renderer_isAnimatedGameObject(obj)
+            Renderer_isAnimatedGameObject(obj))
+    ) {
+      continue;
+    }
+#endif
 
-    );
+#if DEBUG_LOG_RENDER
+    debugLogRender(obj, game);
+#endif
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL); 
+    drawGameObject(obj);
   }
+
 
 #if USE_SPRITES
 
@@ -1835,6 +2112,8 @@ void renderScene(void) {
     }
   }
 #endif
+
+  game->profTimeDraw += (CUR_TIME_MS() - profStartDraw);
 
 #if USE_LIGHTING
   glEnable(GL_LIGHTING);
@@ -2067,8 +2346,10 @@ void renderScene(void) {
   free(intersectingObjects);
   free(visibleObjDist);
   free(worldObjectsVisibility);
+  RendererZSortList_destroy(&zSortListBG);
+  RendererZSortList_destroy(&zSortListFG);
 
-  game->profTimeDraw += (CUR_TIME_MS() - profStartDraw);
+  // game->profTimeDraw += (CUR_TIME_MS() - profStartDraw);
   glutSwapBuffers();
 }
 

@@ -57,6 +57,8 @@ function w64_main()
 		local bmptable, previewtable 								= w64_bmpFileToC(bmp)
 		local metaString, textureString 	= w64_outputTexture(objname,texturename,previewtable,bmptable)
 		local meshList = {}
+		local meshInfoList = {}
+		table.insert(final_file_output, "#include \"mesh.h\"")
 		table.insert(final_file_output, metaString)
 		table.insert(final_file_output, textureString)
 
@@ -80,15 +82,21 @@ function w64_main()
 			table.insert(final_file_output, vertexString)
 			table.insert(final_file_output, faceString)
 			table.insert(final_file_output, displayListString)
+			table.insert(final_file_output, w64_outputMeshInfo(facesinpacks, facesinpacksrefs, subobj_combined_name,objname,texturename))
 			table.insert(meshList, string.format("    Wtx_%s,", subobj_combined_name))
+			table.insert(meshInfoList, string.format("    MeshInfo_%s,", subobj_combined_name))
 		end
 
 
 		table.insert(final_file_output,
 			string.format("#define %s_MODEL_MESH_COUNT %d\n\n", string.upper(objname), tableLength(objfile_subobjtables))
-			.. string.format("Gfx* %s_model_meshes[%d] __attribute__((aligned (16))) = {\n", objname, tableLength(objfile_subobjtables))
-			.. table.concat(meshList, '\n')
+			
+			.. string.format("MeshInfo* %s_meshinfos[%d] = {\n", objname, tableLength(objfile_subobjtables))
+			.. table.concat(meshInfoList, '\n')
 			.. "\n};\n"
+			.. string.format("#ifdef __N64__\nGfx* %s_model_meshes[%d] __attribute__((aligned (16))) = {\n", objname, tableLength(objfile_subobjtables))
+			.. table.concat(meshList, '\n')
+			.. "\n};\n#endif\n"
 		)
 
 		filename = arg[2]
@@ -432,26 +440,62 @@ function w64_outputTriangles(facesInPacks, facesPackRefs, one_tri, objname)
 			end
 		end
 	end
+
 	-- output faces
 	print("Success creating faces and verts!")
 	return string.format(
-		"Gfx Vtx_%s_mesh01_dl[] __attribute__((aligned (16))) = {\n\t%s,\n\tgsSPEndDisplayList(),\n};",
-		objname,
-		table.concat(faceOutputTable,",\n\t")
+		"#ifdef __N64__\nGfx Vtx_%s_mesh01_dl[] __attribute__((aligned (16))) = {\n\t%s,\n\tgsSPEndDisplayList(),\n};\n#endif\n",
+		table.concat(faceOutputTable,",\n\t"),
+		objname
 	)
+	
 end
 
+-- meshinfo points to tris list
+-- each tri points to a vertex table and contains vert indexes
+
+function w64_outputMeshInfo(facesInPacks, facesPackRefs,  objname,mainobjname,texturename)
+
+	triOutputTable = {}
+	for packNumber=1,#facesInPacks do
+		local step = 1
+		for k=1,#facesInPacks[packNumber], step do
+
+			table.insert(
+				triOutputTable,
+				string.format(
+					-- tri 
+					"{(Vtx*)(&Vtx_"..objname.."_mesh01_"..(packNumber-1).."[0]),%i,%i,%i}",
+					getLocationOfItem(facesPackRefs[packNumber], facesInPacks[packNumber][k][1]+1)-1,
+					getLocationOfItem(facesPackRefs[packNumber], facesInPacks[packNumber][k][2]+1)-1,
+					getLocationOfItem(facesPackRefs[packNumber], facesInPacks[packNumber][k][3]+1)-1
+				)
+			)
+		end
+	end
+
+
+	return string.format(
+		"MeshTri Tris_%s[] = {\n\t%s\n};\n\n",
+		objname,
+		table.concat(triOutputTable,",\n\t")
+	).."MeshInfo MeshInfo_"..objname..
+	"[] = {&Tris_"..objname..
+	"[0],"..#triOutputTable..
+","..string.format("&Text_%s_%s_diff[0]",mainobjname,texturename).."};\n"
+
+end
 function w64_outputDisplayList(subobj_combined_name,obj_Name,name_of_texture)
 	-- output final display list
 	-- This isn't customisable at the moment at all but until I 
 	-- actually figure out what'd need changing, I'll leave this!
 	return string.format(
-		"Gfx Wtx_%s[] __attribute__((aligned (16))) = {\n"..
+		"#ifdef __N64__\nGfx Wtx_%s[] __attribute__((aligned (16))) = {\n"..
 		"\t  gsDPLoadTextureBlock(Text_%s_%s_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, \n"..
 		"\t  \t  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), \n"..
 		"\t  gsSPDisplayList(Vtx_%s_mesh01_dl),\n"..
 		"\t  gsSPEndDisplayList()\n"..
-		"};",
+		"};\n#endif",
 		subobj_combined_name,
 		obj_Name,
 		name_of_texture,
