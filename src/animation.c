@@ -6,6 +6,7 @@
 #include "animation.h"
 #include "constants.h"
 #include "rotation.h"
+#include "trace.h"
 
 void AnimationState_init(AnimationState* self) {
   self->state = 0;
@@ -79,6 +80,7 @@ void AnimationFrame_lerp(
   Quaternion quaternionA, quaternionB;
   Euler radiansA, radiansB, radiansResult;
   int frameDataOffsetA, frameDataOffsetB;
+  float profStartAnimLerp;
   AnimationFrame *a, *b;
 
 #ifndef __N64__
@@ -104,8 +106,10 @@ void AnimationFrame_lerp(
   Euler_fromEulerDegrees(&radiansA, &a->rotation);
   Euler_fromEulerDegrees(&radiansB, &b->rotation);
 
+  profStartAnimLerp = CUR_TIME_MS();
   Quaternion_fromEuler(&quaternionA, &radiansA);
   Quaternion_fromEuler(&quaternionB, &radiansB);
+  Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp, CUR_TIME_MS());
 
   Quaternion_slerp(&quaternionA, &quaternionB, interp->t);
 

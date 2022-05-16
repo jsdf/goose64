@@ -47,12 +47,12 @@
 
 #define CONSOLE_ED64LOG_DEBUG 0
 #define CONSOLE_SHOW_PROFILING 0
-#define CONSOLE_SHOW_TRACING 0
+#define CONSOLE_SHOW_TRACING 1
 #define CONSOLE_SHOW_CULLING 0
 #define CONSOLE_SHOW_CAMERA 0
 #define CONSOLE_SHOW_SOUND 1
 #define CONSOLE_SHOW_RCP_TASKS 0
-#define LOG_TRACES 0
+#define LOG_TRACES 1
 #define CONTROLLER_DEAD_ZONE 0.1
 #define SOUND_TEST 1
 #define DRAW_SPRITES 1
@@ -796,7 +796,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   int visibleObjectsCount;
   int visibilityCulled = 0;
   float profStartSort, profStartIter, profStartAnim;
-  // float profStartAnimLerp;
+  float profStartAnimLerp;
   float profStartFrustum;
 
   game = Game_get();
@@ -962,7 +962,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
       AnimationInterpolation_calc(&animInterp, obj->animState, curAnimRange);
 
       for (modelMeshIdx = 0; modelMeshIdx < modelMeshParts; ++modelMeshIdx) {
-        // profStartAnimLerp = CUR_TIME_MS();
+        profStartAnimLerp = CUR_TIME_MS();
         // lerping takes about 0.2ms per bone
         if (shouldLerpAnimation(obj->modelType)) {
           AnimationFrame_lerp(
@@ -983,8 +983,8 @@ void drawWorldObjects(Dynamic* dynamicp) {
               &animFrame     // the resultant interpolated animation frame
           );
         }
-        // Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp,
-        // CUR_TIME_MS());
+        Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp,
+        CUR_TIME_MS());
 
         // push matrix with the blender to n64 coord rotation, then mulitply
         // it by the model's rotation and offset

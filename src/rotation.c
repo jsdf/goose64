@@ -10,6 +10,26 @@
 static Vec3d _zero = {0, 0, 0};
 static Vec3d _one = {1, 1, 1};
 
+
+#define FASTINVSQRT 1
+
+#ifdef FASTINVSQRT
+static float fastInvSqrt(float number) {
+  long i;
+  float x2, y;
+  const float threehalfs = 1.5F;
+
+  x2 = number * 0.5F;
+  y = number;
+  i = *(long*)&y;
+  i = 0x5f3759df - (i >> 1);
+  y = *(float*)&i;
+  y = y * (threehalfs - (x2 * y * y));
+
+  return y;
+}
+#endif
+
 void Matrix4_compose(Matrix4* matrix,
                      Vec3d* position,
                      Quaternion* quaternion,
@@ -123,6 +143,7 @@ void Euler_fromEulerDegrees(Euler* radians, EulerDegrees* degrees) {
   radians->z = degToRad(degrees->z);
 }
 
+#define MATH_OPT 1
 #ifdef MATH_OPT
 static float Math_copysign(float x, float y) {
   return ((x < 0 && y > 0) || (x > 0 && y < 0)) ? -x : x;
@@ -239,6 +260,20 @@ float Quaternion_length(Quaternion* self) {
 }
 
 void Quaternion_normalize(Quaternion* self) {
+#ifdef FASTINVSQRT
+  float invsqrt = fastInvSqrt(self->x * self->x + self->y * self->y + self->z * self->z);
+  if (invsqrt == 0.0f) {
+    self->x = 0.0f;
+    self->y = 0.0f;
+    self->z = 0.0f;
+    self->w = 1.0f;
+  } else {
+    self->x *= invsqrt;
+    self->y *= invsqrt;
+    self->z *= invsqrt;
+    self->w *= invsqrt;
+  }
+#else
   float l;
   l = Quaternion_length(self);
 
@@ -247,8 +282,8 @@ void Quaternion_normalize(Quaternion* self) {
     self->y = 0.0f;
     self->z = 0.0f;
     self->w = 1.0f;
-
   } else {
+
     l = 1.0f / l;
 
     self->x = self->x * l;
@@ -256,6 +291,7 @@ void Quaternion_normalize(Quaternion* self) {
     self->z = self->z * l;
     self->w = self->w * l;
   }
+  #endif
 }
 
 void Quaternion_slerp(Quaternion* self, Quaternion* qb, float t) {
@@ -308,7 +344,8 @@ void Quaternion_slerp(Quaternion* self, Quaternion* qb, float t) {
     self->y = s * y + t * self->y;
     self->z = s * z + t * self->z;
 
-    Quaternion_normalize(self);
+    // optional?
+    // Quaternion_normalize(self);
     return;
   }
 

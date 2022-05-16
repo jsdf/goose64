@@ -63,7 +63,17 @@ then open the goose64glut project with xcode, build and run
 
 ## development
 
-more information can be found in [N64SDK](N64SDK.md) and [ART](ART.md)
+more information about n64 programming can be found in [N64SDK](N64SDK.md) and [ART](ART.md).
+
+### deploy to everdrive and start logging
+
+with everdrive64 v3 inserted and usb cable connected, reset console and run:
+
+```
+./deploy.sh
+```
+
+if you get a 'device not found' error, check that 'FT245R USB FIFO' is visible in your system's list of connected usb devices
 
 ### regenerate n64 header files from the OBJ models
 if you update .obj model files:
