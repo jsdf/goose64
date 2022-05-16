@@ -61,8 +61,11 @@ brew install glm
 
 then open the goose64glut project with xcode, build and run
 
+## development
 
-## regenerate n64 header files from the OBJ models
+more information can be found in [N64SDK](N64SDK.md) and [ART](ART.md)
+
+### regenerate n64 header files from the OBJ models
 if you update .obj model files:
 
 first make sure you have lua installed
@@ -78,7 +81,7 @@ then, to rebuild model header files
 ./rebuild_models.sh
 ```
 
-## regenerate n64 header files for sprites
+### regenerate n64 header files for sprites
 if you update any texture files:
 
 make sure you have python and pillow installed
@@ -93,7 +96,7 @@ then, to rebuild sprites
 ./sprites.sh 
 ```
 
-## export map object data
+### export map object data
 
 - open blender (or use `./blender.sh` to see console output)
 - in the blender text editor editor, open and run export_positions.py then open and run export_collision_mesh.py
