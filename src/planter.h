@@ -296,7 +296,8 @@ Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_planter_mesh01_0[0], 32, 0),
+Gfx Vtx_planter_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_planter_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,3,7,0,8,9,10,0),
 	gsSP2Triangles(11,12,13,0,3,14,15,0),
@@ -353,8 +354,7 @@ Gfx Vtx_gsSPVertex(&Vtx_planter_mesh01_0[0], 32, 0),
 	gsSP2Triangles(5,6,7,0,8,9,10,0),
 	gsSP2Triangles(11,12,13,0,14,15,2,0),
 	gsSP2Triangles(15,16,2,0,2,1,17,0),
-	gsSP2Triangles(18,19,20,0,21,10,9,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	planter,
+	gsSP2Triangles(18,19,20,0,21,10,9,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -369,7 +369,7 @@ Gfx Wtx_planter[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_planter[] = {
+MeshTri Tris_planter[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_planter_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_planter_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_planter_mesh01_0[0]),6,3,7},
@@ -472,7 +472,7 @@ MeshTri Tris_planter[] = {
 	{(Vtx*)(&Vtx_planter_mesh01_6[0]),21,10,9}
 };
 
-MeshInfo MeshInfo_planter[] = {&Tris_planter[0],100,&Text_planter_planter_diff[0]};
+MeshInfo MeshInfo_planter[] __attribute__((aligned (16))) = {&Tris_planter[0],100,&Text_planter_planter_diff[0]};
 
 
 #define PLANTER_MODEL_MESH_COUNT 1

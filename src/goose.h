@@ -331,7 +331,8 @@ Vtx_tn Vtx_goose_mesh01_0[32] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_goose_mesh01_0[0], 32, 0),
+Gfx Vtx_goose_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_goose_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,8,9,10,0),
 	gsSP2Triangles(11,12,9,0,1,13,2,0),
@@ -397,8 +398,7 @@ Gfx Vtx_gsSPVertex(&Vtx_goose_mesh01_0[0], 32, 0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,13,14,0,15,16,17,0),
 	gsSP2Triangles(18,19,20,0,21,22,23,0),
-	gsSP1Triangle(3,24,4,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	goose,
+	gsSP1Triangle(3,24,4,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -413,7 +413,7 @@ Gfx Wtx_goose[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_goose[] = {
+MeshTri Tris_goose[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_goose_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_goose_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_goose_mesh01_0[0]),6,7,8},
@@ -530,7 +530,7 @@ MeshTri Tris_goose[] = {
 	{(Vtx*)(&Vtx_goose_mesh01_7[0]),3,24,4}
 };
 
-MeshInfo MeshInfo_goose[] = {&Tris_goose[0],114,&Text_goose_goosetex_diff[0]};
+MeshInfo MeshInfo_goose[] __attribute__((aligned (16))) = {&Tris_goose[0],114,&Text_goose_goosetex_diff[0]};
 
 
 #define GOOSE_MODEL_MESH_COUNT 1

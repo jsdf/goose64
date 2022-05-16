@@ -174,7 +174,8 @@ Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] __attribute__((aligned 
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0], 32, 0),
+Gfx Vtx_gooserig_goosebody_goosebodymesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,1,3,2,0),
 	gsSP2Triangles(4,5,0,0,6,7,8,0),
 	gsSP2Triangles(9,10,11,0,7,12,13,0),
@@ -203,8 +204,7 @@ Gfx Vtx_gsSPVertex(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(16,25,26,0,12,2,22,0),
 	gsSP2Triangles(6,27,12,0,27,2,12,0),
 	gsSP2Triangles(24,28,1,0,29,9,8,0),
-	gsSP2Triangles(30,27,24,0,14,31,15,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	gooserig_goosebody_goosebodymesh,
+	gsSP2Triangles(30,27,24,0,14,31,15,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -219,7 +219,7 @@ Gfx Wtx_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_goosebody_goosebodymesh[] = {
+MeshTri Tris_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0]),1,3,2},
 	{(Vtx*)(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0]),4,5,0},
@@ -276,7 +276,7 @@ MeshTri Tris_gooserig_goosebody_goosebodymesh[] = {
 	{(Vtx*)(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_2[0]),14,31,15}
 };
 
-MeshInfo MeshInfo_gooserig_goosebody_goosebodymesh[] = {&Tris_gooserig_goosebody_goosebodymesh[0],54,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (16))) = {&Tris_gooserig_goosebody_goosebodymesh[0],54,&Text_gooserig_goosetex_diff[0]};
 
 
 Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[32] __attribute__((aligned (16))) = {
@@ -330,7 +330,8 @@ Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[32] __attribute__((alig
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0], 32, 0),
+Gfx Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,6,2,9,0),
 	gsSP2Triangles(10,7,11,0,1,12,9,0),
@@ -356,8 +357,7 @@ Gfx Vtx_gsSPVertex(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0], 32, 0)
 	gsSP2Triangles(10,3,11,0,9,8,7,0),
 	gsSP2Triangles(0,12,1,0,3,10,4,0),
 	gsSP2Triangles(8,2,1,0,1,12,8,0),
-	gsSP2Triangles(12,13,8,0,13,6,8,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	gooserig_goosefoot_l_goosefoot_lmesh,
+	gsSP2Triangles(12,13,8,0,13,6,8,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -372,7 +372,7 @@ Gfx Wtx_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_goosefoot_l_goosefoot_lmesh[] = {
+MeshTri Tris_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0]),6,7,8},
@@ -425,7 +425,7 @@ MeshTri Tris_gooserig_goosefoot_l_goosefoot_lmesh[] = {
 	{(Vtx*)(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_1[0]),13,6,8}
 };
 
-MeshInfo MeshInfo_gooserig_goosefoot_l_goosefoot_lmesh[] = {&Tris_gooserig_goosefoot_l_goosefoot_lmesh[0],50,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_goosefoot_l_goosefoot_lmesh[0],50,&Text_gooserig_goosetex_diff[0]};
 
 
 Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[32] __attribute__((aligned (16))) = {
@@ -479,7 +479,8 @@ Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[32] __attribute__((alig
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0], 32, 0),
+Gfx Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,8,2,9,0),
 	gsSP2Triangles(10,11,6,0,1,12,9,0),
@@ -505,8 +506,7 @@ Gfx Vtx_gsSPVertex(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0], 32, 0)
 	gsSP2Triangles(10,3,11,0,9,8,7,0),
 	gsSP2Triangles(0,12,1,0,3,10,4,0),
 	gsSP2Triangles(8,2,1,0,1,12,8,0),
-	gsSP2Triangles(12,13,8,0,13,6,8,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	gooserig_goosefoot_r_goosefoot_rmesh,
+	gsSP2Triangles(12,13,8,0,13,6,8,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -521,7 +521,7 @@ Gfx Wtx_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_goosefoot_r_goosefoot_rmesh[] = {
+MeshTri Tris_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0]),6,7,8},
@@ -574,7 +574,7 @@ MeshTri Tris_gooserig_goosefoot_r_goosefoot_rmesh[] = {
 	{(Vtx*)(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_1[0]),13,6,8}
 };
 
-MeshInfo MeshInfo_gooserig_goosefoot_r_goosefoot_rmesh[] = {&Tris_gooserig_goosefoot_r_goosefoot_rmesh[0],50,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_goosefoot_r_goosefoot_rmesh[0],50,&Text_gooserig_goosetex_diff[0]};
 
 
 Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] __attribute__((aligned (16))) = {
@@ -688,7 +688,8 @@ Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] __attribute__((aligned 
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0], 32, 0),
+Gfx Vtx_gooserig_goosehead_gooseheadmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,0,3,4,0),
 	gsSP2Triangles(3,5,4,0,6,7,8,0),
 	gsSP2Triangles(9,10,11,0,12,13,5,0),
@@ -721,8 +722,7 @@ Gfx Vtx_gsSPVertex(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0], 32, 0),
 	gsSP1Triangle(23,30,31,0),
 	gsSPVertex(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_3[0], 8, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
-	gsSP1Triangle(5,6,7,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	gooserig_goosehead_gooseheadmesh,
+	gsSP1Triangle(5,6,7,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -737,7 +737,7 @@ Gfx Wtx_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_goosehead_gooseheadmesh[] = {
+MeshTri Tris_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0]),0,3,4},
 	{(Vtx*)(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0]),3,5,4},
@@ -798,7 +798,7 @@ MeshTri Tris_gooserig_goosehead_gooseheadmesh[] = {
 	{(Vtx*)(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_3[0]),5,6,7}
 };
 
-MeshInfo MeshInfo_gooserig_goosehead_gooseheadmesh[] = {&Tris_gooserig_goosehead_gooseheadmesh[0],58,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_goosehead_gooseheadmesh[0],58,&Text_gooserig_goosetex_diff[0]};
 
 
 Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] __attribute__((aligned (16))) = {
@@ -888,7 +888,8 @@ Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] __attribute__((aligne
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0], 32, 0),
+Gfx Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,13,3,0,8,14,15,0),
@@ -918,8 +919,7 @@ Gfx Vtx_gsSPVertex(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(10,12,11,0,13,5,14,0),
-	gsSP1Triangle(7,15,16,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	gooserig_gooseleg_l_gooseleg_lmesh,
+	gsSP1Triangle(7,15,16,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -934,7 +934,7 @@ Gfx Wtx_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_gooseleg_l_gooseleg_lmesh[] = {
+MeshTri Tris_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0]),6,7,8},
@@ -991,7 +991,7 @@ MeshTri Tris_gooserig_gooseleg_l_gooseleg_lmesh[] = {
 	{(Vtx*)(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_2[0]),7,15,16}
 };
 
-MeshInfo MeshInfo_gooserig_gooseleg_l_gooseleg_lmesh[] = {&Tris_gooserig_gooseleg_l_gooseleg_lmesh[0],54,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_gooseleg_l_gooseleg_lmesh[0],54,&Text_gooserig_goosetex_diff[0]};
 
 
 Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] __attribute__((aligned (16))) = {
@@ -1081,7 +1081,8 @@ Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] __attribute__((aligne
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0], 32, 0),
+Gfx Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,13,3,0,8,14,15,0),
@@ -1111,8 +1112,7 @@ Gfx Vtx_gsSPVertex(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(10,12,13,0,10,13,11,0),
-	gsSP2Triangles(14,5,15,0,8,7,16,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	gooserig_gooseleg_r_gooseleg_rmesh,
+	gsSP2Triangles(14,5,15,0,8,7,16,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -1127,7 +1127,7 @@ Gfx Wtx_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_gooseleg_r_gooseleg_rmesh[] = {
+MeshTri Tris_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0]),6,7,8},
@@ -1184,7 +1184,7 @@ MeshTri Tris_gooserig_gooseleg_r_gooseleg_rmesh[] = {
 	{(Vtx*)(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_2[0]),8,7,16}
 };
 
-MeshInfo MeshInfo_gooserig_gooseleg_r_gooseleg_rmesh[] = {&Tris_gooserig_gooseleg_r_gooseleg_rmesh[0],54,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_gooseleg_r_gooseleg_rmesh[0],54,&Text_gooserig_goosetex_diff[0]};
 
 
 Vtx_tn Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[24] __attribute__((aligned (16))) = {
@@ -1215,7 +1215,8 @@ Vtx_tn Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[24] __attribute__((aligned 
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0], 24, 0),
+Gfx Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0], 24, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,7,0),
 	gsSP2Triangles(4,3,11,0,0,3,5,0),
@@ -1225,8 +1226,7 @@ Gfx Vtx_gsSPVertex(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0], 24, 0),
 	gsSP2Triangles(19,8,7,0,20,7,10,0),
 	gsSP2Triangles(18,21,16,0,0,17,16,0),
 	gsSP2Triangles(0,22,17,0,13,22,0,0),
-	gsSP2Triangles(19,7,20,0,23,15,0,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	gooserig_gooseneck_gooseneckmesh,
+	gsSP2Triangles(19,7,20,0,23,15,0,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -1241,7 +1241,7 @@ Gfx Wtx_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_gooseneck_gooseneckmesh[] = {
+MeshTri Tris_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0]),6,7,8},
@@ -1264,7 +1264,7 @@ MeshTri Tris_gooserig_gooseneck_gooseneckmesh[] = {
 	{(Vtx*)(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0]),23,15,0}
 };
 
-MeshInfo MeshInfo_gooserig_gooseneck_gooseneckmesh[] = {&Tris_gooserig_gooseneck_gooseneckmesh[0],20,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_gooseneck_gooseneckmesh[0],20,&Text_gooserig_goosetex_diff[0]};
 
 
 #define GOOSERIG_MODEL_MESH_COUNT 7

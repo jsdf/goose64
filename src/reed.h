@@ -91,13 +91,13 @@ Vtx_tn Vtx_reed_mesh01_0[15] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_reed_mesh01_0[0], 15, 0),
+Gfx Vtx_reed_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_reed_mesh01_0[0], 15, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(6,12,9,0,3,13,4,0),
 	gsSP2Triangles(6,14,7,0,9,12,10,0),
-	gsSP1Triangle(6,8,12,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	reed,
+	gsSP1Triangle(6,8,12,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -112,7 +112,7 @@ Gfx Wtx_reed[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_reed[] = {
+MeshTri Tris_reed[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_reed_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_reed_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_reed_mesh01_0[0]),6,7,8},
@@ -124,7 +124,7 @@ MeshTri Tris_reed[] = {
 	{(Vtx*)(&Vtx_reed_mesh01_0[0]),6,8,12}
 };
 
-MeshInfo MeshInfo_reed[] = {&Tris_reed[0],9,&Text_reed_reed_diff[0]};
+MeshInfo MeshInfo_reed[] __attribute__((aligned (16))) = {&Tris_reed[0],9,&Text_reed_reed_diff[0]};
 
 
 #define REED_MODEL_MESH_COUNT 1

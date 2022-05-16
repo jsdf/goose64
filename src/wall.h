@@ -104,7 +104,8 @@ Vtx_tn Vtx_wall_mesh01_0[28] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_wall_mesh01_0[0], 28, 0),
+Gfx Vtx_wall_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_wall_mesh01_0[0], 28, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,13,14,0,0,15,16,0),
@@ -113,8 +114,7 @@ Gfx Vtx_gsSPVertex(&Vtx_wall_mesh01_0[0], 28, 0),
 	gsSP2Triangles(3,22,4,0,6,23,7,0),
 	gsSP2Triangles(9,24,10,0,12,25,13,0),
 	gsSP2Triangles(0,2,15,0,1,18,15,0),
-	gsSP2Triangles(17,26,18,0,19,27,20,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	wall,
+	gsSP2Triangles(17,26,18,0,19,27,20,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -129,7 +129,7 @@ Gfx Wtx_wall[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_wall[] = {
+MeshTri Tris_wall[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_wall_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_wall_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_wall_mesh01_0[0]),6,7,8},
@@ -150,7 +150,7 @@ MeshTri Tris_wall[] = {
 	{(Vtx*)(&Vtx_wall_mesh01_0[0]),19,27,20}
 };
 
-MeshInfo MeshInfo_wall[] = {&Tris_wall[0],18,&Text_wall_wall_diff[0]};
+MeshInfo MeshInfo_wall[] __attribute__((aligned (16))) = {&Tris_wall[0],18,&Text_wall_wall_diff[0]};
 
 
 #define WALL_MODEL_MESH_COUNT 1

@@ -405,7 +405,8 @@ Vtx_tn Vtx_person_mesh01_0[32] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_person_mesh01_0[0], 32, 0),
+Gfx Vtx_person_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_person_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,0,0),
 	gsSP2Triangles(11,12,6,0,13,14,15,0),
@@ -528,8 +529,7 @@ Gfx Vtx_gsSPVertex(&Vtx_person_mesh01_0[0], 32, 0),
 	gsSP2Triangles(16,17,18,0,19,20,21,0),
 	gsSP2Triangles(20,22,21,0,23,9,24,0),
 	gsSP2Triangles(25,26,27,0,28,29,30,0),
-	gsSP1Triangle(30,29,31,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	person,
+	gsSP1Triangle(30,29,31,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -544,7 +544,7 @@ Gfx Wtx_person[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_person[] = {
+MeshTri Tris_person[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_person_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_person_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_person_mesh01_0[0]),6,7,8},
@@ -770,7 +770,7 @@ MeshTri Tris_person[] = {
 	{(Vtx*)(&Vtx_person_mesh01_9[0]),30,29,31}
 };
 
-MeshInfo MeshInfo_person[] = {&Tris_person[0],223,&Text_person_person_diff[0]};
+MeshInfo MeshInfo_person[] __attribute__((aligned (16))) = {&Tris_person[0],223,&Text_person_person_diff[0]};
 
 
 #define PERSON_MODEL_MESH_COUNT 1

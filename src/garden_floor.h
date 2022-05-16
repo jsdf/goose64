@@ -354,7 +354,8 @@ Vtx_tn Vtx_garden_floor_mesh01_0[32] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_garden_floor_mesh01_0[0], 32, 0),
+Gfx Vtx_garden_floor_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_garden_floor_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,13,14,0,15,16,17,0),
@@ -474,8 +475,7 @@ Gfx Vtx_gsSPVertex(&Vtx_garden_floor_mesh01_0[0], 32, 0),
 	gsSPVertex(&Vtx_garden_floor_mesh01_8[0], 14, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,6,10,0),
-	gsSP1Triangle(11,12,13,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	garden_floor,
+	gsSP1Triangle(11,12,13,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -490,7 +490,7 @@ Gfx Wtx_garden_floor[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_garden_floor[] = {
+MeshTri Tris_garden_floor[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_garden_floor_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_garden_floor_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_garden_floor_mesh01_0[0]),6,7,8},
@@ -714,7 +714,7 @@ MeshTri Tris_garden_floor[] = {
 	{(Vtx*)(&Vtx_garden_floor_mesh01_8[0]),11,12,13}
 };
 
-MeshInfo MeshInfo_garden_floor[] = {&Tris_garden_floor[0],221,&Text_garden_floor_green_diff[0]};
+MeshInfo MeshInfo_garden_floor[] __attribute__((aligned (16))) = {&Tris_garden_floor[0],221,&Text_garden_floor_green_diff[0]};
 
 
 #define GARDEN_FLOOR_MODEL_MESH_COUNT 1

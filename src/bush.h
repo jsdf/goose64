@@ -137,7 +137,8 @@ Vtx_tn Vtx_bush_mesh01_0[32] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_bush_mesh01_0[0], 32, 0),
+Gfx Vtx_bush_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_bush_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,13,14,0,14,15,16,0),
@@ -169,8 +170,7 @@ Gfx Vtx_gsSPVertex(&Vtx_bush_mesh01_0[0], 32, 0),
 	gsSP2Triangles(9,26,17,0,18,24,19,0),
 	gsSP2Triangles(12,25,21,0,5,3,14,0),
 	gsSP2Triangles(22,21,19,0,7,13,25,0),
-	gsSP1Triangle(26,18,20,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	bush,
+	gsSP1Triangle(26,18,20,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -185,7 +185,7 @@ Gfx Wtx_bush[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_bush[] = {
+MeshTri Tris_bush[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_bush_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_bush_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_bush_mesh01_0[0]),6,7,8},
@@ -248,7 +248,7 @@ MeshTri Tris_bush[] = {
 	{(Vtx*)(&Vtx_bush_mesh01_1[0]),26,18,20}
 };
 
-MeshInfo MeshInfo_bush[] = {&Tris_bush[0],60,&Text_bush_bush_diff[0]};
+MeshInfo MeshInfo_bush[] __attribute__((aligned (16))) = {&Tris_bush[0],60,&Text_bush_bush_diff[0]};
 
 
 #define BUSH_MODEL_MESH_COUNT 1

@@ -99,7 +99,8 @@ Vtx_tn Vtx_rocks_Rock_Cube_001_mesh01_0[23] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_rocks_Rock_Cube_001_mesh01_0[0], 23, 0),
+Gfx Vtx_rocks_Rock_Cube_001_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_rocks_Rock_Cube_001_mesh01_0[0], 23, 0),
 	gsSP2Triangles(0,1,2,0,3,4,1,0),
 	gsSP2Triangles(5,6,7,0,8,9,10,0),
 	gsSP2Triangles(11,12,13,0,14,15,16,0),
@@ -107,8 +108,7 @@ Gfx Vtx_gsSPVertex(&Vtx_rocks_Rock_Cube_001_mesh01_0[0], 23, 0),
 	gsSP2Triangles(3,18,4,0,5,17,6,0),
 	gsSP2Triangles(8,19,9,0,20,12,11,0),
 	gsSP2Triangles(12,21,13,0,16,18,14,0),
-	gsSP2Triangles(14,22,15,0,17,19,8,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	rocks_Rock_Cube_001,
+	gsSP2Triangles(14,22,15,0,17,19,8,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -123,7 +123,7 @@ Gfx Wtx_rocks_Rock_Cube_001[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_rocks_Rock_Cube_001[] = {
+MeshTri Tris_rocks_Rock_Cube_001[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_rocks_Rock_Cube_001_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_rocks_Rock_Cube_001_mesh01_0[0]),3,4,1},
 	{(Vtx*)(&Vtx_rocks_Rock_Cube_001_mesh01_0[0]),5,6,7},
@@ -142,7 +142,7 @@ MeshTri Tris_rocks_Rock_Cube_001[] = {
 	{(Vtx*)(&Vtx_rocks_Rock_Cube_001_mesh01_0[0]),17,19,8}
 };
 
-MeshInfo MeshInfo_rocks_Rock_Cube_001[] = {&Tris_rocks_Rock_Cube_001[0],16,&Text_rocks_rock_diff[0]};
+MeshInfo MeshInfo_rocks_Rock_Cube_001[] __attribute__((aligned (16))) = {&Tris_rocks_Rock_Cube_001[0],16,&Text_rocks_rock_diff[0]};
 
 
 Vtx_tn Vtx_rocks_Rock_001_Cube_002_mesh01_0[22] __attribute__((aligned (16))) = {
@@ -171,7 +171,8 @@ Vtx_tn Vtx_rocks_Rock_001_Cube_002_mesh01_0[22] __attribute__((aligned (16))) = 
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_rocks_Rock_001_Cube_002_mesh01_0[0], 22, 0),
+Gfx Vtx_rocks_Rock_001_Cube_002_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_rocks_Rock_001_Cube_002_mesh01_0[0], 22, 0),
 	gsSP2Triangles(0,1,2,0,2,3,4,0),
 	gsSP2Triangles(5,6,7,0,8,9,10,0),
 	gsSP2Triangles(11,12,7,0,13,14,15,0),
@@ -179,8 +180,7 @@ Gfx Vtx_gsSPVertex(&Vtx_rocks_Rock_001_Cube_002_mesh01_0[0], 22, 0),
 	gsSP2Triangles(2,1,3,0,5,18,6,0),
 	gsSP2Triangles(8,16,9,0,19,12,11,0),
 	gsSP2Triangles(12,5,7,0,20,21,15,0),
-	gsSP2Triangles(21,13,15,0,7,6,16,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	rocks_Rock_001_Cube_002,
+	gsSP2Triangles(21,13,15,0,7,6,16,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -195,7 +195,7 @@ Gfx Wtx_rocks_Rock_001_Cube_002[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_rocks_Rock_001_Cube_002[] = {
+MeshTri Tris_rocks_Rock_001_Cube_002[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_rocks_Rock_001_Cube_002_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_rocks_Rock_001_Cube_002_mesh01_0[0]),2,3,4},
 	{(Vtx*)(&Vtx_rocks_Rock_001_Cube_002_mesh01_0[0]),5,6,7},
@@ -214,7 +214,7 @@ MeshTri Tris_rocks_Rock_001_Cube_002[] = {
 	{(Vtx*)(&Vtx_rocks_Rock_001_Cube_002_mesh01_0[0]),7,6,16}
 };
 
-MeshInfo MeshInfo_rocks_Rock_001_Cube_002[] = {&Tris_rocks_Rock_001_Cube_002[0],16,&Text_rocks_rock_diff[0]};
+MeshInfo MeshInfo_rocks_Rock_001_Cube_002[] __attribute__((aligned (16))) = {&Tris_rocks_Rock_001_Cube_002[0],16,&Text_rocks_rock_diff[0]};
 
 
 Vtx_tn Vtx_rocks_Rock_002_Cube_003_mesh01_0[25] __attribute__((aligned (16))) = {
@@ -246,7 +246,8 @@ Vtx_tn Vtx_rocks_Rock_002_Cube_003_mesh01_0[25] __attribute__((aligned (16))) = 
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_rocks_Rock_002_Cube_003_mesh01_0[0], 25, 0),
+Gfx Vtx_rocks_Rock_002_Cube_003_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_rocks_Rock_002_Cube_003_mesh01_0[0], 25, 0),
 	gsSP2Triangles(0,1,2,0,1,3,4,0),
 	gsSP2Triangles(5,6,7,0,8,9,10,0),
 	gsSP2Triangles(11,7,12,0,13,14,15,0),
@@ -256,8 +257,7 @@ Gfx Vtx_gsSPVertex(&Vtx_rocks_Rock_002_Cube_003_mesh01_0[0], 25, 0),
 	gsSP2Triangles(8,17,9,0,21,11,12,0),
 	gsSP2Triangles(11,19,7,0,7,16,12,0),
 	gsSP2Triangles(22,15,14,0,15,23,13,0),
-	gsSP2Triangles(23,24,13,0,16,6,17,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	rocks_Rock_002_Cube_003,
+	gsSP2Triangles(23,24,13,0,16,6,17,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -272,7 +272,7 @@ Gfx Wtx_rocks_Rock_002_Cube_003[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_rocks_Rock_002_Cube_003[] = {
+MeshTri Tris_rocks_Rock_002_Cube_003[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_rocks_Rock_002_Cube_003_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_rocks_Rock_002_Cube_003_mesh01_0[0]),1,3,4},
 	{(Vtx*)(&Vtx_rocks_Rock_002_Cube_003_mesh01_0[0]),5,6,7},
@@ -295,7 +295,7 @@ MeshTri Tris_rocks_Rock_002_Cube_003[] = {
 	{(Vtx*)(&Vtx_rocks_Rock_002_Cube_003_mesh01_0[0]),16,6,17}
 };
 
-MeshInfo MeshInfo_rocks_Rock_002_Cube_003[] = {&Tris_rocks_Rock_002_Cube_003[0],20,&Text_rocks_rock_diff[0]};
+MeshInfo MeshInfo_rocks_Rock_002_Cube_003[] __attribute__((aligned (16))) = {&Tris_rocks_Rock_002_Cube_003[0],20,&Text_rocks_rock_diff[0]};
 
 
 #define ROCKS_MODEL_MESH_COUNT 3

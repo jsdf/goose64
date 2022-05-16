@@ -90,14 +90,14 @@ Vtx_tn Vtx_testingCube_mesh01_0[14] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_testingCube_mesh01_0[0], 14, 0),
+Gfx Vtx_testingCube_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_testingCube_mesh01_0[0], 14, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,7,5,1,0),
 	gsSP2Triangles(5,4,2,0,9,2,4,0),
 	gsSP2Triangles(10,0,2,0,11,3,5,0),
 	gsSP2Triangles(12,6,8,0,8,7,1,0),
-	gsSP2Triangles(1,5,2,0,13,9,4,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	testingCube,
+	gsSP2Triangles(1,5,2,0,13,9,4,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -112,7 +112,7 @@ Gfx Wtx_testingCube[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_testingCube[] = {
+MeshTri Tris_testingCube[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),6,7,8},
@@ -127,7 +127,7 @@ MeshTri Tris_testingCube[] = {
 	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),13,9,4}
 };
 
-MeshInfo MeshInfo_testingCube[] = {&Tris_testingCube[0],12,&Text_testingCube_testCubeTex_diff[0]};
+MeshInfo MeshInfo_testingCube[] __attribute__((aligned (16))) = {&Tris_testingCube[0],12,&Text_testingCube_testCubeTex_diff[0]};
 
 
 #define TESTINGCUBE_MODEL_MESH_COUNT 1

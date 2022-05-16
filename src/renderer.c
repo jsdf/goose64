@@ -1,9 +1,9 @@
 
 #include "renderer.h"
 #include <math.h>
-#include <float.h>
 #ifndef __N64__
 #include <stdio.h>
+#include <float.h>
 #endif
 #ifdef __N64__
 #include <PR/os_internal.h>

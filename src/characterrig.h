@@ -88,7 +88,8 @@ Vtx_tn Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[12] __attribute__((aligne
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0], 12, 0),
+Gfx Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0], 12, 0),
 	gsSP2Triangles(0,1,2,0,3,1,4,0),
 	gsSP2Triangles(5,1,6,0,2,7,0,0),
 	gsSP2Triangles(8,4,5,0,7,9,10,0),
@@ -98,8 +99,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0], 12, 0),
 	gsSP2Triangles(3,2,1,0,5,4,1,0),
 	gsSP2Triangles(2,11,7,0,7,11,9,0),
 	gsSP2Triangles(3,9,11,0,0,7,10,0),
-	gsSP2Triangles(3,8,10,0,6,0,8,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkfoot_r_gkfoot_rmesh,
+	gsSP2Triangles(3,8,10,0,6,0,8,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -114,7 +114,7 @@ Gfx Wtx_characterrig_gkfoot_r_gkfoot_rmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_characterrig_gkfoot_r_gkfoot_rmesh[] = {
+MeshTri Tris_characterrig_gkfoot_r_gkfoot_rmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),3,1,4},
 	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),5,1,6},
@@ -137,7 +137,7 @@ MeshTri Tris_characterrig_gkfoot_r_gkfoot_rmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkfoot_r_gkfoot_rmesh_mesh01_0[0]),6,0,8}
 };
 
-MeshInfo MeshInfo_characterrig_gkfoot_r_gkfoot_rmesh[] = {&Tris_characterrig_gkfoot_r_gkfoot_rmesh[0],20,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkfoot_r_gkfoot_rmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkfoot_r_gkfoot_rmesh[0],20,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[28] __attribute__((aligned (16))) = {
@@ -172,7 +172,8 @@ Vtx_tn Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[28] __attribute__((
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0], 28, 0),
+Gfx Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0], 28, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,7,10,0),
 	gsSP2Triangles(11,12,9,0,13,14,4,0),
@@ -190,8 +191,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0], 28
 	gsSP2Triangles(13,15,21,0,18,20,21,0),
 	gsSP2Triangles(18,4,14,0,22,25,23,0),
 	gsSP2Triangles(24,10,0,0,25,2,9,0),
-	gsSP2Triangles(25,22,0,0,24,23,9,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkforearm_r_gkforearm_rmesh,
+	gsSP2Triangles(25,22,0,0,24,23,9,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -206,7 +206,7 @@ Gfx Wtx_characterrig_gkforearm_r_gkforearm_rmesh[] __attribute__((aligned (16)))
 };
 #endif
 
-MeshTri Tris_characterrig_gkforearm_r_gkforearm_rmesh[] = {
+MeshTri Tris_characterrig_gkforearm_r_gkforearm_rmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),6,7,8},
@@ -245,7 +245,7 @@ MeshTri Tris_characterrig_gkforearm_r_gkforearm_rmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkforearm_r_gkforearm_rmesh_mesh01_0[0]),24,23,9}
 };
 
-MeshInfo MeshInfo_characterrig_gkforearm_r_gkforearm_rmesh[] = {&Tris_characterrig_gkforearm_r_gkforearm_rmesh[0],36,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkforearm_r_gkforearm_rmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkforearm_r_gkforearm_rmesh[0],36,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[32] __attribute__((aligned (16))) = {
@@ -317,7 +317,8 @@ Vtx_tn Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[32] __attribute__((aligned (1
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0], 32, 0),
+Gfx Vtx_characterrig_gkhead_gkheadmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,0,2,0,7,8,0,0),
 	gsSP2Triangles(1,9,10,0,11,12,0,0),
@@ -344,8 +345,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(3,28,4,0,1,7,6,0),
 	gsSP2Triangles(7,5,8,0,29,19,18,0),
 	gsSP2Triangles(9,12,10,0,4,30,8,0),
-	gsSP2Triangles(12,9,13,0,14,31,18,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkhead_gkheadmesh,
+	gsSP2Triangles(12,9,13,0,14,31,18,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -360,7 +360,7 @@ Gfx Wtx_characterrig_gkhead_gkheadmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_characterrig_gkhead_gkheadmesh[] = {
+MeshTri Tris_characterrig_gkhead_gkheadmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_0[0]),6,0,2},
@@ -415,7 +415,7 @@ MeshTri Tris_characterrig_gkhead_gkheadmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkhead_gkheadmesh_mesh01_1[0]),14,31,18}
 };
 
-MeshInfo MeshInfo_characterrig_gkhead_gkheadmesh[] = {&Tris_characterrig_gkhead_gkheadmesh[0],52,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkhead_gkheadmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkhead_gkheadmesh[0],52,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[18] __attribute__((aligned (16))) = {
@@ -440,7 +440,8 @@ Vtx_tn Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[18] __attribute__((aligne
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0], 18, 0),
+Gfx Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0], 18, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,4,10,0),
 	gsSP2Triangles(11,12,13,0,11,0,3,0),
@@ -449,8 +450,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0], 18, 0),
 	gsSP2Triangles(3,16,4,0,6,17,7,0),
 	gsSP2Triangles(9,5,4,0,11,14,12,0),
 	gsSP2Triangles(11,13,0,0,12,15,0,0),
-	gsSP2Triangles(14,11,3,0,14,5,15,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkshin_r_gkshin_rmesh,
+	gsSP2Triangles(14,11,3,0,14,5,15,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -465,7 +465,7 @@ Gfx Wtx_characterrig_gkshin_r_gkshin_rmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_characterrig_gkshin_r_gkshin_rmesh[] = {
+MeshTri Tris_characterrig_gkshin_r_gkshin_rmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),6,7,8},
@@ -486,7 +486,7 @@ MeshTri Tris_characterrig_gkshin_r_gkshin_rmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkshin_r_gkshin_rmesh_mesh01_0[0]),14,5,15}
 };
 
-MeshInfo MeshInfo_characterrig_gkshin_r_gkshin_rmesh[] = {&Tris_characterrig_gkshin_r_gkshin_rmesh[0],18,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkshin_r_gkshin_rmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkshin_r_gkshin_rmesh[0],18,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[31] __attribute__((aligned (16))) = {
@@ -524,7 +524,8 @@ Vtx_tn Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[31] __attribute__((alig
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0], 31, 0),
+Gfx Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0], 31, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,13,14,0,15,16,17,0),
@@ -544,8 +545,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0], 31, 0)
 	gsSP2Triangles(28,29,14,0,25,27,17,0),
 	gsSP2Triangles(26,25,19,0,28,13,17,0),
 	gsSP2Triangles(23,2,11,0,22,24,11,0),
-	gsSP2Triangles(30,8,2,0,30,22,10,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkthigh_r_gkthigh_rmesh,
+	gsSP2Triangles(30,8,2,0,30,22,10,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -560,7 +560,7 @@ Gfx Wtx_characterrig_gkthigh_r_gkthigh_rmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_characterrig_gkthigh_r_gkthigh_rmesh[] = {
+MeshTri Tris_characterrig_gkthigh_r_gkthigh_rmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),6,7,8},
@@ -603,7 +603,7 @@ MeshTri Tris_characterrig_gkthigh_r_gkthigh_rmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkthigh_r_gkthigh_rmesh_mesh01_0[0]),30,22,10}
 };
 
-MeshInfo MeshInfo_characterrig_gkthigh_r_gkthigh_rmesh[] = {&Tris_characterrig_gkthigh_r_gkthigh_rmesh[0],40,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkthigh_r_gkthigh_rmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkthigh_r_gkthigh_rmesh[0],40,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[32] __attribute__((aligned (16))) = {
@@ -708,7 +708,8 @@ Vtx_tn Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[32] __attribute__((aligned 
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0], 32, 0),
+Gfx Vtx_characterrig_gktorso_gktorsomesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(5,0,6,0,7,8,9,0),
 	gsSP2Triangles(9,10,11,0,12,13,14,0),
@@ -753,8 +754,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(29,30,16,0,16,15,26,0),
 	gsSP2Triangles(29,16,10,0,10,16,26,0),
 	gsSP2Triangles(19,5,20,0,5,8,20,0),
-	gsSP1Triangle(8,7,31,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gktorso_gktorsomesh,
+	gsSP1Triangle(8,7,31,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -769,7 +769,7 @@ Gfx Wtx_characterrig_gktorso_gktorsomesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_characterrig_gktorso_gktorsomesh[] = {
+MeshTri Tris_characterrig_gktorso_gktorsomesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_0[0]),5,0,6},
@@ -856,7 +856,7 @@ MeshTri Tris_characterrig_gktorso_gktorsomesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gktorso_gktorsomesh_mesh01_2[0]),8,7,31}
 };
 
-MeshInfo MeshInfo_characterrig_gktorso_gktorsomesh[] = {&Tris_characterrig_gktorso_gktorsomesh[0],84,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gktorso_gktorsomesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gktorso_gktorsomesh[0],84,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[12] __attribute__((aligned (16))) = {
@@ -875,7 +875,8 @@ Vtx_tn Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[12] __attribute__((align
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0], 12, 0),
+Gfx Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0], 12, 0),
 	gsSP2Triangles(0,1,2,0,1,3,4,0),
 	gsSP2Triangles(1,5,2,0,6,7,0,0),
 	gsSP2Triangles(8,5,4,0,9,6,10,0),
@@ -885,8 +886,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0], 12, 0),
 	gsSP2Triangles(1,7,3,0,1,4,5,0),
 	gsSP2Triangles(6,11,7,0,9,11,6,0),
 	gsSP2Triangles(11,9,3,0,10,6,0,0),
-	gsSP2Triangles(3,9,10,0,8,0,2,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkfoot_l_gkfoot_lrmesh,
+	gsSP2Triangles(3,9,10,0,8,0,2,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -901,7 +901,7 @@ Gfx Wtx_characterrig_gkfoot_l_gkfoot_lrmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_characterrig_gkfoot_l_gkfoot_lrmesh[] = {
+MeshTri Tris_characterrig_gkfoot_l_gkfoot_lrmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),1,3,4},
 	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),1,5,2},
@@ -924,7 +924,7 @@ MeshTri Tris_characterrig_gkfoot_l_gkfoot_lrmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkfoot_l_gkfoot_lrmesh_mesh01_0[0]),8,0,2}
 };
 
-MeshInfo MeshInfo_characterrig_gkfoot_l_gkfoot_lrmesh[] = {&Tris_characterrig_gkfoot_l_gkfoot_lrmesh[0],20,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkfoot_l_gkfoot_lrmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkfoot_l_gkfoot_lrmesh[0],20,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[28] __attribute__((aligned (16))) = {
@@ -959,7 +959,8 @@ Vtx_tn Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[28] __attribute__(
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0], 28, 0),
+Gfx Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0], 28, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,8,9,10,0),
 	gsSP2Triangles(9,11,10,0,12,13,3,0),
@@ -977,8 +978,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0], 2
 	gsSP2Triangles(13,17,19,0,19,18,20,0),
 	gsSP2Triangles(20,18,12,0,21,24,22,0),
 	gsSP2Triangles(1,8,24,0,10,2,23,0),
-	gsSP2Triangles(23,2,1,0,24,8,10,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkforearm_l_gkforearm_lrmesh,
+	gsSP2Triangles(23,2,1,0,24,8,10,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -993,7 +993,7 @@ Gfx Wtx_characterrig_gkforearm_l_gkforearm_lrmesh[] __attribute__((aligned (16))
 };
 #endif
 
-MeshTri Tris_characterrig_gkforearm_l_gkforearm_lrmesh[] = {
+MeshTri Tris_characterrig_gkforearm_l_gkforearm_lrmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),6,7,8},
@@ -1032,7 +1032,7 @@ MeshTri Tris_characterrig_gkforearm_l_gkforearm_lrmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkforearm_l_gkforearm_lrmesh_mesh01_0[0]),24,8,10}
 };
 
-MeshInfo MeshInfo_characterrig_gkforearm_l_gkforearm_lrmesh[] = {&Tris_characterrig_gkforearm_l_gkforearm_lrmesh[0],36,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkforearm_l_gkforearm_lrmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkforearm_l_gkforearm_lrmesh[0],36,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[18] __attribute__((aligned (16))) = {
@@ -1057,7 +1057,8 @@ Vtx_tn Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[18] __attribute__((aligne
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0], 18, 0),
+Gfx Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0], 18, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,3,5,0),
 	gsSP2Triangles(10,11,12,0,11,0,12,0),
@@ -1066,8 +1067,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0], 18, 0),
 	gsSP2Triangles(3,15,4,0,6,16,7,0),
 	gsSP2Triangles(9,17,3,0,10,13,11,0),
 	gsSP2Triangles(11,4,0,0,0,2,10,0),
-	gsSP2Triangles(13,5,4,0,2,5,13,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkshin_l_gkshin_lmesh,
+	gsSP2Triangles(13,5,4,0,2,5,13,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -1082,7 +1082,7 @@ Gfx Wtx_characterrig_gkshin_l_gkshin_lmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_characterrig_gkshin_l_gkshin_lmesh[] = {
+MeshTri Tris_characterrig_gkshin_l_gkshin_lmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),6,7,8},
@@ -1103,7 +1103,7 @@ MeshTri Tris_characterrig_gkshin_l_gkshin_lmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkshin_l_gkshin_lmesh_mesh01_0[0]),2,5,13}
 };
 
-MeshInfo MeshInfo_characterrig_gkshin_l_gkshin_lmesh[] = {&Tris_characterrig_gkshin_l_gkshin_lmesh[0],18,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkshin_l_gkshin_lmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkshin_l_gkshin_lmesh[0],18,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[31] __attribute__((aligned (16))) = {
@@ -1141,7 +1141,8 @@ Vtx_tn Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[31] __attribute__((alig
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0], 31, 0),
+Gfx Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0], 31, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(2,12,13,0,14,15,4,0),
@@ -1161,8 +1162,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0], 31, 0)
 	gsSP2Triangles(27,13,12,0,24,16,20,0),
 	gsSP2Triangles(26,17,16,0,20,13,27,0),
 	gsSP2Triangles(11,30,21,0,9,11,23,0),
-	gsSP2Triangles(21,30,7,0,29,7,9,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkthigh_l_gkthigh_lmesh,
+	gsSP2Triangles(21,30,7,0,29,7,9,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -1177,7 +1177,7 @@ Gfx Wtx_characterrig_gkthigh_l_gkthigh_lmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_characterrig_gkthigh_l_gkthigh_lmesh[] = {
+MeshTri Tris_characterrig_gkthigh_l_gkthigh_lmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),6,7,8},
@@ -1220,7 +1220,7 @@ MeshTri Tris_characterrig_gkthigh_l_gkthigh_lmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkthigh_l_gkthigh_lmesh_mesh01_0[0]),29,7,9}
 };
 
-MeshInfo MeshInfo_characterrig_gkthigh_l_gkthigh_lmesh[] = {&Tris_characterrig_gkthigh_l_gkthigh_lmesh[0],40,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkthigh_l_gkthigh_lmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkthigh_l_gkthigh_lmesh[0],40,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[22] __attribute__((aligned (16))) = {
@@ -1249,7 +1249,8 @@ Vtx_tn Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[22] __attribute__((alig
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0], 22, 0),
+Gfx Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0], 22, 0),
 	gsSP2Triangles(0,1,2,0,3,4,1,0),
 	gsSP2Triangles(5,6,7,0,8,4,9,0),
 	gsSP2Triangles(10,5,8,0,0,10,3,0),
@@ -1265,8 +1266,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0], 22, 0)
 	gsSP2Triangles(13,17,1,0,15,14,4,0),
 	gsSP2Triangles(15,6,17,0,14,16,1,0),
 	gsSP2Triangles(12,11,18,0,10,8,19,0),
-	gsSP2Triangles(9,12,19,0,10,18,11,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkbicep_r_gkbicep_rmesh,
+	gsSP2Triangles(9,12,19,0,10,18,11,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -1281,7 +1281,7 @@ Gfx Wtx_characterrig_gkbicep_r_gkbicep_rmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_characterrig_gkbicep_r_gkbicep_rmesh[] = {
+MeshTri Tris_characterrig_gkbicep_r_gkbicep_rmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),3,4,1},
 	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),5,6,7},
@@ -1316,7 +1316,7 @@ MeshTri Tris_characterrig_gkbicep_r_gkbicep_rmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkbicep_r_gkbicep_rmesh_mesh01_0[0]),10,18,11}
 };
 
-MeshInfo MeshInfo_characterrig_gkbicep_r_gkbicep_rmesh[] = {&Tris_characterrig_gkbicep_r_gkbicep_rmesh[0],32,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkbicep_r_gkbicep_rmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkbicep_r_gkbicep_rmesh[0],32,&Text_characterrig_person_diff[0]};
 
 
 Vtx_tn Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[22] __attribute__((aligned (16))) = {
@@ -1345,7 +1345,8 @@ Vtx_tn Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[22] __attribute__((ali
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0], 22, 0),
+Gfx Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0], 22, 0),
 	gsSP2Triangles(0,1,2,0,1,3,4,0),
 	gsSP2Triangles(5,6,7,0,3,8,4,0),
 	gsSP2Triangles(9,6,2,0,2,1,9,0),
@@ -1361,8 +1362,7 @@ Gfx Vtx_gsSPVertex(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0], 22, 0
 	gsSP2Triangles(13,0,14,0,5,3,12,0),
 	gsSP2Triangles(11,14,5,0,3,0,13,0),
 	gsSP2Triangles(16,18,17,0,4,16,10,0),
-	gsSP2Triangles(9,17,18,0,18,16,4,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	characterrig_gkbicep_l_gkbicep_lrmesh,
+	gsSP2Triangles(9,17,18,0,18,16,4,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -1377,7 +1377,7 @@ Gfx Wtx_characterrig_gkbicep_l_gkbicep_lrmesh[] __attribute__((aligned (16))) = 
 };
 #endif
 
-MeshTri Tris_characterrig_gkbicep_l_gkbicep_lrmesh[] = {
+MeshTri Tris_characterrig_gkbicep_l_gkbicep_lrmesh[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),1,3,4},
 	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),5,6,7},
@@ -1412,7 +1412,7 @@ MeshTri Tris_characterrig_gkbicep_l_gkbicep_lrmesh[] = {
 	{(Vtx*)(&Vtx_characterrig_gkbicep_l_gkbicep_lrmesh_mesh01_0[0]),18,16,4}
 };
 
-MeshInfo MeshInfo_characterrig_gkbicep_l_gkbicep_lrmesh[] = {&Tris_characterrig_gkbicep_l_gkbicep_lrmesh[0],32,&Text_characterrig_person_diff[0]};
+MeshInfo MeshInfo_characterrig_gkbicep_l_gkbicep_lrmesh[] __attribute__((aligned (16))) = {&Tris_characterrig_gkbicep_l_gkbicep_lrmesh[0],32,&Text_characterrig_person_diff[0]};
 
 
 #define CHARACTERRIG_MODEL_MESH_COUNT 12

@@ -169,7 +169,8 @@ Vtx_tn Vtx_book_mesh01_0[32] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_book_mesh01_0[0], 32, 0),
+Gfx Vtx_book_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_book_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,0,3,4,0),
 	gsSP2Triangles(5,6,7,0,7,8,5,0),
 	gsSP2Triangles(9,10,11,0,12,8,13,0),
@@ -202,8 +203,7 @@ Gfx Vtx_gsSPVertex(&Vtx_book_mesh01_0[0], 32, 0),
 	gsSP2Triangles(10,12,11,0,13,14,15,0),
 	gsSP2Triangles(6,16,17,0,18,19,20,0),
 	gsSP2Triangles(21,10,9,0,22,23,24,0),
-	gsSP2Triangles(23,25,24,0,25,26,24,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	book,
+	gsSP2Triangles(23,25,24,0,25,26,24,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -218,7 +218,7 @@ Gfx Wtx_book[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_book[] = {
+MeshTri Tris_book[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_book_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_book_mesh01_0[0]),0,3,4},
 	{(Vtx*)(&Vtx_book_mesh01_0[0]),5,6,7},
@@ -281,7 +281,7 @@ MeshTri Tris_book[] = {
 	{(Vtx*)(&Vtx_book_mesh01_2[0]),25,26,24}
 };
 
-MeshInfo MeshInfo_book[] = {&Tris_book[0],60,&Text_book_book_diff[0]};
+MeshInfo MeshInfo_book[] __attribute__((aligned (16))) = {&Tris_book[0],60,&Text_book_book_diff[0]};
 
 
 #define BOOK_MODEL_MESH_COUNT 1

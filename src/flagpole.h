@@ -210,7 +210,8 @@ Vtx_tn Vtx_flagpole_mesh01_0[32] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_flagpole_mesh01_0[0], 32, 0),
+Gfx Vtx_flagpole_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_flagpole_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
 	gsSP2Triangles(12,3,5,0,13,6,8,0),
@@ -256,8 +257,7 @@ Gfx Vtx_gsSPVertex(&Vtx_flagpole_mesh01_0[0], 32, 0),
 	gsSP2Triangles(25,26,27,0,28,29,30,0),
 	gsSP1Triangle(0,3,1,0),
 	gsSPVertex(&Vtx_flagpole_mesh01_4[0], 3, 0),
-	gsSP1Triangle(0,1,2,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	flagpole,
+	gsSP1Triangle(0,1,2,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -272,7 +272,7 @@ Gfx Wtx_flagpole[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_flagpole[] = {
+MeshTri Tris_flagpole[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_flagpole_mesh01_0[0]),6,7,8},
@@ -357,7 +357,7 @@ MeshTri Tris_flagpole[] = {
 	{(Vtx*)(&Vtx_flagpole_mesh01_4[0]),0,1,2}
 };
 
-MeshInfo MeshInfo_flagpole[] = {&Tris_flagpole[0],82,&Text_flagpole_flagpole_diff[0]};
+MeshInfo MeshInfo_flagpole[] __attribute__((aligned (16))) = {&Tris_flagpole[0],82,&Text_flagpole_flagpole_diff[0]};
 
 
 #define FLAGPOLE_MODEL_MESH_COUNT 1

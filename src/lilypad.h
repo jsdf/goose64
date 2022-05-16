@@ -89,14 +89,14 @@ Vtx_tn Vtx_lilypad_mesh01_0[13] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_gsSPVertex(&Vtx_lilypad_mesh01_0[0], 13, 0),
+Gfx Vtx_lilypad_mesh01_dl[] __attribute__((aligned (16))) = {
+	gsSPVertex(&Vtx_lilypad_mesh01_0[0], 13, 0),
 	gsSP2Triangles(0,1,2,0,3,4,0,0),
 	gsSP2Triangles(4,5,0,0,5,6,0,0),
 	gsSP2Triangles(6,7,0,0,0,8,1,0),
 	gsSP2Triangles(9,3,0,0,10,11,0,0),
 	gsSP2Triangles(11,9,0,0,2,12,0,0),
-	gsSP1Triangle(12,10,0,0)_mesh01_dl[] __attribute__((aligned (16))) = {
-	lilypad,
+	gsSP1Triangle(12,10,0,0),
 	gsSPEndDisplayList(),
 };
 #endif
@@ -111,7 +111,7 @@ Gfx Wtx_lilypad[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_lilypad[] = {
+MeshTri Tris_lilypad[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),3,4,0},
 	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),4,5,0},
@@ -125,7 +125,7 @@ MeshTri Tris_lilypad[] = {
 	{(Vtx*)(&Vtx_lilypad_mesh01_0[0]),12,10,0}
 };
 
-MeshInfo MeshInfo_lilypad[] = {&Tris_lilypad[0],11,&Text_lilypad_lilypad_diff[0]};
+MeshInfo MeshInfo_lilypad[] __attribute__((aligned (16))) = {&Tris_lilypad[0],11,&Text_lilypad_lilypad_diff[0]};
 
 
 #define LILYPAD_MODEL_MESH_COUNT 1

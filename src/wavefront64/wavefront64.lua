@@ -445,8 +445,8 @@ function w64_outputTriangles(facesInPacks, facesPackRefs, one_tri, objname)
 	print("Success creating faces and verts!")
 	return string.format(
 		"#ifdef __N64__\nGfx Vtx_%s_mesh01_dl[] __attribute__((aligned (16))) = {\n\t%s,\n\tgsSPEndDisplayList(),\n};\n#endif\n",
-		table.concat(faceOutputTable,",\n\t"),
-		objname
+		objname,
+		table.concat(faceOutputTable,",\n\t")
 	)
 	
 end
@@ -476,11 +476,11 @@ function w64_outputMeshInfo(facesInPacks, facesPackRefs,  objname,mainobjname,te
 
 
 	return string.format(
-		"MeshTri Tris_%s[] = {\n\t%s\n};\n\n",
+		"MeshTri Tris_%s[] __attribute__((aligned (16))) = {\n\t%s\n};\n\n",
 		objname,
 		table.concat(triOutputTable,",\n\t")
 	).."MeshInfo MeshInfo_"..objname..
-	"[] = {&Tris_"..objname..
+	"[] __attribute__((aligned (16))) = {&Tris_"..objname..
 	"[0],"..#triOutputTable..
 ","..string.format("&Text_%s_%s_diff[0]",mainobjname,texturename).."};\n"
 
