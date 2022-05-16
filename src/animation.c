@@ -80,7 +80,7 @@ void AnimationFrame_lerp(
   Quaternion quaternionA, quaternionB;
   Euler radiansA, radiansB, radiansResult;
   int frameDataOffsetA, frameDataOffsetB;
-  float profStartAnimLerp;
+  // float profStartAnimLerp;
   AnimationFrame *a, *b;
 
 #ifndef __N64__
@@ -106,10 +106,10 @@ void AnimationFrame_lerp(
   Euler_fromEulerDegrees(&radiansA, &a->rotation);
   Euler_fromEulerDegrees(&radiansB, &b->rotation);
 
-  profStartAnimLerp = CUR_TIME_MS();
+  // profStartAnimLerp = CUR_TIME_MS();
   Quaternion_fromEuler(&quaternionA, &radiansA);
   Quaternion_fromEuler(&quaternionB, &radiansB);
-  Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp, CUR_TIME_MS());
+  // Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp, CUR_TIME_MS());
 
   Quaternion_slerp(&quaternionA, &quaternionB, interp->t);
 

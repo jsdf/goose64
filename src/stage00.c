@@ -796,7 +796,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
   int visibleObjectsCount;
   int visibilityCulled = 0;
   float profStartSort, profStartIter, profStartAnim;
-  float profStartAnimLerp;
+  // float profStartAnimLerp;
   float profStartFrustum;
 
   game = Game_get();
@@ -962,7 +962,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
       AnimationInterpolation_calc(&animInterp, obj->animState, curAnimRange);
 
       for (modelMeshIdx = 0; modelMeshIdx < modelMeshParts; ++modelMeshIdx) {
-        profStartAnimLerp = CUR_TIME_MS();
+        // profStartAnimLerp = CUR_TIME_MS();
         // lerping takes about 0.2ms per bone
         if (shouldLerpAnimation(obj->modelType)) {
           AnimationFrame_lerp(
@@ -983,8 +983,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
               &animFrame     // the resultant interpolated animation frame
           );
         }
-        Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp,
-        CUR_TIME_MS());
+        // Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp, CUR_TIME_MS());
 
         // push matrix with the blender to n64 coord rotation, then mulitply
         // it by the model's rotation and offset
