@@ -40,9 +40,6 @@
 #include "garden_map.h"
 #include "garden_map_collision.h"
 #include "garden_map_graph.h"
-// anim data
-#include "character_anim.h"
-#include "goose_anim.h"
 
 #include "ed64io.h"
 
@@ -51,19 +48,9 @@
 
 #define CONTROLLER_DEAD_ZONE 0.1
 #define SOUND_TEST 0
-#define DRAW_SPRITES 0
-
-typedef enum RenderMode {
-  ToonFlatShadingRenderMode,
-  TextureAndLightingRenderMode,
-  TextureNoLightingRenderMode,
-  NoTextureNoLightingRenderMode,
-  LightingNoTextureRenderMode,
-  WireframeRenderMode,
-  MAX_RENDER_MODE
-} RenderMode;
 
 typedef enum ConsoleMode {
+  CONSOLE_HIDDEN,
   CONSOLE_SHOW_CAMERA,
   CONSOLE_SHOW_CPU_PROFILING,
   CONSOLE_SHOW_CULLING,
@@ -75,7 +62,7 @@ typedef enum ConsoleMode {
   MAX_CONSOLE_MODE
 } ConsoleMode;
 
-static int consoleShown = FALSE;
+#define consoleShown() consoleMode == CONSOLE_HIDDEN
 static int nuPerfBarShown = FALSE;
 static ConsoleMode consoleMode = CONSOLE_SHOW_PROFILING;
 
@@ -86,7 +73,7 @@ static Input input;
 static u16 perspNorm;
 static u32 nearPlane; /* Near Plane */
 static u32 farPlane;  /* Far Plane */
-static Frustum frustum;
+
 #if HIGH_RESOLUTION && HIGH_RESOLUTION_HALF_Y
 static float aspect = (f32)SCREEN_WD / (f32)(SCREEN_HT * 2);
 #else
@@ -109,8 +96,6 @@ float profAvgPath;
 float lastFrameTime;
 float profilingAverages[MAX_TRACE_EVENT_TYPE];
 
-static int objectsCulled;
-
 static int usbEnabled;
 static int usbResult;
 static UsbLoggerState usbLoggerState;
@@ -118,40 +103,12 @@ static UsbLoggerState usbLoggerState;
 static int logTraceStartOffset = 0;
 static int loggingTrace = FALSE;
 
-static int twoCycleMode;
-static RenderMode renderModeSetting;
 PhysWorldData physWorldData;
 
-void drawWorldObjects(Dynamic* dynamicp);
 void soundCheck(void);
 void Rom2Ram(void*, void*, s32);
-int screenProject(Vec3d* obj,
-                  MtxF modelMatrix,
-                  MtxF projMatrix,
-                  ViewportF viewport,
-                  Vec3d* win);
-void drawSprite(unsigned short* sprData,
-                int sprWidth,
-                int sprHeight,
-                int x,
-                int y,
-                int width,
-                int height,
-                int centered);
 
 #define OBJ_START_VAL 1000
-
-Lights1 sun_light = gdSPDefLights1(120,
-                                   120,
-                                   120, /* weak ambient light */
-                                   255,
-                                   255,
-                                   255, /* white light */
-                                   80,
-                                   80,
-                                   0);
-
-Lights0 amb_light = gdSPDefLights0(200, 200, 200 /*  ambient light */);
 
 static musHandle sndHandle = 0;
 static musHandle seqHandle = 0;
@@ -159,6 +116,11 @@ static float sndPitch = 10.5;  // i don't fucking know :((
 static int sndNumber = 0;
 static int honkSoundRange = Honk5Sound - Honk1Sound;
 static int seqPlaying = FALSE;
+
+#define NUM_DEBUG_RENDER_MODES 3
+static int debugRenderMode = 0;
+static RenderMode debugRenderModes[] = {
+    ToonFlatShadingRenderMode, WireframeRenderMode, NormalColorRenderMode};
 
 /* The initialization of stage 0 */
 void initStage00() {
@@ -208,8 +170,6 @@ void initStage00() {
 
   loggingTrace = FALSE;
 
-  twoCycleMode = FALSE;
-  renderModeSetting = ToonFlatShadingRenderMode;
   nearPlane = DEFAULT_NEARPLANE;
   farPlane = DEFAULT_FARPLANE;
   Vec3d_init(&viewPos, 0.0F, 0.0F, -400.0F);
@@ -217,6 +177,7 @@ void initStage00() {
   Input_init(&input);
 
   Game_init(garden_map_data, GARDEN_MAP_COUNT, &physWorldData);
+  Option_initAll();
 
   invariant(GARDEN_MAP_COUNT <= MAX_WORLD_OBJECTS);
 
@@ -224,6 +185,7 @@ void initStage00() {
 
   game->pathfindingGraph = &garden_map_graph;
   game->pathfindingState = &garden_map_graph_pathfinding_state;
+  game->worldObjectsBounds = garden_map_bounds;
 
   lastFrameTime = CUR_TIME_MS();
 
@@ -349,7 +311,8 @@ void makeDL00() {
   gfxClearCfb(GPACK_RGBA5551(0, 0, 0, 1));
 #endif
 
-  Frustum_setCamInternals(&frustum, fovy, aspect, nearPlane, farPlane);
+  Frustum_setCamInternals(&N64Renderer_frustum, fovy, aspect, nearPlane,
+                          farPlane);
 
   /* projection, viewing, modeling matrix set */
   guPerspective(&dynamicp->projection, &perspNorm, fovy, aspect, nearPlane,
@@ -358,7 +321,8 @@ void makeDL00() {
 
   // gSPClipRatio(glistp++, FRUSTRATIO_4);
 
-  Frustum_setCamDef(&frustum, &game->viewPos, &game->viewTarget, &upVector);
+  Frustum_setCamDef(&N64Renderer_frustum, &game->viewPos, &game->viewTarget,
+                    &upVector);
 
   if (game->freeView) {
     guPosition(&dynamicp->camera,
@@ -373,7 +337,7 @@ void makeDL00() {
              game->viewTarget.z, upVector.x, upVector.y, upVector.z);
   }
 
-  drawWorldObjects(dynamicp);
+  N64Renderer_drawWorldObjects(dynamicp);
 
   gDPFullSync(glistp++);
   gSPEndDisplayList(glistp++);
@@ -385,10 +349,10 @@ void makeDL00() {
   nuGfxTaskStart(
       &gfx_glist[gfx_gtask_no][0],
       (s32)(glistp - gfx_glist[gfx_gtask_no]) * sizeof(Gfx),
-      renderModeSetting == WireframeRenderMode ? NU_GFX_UCODE_L3DEX2
-                                               : NU_GFX_UCODE_F3DEX,
+      N64Renderer_renderMode == WireframeRenderMode ? NU_GFX_UCODE_L3DEX2
+                                                    : NU_GFX_UCODE_F3DEX,
       // swap buffer if we don't also have another task to show debug stuff
-      consoleShown || nuPerfBarShown ? NU_SC_NOSWAPBUFFER : NU_SC_SWAPBUFFER);
+      consoleShown() || nuPerfBarShown ? NU_SC_NOSWAPBUFFER : NU_SC_SWAPBUFFER);
 
   /* Switch display list buffers */
   gfx_gtask_no ^= 1;
@@ -404,8 +368,8 @@ void makeDL00() {
 
 // debug text overlay
 #if DEBUG
-  if (consoleShown) {
-    invariant(!(consoleShown && nuPerfBarShown));
+  if (consoleShown()) {
+    invariant(!(consoleShown() && nuPerfBarShown));
     nuDebConClear(0);
     consoleOffset = 21;
 
@@ -461,7 +425,7 @@ void makeDL00() {
         break;
         case CONSOLE_SHOW_CULLING:
           nuDebConTextPos(0, 4, consoleOffset++);
-          sprintf(conbuf, "culled=%d", objectsCulled);
+          sprintf(conbuf, "culled=%d", N64Renderer_objectsCulled);
           nuDebConCPuts(0, conbuf);
           break;
         case CONSOLE_SHOW_CAMERA:
@@ -519,10 +483,6 @@ void checkDebugControls(Game* game) {
   viewRot.x = contdata->stick_y;  // rot around x
   viewRot.y = contdata->stick_x;  // rot around y
 
-  /* The reverse rotation by the A button */
-  if (contdata[0].trigger & A_BUTTON) {
-    twoCycleMode = !twoCycleMode;
-  }
   /* Change the moving speed with up/down buttons of controller */
   if (contdata[0].button & U_JPAD)
     viewPos.z += 10.0;
@@ -611,19 +571,17 @@ void updateGame00(void) {
   /* Data reading of controller 1 */
   nuContDataGetEx(contdata, 0);
   if (contdata[0].trigger & START_BUTTON) {
-    // renderModeSetting++;
-    // if (renderModeSetting >= MAX_RENDER_MODE) {
-    //   renderModeSetting = 0;
-    // }
-    renderModeSetting = renderModeSetting == ToonFlatShadingRenderMode
-                            ? WireframeRenderMode
-                            : ToonFlatShadingRenderMode;
+    debugRenderMode++;
+    if (debugRenderMode >= NUM_DEBUG_RENDER_MODES) {
+      debugRenderMode = 0;
+    }
+    N64Renderer_renderMode = debugRenderModes[debugRenderMode];
   }
 
 #if SOUND_TEST
   soundCheck();
 #endif
-  if (contdata[0].trigger & Z_TRIG) {
+  if (contdata[0].trigger & L_TRIG) {
     game->freeView = !game->freeView;
   }
   if (game->freeView) {
@@ -636,7 +594,7 @@ void updateGame00(void) {
     if (contdata[0].button & B_BUTTON) {
       input.pickup = TRUE;
     }
-    if (contdata[0].button & L_TRIG) {
+    if (contdata[0].button & Z_TRIG) {
       input.zoomIn = TRUE;
     }
     if (contdata[0].button & R_TRIG) {
@@ -644,26 +602,18 @@ void updateGame00(void) {
     }
 
     if (contdata[0].trigger & L_JPAD) {
-      if (consoleShown) {
-        if (consoleMode == 0) {
-          consoleMode = MAX_CONSOLE_MODE - 1;
-          consoleShown = FALSE;
-        } else {
-          consoleMode -= 1;
-        }
+      // letting an enum go negative is undefined behavior, so wrap it now
+      if (consoleMode == 0) {
+        consoleMode = MAX_CONSOLE_MODE - 1;
       } else {
-        consoleShown = TRUE;
+        consoleMode -= 1;
       }
     }
     if (contdata[0].trigger & R_JPAD) {
-      if (consoleShown) {
-        consoleMode += 1;
-        if (consoleMode == MAX_CONSOLE_MODE) {
-          consoleMode = 0;
-          consoleShown = FALSE;
-        }
+      if (consoleMode == MAX_CONSOLE_MODE - 1) {
+        consoleMode = 0;
       } else {
-        consoleShown = TRUE;
+        consoleMode += 1;
       }
     }
 
@@ -795,7 +745,7 @@ void updateGame00(void) {
 void stage00(int pendingGfx) {
   float skippedGfxTime, profStartUpdate, profStartFrame, profEndFrame;
   // an extra task is used to draw debug stuff
-  int gfxTasksPerMakeDL = consoleShown || nuPerfBarShown ? 2 : 1;
+  int gfxTasksPerMakeDL = consoleShown() || nuPerfBarShown ? 2 : 1;
   profStartFrame = CUR_TIME_MS();
   /* Provide the display process if n or less RCP tasks are processing or
         waiting for the process.  */
@@ -821,372 +771,6 @@ void stage00(int pendingGfx) {
   Trace_addEvent(MainUpdateTraceEvent, profStartUpdate, profEndFrame);
   profilingAccumulated[MainCPUTraceEvent] += profEndFrame - profStartFrame;
   profilingCounts[MainCPUTraceEvent]++;
-}
-
-typedef enum LightingType {
-  SunLighting,
-  OnlyAmbientLighting,
-  MAX_LIGHTING_TYPE
-} LightingType;
-
-LightingType getLightingType(GameObject* obj) {
-  switch (obj->modelType) {
-    case UniFloorModel:
-      return OnlyAmbientLighting;
-    default:
-      return SunLighting;
-  }
-}
-
-int getAnimationNumModelMeshParts(ModelType modelType) {
-  switch (modelType) {
-    case GooseModel:
-      return MAX_GOOSE_MESH_TYPE;
-    default:
-      return MAX_CHARACTER_MESH_TYPE;
-  }
-}
-
-int shouldLerpAnimation(ModelType modelType) {
-  switch (modelType) {
-    case GooseModel:
-      return TRUE;
-    default:
-      return FALSE;
-  }
-}
-
-AnimationRange* getCurrentAnimationRange(GameObject* obj) {
-  if (obj->modelType == GooseModel) {
-    return &goose_anim_ranges[(GooseAnimType)obj->animState->state];
-  } else {
-    return &character_anim_ranges[(CharacterAnimType)obj->animState->state];
-  }
-}
-
-AnimationFrame* getAnimData(ModelType modelType) {
-  switch (modelType) {
-    case GooseModel:
-      return goose_anim_data;
-    default:
-      return character_anim_data;
-  }
-}
-
-void drawWorldObjects(Dynamic* dynamicp) {
-  Game* game;
-  GameObject* obj;
-  int i, useZBuffering;
-  int modelMeshIdx;
-  int modelMeshParts;
-  Gfx* modelDisplayList;
-  AnimationFrame animFrame;
-  AnimationInterpolation animInterp;
-  AnimationRange* curAnimRange;
-  AnimationBoneAttachment* attachment;
-  RendererSortDistance* visibleObjDistance;
-  int* worldObjectsVisibility;
-  int* intersectingObjects;
-  int visibleObjectsCount;
-  int visibilityCulled = 0;
-  float profStartSort, profStartIter, profStartAnim;
-  // float profStartAnimLerp;
-  float profStartFrustum;
-
-  game = Game_get();
-  worldObjectsVisibility = (int*)malloc(game->worldObjectsCount * sizeof(int));
-  invariant(worldObjectsVisibility);
-
-  profStartFrustum = CUR_TIME_MS();
-  visibilityCulled = Renderer_cullVisibility(
-      game->worldObjects, game->worldObjectsCount, worldObjectsVisibility,
-      &frustum, garden_map_bounds);
-  objectsCulled = visibilityCulled;
-
-  Trace_addEvent(DrawFrustumCullTraceEvent, profStartFrustum, CUR_TIME_MS());
-
-  // only alloc space for num visible objects
-  visibleObjectsCount = game->worldObjectsCount - visibilityCulled;
-  visibleObjDistance = (RendererSortDistance*)malloc(
-      (visibleObjectsCount) * sizeof(RendererSortDistance));
-  invariant(visibleObjDistance);
-
-  profStartSort = CUR_TIME_MS();
-  Renderer_sortVisibleObjects(game->worldObjects, game->worldObjectsCount,
-                              worldObjectsVisibility, visibleObjectsCount,
-                              visibleObjDistance, &game->viewPos,
-                              garden_map_bounds);
-  Trace_addEvent(DrawSortTraceEvent, profStartSort, CUR_TIME_MS());
-
-  // boolean of whether an object intersects another (for z buffer
-  // optimization)
-  intersectingObjects = (int*)malloc((visibleObjectsCount) * sizeof(int));
-  invariant(intersectingObjects);
-  Renderer_calcIntersecting(intersectingObjects, visibleObjectsCount,
-                            visibleObjDistance, garden_map_bounds);
-
-  gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-  gDPSetCycleType(glistp++, twoCycleMode ? G_CYC_2CYCLE : G_CYC_1CYCLE);
-
-  // z-buffered, antialiased triangles
-  //
-#if !RENDERER_PAINTERS_ALGORITHM
-  gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
-  gSPSetGeometryMode(glistp++, G_ZBUFFER);
-#endif
-
-  gSPSetLights0(glistp++, amb_light);
-
-  // setup view
-  gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
-            G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
-  gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->camera)),
-            G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
-
-  profStartIter = CUR_TIME_MS();
-  // render world objects
-  for (i = 0; i < visibleObjectsCount; i++) {
-    // iterate visible objects far to near
-    obj = (visibleObjDistance + i)->obj;
-
-    // render textured models
-    gSPTexture(glistp++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
-    gDPSetTextureFilter(glistp++, G_TF_BILERP);
-    gDPSetTexturePersp(glistp++, G_TP_PERSP);
-
-    switch (renderModeSetting) {
-      case TextureAndLightingRenderMode:
-      case LightingNoTextureRenderMode:
-        if (getLightingType(obj) == OnlyAmbientLighting) {
-          gSPSetLights0(glistp++, amb_light);
-
-        } else {
-          gSPSetLights1(glistp++, sun_light);
-        }
-        break;
-      default:
-        break;
-    }
-
-    gSPClearGeometryMode(glistp++, 0xFFFFFFFF);
-    invariant(i < visibleObjectsCount);
-    invariant(obj != NULL);
-    if (!RENDERER_PAINTERS_ALGORITHM ||  // always z buffer
-
-        intersectingObjects[i] ||
-        // animated game objects have concave shapes, need z buffering
-        Renderer_isAnimatedGameObject(obj)) {
-      if (!RENDERER_PAINTERS_ALGORITHM ||  // always z buffer
-          Renderer_isZBufferedGameObject(obj)) {
-        if (ANTIALIASING) {
-          gDPSetRenderMode(glistp++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
-        } else {
-          gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
-        }
-        gSPSetGeometryMode(glistp++, G_ZBUFFER);
-      } else /*if (Renderer_isZWriteGameObject(obj))*/ {
-        if (ANTIALIASING) {
-          gDPSetRenderMode(glistp++, G_RM_AA_ZUPD_OPA_SURF,
-                           G_RM_AA_ZUPD_OPA_SURF2);
-        } else {
-          gDPSetRenderMode(glistp++, G_RM_ZUPD_OPA_SURF, G_RM_ZUPD_OPA_SURF2);
-        }
-        gSPSetGeometryMode(glistp++, G_ZBUFFER);
-      }
-    } else {
-      if (ANTIALIASING) {
-        gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
-      } else {
-        gDPSetRenderMode(glistp++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
-      }
-    }
-
-    switch (renderModeSetting) {
-      case ToonFlatShadingRenderMode:
-        // if (Renderer_isLitGameObject(obj)) {
-        //   gSPSetGeometryMode(glistp++, G_SHADE | G_LIGHTING | G_CULL_BACK);
-        // } else {
-        //   gSPSetGeometryMode(glistp++, G_SHADE | G_CULL_BACK);
-        // }
-
-        gSPSetGeometryMode(glistp++, G_CULL_BACK);
-        gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
-        break;
-      case TextureNoLightingRenderMode:
-      case WireframeRenderMode:
-        gSPSetGeometryMode(glistp++, G_SHADE | G_SHADING_SMOOTH | G_CULL_BACK);
-        gDPSetCombineMode(glistp++, G_CC_DECALRGB, G_CC_DECALRGB);
-        break;
-      case TextureAndLightingRenderMode:
-        gSPSetGeometryMode(
-            glistp++, G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_CULL_BACK);
-        gDPSetCombineMode(glistp++, G_CC_MODULATERGB, G_CC_MODULATERGB);
-        break;
-      case LightingNoTextureRenderMode:
-        gSPSetGeometryMode(
-            glistp++, G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_CULL_BACK);
-        gDPSetCombineMode(glistp++, G_CC_SHADE, G_CC_SHADE);
-        break;
-      default:  // NoTextureNoLightingRenderMode
-        gDPSetPrimColor(glistp++, 0, 0, /*r*/ 180, /*g*/ 180, /*b*/ 180,
-                        /*a*/ 255);
-        gSPSetGeometryMode(glistp++, G_CULL_BACK);
-        gDPSetCombineMode(glistp++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-    }
-
-    // set the transform in world space for the gameobject to render
-    guPosition(&dynamicp->objTransforms[i],
-               0.0F,                                        // rot x
-               obj->rotation.y,                             // rot y
-               0.0F,                                        // rot z
-               modelTypesProperties[obj->modelType].scale,  // scale
-               obj->position.x,                             // pos x
-               obj->position.y,                             // pos y
-               obj->position.z                              // pos z
-    );
-    gSPMatrix(
-        glistp++, OS_K0_TO_PHYSICAL(&(dynamicp->objTransforms[i])),
-        G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);  // gameobject mtx start
-
-    if (Renderer_isAnimatedGameObject(obj)) {
-      // case for multi-part objects using rigid body animation
-      profStartAnim = CUR_TIME_MS();
-
-      modelMeshParts = getAnimationNumModelMeshParts(obj->modelType);
-      curAnimRange = getCurrentAnimationRange(obj);
-      AnimationInterpolation_calc(&animInterp, obj->animState, curAnimRange);
-
-      for (modelMeshIdx = 0; modelMeshIdx < modelMeshParts; ++modelMeshIdx) {
-        // profStartAnimLerp = CUR_TIME_MS();
-        // lerping takes about 0.2ms per bone
-        if (shouldLerpAnimation(obj->modelType)) {
-          AnimationFrame_lerp(
-              &animInterp,  // result of AnimationInterpolation_calc()
-              getAnimData(
-                  obj->modelType),  // pointer to start of AnimationFrame list
-              modelMeshParts,       // num bones in rig used by animData
-              modelMeshIdx,  // index of bone in rig to produce transform for
-              &animFrame     // the resultant interpolated animation frame
-          );
-        } else {
-          AnimationFrame_get(
-              &animInterp,  // result of AnimationInterpolation_calc()
-              getAnimData(
-                  obj->modelType),  // pointer to start of AnimationFrame list
-              modelMeshParts,       // num bones in rig used by animData
-              modelMeshIdx,  // index of bone in rig to produce transform for
-              &animFrame     // the resultant interpolated animation frame
-          );
-        }
-        // Trace_addEvent(AnimLerpTraceEvent, profStartAnimLerp, CUR_TIME_MS());
-
-        // push matrix with the blender to n64 coord rotation, then mulitply
-        // it by the model's rotation and offset
-
-        // rotate from z-up (blender) to y-up (opengl) coords
-        // TODO: move as many of these transformations as possible to
-        // be precomputed in animation data
-        guRotate(&dynamicp->zUpToYUpCoordinatesRotation, -90.0f, 1, 0, 0);
-        gSPMatrix(glistp++,
-                  OS_K0_TO_PHYSICAL(&(dynamicp->zUpToYUpCoordinatesRotation)),
-                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
-
-        guPosition(&obj->animState->animMeshTransform[modelMeshIdx],
-                   animFrame.rotation.x,  // roll
-                   animFrame.rotation.y,  // pitch
-                   animFrame.rotation.z,  // yaw
-                   1.0F,                  // scale
-                   animFrame.position.x,  // pos x
-                   animFrame.position.y,  // pos y
-                   animFrame.position.z   // pos z
-        );
-        gSPMatrix(glistp++,
-                  OS_K0_TO_PHYSICAL(
-                      &(obj->animState->animMeshTransform[modelMeshIdx])),
-                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
-
-        gSPDisplayList(glistp++, getMeshDisplayListForModelMeshPart(
-                                     obj->modelType, animFrame.object));
-
-        attachment = &obj->animState->attachment;
-        if (attachment->modelType != NoneModel &&
-            attachment->boneIndex == modelMeshIdx) {
-          guPosition(&obj->animState->attachmentTransform,
-                     attachment->rotation.x,  // roll
-                     attachment->rotation.y,  // pitch
-                     attachment->rotation.z,  // yaw
-                     1.0F,                    // scale
-                     attachment->offset.x,    // pos x
-                     attachment->offset.y,    // pos y
-                     attachment->offset.z     // pos z
-          );
-          gSPMatrix(glistp++,
-                    OS_K0_TO_PHYSICAL(&(obj->animState->attachmentTransform)),
-                    G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
-          modelDisplayList = getModelDisplayList(attachment->modelType, 0);
-          gSPDisplayList(glistp++, modelDisplayList);
-          gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
-        }
-
-        gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
-      }
-      Trace_addEvent(DrawAnimTraceEvent, profStartAnim, CUR_TIME_MS());
-    } else {
-      // case for simple gameobjects with no moving sub-parts
-      modelDisplayList = getModelDisplayList(obj->modelType, obj->subtype);
-
-      gSPDisplayList(glistp++, modelDisplayList);
-    }
-
-    gSPPopMatrix(glistp++, G_MTX_MODELVIEW);  // gameobject mtx end
-
-    gDPPipeSync(glistp++);
-  }
-
-#if DRAW_SPRITES
-  {
-    ViewportF viewport = {0, 0, SCREEN_WD, SCREEN_HT};
-    float width = 64;
-    float height = 64;
-    Vec3d center;
-    Vec3d projected;
-    MtxF modelViewMtxF;
-    MtxF projectionMtxF;
-
-    guMtxL2F(modelViewMtxF, &dynamicp->camera);
-    guMtxL2F(projectionMtxF, &dynamicp->projection);
-    for (i = 0; i < visibleObjectsCount; i++) {
-      obj = visibleObjDistance[i].obj;
-      Game_getObjCenter(obj, &center);
-      center.y += 75;
-      if (!obj->animState) {
-        continue;
-      }
-      screenProject(&center, modelViewMtxF, projectionMtxF, viewport,
-                    &projected);
-
-      // render sprites
-      drawSprite(getSpriteForSpriteType(HonkSprite,
-                                        Sprite_frameCycle(HONK_SPRITE_FRAMES,
-                                                          /*sprite frame
-                                                          duration*/
-                                                          10, game->tick)),
-
-                 32, 32,  // texture dimensions
-                 projected.x,
-                 SCREEN_HT - projected.y,  // draw at pos, invert y
-                 RES_SCALE_X(width), RES_SCALE_Y(height), TRUE
-
-      );
-    }
-  }
-#endif
-
-  free(intersectingObjects);
-  free(visibleObjDistance);
-  free(worldObjectsVisibility);
-
-  Trace_addEvent(DrawIterTraceEvent, profStartIter, CUR_TIME_MS());
 }
 
 /* Provide playback and control of audio by the button of the controller */
@@ -1234,90 +818,4 @@ void Rom2Ram(void* from_addr, void* to_addr, s32 seq_size) {
     seq_size++;
 
   nuPiReadRom((u32)from_addr, to_addr, seq_size);
-}
-
-void drawSprite(unsigned short* sprData,
-                int sprWidth,
-                int sprHeight,
-                int atX,
-                int atY,
-                int width,
-                int height,
-                int centered) {
-  int x = atX + (centered ? -(width / 2) : 0);
-  int y = atY + (centered ? -(height / 2) : 0);
-
-  gDPLoadTextureBlock(glistp++, sprData, G_IM_FMT_RGBA, G_IM_SIZ_16b, sprWidth,
-                      sprHeight, 0, G_TX_WRAP | G_TX_NOMIRROR,
-                      G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_NOLOD, G_TX_NOLOD);
-  gDPSetTexturePersp(glistp++, G_TP_NONE);
-  gDPSetAlphaCompare(glistp++, G_AC_THRESHOLD);
-  gDPSetCombineMode(glistp++, G_CC_MODULATERGBA_PRIM, G_CC_MODULATERGBA_PRIM);
-  gDPSetRenderMode(glistp++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
-  // TODO: clip rectangle and offset+scale tex coords so we can render partly
-  // offscreen textures
-  gSPScisTextureRectangle(
-      glistp++,
-      (int)(x) << 2,           // upper left x,
-      (int)(y) << 2,           // upper left y
-      (int)(x + width) << 2,   // lower right x,
-      (int)(y + height) << 2,  // lower right y,
-      G_TX_RENDERTILE,         // tile
-      // upper left s, t
-      // when using gSPTextureRectangleFlip, these args are flipped
-      0 << 5, 0 << 5,
-      // change in s,t for each change in screen space x,y.
-      // smaller values = larger scaling
-      // when using gSPTextureRectangleFlip, these args are flipped
-      ((float)sprWidth / (float)width) * (1 << 10),
-      ((float)sprHeight / (float)height) * (1 << 10));
-
-  gDPPipeSync(glistp++);
-}
-
-void mulMtxFVecF(MtxF matrix, float* in /*[4]*/, float* out /*[4]*/) {
-  int i;
-
-  for (i = 0; i < 4; i++) {
-    out[i] = in[0] * matrix[0][i] +  //  0, 1, 2, 3
-             in[1] * matrix[1][i] +  //  4, 5, 6, 7,
-             in[2] * matrix[2][i] +  //  8, 9,10, 9,
-             in[3] * matrix[3][i];   // 12,13,14,15,
-  }
-}
-
-// like gluProject()
-int screenProject(Vec3d* obj,
-                  MtxF modelMatrix,
-                  MtxF projMatrix,
-                  ViewportF viewport,
-                  Vec3d* win) {
-  float in[4];
-  float out[4];
-
-  in[0] = obj->x;
-  in[1] = obj->y;
-  in[2] = obj->z;
-  in[3] = 1.0;
-  mulMtxFVecF(modelMatrix, in, out);
-  mulMtxFVecF(projMatrix, out, in);
-
-  if (in[3] == 0.0)
-    return FALSE;
-  in[0] /= in[3];
-  in[1] /= in[3];
-  in[2] /= in[3];
-  /* Map x, y and z to range 0-1 */
-  in[0] = in[0] * 0.5 + 0.5;
-  in[1] = in[1] * 0.5 + 0.5;
-  in[2] = in[2] * 0.5 + 0.5;
-
-  /* Map x,y to viewport */
-  in[0] = in[0] * viewport[2] + viewport[0];
-  in[1] = in[1] * viewport[3] + viewport[1];
-
-  win->x = in[0];
-  win->y = in[1];
-  win->z = in[2];
-  return TRUE;
 }

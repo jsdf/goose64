@@ -31,14 +31,16 @@ int Renderer_isDynamicObject(GameObject* obj) {
 int Renderer_isZBufferedGameObject(GameObject* obj) {
   if (Renderer_isDynamicObject(obj))
     return TRUE;
+
+  // animated game objects have concave shapes, need z buffering
   if (Renderer_isAnimatedGameObject(obj))
     return TRUE;
 
   switch (obj->modelType) {
-    case BushModel:
-      // case WatergrassModel:
-      // case ReedModel:
-      return TRUE;
+    // case BushModel:
+    // case WatergrassModel:
+    // case ReedModel:
+    // return TRUE;
     default:
       return FALSE;
   }

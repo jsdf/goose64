@@ -8,6 +8,8 @@
 #ifndef _GRAPHIC_H_
 #define _GRAPHIC_H_
 #include "constants.h"
+#include "frustum.h"
+#include "gameobject.h"
 #include "option.h"
 
 #define SCREEN_WD_MAX 640
@@ -23,12 +25,10 @@
 #define SCREEN_WD 640
 
 #if HIGH_RESOLUTION_HALF_Y
-// #define SCREEN_HT 240
-#define SCREEN_HT 360
-#define ANTIALIASING 1
+#define SCREEN_HT 240
+// #define SCREEN_HT 360
 #else
 #define SCREEN_HT 480
-#define ANTIALIASING 0
 #endif
 
 #define FRAME_BUFFERS 3
@@ -45,7 +45,6 @@
 #else  // low resolution, 320x240
 #define SCREEN_WD 320
 #define SCREEN_HT 240
-#define ANTIALIASING 1
 #define FRAME_BUFFERS 3
 // in lowest usable ram, uses 150kb
 #define ZBUFFER_ADDR 0x80000400
@@ -100,6 +99,30 @@ translation (13-15) is from mtx[3][0] to mtx[3][2]
  */
 typedef float MtxF[4][4];
 
+typedef enum RenderMode {
+  ToonFlatShadingRenderMode,
+  TextureAndLightingRenderMode,
+  TextureNoLightingRenderMode,
+  NoTextureNoLightingRenderMode,
+  LightingNoTextureRenderMode,
+  WireframeRenderMode,
+  NormalColorRenderMode,
+  MAX_RENDER_MODE
+} RenderMode;
+
+typedef enum LightingType {
+  SunLighting,
+  OnlyAmbientLighting,
+  MAX_LIGHTING_TYPE
+} LightingType;
+
+typedef enum RenderPass {
+  BackgroundRenderPass,
+  ForegroundRenderPass,
+  ZBufferedRenderPass,
+  MAX_RENDER_PASS
+} RenderPass;
+
 /*-------------------------------- parameter---------------------------------*/
 extern Dynamic gfx_dynamic[];
 extern Gfx* glistp;
@@ -112,5 +135,16 @@ extern void gfxClearCfb(u16 fillColor);
 /*------------------------------- other extern define -----------------------*/
 extern Gfx setup_rdpstate[];
 extern Gfx setup_rspstate[];
+
+// TODO: hide this stuff behind methods?
+// mainly exposed for the debugging tools in the main game loop
+extern RenderMode N64Renderer_renderMode;
+extern Frustum N64Renderer_frustum;
+extern int N64Renderer_objectsCulled;
+extern int N64Renderer_twoCycleMode;
+
+// methods
+
+void N64Renderer_drawWorldObjects(Dynamic* dynamicp);
 
 #endif /* _GRAPHIC_H_ */

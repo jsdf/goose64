@@ -3,14 +3,14 @@
 #define _OPTION_H_
 
 #define HIGH_RESOLUTION 1
+
 #define HIGH_RESOLUTION_HALF_Y 0
-// TODO: switch based on region
 #if HIGH_RESOLUTION
 #if HIGH_RESOLUTION_HALF_Y
+// TODO: switch based on region
 #define VSYNC_FPS 30
 #define FRAME_SKIP 2
 #else
-
 #define VSYNC_FPS 30
 #define FRAME_SKIP 2
 #endif
@@ -33,4 +33,7 @@ typedef enum Option {
 
 extern int options[MAX_OPTION];
 extern char* OptionStrings[];
+
+void Option_initAll();
+
 #endif /* !_OPTION_H_ */

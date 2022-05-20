@@ -2662,6 +2662,7 @@ int main(int argc, char** argv) {
   GameObject* obj;
 
   Game_init(garden_map_data, GARDEN_MAP_COUNT, &physWorldData);
+  Option_initAll();
 
   game = Game_get();
   game->pathfindingGraph = pathfindingGraph;

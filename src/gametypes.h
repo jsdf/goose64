@@ -89,6 +89,7 @@ typedef struct Game {
   PhysState physicsState;
   Graph* pathfindingGraph;
   PathfindingState* pathfindingState;
+  AABB* worldObjectsBounds;
 
   // profiling
   float profTimeCharacters;
