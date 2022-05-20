@@ -23,6 +23,7 @@
 #include "input.h"
 #include "main.h"
 #include "modeltype.h"
+#include "option.h"
 #include "pathfinding.h"
 #include "physics.h"
 #include "renderer.h"
@@ -45,17 +46,12 @@
 
 #include "ed64io.h"
 
-#define CONSOLE_ED64LOG_DEBUG 0
-#define CONSOLE_SHOW_PROFILING 0
-#define CONSOLE_SHOW_TRACING 1
-#define CONSOLE_SHOW_CULLING 0
-#define CONSOLE_SHOW_CAMERA 0
-#define CONSOLE_SHOW_SOUND 1
-#define CONSOLE_SHOW_RCP_TASKS 0
-#define LOG_TRACES 1
+#define LOG_TRACES 0
+#define LOG_PROFILING 1
+
 #define CONTROLLER_DEAD_ZONE 0.1
-#define SOUND_TEST 1
-#define DRAW_SPRITES 1
+#define SOUND_TEST 0
+#define DRAW_SPRITES 0
 
 typedef enum RenderMode {
   ToonFlatShadingRenderMode,
@@ -66,6 +62,22 @@ typedef enum RenderMode {
   WireframeRenderMode,
   MAX_RENDER_MODE
 } RenderMode;
+
+typedef enum ConsoleMode {
+  CONSOLE_SHOW_CAMERA,
+  CONSOLE_SHOW_CPU_PROFILING,
+  CONSOLE_SHOW_CULLING,
+  CONSOLE_SHOW_PROFILING,
+  CONSOLE_SHOW_RCP_TASKS,
+  CONSOLE_SHOW_SOUND,
+  CONSOLE_SHOW_TRACING,
+  CONSOLE_SHOW_ED64LOG_INTERNALS,
+  MAX_CONSOLE_MODE
+} ConsoleMode;
+
+static int consoleShown = FALSE;
+static int nuPerfBarShown = FALSE;
+static ConsoleMode consoleMode = CONSOLE_SHOW_PROFILING;
 
 static Vec3d viewPos;
 static Vec3d viewRot;
@@ -249,7 +261,8 @@ void debugPrintFloat(int x, int y, char* format, float value) {
 #ifdef NU_DEBUG
 void traceRCP() {
   int i;
-  float longestTaskTime = 0;
+  float longestRDPTaskTime = 0;
+  float longestRSPTaskTime = 0;
   // s64 retraceTime;
 
   // retraceTime = nuDebTaskPerfPtr->retraceTime;
@@ -275,12 +288,22 @@ void traceRCP() {
     Trace_addEvent(RDPTaskTraceEvent, gfxTaskTime.rspStart / 1000.0f,
                    gfxTaskTime.rdpEnd / 1000.0f);
 
-    longestTaskTime = MAX(longestTaskTime, ((gfxTaskTime.rdpEnd) / 1000.0f -
-                                            (gfxTaskTime.rspStart / 1000.0f)));
+    // longestRDPTaskTime = MAX(longestRDPTaskTime, ((gfxTaskTime.rspEnd) /
+    // 1000.0f -
+    //                                         (gfxTaskTime.rdpStart /
+    //                                         1000.0f)));
+    longestRDPTaskTime =
+        MAX(longestRDPTaskTime,
+            ((gfxTaskTime.rdpEnd) / 1000.0f - (gfxTaskTime.rspEnd / 1000.0f)));
+    longestRSPTaskTime = MAX(
+        longestRSPTaskTime,
+        ((gfxTaskTime.rspEnd) / 1000.0f - (gfxTaskTime.rspStart / 1000.0f)));
   }
   // debugPrintf("\n");
-  profilingAccumulated[RDPTaskTraceEvent] += longestTaskTime;
+  profilingAccumulated[RDPTaskTraceEvent] += longestRDPTaskTime;
   profilingCounts[RDPTaskTraceEvent]++;
+  profilingAccumulated[RSPTaskTraceEvent] += longestRSPTaskTime;
+  profilingCounts[RSPTaskTraceEvent]++;
 }
 #endif
 
@@ -292,7 +315,7 @@ void makeDL00() {
   float curTime;
   int i;
   float profStartDraw, profEndDraw, profStartDebugDraw;
-#if CONSOLE
+#if DEBUG
   char conbuf[100];
 #endif
 
@@ -321,7 +344,7 @@ void makeDL00() {
 
 /* Clear the frame and Z-buffer */
 #if RENDERER_FAKE_GROUND
-  gfxClearCfb(GPACK_RGBA5551(112, 158, 122, 1));
+  gfxClearCfb(GPACK_RGBA5551(111, 160, 120, 1));
 #else
   gfxClearCfb(GPACK_RGBA5551(0, 0, 0, 1));
 #endif
@@ -333,7 +356,7 @@ void makeDL00() {
                 farPlane, 1.0);
   gSPPerspNormalize(glistp++, perspNorm);
 
-  // gSPClipRatio(glistp++, FRUSTRATIO_6);
+  // gSPClipRatio(glistp++, FRUSTRATIO_4);
 
   Frustum_setCamDef(&frustum, &game->viewPos, &game->viewTarget, &upVector);
 
@@ -359,16 +382,13 @@ void makeDL00() {
 
   /* Activate the task and (maybe)
      switch display buffers */
-  nuGfxTaskStart(&gfx_glist[gfx_gtask_no][0],
-                 (s32)(glistp - gfx_glist[gfx_gtask_no]) * sizeof(Gfx),
-                 renderModeSetting == WireframeRenderMode ? NU_GFX_UCODE_L3DEX2
-                                                          : NU_GFX_UCODE_F3DEX,
-#if CONSOLE || NU_PERF_BAR
-                 NU_SC_NOSWAPBUFFER
-#else
-                 NU_SC_SWAPBUFFER
-#endif
-  );
+  nuGfxTaskStart(
+      &gfx_glist[gfx_gtask_no][0],
+      (s32)(glistp - gfx_glist[gfx_gtask_no]) * sizeof(Gfx),
+      renderModeSetting == WireframeRenderMode ? NU_GFX_UCODE_L3DEX2
+                                               : NU_GFX_UCODE_F3DEX,
+      // swap buffer if we don't also have another task to show debug stuff
+      consoleShown || nuPerfBarShown ? NU_SC_NOSWAPBUFFER : NU_SC_SWAPBUFFER);
 
   /* Switch display list buffers */
   gfx_gtask_no ^= 1;
@@ -379,113 +399,117 @@ void makeDL00() {
 
   profStartDebugDraw = CUR_TIME_MS();
 
-#if NU_PERF_BAR
-  nuDebTaskPerfBar1(1, 200, NU_SC_SWAPBUFFER);
-#endif
+  if (nuPerfBarShown)
+    nuDebTaskPerfBar1(1, 200, NU_SC_SWAPBUFFER);
 
 // debug text overlay
-#if CONSOLE
-
-#if NU_PERF_BAR
-#error "can't enable NU_PERF_BAR and CONSOLE at the same time"
-#endif
-
-  if (contPattern & 0x1) {
+#if DEBUG
+  if (consoleShown) {
+    invariant(!(consoleShown && nuPerfBarShown));
     nuDebConClear(0);
-#if CONSOLE_SHOW_CAMERA
-    consoleOffset = 16;
-#else
     consoleOffset = 21;
-#endif
 
+    if (!(contPattern & 0x1)) {
+      nuDebConTextPos(0, 9, 24);
+      nuDebConCPuts(0, "Controller1 not connected");
+    } else if (game->freeView) {
+      debugPrintVec3d(4, consoleOffset++, "viewPos", &viewPos);
+    } else {
+      switch (consoleMode) {
+        case CONSOLE_SHOW_CPU_PROFILING:
+          debugPrintFloat(4, consoleOffset++, "char=%3.2fms",
+                          profAvgCharacters);
+          debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profAvgPhysics);
+          debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profAvgDraw);
+          debugPrintFloat(0, consoleOffset++, "path=%3.2fms", profAvgPath);
+          break;
+        case CONSOLE_SHOW_PROFILING:
+          nuDebConTextPos(0, 4, consoleOffset++);
+          sprintf(conbuf, "cpu=%3.2f rsp=%3.2f rdp=%3.2f",
+                  profilingAverages[MainCPUTraceEvent],
+                  profilingAverages[RSPTaskTraceEvent],
+                  profilingAverages[RDPTaskTraceEvent]);
+          nuDebConCPuts(0, conbuf);
+          nuDebConTextPos(0, 4, consoleOffset++);
+          sprintf(conbuf, "OptMeshSubdiv=%d", options[OptMeshSubdiv]);
+          nuDebConCPuts(0, conbuf);
+          break;
+        case CONSOLE_SHOW_TRACING:
+          nuDebConTextPos(0, 4, consoleOffset++);
+          sprintf(conbuf, "trace rec=%d,log=%d,evs=%d,lgd=%d",
+                  Trace_isTracing(), loggingTrace, Trace_getEventsCount(),
+                  logTraceStartOffset);
+          nuDebConCPuts(0, conbuf);
+          break;
+        case CONSOLE_SHOW_RCP_TASKS:
+#ifdef NU_DEBUG
+        {
+          int tskIdx;
+          for (tskIdx = 0; tskIdx < nuDebTaskPerfPtr->gfxTaskCnt; tskIdx++) {
+            nuDebConTextPos(0, 4, consoleOffset++);
+            sprintf(conbuf, "[t%d:  rsp=%.2f,rdp=%.2f] ", tskIdx,
+                    (nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspEnd -
+                     nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspStart) /
+                        1000.0,
+                    (nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rdpEnd -
+                     nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspStart) /
+                        1000.0);
+            nuDebConCPuts(0, conbuf);
+          }
+        }
+#endif
+        break;
+        case CONSOLE_SHOW_CULLING:
+          nuDebConTextPos(0, 4, consoleOffset++);
+          sprintf(conbuf, "culled=%d", objectsCulled);
+          nuDebConCPuts(0, conbuf);
+          break;
+        case CONSOLE_SHOW_CAMERA:
+          consoleOffset = 16;  // needs extra space
+          debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
+          debugPrintVec3d(4, consoleOffset++, "viewTarget", &game->viewTarget);
+          debugPrintFloat(4, consoleOffset++, "viewZoom=%1.1f", game->viewZoom);
+          debugPrintFloat(4, consoleOffset++, "fovy=%3.1f", fovy);
+          debugPrintFloat(4, consoleOffset++, "nearPlane=%.2f", nearPlane);
+          debugPrintFloat(4, consoleOffset++, "farPlane=%.2f", farPlane);
+          break;
+
+        case CONSOLE_SHOW_ED64LOG_INTERNALS:
+#ifdef ED64
+          usbLoggerGetState(&usbLoggerState);
+          nuDebConTextPos(0, 4, consoleOffset++);
+          sprintf(conbuf, "usb=%d,res=%d,st=%d,id=%d,mqsz=%d", usbEnabled,
+                  usbResult, usbLoggerState.fifoWriteState,
+                  usbLoggerState.msgID, usbLoggerState.msgQSize);
+          nuDebConCPuts(0, conbuf);
+          nuDebConTextPos(0, 4, consoleOffset++);
+          sprintf(conbuf, "off=%4d,flu=%d,ovf=%d,don=%d,err=%d",
+                  usbLoggerState.usbLoggerOffset,
+                  usbLoggerState.usbLoggerFlushing,
+                  usbLoggerState.usbLoggerOverflow, usbLoggerState.countDone,
+                  usbLoggerState.writeError);
+          nuDebConCPuts(0, conbuf);
+#endif
+          break;
+
+        case CONSOLE_SHOW_SOUND:
+          debugPrintFloat(4, consoleOffset++, "snd=%.0f", sndNumber);
+          debugPrintFloat(4, consoleOffset++, "pitch=%f", sndPitch);
+          break;
+      }  // end switch
+    }    // end if (freeView)
     debugPrintFloat(4, consoleOffset++, "frame=%3.2fms",
                     1000.0 / frameCounterLastFrames);
 
-    if (game->freeView) {
-      debugPrintVec3d(4, consoleOffset++, "viewPos", &viewPos);
-    } else {
-#if CONSOLE_SHOW_PROFILING
-      // debugPrintFloat(4, consoleOffset++, "char=%3.2fms", profAvgCharacters);
-      // debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profAvgPhysics);
-      // debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profAvgDraw);
-      // debugPrintFloat(0, consoleOffset++, "path=%3.2fms", profAvgPath);
-      debugPrintFloat(4, consoleOffset++, "cpu=%3.2fms",
-                      profilingAverages[MainCPUTraceEvent]);
-      debugPrintFloat(4, consoleOffset++, "rdp=%3.2fms",
-                      profilingAverages[RDPTaskTraceEvent]);
-#endif
-#if CONSOLE_SHOW_TRACING
-      nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "trace rec=%d,log=%d,evs=%d,lgd=%d", Trace_isTracing(),
-              loggingTrace, Trace_getEventsCount(), logTraceStartOffset);
-      nuDebConCPuts(0, conbuf);
-#endif
-#if CONSOLE_SHOW_RCP_TASKS
-#ifdef NU_DEBUG
-      {
-        int tskIdx;
-        for (tskIdx = 0; tskIdx < nuDebTaskPerfPtr->gfxTaskCnt; tskIdx++) {
-          nuDebConTextPos(0, 4, consoleOffset++);
-          sprintf(conbuf, "[t%d:  rsp=%.2f,rdp=%.2f] ", tskIdx,
-                  (nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspEnd -
-                   nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspStart) /
-                      1000.0,
-                  (nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rdpEnd -
-                   nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspStart) /
-                      1000.0);
-          nuDebConCPuts(0, conbuf);
-        }
-      }
-#endif
-#endif
-#if CONSOLE_SHOW_CULLING
-      nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "culled=%d", objectsCulled);
-      nuDebConCPuts(0, conbuf);
-#endif
-#if CONSOLE_SHOW_CAMERA
-      debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
-      debugPrintVec3d(4, consoleOffset++, "viewTarget", &game->viewTarget);
-      debugPrintFloat(4, consoleOffset++, "viewZoom=%1.1f", game->viewZoom);
-      debugPrintFloat(4, consoleOffset++, "fovy=%3.1f", fovy);
-      debugPrintFloat(4, consoleOffset++, "nearPlane=%.2f", nearPlane);
-      debugPrintFloat(4, consoleOffset++, "farPlane=%.2f", farPlane);
-#endif
-
-#if CONSOLE_ED64LOG_DEBUG
-#ifdef ED64
-      usbLoggerGetState(&usbLoggerState);
-      nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "usb=%d,res=%d,st=%d,id=%d,mqsz=%d", usbEnabled,
-              usbResult, usbLoggerState.fifoWriteState, usbLoggerState.msgID,
-              usbLoggerState.msgQSize);
-      nuDebConCPuts(0, conbuf);
-      nuDebConTextPos(0, 4, consoleOffset++);
-      sprintf(conbuf, "off=%4d,flu=%d,ovf=%d,don=%d,err=%d",
-              usbLoggerState.usbLoggerOffset, usbLoggerState.usbLoggerFlushing,
-              usbLoggerState.usbLoggerOverflow, usbLoggerState.countDone,
-              usbLoggerState.writeError);
-      nuDebConCPuts(0, conbuf);
-#endif
-#endif
-
-#if CONSOLE_SHOW_SOUND
-      debugPrintFloat(4, consoleOffset++, "snd=%.0f", sndNumber);
-      debugPrintFloat(4, consoleOffset++, "pitch=%f", sndPitch);
-#endif
-    }
     nuDebConTextPos(0, 4, consoleOffset++);
     sprintf(conbuf, "retrace=%lu", nuScRetraceCounter);
     nuDebConCPuts(0, conbuf);
     debugPrintVec3d(4, consoleOffset++, "pos", &game->player.goose->position);
-  } else {
-    nuDebConTextPos(0, 9, 24);
-    nuDebConCPuts(0, "Controller1 not connected");
+    /* Display characters on the frame buffer */
+    nuDebConDisp(NU_SC_SWAPBUFFER);
   }
 
-  /* Display characters on the frame buffer */
-  nuDebConDisp(NU_SC_SWAPBUFFER);
-#endif  // #if CONSOLE
+#endif  // end of #if DEBUG
 
   Trace_addEvent(DebugDrawTraceEvent, profStartDebugDraw, CUR_TIME_MS());
 }
@@ -498,12 +522,6 @@ void checkDebugControls(Game* game) {
   /* The reverse rotation by the A button */
   if (contdata[0].trigger & A_BUTTON) {
     twoCycleMode = !twoCycleMode;
-  }
-  if (contdata[0].trigger & B_BUTTON) {
-    renderModeSetting++;
-    if (renderModeSetting >= MAX_RENDER_MODE) {
-      renderModeSetting = 0;
-    }
   }
   /* Change the moving speed with up/down buttons of controller */
   if (contdata[0].button & U_JPAD)
@@ -593,15 +611,21 @@ void updateGame00(void) {
   /* Data reading of controller 1 */
   nuContDataGetEx(contdata, 0);
   if (contdata[0].trigger & START_BUTTON) {
-    renderModeSetting++;
-    if (renderModeSetting >= MAX_RENDER_MODE) {
-      renderModeSetting = 0;
-    }
+    // renderModeSetting++;
+    // if (renderModeSetting >= MAX_RENDER_MODE) {
+    //   renderModeSetting = 0;
+    // }
+    renderModeSetting = renderModeSetting == ToonFlatShadingRenderMode
+                            ? WireframeRenderMode
+                            : ToonFlatShadingRenderMode;
   }
 
 #if SOUND_TEST
   soundCheck();
 #endif
+  if (contdata[0].trigger & Z_TRIG) {
+    game->freeView = !game->freeView;
+  }
   if (game->freeView) {
     checkDebugControls(game);
   } else {
@@ -612,9 +636,6 @@ void updateGame00(void) {
     if (contdata[0].button & B_BUTTON) {
       input.pickup = TRUE;
     }
-    if (contdata[0].button & Z_TRIG) {
-      input.zoomIn = TRUE;
-    }
     if (contdata[0].button & L_TRIG) {
       input.zoomIn = TRUE;
     }
@@ -622,6 +643,35 @@ void updateGame00(void) {
       input.zoomOut = TRUE;
     }
 
+    if (contdata[0].trigger & L_JPAD) {
+      if (consoleShown) {
+        if (consoleMode == 0) {
+          consoleMode = MAX_CONSOLE_MODE - 1;
+          consoleShown = FALSE;
+        } else {
+          consoleMode -= 1;
+        }
+      } else {
+        consoleShown = TRUE;
+      }
+    }
+    if (contdata[0].trigger & R_JPAD) {
+      if (consoleShown) {
+        consoleMode += 1;
+        if (consoleMode == MAX_CONSOLE_MODE) {
+          consoleMode = 0;
+          consoleShown = FALSE;
+        }
+      } else {
+        consoleShown = TRUE;
+      }
+    }
+
+    if (contdata[0].trigger & D_CBUTTONS) {
+      options[OptMeshSubdiv] = !options[OptMeshSubdiv];
+    }
+
+#if SOUND_TEST
     if (contdata[0].trigger & L_CBUTTONS) {
       // TODO: trigger this sound from inside the player state machine
       sndNumber = RAND(honkSoundRange) + Honk1Sound;
@@ -650,23 +700,8 @@ void updateGame00(void) {
         seqPlaying = TRUE;
       }
     }
+#endif
 
-    if (contdata[0].trigger & U_CBUTTONS) {
-      if (!loggingTrace) {
-        if (!Trace_isTracing()) {
-          startRecordingTrace();
-        } else {
-          finishRecordingTrace();
-        }
-      }
-    }
-    // if (contdata[0].button & U_CBUTTONS) {
-    //   farPlane += 100.0;
-    // }
-
-    // if (contdata[0].button & D_CBUTTONS) {
-    //   farPlane -= 100.0;
-    // }
     input.direction.x = -contdata->stick_x / 61.0F;
     input.direction.y = contdata->stick_y / 63.0F;
     if (fabsf(input.direction.x) < CONTROLLER_DEAD_ZONE)
@@ -678,10 +713,33 @@ void updateGame00(void) {
     }
   }
 
+  Game_update(&input);
+
+#if LOG_PROFILING
+  if (nuScRetraceCounter % 60 == 0) {
+    debugPrintf(
+        "frm=%3.2f cpu=%3.2f rsp=%3.2f rdp=%3.2f tsks=%d drpd=%d\n",
+        1000.0 / frameCounterLastFrames, profilingAverages[MainCPUTraceEvent],
+        profilingAverages[RSPTaskTraceEvent],
+        profilingAverages[RDPTaskTraceEvent], nuDebTaskPerfPtr->gfxTaskCnt,
+        profilingCounts[SkippedGfxTaskTraceEvent]);
+  }
+#endif
+
+#if LOG_TRACES
+  if (contdata[0].trigger & U_CBUTTONS) {
+    if (!loggingTrace) {
+      if (!Trace_isTracing()) {
+        startRecordingTrace();
+      } else {
+        finishRecordingTrace();
+      }
+    }
+  }
   if (Trace_getEventsCount() == TRACE_EVENT_BUFFER_SIZE) {
     finishRecordingTrace();
   }
-
+#endif
   if (usbEnabled) {
 #if LOG_TRACES
     if (loggingTrace) {
@@ -689,8 +747,6 @@ void updateGame00(void) {
     }
 #endif
   }
-
-  Game_update(&input);
 
   // if (totalUpdates % 60 == 0) {
   //   debugPrintfSync("retrace=%d\n", nuScRetraceCounter);
@@ -727,6 +783,44 @@ void updateGame00(void) {
       profilingCounts[i] = 0;
     }
   }
+}
+
+/*-----------------------------------------------------------------------------
+  The call-back function
+
+  pendingGfx which is passed from Nusystem as the argument of the call-back
+  function is the total of RCP tasks that are currently processing and
+  waiting for the process.
+-----------------------------------------------------------------------------*/
+void stage00(int pendingGfx) {
+  float skippedGfxTime, profStartUpdate, profStartFrame, profEndFrame;
+  // an extra task is used to draw debug stuff
+  int gfxTasksPerMakeDL = consoleShown || nuPerfBarShown ? 2 : 1;
+  profStartFrame = CUR_TIME_MS();
+  /* Provide the display process if n or less RCP tasks are processing or
+        waiting for the process.  */
+  if (nuScRetraceCounter % FRAME_SKIP == 0) {
+    if (pendingGfx < gfxTasksPerMakeDL * 2) {
+      makeDL00();
+      Trace_addEvent(MainMakeDisplayListTraceEvent, profStartFrame,
+                     CUR_TIME_MS());
+    } else {
+      skippedGfxTime = CUR_TIME_MS();
+      Trace_addEvent(SkippedGfxTaskTraceEvent, skippedGfxTime,
+                     skippedGfxTime + 16.0f);
+      profilingCounts[SkippedGfxTaskTraceEvent]++;
+      // debugPrintfSync("dropped frame %d\n", nuScRetraceCounter / FRAME_SKIP);
+    }
+  }
+
+  profStartUpdate = CUR_TIME_MS();
+  /* The process of game progress  */
+  updateGame00();
+  profEndFrame = CUR_TIME_MS();
+  Trace_addEvent(MainCPUTraceEvent, profStartFrame, profEndFrame);
+  Trace_addEvent(MainUpdateTraceEvent, profStartUpdate, profEndFrame);
+  profilingAccumulated[MainCPUTraceEvent] += profEndFrame - profStartFrame;
+  profilingCounts[MainCPUTraceEvent]++;
 }
 
 typedef enum LightingType {
@@ -878,6 +972,7 @@ void drawWorldObjects(Dynamic* dynamicp) {
     invariant(i < visibleObjectsCount);
     invariant(obj != NULL);
     if (!RENDERER_PAINTERS_ALGORITHM ||  // always z buffer
+
         intersectingObjects[i] ||
         // animated game objects have concave shapes, need z buffering
         Renderer_isAnimatedGameObject(obj)) {
@@ -1086,19 +1181,6 @@ void drawWorldObjects(Dynamic* dynamicp) {
     }
   }
 #endif
-
-  // if (nuScRetraceCounter % 60 == 0) {
-  //   debugPrintf("[");
-  //   for (i = 0; i < visibleObjectsCount; i++) {
-  //     {
-  //       RendererSortDistance* dist = (visibleObjDistance + i);
-  //       debugPrintf("%d: %s(%f),\n", i,
-  //       ModelTypeStrings[dist->obj->modelType],
-  //                   dist->distance);
-  //     }
-  //   }
-  //   debugPrintf("]\n");
-  // }
 
   free(intersectingObjects);
   free(visibleObjDistance);

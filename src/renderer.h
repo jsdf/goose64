@@ -11,7 +11,7 @@
 // some objects that don't need it
 #define RENDERER_PAINTERS_ALGORITHM 1
 // just use solid color fill instead of rendering ground
-#define RENDERER_FAKE_GROUND 0
+#define RENDERER_FAKE_GROUND 1
 
 #define RENDERER_ZSORT_BUCKET_COUNT 50
 #define RENDERER_ZSORT_BUCKET_INIT_CAPACITY 100

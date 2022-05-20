@@ -26,6 +26,12 @@ typedef enum ModelType {
   WatergrassModel,
   ReedModel,
   LilypadModel,
+  BenchModel,
+  PathModel,
+  PaverModel,
+  WallTallModel,
+  HedgeModel,
+  CollisionGroundModel,
   MAX_MODEL_TYPE
 } ModelType;
 

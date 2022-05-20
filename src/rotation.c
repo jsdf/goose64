@@ -10,8 +10,9 @@
 static Vec3d _zero = {0, 0, 0};
 static Vec3d _one = {1, 1, 1};
 
-
+#ifdef __N64__
 #define FASTINVSQRT 1
+#endif
 
 #ifdef FASTINVSQRT
 static float fastInvSqrt(float number) {

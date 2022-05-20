@@ -8,12 +8,6 @@
 extern NUContData contdata[1]; /* Read data of the controller  */
 extern u8 contPattern;         /* The pattern of the connected controller  */
 
-#if CONSOLE || NU_PERF_BAR
-#define GFX_TASKS_PER_MAKEDL 2
-#else
-#define GFX_TASKS_PER_MAKEDL 1
-#endif
-
 #endif /* _LANGUAGE_C */
 #endif /* MAIN_H */
 

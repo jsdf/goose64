@@ -12,7 +12,7 @@
 #include "ed64io_usb.h"
 #include "graphic.h"
 
-#define DEBUG_VI_MODE 0
+#define DEBUG_VI_MODE 1
 
 Gfx gfx_glist[2][GFX_GLIST_LEN];
 Dynamic gfx_dynamic[2];
@@ -174,9 +174,14 @@ void gfxInit(void) {
   /* Activate the graphic thread  */
   nuGfxThreadStart();
 
-  viMode = osViModeTable[HIGH_RESOLUTION ? (ANTIALIASING ? OS_VI_NTSC_HAF1
-                                                         : OS_VI_NTSC_HPF1)
-                                         : OS_VI_NTSC_LAN1];
+  viMode = osViModeTable[HIGH_RESOLUTION
+                             ? (ANTIALIASING ? (options[OptDeflickerInterlace]
+                                                    ? OS_VI_NTSC_HAF1
+                                                    : OS_VI_NTSC_HAN1)
+                                             : (options[OptDeflickerInterlace]
+                                                    ? OS_VI_NTSC_HPF1
+                                                    : OS_VI_NTSC_HPN1))
+                             : OS_VI_NTSC_LAN1];
 #if HIGH_RESOLUTION_HALF_Y
   viMode = osViModeTable[OS_VI_NTSC_LAN1];
   /* Change width, xScale, and origin */
@@ -192,9 +197,12 @@ void gfxInit(void) {
   debugPrintfSync("SCREEN_WD=%d SCREEN_HT=%d", SCREEN_WD, SCREEN_HT);
 
   debugPrintfSync(
-      "type=%u\ncomRegs={\nctrl=%u\nwidth=%u\nburst=%u\nvSync=%u\nhSync=%u\n"
-      "leap=%u\nhStart=%u\nxScale=%u\nvCurrent=%u\n}\nfldRegs[0]={\norigin=%u\n"
-      "yScale=%u\nvStart=%u\nvBurst=%u\nvIntr=%u\n}\nfldRegs[1]={\norigin=%u\n"
+      "type=%u\ncomRegs={\nctrl=%u\nwidth=%u\nburst=%u\nvSync=%u\nhSync=%"
+      "u\n"
+      "leap=%u\nhStart=%u\nxScale=%u\nvCurrent=%u\n}\nfldRegs[0]={"
+      "\norigin=%u\n"
+      "yScale=%u\nvStart=%u\nvBurst=%u\nvIntr=%u\n}\nfldRegs[1]={\norigin="
+      "%u\n"
       "yScale=%u\nvStart=%u\nvBurst=%u\nvIntr=%u\n}\n",
       viMode.type, viMode.comRegs.ctrl, viMode.comRegs.width,
       viMode.comRegs.burst, viMode.comRegs.vSync, viMode.comRegs.hSync,
@@ -209,7 +217,8 @@ void gfxInit(void) {
 
   /* Set VI */
   osViSetMode(&viMode);
-  // when osViSetMode was called these flags were reset to their default values
+  // when osViSetMode was called these flags were reset to their default
+  // values
   osViSetSpecialFeatures(OS_VI_DITHER_FILTER_ON | OS_VI_GAMMA_OFF |
                          OS_VI_GAMMA_DITHER_OFF | OS_VI_DIVOT_ON);
 

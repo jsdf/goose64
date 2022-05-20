@@ -1,6 +1,7 @@
 #include <nusys.h>
 
 #include "models.h"
+#include "option.h"
 
 #include "constants.h"
 #include "ed64io_usb.h"
@@ -77,6 +78,9 @@ Gfx* getModelDisplayList(ModelType modelType, int subtype) {
     case LilypadModel:
       invariant(subtype < LILYPAD_MODEL_MESH_COUNT);
       return lilypad_model_meshes[subtype];
+    case PaverModel:
+      invariant(subtype < PAVER_MODEL_MESH_COUNT);
+      return paver_model_meshes[subtype];
     default:
       return testingCube_model_meshes[0];
   }

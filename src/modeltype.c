@@ -2,6 +2,7 @@
 #include "modeltype.h"
 
 char* ModelTypeStrings[] = {
+
     "NoneModel",               //
     "GooseModel",              //
     "BookItemModel",           //
@@ -20,6 +21,12 @@ char* ModelTypeStrings[] = {
     "WatergrassModel",         //
     "ReedModel",               //
     "LilypadModel",            //
+    "BenchModel",              //
+    "PathModel",               //
+    "PaverModel",              //
+    "WallTallModel",           //
+    "HedgeModel",              //
+    "CollisionGroundModel",    //
     "MAX_MODEL_TYPE",          //
 };
 
@@ -71,5 +78,17 @@ ModelProperties modelTypesProperties[] = {
     /* ReedModel */
     DEFAULT_MODEL_PROPERTIES,
     /* LilypadModel */
+    DEFAULT_MODEL_PROPERTIES,
+    /* BenchModel */
+    DEFAULT_MODEL_PROPERTIES,
+    /* PathModel */
+    DEFAULT_MODEL_PROPERTIES,
+    /* PaverModel */
+    DEFAULT_MODEL_PROPERTIES,
+    /* WallTallModel */
+    DEFAULT_MODEL_PROPERTIES,
+    /* HedgeModel */
+    DEFAULT_MODEL_PROPERTIES,
+    /* CollisionGroundModel */
     DEFAULT_MODEL_PROPERTIES,
 };

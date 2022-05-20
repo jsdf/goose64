@@ -8,6 +8,7 @@
 #ifndef _GRAPHIC_H_
 #define _GRAPHIC_H_
 #include "constants.h"
+#include "option.h"
 
 #define SCREEN_WD_MAX 640
 #define XSCALE_MAX 0x400
@@ -22,7 +23,8 @@
 #define SCREEN_WD 640
 
 #if HIGH_RESOLUTION_HALF_Y
-#define SCREEN_HT 240
+// #define SCREEN_HT 240
+#define SCREEN_HT 360
 #define ANTIALIASING 1
 #else
 #define SCREEN_HT 480

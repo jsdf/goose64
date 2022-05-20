@@ -2,8 +2,8 @@
 #include "renderer.h"
 #include <math.h>
 #ifndef __N64__
-#include <stdio.h>
 #include <float.h>
+#include <stdio.h>
 #endif
 #ifdef __N64__
 #include <PR/os_internal.h>
@@ -16,13 +16,11 @@
 #endif
 #include <string.h>
 
-
 #include "ed64io_usb.h"
 #include "frustum.h"
 #include "game.h"
 #include "gameobject.h"
 #include "vec3d.h"
-
 
 #define RENDERER_FRUSTUM_CULLING 1
 
@@ -329,7 +327,7 @@ int Renderer_cullVisibility(GameObject* worldObjects,
   for (i = 0; i < worldObjectsCount; i++) {
     obj = worldObjects + i;
     if (obj->modelType == NoneModel || !obj->visible
-#if FAKE_GROUND
+#if RENDERER_FAKE_GROUND
         || obj->modelType == GroundModel
 #endif
 
@@ -427,7 +425,7 @@ void RendererZSortList_insertMeshTri(RendererZSortList* list,
   RendererZSortBucket* bucket;
   float dist = cb(obj, meshtri, viewPos);
   float clampedDist = CLAMP(dist, list->near, (list->far - 0.001));
-  int bucketIdx = (clampedDist-list->near) / list->bucketSize;
+  int bucketIdx = (clampedDist - list->near) / list->bucketSize;
   invariant(bucketIdx >= 0 && bucketIdx < list->count);
 
   bucket = &list->buckets[bucketIdx];

@@ -117,38 +117,3 @@ void mainproc(void) {
   while (1)
     ;
 }
-
-/*-----------------------------------------------------------------------------
-  The call-back function
-
-  pendingGfx which is passed from Nusystem as the argument of the call-back
-  function is the total of RCP tasks that are currently processing and
-  waiting for the process.
------------------------------------------------------------------------------*/
-void stage00(int pendingGfx) {
-  float skippedGfxTime, profStartUpdate, profStartFrame, profEndFrame;
-  profStartFrame = CUR_TIME_MS();
-  /* Provide the display process if n or less RCP tasks are processing or
-        waiting for the process.  */
-  if (nuScRetraceCounter % FRAME_SKIP == 0) {
-    if (pendingGfx < GFX_TASKS_PER_MAKEDL * 2) {
-      makeDL00();
-      Trace_addEvent(MainMakeDisplayListTraceEvent, profStartFrame,
-                     CUR_TIME_MS());
-    } else {
-      skippedGfxTime = CUR_TIME_MS();
-      Trace_addEvent(SkippedGfxTaskTraceEvent, skippedGfxTime,
-                     skippedGfxTime + 16.0f);
-      // debugPrintfSync("dropped frame %d\n", nuScRetraceCounter / FRAME_SKIP);
-    }
-  }
-
-  profStartUpdate = CUR_TIME_MS();
-  /* The process of game progress  */
-  updateGame00();
-  profEndFrame = CUR_TIME_MS();
-  Trace_addEvent(MainCPUTraceEvent, profStartFrame, profEndFrame);
-  Trace_addEvent(MainUpdateTraceEvent, profStartUpdate, profEndFrame);
-  profilingAccumulated[MainCPUTraceEvent] += profEndFrame - profStartFrame;
-  profilingCounts[MainCPUTraceEvent]++;
-}

@@ -11,6 +11,7 @@
 #include "gameutils.h"
 
 #include "constants.h"
+#include "option.h"
 
 #include "characteranimtypes.h"
 
