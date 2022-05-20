@@ -37,7 +37,7 @@ Texture preview:
 	%%%%%%%%%%%%%%%%%%%%%%%%%@@@@@@@
 */
 
-unsigned short Text_gooserig_goosetex_diff[] __attribute__((aligned (16))) = {
+unsigned short Text_gooserig_goosetex_diff[] __attribute__((aligned (8))) = {
 	0xfffd,0xfffd,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
 	0xfffd,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
 	0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0x0001,0x0001,0xffff,0xffff,
@@ -72,7 +72,7 @@ unsigned short Text_gooserig_goosetex_diff[] __attribute__((aligned (16))) = {
 	0xffbb,0xffbb,0xffbb,0xffbb,0xffbb,0xffbb,0xffbb,0xffbb,0xffbb,0xffbd,0xfffd,0xfffd,0xfffd,0xfffd,0xfffd,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
 };
 
-Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] __attribute__((aligned (8))) = {
 	{   -7,     0,   -27, 0,   1070,    994,   -17,     0,  -126, 0},
 	{  -27,   -11,   -14, 0,   1342,    883,   -90,   -71,   -56, 0},
 	{  -45,     0,     1, 0,   1572,   1004,  -119,     0,    45, 0},
@@ -105,7 +105,7 @@ Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] __attribute__((aligned 
 	{  -12,   -11,   -25, 0,    123,   1802,   -48,   -52,  -107, 0},
 	{   -1,   -17,   -23, 0,     28,   1691,    22,   -90,   -88, 0},
 	{   14,     0,   -21, 0,    787,   1004,    82,     0,   -97, 0},
-};Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_1[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_1[32] __attribute__((aligned (8))) = {
 	{   26,   -12,     3, 0,   1008,   1617,    98,   -80,   -11, 0},
 	{   18,    -9,    19, 0,    977,   1506,    29,   -70,   102, 0},
 	{    7,   -17,     8, 0,   1120,   1609,   -22,  -106,    66, 0},
@@ -138,7 +138,7 @@ Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] __attribute__((aligned 
 	{   -8,     0,    11, 0,    634,    771,   -41,     0,   120, 0},
 	{  -27,    10,   -14, 0,    451,   1802,   -90,    70,   -56, 0},
 	{  -16,    16,   -10, 0,    345,   1643,   -51,   115,    12, 0},
-};Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_2[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_2[32] __attribute__((aligned (8))) = {
 	{   18,     8,    19, 0,    977,   1506,    29,    69,   102, 0},
 	{   23,     2,    16, 0,    377,   1527,    98,    25,    75, 0},
 	{   26,    11,     3, 0,   1008,   1617,    98,    79,   -11, 0},
@@ -174,7 +174,7 @@ Vtx_tn Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[32] __attribute__((aligned 
 };
 
 #ifdef __N64__
-Gfx Vtx_gooserig_goosebody_goosebodymesh_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_gooserig_goosebody_goosebodymesh_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,1,3,2,0),
 	gsSP2Triangles(4,5,0,0,6,7,8,0),
@@ -211,7 +211,7 @@ Gfx Vtx_gooserig_goosebody_goosebodymesh_mesh01_dl[] __attribute__((aligned (16)
 
 
 #ifdef __N64__
-Gfx Wtx_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (16))) = {
+Gfx Wtx_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_goosebody_goosebodymesh_mesh01_dl),
@@ -219,7 +219,7 @@ Gfx Wtx_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (16))) = {
+MeshTri Tris_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0]),1,3,2},
 	{(Vtx*)(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_0[0]),4,5,0},
@@ -276,10 +276,10 @@ MeshTri Tris_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (16))) = 
 	{(Vtx*)(&Vtx_gooserig_goosebody_goosebodymesh_mesh01_2[0]),14,31,15}
 };
 
-MeshInfo MeshInfo_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (16))) = {&Tris_gooserig_goosebody_goosebodymesh[0],54,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_goosebody_goosebodymesh[] __attribute__((aligned (8))) = {&Tris_gooserig_goosebody_goosebodymesh[0],54,&Text_gooserig_goosetex_diff[0]};
 
 
-Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[32] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[32] __attribute__((aligned (8))) = {
 	{   -6,    -1,    -1, 0,   1764,   1231,   -71,    -7,  -106, 0},
 	{   -6,     1,    -1, 0,   1691,   1231,   -73,    57,   -88, 0},
 	{   -3,    -1,    -2, 0,   1764,   1231,   -11,    -2,  -127, 0},
@@ -312,7 +312,7 @@ Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[32] __attribute__((alig
 	{    8,    -8,    -2, 0,   1764,   1304,   114,   -50,   -25, 0},
 	{   -6,    -2,    -1, 0,   1764,   1231,   -68,   -53,   -94, 0},
 	{   -1,    -5,    -2, 0,   1764,   1231,   -38,   -67,  -102, 0},
-};Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_1[14] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_1[14] __attribute__((aligned (8))) = {
 	{   -1,     4,     0, 0,   1691,   1450,   -33,    98,    73, 0},
 	{   -5,     2,     1, 0,   1691,   1450,   -41,    79,    90, 0},
 	{   -4,     1,     1, 0,   1691,   1450,    12,    18,   124, 0},
@@ -330,7 +330,7 @@ Vtx_tn Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[32] __attribute__((alig
 };
 
 #ifdef __N64__
-Gfx Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,6,2,9,0),
@@ -364,7 +364,7 @@ Gfx Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_dl[] __attribute__((aligned 
 
 
 #ifdef __N64__
-Gfx Wtx_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (16))) = {
+Gfx Wtx_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_dl),
@@ -372,7 +372,7 @@ Gfx Wtx_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (16))) = {
+MeshTri Tris_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_0[0]),6,7,8},
@@ -425,10 +425,10 @@ MeshTri Tris_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (16))
 	{(Vtx*)(&Vtx_gooserig_goosefoot_l_goosefoot_lmesh_mesh01_1[0]),13,6,8}
 };
 
-MeshInfo MeshInfo_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_goosefoot_l_goosefoot_lmesh[0],50,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_goosefoot_l_goosefoot_lmesh[] __attribute__((aligned (8))) = {&Tris_gooserig_goosefoot_l_goosefoot_lmesh[0],50,&Text_gooserig_goosetex_diff[0]};
 
 
-Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[32] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[32] __attribute__((aligned (8))) = {
 	{   -6,     0,    -1, 0,   1764,   1231,    87,    -8,    91, 0},
 	{   -6,    -2,    -1, 0,   1691,   1231,    81,    64,    73, 0},
 	{   -2,     0,    -1, 0,   1764,   1231,     4,    -1,   126, 0},
@@ -461,7 +461,7 @@ Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[32] __attribute__((alig
 	{    6,     6,    -1, 0,   1764,   1304,  -113,   -53,    26, 0},
 	{   -6,     1,    -1, 0,   1764,   1231,    76,   -63,    79, 0},
 	{   -1,     3,    -1, 0,   1764,   1231,    30,   -67,   103, 0},
-};Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_1[14] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_1[14] __attribute__((aligned (8))) = {
 	{   -1,    -4,     0, 0,   1691,   1450,    28,    99,   -74, 0},
 	{   -4,    -2,     1, 0,   1691,   1450,    32,    72,  -100, 0},
 	{   -3,    -2,     1, 0,   1691,   1450,   -13,    18,  -126, 0},
@@ -479,7 +479,7 @@ Vtx_tn Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[32] __attribute__((alig
 };
 
 #ifdef __N64__
-Gfx Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,8,2,9,0),
@@ -513,7 +513,7 @@ Gfx Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_dl[] __attribute__((aligned 
 
 
 #ifdef __N64__
-Gfx Wtx_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (16))) = {
+Gfx Wtx_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_dl),
@@ -521,7 +521,7 @@ Gfx Wtx_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (16))) = {
+MeshTri Tris_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_0[0]),6,7,8},
@@ -574,10 +574,10 @@ MeshTri Tris_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (16))
 	{(Vtx*)(&Vtx_gooserig_goosefoot_r_goosefoot_rmesh_mesh01_1[0]),13,6,8}
 };
 
-MeshInfo MeshInfo_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_goosefoot_r_goosefoot_rmesh[0],50,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_goosefoot_r_goosefoot_rmesh[] __attribute__((aligned (8))) = {&Tris_gooserig_goosefoot_r_goosefoot_rmesh[0],50,&Text_gooserig_goosetex_diff[0]};
 
 
-Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] __attribute__((aligned (8))) = {
 	{    3,    -5,    -3, 0,    198,   1556,    14,   -99,   -79, 0},
 	{   -1,    -4,     5, 0,    299,   1398,   -15,  -115,    52, 0},
 	{   -1,    -6,    -1, 0,    287,   1481,    19,  -125,   -17, 0},
@@ -610,7 +610,7 @@ Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] __attribute__((aligned 
 	{    0,    -4,     6, 0,   1796,    177,    55,   -85,    76, 0},
 	{   -1,    -4,     5, 0,   1814,    188,   -15,  -115,    52, 0},
 	{  -11,     0,   -12, 0,   1172,    755,  -127,     0,   -14, 0},
-};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_1[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_1[32] __attribute__((aligned (8))) = {
 	{    0,     0,     8, 0,   1898,    663,    37,     0,   121, 0},
 	{   -6,     0,     7, 0,   1859,    676,   -76,     0,   102, 0},
 	{   -1,    -4,     6, 0,   1877,    622,    -9,   -85,    94, 0},
@@ -643,7 +643,7 @@ Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] __attribute__((aligned 
 	{   -8,     2,    -9, 0,    377,   1527,    -7,   120,   -39, 0},
 	{   -1,     3,     6, 0,   1877,    622,    -9,    84,    94, 0},
 	{   -1,     3,     5, 0,   1866,    602,   -15,   114,    52, 0},
-};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_2[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_2[32] __attribute__((aligned (8))) = {
 	{   11,     0,    -4, 0,   1865,   1406,   121,     0,   -38, 0},
 	{    3,     1,     3, 0,   1522,   1361,    74,    60,    83, 0},
 	{    4,     0,     3, 0,   1499,   1406,    88,     0,    91, 0},
@@ -676,7 +676,7 @@ Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] __attribute__((aligned 
 	{   -1,     3,     6, 0,   1815,    167,    -9,    84,    94, 0},
 	{   -1,    -4,     6, 0,    885,   1307,    -9,   -85,    94, 0},
 	{    0,    -4,     6, 0,    865,   1317,    55,   -85,    76, 0},
-};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_3[8] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_3[8] __attribute__((aligned (8))) = {
 	{    0,    -4,     6, 0,    865,   1317,    55,   -85,    76, 0},
 	{    0,    -4,     5, 0,    845,   1328,    28,  -122,    24, 0},
 	{    3,    -4,     2, 0,    763,   1328,    48,  -109,    43, 0},
@@ -688,7 +688,7 @@ Vtx_tn Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[32] __attribute__((aligned 
 };
 
 #ifdef __N64__
-Gfx Vtx_gooserig_goosehead_gooseheadmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_gooserig_goosehead_gooseheadmesh_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,0,3,4,0),
 	gsSP2Triangles(3,5,4,0,6,7,8,0),
@@ -729,7 +729,7 @@ Gfx Vtx_gooserig_goosehead_gooseheadmesh_mesh01_dl[] __attribute__((aligned (16)
 
 
 #ifdef __N64__
-Gfx Wtx_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (16))) = {
+Gfx Wtx_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_goosehead_gooseheadmesh_mesh01_dl),
@@ -737,7 +737,7 @@ Gfx Wtx_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (16))) = {
+MeshTri Tris_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0]),0,3,4},
 	{(Vtx*)(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_0[0]),3,5,4},
@@ -798,10 +798,10 @@ MeshTri Tris_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (16))) = 
 	{(Vtx*)(&Vtx_gooserig_goosehead_gooseheadmesh_mesh01_3[0]),5,6,7}
 };
 
-MeshInfo MeshInfo_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_goosehead_gooseheadmesh[0],58,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_goosehead_gooseheadmesh[] __attribute__((aligned (8))) = {&Tris_gooserig_goosehead_gooseheadmesh[0],58,&Text_gooserig_goosetex_diff[0]};
 
 
-Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] __attribute__((aligned (8))) = {
 	{    1,    -2,    -2, 0,   1038,   1041,    83,   -74,   -61, 0},
 	{    6,    -1,     8, 0,   1038,   1041,   126,     5,    10, 0},
 	{    5,    -9,    10, 0,   1038,   1041,    76,  -102,     7, 0},
@@ -834,7 +834,7 @@ Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] __attribute__((aligne
 	{    0,     4,     6, 0,    965,   1041,     5,   126,     3, 0},
 	{   -1,     2,    10, 0,    965,   1041,   -33,   117,    34, 0},
 	{    1,     2,    15, 0,    965,   1041,    15,    95,    82, 0},
-};Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_1[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_1[32] __attribute__((aligned (8))) = {
 	{    1,     2,    15, 0,    965,   1041,    15,    95,    82, 0},
 	{   -1,     2,    10, 0,    965,   1041,   -33,   117,    34, 0},
 	{   -3,    -1,    13, 0,    965,   1041,   -76,    82,    59, 0},
@@ -867,7 +867,7 @@ Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] __attribute__((aligne
 	{   -1,     0,   -18, 0,   1729,   1442,    -3,    -1,  -127, 0},
 	{   -1,     0,   -18, 0,   1664,   1435,    -3,    -1,  -127, 0},
 	{    1,     1,    -2, 0,   1691,   1450,   105,    60,   -38, 0},
-};Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_2[17] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_2[17] __attribute__((aligned (8))) = {
 	{   -2,    -1,   -17, 0,   1545,   1377,   -80,   -78,   -62, 0},
 	{   -2,    -2,    -2, 0,   1545,   1377,   -83,   -82,   -52, 0},
 	{   -2,    -1,    -2, 0,   1545,   1377,  -119,   -11,   -44, 0},
@@ -888,7 +888,7 @@ Vtx_tn Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[32] __attribute__((aligne
 };
 
 #ifdef __N64__
-Gfx Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -926,7 +926,7 @@ Gfx Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_dl[] __attribute__((aligned (1
 
 
 #ifdef __N64__
-Gfx Wtx_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (16))) = {
+Gfx Wtx_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_dl),
@@ -934,7 +934,7 @@ Gfx Wtx_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (16))) = {
+MeshTri Tris_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_0[0]),6,7,8},
@@ -991,10 +991,10 @@ MeshTri Tris_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (16))) 
 	{(Vtx*)(&Vtx_gooserig_gooseleg_l_gooseleg_lmesh_mesh01_2[0]),7,15,16}
 };
 
-MeshInfo MeshInfo_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_gooseleg_l_gooseleg_lmesh[0],54,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_gooseleg_l_gooseleg_lmesh[] __attribute__((aligned (8))) = {&Tris_gooserig_gooseleg_l_gooseleg_lmesh[0],54,&Text_gooserig_goosetex_diff[0]};
 
 
-Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] __attribute__((aligned (8))) = {
 	{    1,     1,    -2, 0,   1038,   1041,   -84,   -73,    63, 0},
 	{    5,     0,     7, 0,   1038,   1041,  -125,     8,    21, 0},
 	{    4,     7,     6, 0,   1038,   1041,   -79,   -95,    32, 0},
@@ -1027,7 +1027,7 @@ Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] __attribute__((aligne
 	{    4,    -3,     7, 0,    965,   1041,   -93,    86,     6, 0},
 	{   -1,    -4,    10, 0,    965,   1041,     0,   117,   -49, 0},
 	{    4,    -1,    14, 0,    965,   1041,   -67,    82,   -70, 0},
-};Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_1[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_1[32] __attribute__((aligned (8))) = {
 	{    4,    -1,    14, 0,    965,   1041,   -67,    82,   -70, 0},
 	{   -1,    -4,    10, 0,    965,   1041,     0,   117,   -49, 0},
 	{   -3,    -1,    12, 0,    965,   1041,    48,   102,   -57, 0},
@@ -1060,7 +1060,7 @@ Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] __attribute__((aligne
 	{   -1,    -1,   -18, 0,   1729,   1442,     2,    -1,   126, 0},
 	{   -1,    -1,   -18, 0,   1664,   1435,     2,    -1,   126, 0},
 	{    1,    -2,    -2, 0,   1691,   1450,  -108,    62,    27, 0},
-};Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_2[17] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_2[17] __attribute__((aligned (8))) = {
 	{   -2,     0,   -17, 0,   1545,   1377,    79,   -78,    61, 0},
 	{   -2,     1,    -2, 0,   1545,   1377,    82,   -82,    51, 0},
 	{   -2,     0,    -2, 0,   1545,   1377,   118,   -11,    43, 0},
@@ -1081,7 +1081,7 @@ Vtx_tn Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[32] __attribute__((aligne
 };
 
 #ifdef __N64__
-Gfx Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -1119,7 +1119,7 @@ Gfx Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_dl[] __attribute__((aligned (1
 
 
 #ifdef __N64__
-Gfx Wtx_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (16))) = {
+Gfx Wtx_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_dl),
@@ -1127,7 +1127,7 @@ Gfx Wtx_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (16))) = {
+MeshTri Tris_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_0[0]),6,7,8},
@@ -1184,10 +1184,10 @@ MeshTri Tris_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (16))) 
 	{(Vtx*)(&Vtx_gooserig_gooseleg_r_gooseleg_rmesh_mesh01_2[0]),8,7,16}
 };
 
-MeshInfo MeshInfo_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_gooseleg_r_gooseleg_rmesh[0],54,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_gooseleg_r_gooseleg_rmesh[] __attribute__((aligned (8))) = {&Tris_gooserig_gooseleg_r_gooseleg_rmesh[0],54,&Text_gooserig_goosetex_diff[0]};
 
 
-Vtx_tn Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[24] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[24] __attribute__((aligned (8))) = {
 	{   -6,     0,    -4, 0,   1172,    755,  -119,     0,    44, 0},
 	{  -13,     0,   -13, 0,   1008,    758,    98,     0,   -81, 0},
 	{  -14,     5,   -17, 0,   1027,    570,   -33,  -108,   -60, 0},
@@ -1215,7 +1215,7 @@ Vtx_tn Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[24] __attribute__((aligned 
 };
 
 #ifdef __N64__
-Gfx Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0], 24, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,7,0),
@@ -1233,7 +1233,7 @@ Gfx Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_dl[] __attribute__((aligned (16)
 
 
 #ifdef __N64__
-Gfx Wtx_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (16))) = {
+Gfx Wtx_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_gooserig_goosetex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_dl),
@@ -1241,7 +1241,7 @@ Gfx Wtx_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (16))) = {
+MeshTri Tris_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0]),6,7,8},
@@ -1264,7 +1264,7 @@ MeshTri Tris_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (16))) = 
 	{(Vtx*)(&Vtx_gooserig_gooseneck_gooseneckmesh_mesh01_0[0]),23,15,0}
 };
 
-MeshInfo MeshInfo_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (16))) = {&Tris_gooserig_gooseneck_gooseneckmesh[0],20,&Text_gooserig_goosetex_diff[0]};
+MeshInfo MeshInfo_gooserig_gooseneck_gooseneckmesh[] __attribute__((aligned (8))) = {&Tris_gooserig_gooseneck_gooseneckmesh[0],20,&Text_gooserig_goosetex_diff[0]};
 
 
 #define GOOSERIG_MODEL_MESH_COUNT 7
@@ -1279,7 +1279,7 @@ MeshInfo* gooserig_meshinfos[7] = {
     MeshInfo_gooserig_gooseneck_gooseneckmesh,
 };
 #ifdef __N64__
-Gfx* gooserig_model_meshes[7] __attribute__((aligned (16))) = {
+Gfx* gooserig_model_meshes[7] __attribute__((aligned (8))) = {
     Wtx_gooserig_goosebody_goosebodymesh,
     Wtx_gooserig_goosefoot_l_goosefoot_lmesh,
     Wtx_gooserig_goosefoot_r_goosefoot_rmesh,

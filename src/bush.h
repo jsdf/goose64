@@ -37,7 +37,7 @@ Texture preview:
 	::::::::::::::::::::::::::::::::
 */
 
-unsigned short Text_bush_bush_diff[] __attribute__((aligned (16))) = {
+unsigned short Text_bush_bush_diff[] __attribute__((aligned (8))) = {
 	0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,
 	0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,
 	0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,
@@ -72,7 +72,7 @@ unsigned short Text_bush_bush_diff[] __attribute__((aligned (16))) = {
 	0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,0x4b95,
 };
 
-Vtx_tn Vtx_bush_mesh01_0[32] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_bush_mesh01_0[32] __attribute__((aligned (8))) = {
 	{   13,    13,    46, 0,    689,   1899,    58,    45,   103, 0},
 	{   38,    19,    23, 0,    689,    993,    84,    53,    78, 0},
 	{    7,    43,    29, 0,   1545,   1648,    55,    80,    81, 0},
@@ -105,7 +105,7 @@ Vtx_tn Vtx_bush_mesh01_0[32] __attribute__((aligned (16))) = {
 	{  -26,    -2,   -39, 0,     63,    533,   -55,   -24,  -113, 0},
 	{  -42,    -2,   -15, 0,     51,    541,  -121,   -19,   -36, 0},
 	{  -42,    -2,    14, 0,     51,   1447,  -116,   -48,    24, 0},
-};Vtx_tn Vtx_bush_mesh01_1[28] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_bush_mesh01_1[28] __attribute__((aligned (8))) = {
 	{  -26,    -4,    38, 0,     67,    539,   -75,   -11,   102, 0},
 	{  -13,    22,    41, 0,    693,    992,   -60,    54,    98, 0},
 	{  -35,    18,    27, 0,    693,     86,   -83,    47,    83, 0},
@@ -137,7 +137,7 @@ Vtx_tn Vtx_bush_mesh01_0[32] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_bush_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_bush_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_bush_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -177,7 +177,7 @@ Gfx Vtx_bush_mesh01_dl[] __attribute__((aligned (16))) = {
 
 
 #ifdef __N64__
-Gfx Wtx_bush[] __attribute__((aligned (16))) = {
+Gfx Wtx_bush[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_bush_bush_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_bush_mesh01_dl),
@@ -185,7 +185,7 @@ Gfx Wtx_bush[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_bush[] __attribute__((aligned (16))) = {
+MeshTri Tris_bush[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_bush_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_bush_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_bush_mesh01_0[0]),6,7,8},
@@ -248,7 +248,7 @@ MeshTri Tris_bush[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_bush_mesh01_1[0]),26,18,20}
 };
 
-MeshInfo MeshInfo_bush[] __attribute__((aligned (16))) = {&Tris_bush[0],60,&Text_bush_bush_diff[0]};
+MeshInfo MeshInfo_bush[] __attribute__((aligned (8))) = {&Tris_bush[0],60,&Text_bush_bush_diff[0]};
 
 
 #define BUSH_MODEL_MESH_COUNT 1
@@ -257,7 +257,7 @@ MeshInfo* bush_meshinfos[1] = {
     MeshInfo_bush,
 };
 #ifdef __N64__
-Gfx* bush_model_meshes[1] __attribute__((aligned (16))) = {
+Gfx* bush_model_meshes[1] __attribute__((aligned (8))) = {
     Wtx_bush,
 };
 #endif

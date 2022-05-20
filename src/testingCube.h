@@ -37,7 +37,7 @@ Texture preview:
 	@@@@@@@%::::::::%@@@@@@@@@@@@@@@
 */
 
-unsigned short Text_testingCube_testCubeTex_diff[] __attribute__((aligned (16))) = {
+unsigned short Text_testingCube_testCubeTex_diff[] __attribute__((aligned (8))) = {
 	0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
 	0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
 	0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0x06bf,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
@@ -72,7 +72,7 @@ unsigned short Text_testingCube_testCubeTex_diff[] __attribute__((aligned (16)))
 	0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0x07c1,0x07c1,0x07c1,0x07c1,0x07c1,0x07c1,0x07c1,0x07c1,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,
 };
 
-Vtx_tn Vtx_testingCube_mesh01_0[14] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_testingCube_mesh01_0[14] __attribute__((aligned (8))) = {
 	{   30,   -30,    30, 0,      0,    990,     0,  -127,     0, 0},
 	{  -30,   -30,    30, 0,    495,    990,     0,  -127,     0, 0},
 	{  -30,   -30,   -30, 0,    495,    495,     0,  -127,     0, 0},
@@ -90,7 +90,7 @@ Vtx_tn Vtx_testingCube_mesh01_0[14] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_testingCube_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_testingCube_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_testingCube_mesh01_0[0], 14, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,7,5,1,0),
@@ -104,7 +104,7 @@ Gfx Vtx_testingCube_mesh01_dl[] __attribute__((aligned (16))) = {
 
 
 #ifdef __N64__
-Gfx Wtx_testingCube[] __attribute__((aligned (16))) = {
+Gfx Wtx_testingCube[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_testingCube_testCubeTex_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_testingCube_mesh01_dl),
@@ -112,7 +112,7 @@ Gfx Wtx_testingCube[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_testingCube[] __attribute__((aligned (16))) = {
+MeshTri Tris_testingCube[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),6,7,8},
@@ -127,7 +127,7 @@ MeshTri Tris_testingCube[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_testingCube_mesh01_0[0]),13,9,4}
 };
 
-MeshInfo MeshInfo_testingCube[] __attribute__((aligned (16))) = {&Tris_testingCube[0],12,&Text_testingCube_testCubeTex_diff[0]};
+MeshInfo MeshInfo_testingCube[] __attribute__((aligned (8))) = {&Tris_testingCube[0],12,&Text_testingCube_testCubeTex_diff[0]};
 
 
 #define TESTINGCUBE_MODEL_MESH_COUNT 1
@@ -136,7 +136,7 @@ MeshInfo* testingCube_meshinfos[1] = {
     MeshInfo_testingCube,
 };
 #ifdef __N64__
-Gfx* testingCube_model_meshes[1] __attribute__((aligned (16))) = {
+Gfx* testingCube_model_meshes[1] __attribute__((aligned (8))) = {
     Wtx_testingCube,
 };
 #endif

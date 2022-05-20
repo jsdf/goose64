@@ -94,7 +94,7 @@ function w64_main()
 			.. string.format("MeshInfo* %s_meshinfos[%d] = {\n", objname, tableLength(objfile_subobjtables))
 			.. table.concat(meshInfoList, '\n')
 			.. "\n};\n"
-			.. string.format("#ifdef __N64__\nGfx* %s_model_meshes[%d] __attribute__((aligned (16))) = {\n", objname, tableLength(objfile_subobjtables))
+			.. string.format("#ifdef __N64__\nGfx* %s_model_meshes[%d] __attribute__((aligned (8))) = {\n", objname, tableLength(objfile_subobjtables))
 			.. table.concat(meshList, '\n')
 			.. "\n};\n#endif\n"
 		)
@@ -444,7 +444,7 @@ function w64_outputTriangles(facesInPacks, facesPackRefs, one_tri, objname)
 	-- output faces
 	print("Success creating faces and verts!")
 	return string.format(
-		"#ifdef __N64__\nGfx Vtx_%s_mesh01_dl[] __attribute__((aligned (16))) = {\n\t%s,\n\tgsSPEndDisplayList(),\n};\n#endif\n",
+		"#ifdef __N64__\nGfx Vtx_%s_mesh01_dl[] __attribute__((aligned (8))) = {\n\t%s,\n\tgsSPEndDisplayList(),\n};\n#endif\n",
 		objname,
 		table.concat(faceOutputTable,",\n\t")
 	)
@@ -476,11 +476,11 @@ function w64_outputMeshInfo(facesInPacks, facesPackRefs,  objname,mainobjname,te
 
 
 	return string.format(
-		"MeshTri Tris_%s[] __attribute__((aligned (16))) = {\n\t%s\n};\n\n",
+		"MeshTri Tris_%s[] __attribute__((aligned (8))) = {\n\t%s\n};\n\n",
 		objname,
 		table.concat(triOutputTable,",\n\t")
 	).."MeshInfo MeshInfo_"..objname..
-	"[] __attribute__((aligned (16))) = {&Tris_"..objname..
+	"[] __attribute__((aligned (8))) = {&Tris_"..objname..
 	"[0],"..#triOutputTable..
 ","..string.format("&Text_%s_%s_diff[0]",mainobjname,texturename).."};\n"
 
@@ -490,7 +490,7 @@ function w64_outputDisplayList(subobj_combined_name,obj_Name,name_of_texture)
 	-- This isn't customisable at the moment at all but until I 
 	-- actually figure out what'd need changing, I'll leave this!
 	return string.format(
-		"#ifdef __N64__\nGfx Wtx_%s[] __attribute__((aligned (16))) = {\n"..
+		"#ifdef __N64__\nGfx Wtx_%s[] __attribute__((aligned (8))) = {\n"..
 		"\t  gsDPLoadTextureBlock(Text_%s_%s_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, \n"..
 		"\t  \t  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), \n"..
 		"\t  gsSPDisplayList(Vtx_%s_mesh01_dl),\n"..
@@ -514,13 +514,13 @@ function w64_outputTexture(objname,texturename,previewtable,bmptable)
 	local datastring = ""
 	if(objname==0) then
 		datastring = string.format(
-			"unsigned short Sprite_%s[] __attribute__((aligned (16))) = {\n%s};",
+			"unsigned short Sprite_%s[] __attribute__((aligned (8))) = {\n%s};",
 			texturename,
 			table.concat(bmptable)
 		)
 	else
 		datastring = string.format(
-			"unsigned short Text_%s_%s_diff[] __attribute__((aligned (16))) = {\n%s};",
+			"unsigned short Text_%s_%s_diff[] __attribute__((aligned (8))) = {\n%s};",
 			objname,
 			texturename,
 			table.concat(bmptable)
@@ -540,7 +540,7 @@ function w64_outputVerts(facesinpacks,facesinpacksrefs,verttexttable,objname)
 			-- ", direct reference: ["..(packNumber-1).."]["..(i-1).."]"
 		end
 		table.insert(outputTable, string.format(
-			"Vtx_tn Vtx_%s_mesh01_%i[%i] __attribute__((aligned (16))) = {\n%s\n};",
+			"Vtx_tn Vtx_%s_mesh01_%i[%i] __attribute__((aligned (8))) = {\n%s\n};",
 			objname,
 			packNumber-1,
 			#facesinpacksrefs[packNumber],

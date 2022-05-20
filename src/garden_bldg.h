@@ -37,7 +37,7 @@ Texture preview:
 	:::::::::::::::::::::...........
 */
 
-unsigned short Text_garden_bldg_redbldg_diff[] __attribute__((aligned (16))) = {
+unsigned short Text_garden_bldg_redbldg_diff[] __attribute__((aligned (8))) = {
 	0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,
 	0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,
 	0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,
@@ -72,7 +72,7 @@ unsigned short Text_garden_bldg_redbldg_diff[] __attribute__((aligned (16))) = {
 	0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x7a0d,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,0x4213,
 };
 
-Vtx_tn Vtx_garden_bldg_mesh01_0[27] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_garden_bldg_mesh01_0[27] __attribute__((aligned (8))) = {
 	{    0,   309,  -598, 0,   1410,    633,    73,   103,     0, 0},
 	{  169,   189,   597, 0,   1905,    138,    73,   103,     0, 0},
 	{  169,   189,  -598, 0,   1410,    138,    73,   103,     0, 0},
@@ -103,7 +103,7 @@ Vtx_tn Vtx_garden_bldg_mesh01_0[27] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_garden_bldg_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_garden_bldg_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_garden_bldg_mesh01_0[0], 27, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -120,7 +120,7 @@ Gfx Vtx_garden_bldg_mesh01_dl[] __attribute__((aligned (16))) = {
 
 
 #ifdef __N64__
-Gfx Wtx_garden_bldg[] __attribute__((aligned (16))) = {
+Gfx Wtx_garden_bldg[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_garden_bldg_redbldg_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_garden_bldg_mesh01_dl),
@@ -128,7 +128,7 @@ Gfx Wtx_garden_bldg[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_garden_bldg[] __attribute__((aligned (16))) = {
+MeshTri Tris_garden_bldg[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),6,7,8},
@@ -149,7 +149,7 @@ MeshTri Tris_garden_bldg[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_garden_bldg_mesh01_0[0]),9,26,21}
 };
 
-MeshInfo MeshInfo_garden_bldg[] __attribute__((aligned (16))) = {&Tris_garden_bldg[0],18,&Text_garden_bldg_redbldg_diff[0]};
+MeshInfo MeshInfo_garden_bldg[] __attribute__((aligned (8))) = {&Tris_garden_bldg[0],18,&Text_garden_bldg_redbldg_diff[0]};
 
 
 #define GARDEN_BLDG_MODEL_MESH_COUNT 1
@@ -158,7 +158,7 @@ MeshInfo* garden_bldg_meshinfos[1] = {
     MeshInfo_garden_bldg,
 };
 #ifdef __N64__
-Gfx* garden_bldg_model_meshes[1] __attribute__((aligned (16))) = {
+Gfx* garden_bldg_model_meshes[1] __attribute__((aligned (8))) = {
     Wtx_garden_bldg,
 };
 #endif

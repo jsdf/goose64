@@ -37,7 +37,7 @@ Texture preview:
 	:::::::::::---------------------
 */
 
-unsigned short Text_planter_planter_diff[] __attribute__((aligned (16))) = {
+unsigned short Text_planter_planter_diff[] __attribute__((aligned (8))) = {
 	0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,
 	0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,
 	0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,
@@ -72,7 +72,7 @@ unsigned short Text_planter_planter_diff[] __attribute__((aligned (16))) = {
 	0x5a91,0x5a91,0x5a91,0x5a91,0x5a91,0x5a91,0x5a91,0x5a91,0x6291,0x5a91,0x62d3,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,0x8b97,
 };
 
-Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (8))) = {
 	{  -77,    31,    76, 0,      0,   1237,  -127,     0,     0, 0},
 	{  -77,   -33,    55, 0,    495,    742,  -127,     0,     0, 0},
 	{  -77,   -33,    76, 0,      0,    742,  -127,     0,     0, 0},
@@ -105,7 +105,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   76,   -33,    76, 0,      0,    742,   127,     0,     0, 0},
 	{   55,    31,    55, 0,    522,   1860,     0,   127,     0, 0},
 	{  -65,    31,   -56, 0,     33,   1237,     0,     0,   127, 0},
-};Vtx_tn Vtx_planter_mesh01_1[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_planter_mesh01_1[32] __attribute__((aligned (8))) = {
 	{   76,   -33,    76, 0,   1980,    742,     0,     0,   127, 0},
 	{   55,    31,    76, 0,   1485,   1237,     0,     0,   127, 0},
 	{   55,   -33,    76, 0,   1485,    742,     0,     0,   127, 0},
@@ -138,7 +138,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (16))) = {
 	{  -56,    31,   -56, 0,    990,   1237,     0,   127,     0, 0},
 	{  -56,   -33,   -65, 0,    493,    742,   127,     0,     0, 0},
 	{   64,    31,   -56, 0,     33,   1237,   126,     0,     0, 0},
-};Vtx_tn Vtx_planter_mesh01_2[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_planter_mesh01_2[32] __attribute__((aligned (8))) = {
 	{   76,   -33,   -77, 0,   1485,    742,   127,     0,     0, 0},
 	{   76,    31,   -56, 0,    990,   1237,   127,     0,     0, 0},
 	{   76,   -33,   -56, 0,    990,    742,   127,     0,     0, 0},
@@ -171,7 +171,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (16))) = {
 	{   64,    31,     0, 0,   1240,   1732,     0,   126,     0, 0},
 	{   64,    31,   -56, 0,   1451,   1732,     0,   126,     0, 0},
 	{   55,    31,   -56, 0,    522,   1860,     0,   127,     0, 0},
-};Vtx_tn Vtx_planter_mesh01_3[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_planter_mesh01_3[32] __attribute__((aligned (8))) = {
 	{   55,    31,   -77, 0,   1485,   1237,     0,     0,  -127, 0},
 	{   55,   -33,   -65, 0,    493,    742,  -127,     0,     0, 0},
 	{   55,    31,   -65, 0,    460,   1237,  -127,     0,     0, 0},
@@ -204,7 +204,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (16))) = {
 	{  -56,    31,    55, 0,   1451,   1698,     0,   127,     0, 0},
 	{   55,    31,    55, 0,    522,   1860,     0,   127,     0, 0},
 	{   55,    31,     0, 0,    312,   1860,     0,   127,     0, 0},
-};Vtx_tn Vtx_planter_mesh01_4[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_planter_mesh01_4[32] __attribute__((aligned (8))) = {
 	{    0,   -33,    64, 0,    264,    742,     0,     0,   127, 0},
 	{    0,    31,    64, 0,    246,   1237,     0,     0,   127, 0},
 	{  -56,    31,    64, 0,    460,   1237,   127,     0,     0, 0},
@@ -237,7 +237,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (16))) = {
 	{  -77,    31,   -77, 0,   1485,   1732,     0,   127,     0, 0},
 	{  -77,    31,   -56, 0,    990,   1732,     0,   127,     0, 0},
 	{  -65,   -33,   -56, 0,     33,    745,     0,     0,   127, 0},
-};Vtx_tn Vtx_planter_mesh01_5[32] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_planter_mesh01_5[32] __attribute__((aligned (8))) = {
 	{   76,   -33,   -77, 0,   1485,    742,   127,     0,     0, 0},
 	{   76,    31,   -77, 0,   1485,   1237,   127,     0,     0, 0},
 	{   76,    31,   -56, 0,    990,   1237,   127,     0,     0, 0},
@@ -270,7 +270,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (16))) = {
 	{  -77,    31,   -56, 0,    990,   1237,  -127,     0,     0, 0},
 	{  -77,    31,   -77, 0,   1485,   1237,  -127,     0,     0, 0},
 	{  -77,   -33,   -77, 0,   1485,    742,  -127,     0,     0, 0},
-};Vtx_tn Vtx_planter_mesh01_6[22] __attribute__((aligned (16))) = {
+};Vtx_tn Vtx_planter_mesh01_6[22] __attribute__((aligned (8))) = {
 	{   64,    31,   -56, 0,   1451,   1732,     0,   126,     0, 0},
 	{   55,    31,   -56, 0,   1451,   1698,     0,   127,     0, 0},
 	{   55,    31,   -56, 0,   1451,   1698,     0,   126,     0, 0},
@@ -296,7 +296,7 @@ Vtx_tn Vtx_planter_mesh01_0[32] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_planter_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_planter_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_planter_mesh01_0[0], 32, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,3,7,0,8,9,10,0),
@@ -361,7 +361,7 @@ Gfx Vtx_planter_mesh01_dl[] __attribute__((aligned (16))) = {
 
 
 #ifdef __N64__
-Gfx Wtx_planter[] __attribute__((aligned (16))) = {
+Gfx Wtx_planter[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_planter_planter_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_planter_mesh01_dl),
@@ -369,7 +369,7 @@ Gfx Wtx_planter[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_planter[] __attribute__((aligned (16))) = {
+MeshTri Tris_planter[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_planter_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_planter_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_planter_mesh01_0[0]),6,3,7},
@@ -472,7 +472,7 @@ MeshTri Tris_planter[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_planter_mesh01_6[0]),21,10,9}
 };
 
-MeshInfo MeshInfo_planter[] __attribute__((aligned (16))) = {&Tris_planter[0],100,&Text_planter_planter_diff[0]};
+MeshInfo MeshInfo_planter[] __attribute__((aligned (8))) = {&Tris_planter[0],100,&Text_planter_planter_diff[0]};
 
 
 #define PLANTER_MODEL_MESH_COUNT 1
@@ -481,7 +481,7 @@ MeshInfo* planter_meshinfos[1] = {
     MeshInfo_planter,
 };
 #ifdef __N64__
-Gfx* planter_model_meshes[1] __attribute__((aligned (16))) = {
+Gfx* planter_model_meshes[1] __attribute__((aligned (8))) = {
     Wtx_planter,
 };
 #endif

@@ -37,7 +37,7 @@ Texture preview:
 	::::::::::::::::::::::::::::::::
 */
 
-unsigned short Text_wall_wall_diff[] __attribute__((aligned (16))) = {
+unsigned short Text_wall_wall_diff[] __attribute__((aligned (8))) = {
 	0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,
 	0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,
 	0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,0x824f,
@@ -72,7 +72,7 @@ unsigned short Text_wall_wall_diff[] __attribute__((aligned (16))) = {
 	0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x720f,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,0x8a51,
 };
 
-Vtx_tn Vtx_wall_mesh01_0[28] __attribute__((aligned (16))) = {
+Vtx_tn Vtx_wall_mesh01_0[28] __attribute__((aligned (8))) = {
 	{ -237,    18,    -8, 0,   1374,   1830,     0,   127,     0, 0},
 	{  236,    18,     7, 0,   1597,   1353,     0,   127,     0, 0},
 	{  236,    18,    -8, 0,   1374,   1353,     0,   127,     0, 0},
@@ -104,7 +104,7 @@ Vtx_tn Vtx_wall_mesh01_0[28] __attribute__((aligned (16))) = {
 };
 
 #ifdef __N64__
-Gfx Vtx_wall_mesh01_dl[] __attribute__((aligned (16))) = {
+Gfx Vtx_wall_mesh01_dl[] __attribute__((aligned (8))) = {
 	gsSPVertex(&Vtx_wall_mesh01_0[0], 28, 0),
 	gsSP2Triangles(0,1,2,0,3,4,5,0),
 	gsSP2Triangles(6,7,8,0,9,10,11,0),
@@ -121,7 +121,7 @@ Gfx Vtx_wall_mesh01_dl[] __attribute__((aligned (16))) = {
 
 
 #ifdef __N64__
-Gfx Wtx_wall[] __attribute__((aligned (16))) = {
+Gfx Wtx_wall[] __attribute__((aligned (8))) = {
 	  gsDPLoadTextureBlock(Text_wall_wall_diff, G_IM_FMT_RGBA, G_IM_SIZ_16b,32,32,0, 
 	  	  G_TX_WRAP|G_TX_NOMIRROR, G_TX_WRAP|G_TX_NOMIRROR,5,5, G_TX_NOLOD, G_TX_NOLOD), 
 	  gsSPDisplayList(Vtx_wall_mesh01_dl),
@@ -129,7 +129,7 @@ Gfx Wtx_wall[] __attribute__((aligned (16))) = {
 };
 #endif
 
-MeshTri Tris_wall[] __attribute__((aligned (16))) = {
+MeshTri Tris_wall[] __attribute__((aligned (8))) = {
 	{(Vtx*)(&Vtx_wall_mesh01_0[0]),0,1,2},
 	{(Vtx*)(&Vtx_wall_mesh01_0[0]),3,4,5},
 	{(Vtx*)(&Vtx_wall_mesh01_0[0]),6,7,8},
@@ -150,7 +150,7 @@ MeshTri Tris_wall[] __attribute__((aligned (16))) = {
 	{(Vtx*)(&Vtx_wall_mesh01_0[0]),19,27,20}
 };
 
-MeshInfo MeshInfo_wall[] __attribute__((aligned (16))) = {&Tris_wall[0],18,&Text_wall_wall_diff[0]};
+MeshInfo MeshInfo_wall[] __attribute__((aligned (8))) = {&Tris_wall[0],18,&Text_wall_wall_diff[0]};
 
 
 #define WALL_MODEL_MESH_COUNT 1
@@ -159,7 +159,7 @@ MeshInfo* wall_meshinfos[1] = {
     MeshInfo_wall,
 };
 #ifdef __N64__
-Gfx* wall_model_meshes[1] __attribute__((aligned (16))) = {
+Gfx* wall_model_meshes[1] __attribute__((aligned (8))) = {
     Wtx_wall,
 };
 #endif
