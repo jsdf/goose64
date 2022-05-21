@@ -479,11 +479,11 @@ static u32 setupShading() {
   }
 }
 
-// TODO: probably remove the case which doesn't write depth at all
 // returns geometry mode flags
 u32 setupRenderModePerObject(GameObject* obj, int isIntersectingObj) {
   int needsZBuffer =
-      !Renderer_isBackgroundGameObject(obj) /* TEMP: TESTING THIS*/ ||
+      !Renderer_isBackgroundGameObject(obj) ||
+      // ^^^ TEMP: TESTING PERF OF ZBUFFERING ALL FOREGROUNG OBJECTS
       !RENDERER_PAINTERS_ALGORITHM || Renderer_isZBufferedGameObject(obj);
   int needsZWrite = TRUE;
   if (needsZBuffer) {
@@ -503,6 +503,9 @@ u32 setupRenderModePerObject(GameObject* obj, int isIntersectingObj) {
     }
     return G_ZBUFFER;
   } else {
+    // TODO: probably remove this case which doesn't write depth at all
+    // this is only useful if we have objects that are always rendered first
+    // and never intersected
     if (options[OptAntialias]) {
       gDPSetRenderMode(glistp++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
     } else {
