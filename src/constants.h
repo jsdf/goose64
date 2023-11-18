@@ -5,10 +5,11 @@
 #define MAX_WORLD_OBJECTS 100
 // we scale the models up by this much to avoid n64 fixed point precision issues
 #define N64_SCALE_FACTOR 30
-
 #define DEFAULT_FOVY 15.0f
 #define DEFAULT_NEARPLANE 100
 #define DEFAULT_FARPLANE 4000
+#define HIGH_RESOLUTION 0
+#define HIGH_RESOLUTION_HALF_Y 1
 
 #define CONSOLE 1
 #define NU_PERF_BAR 0
@@ -24,6 +25,23 @@
 #define degToRad(angleInDegrees) ((angleInDegrees)*CONST_PI / 180.0)
 #define radToDeg(angleInRadians) ((angleInRadians)*180.0 / CONST_PI)
 
+// TODO: switch based on region
+#if HIGH_RESOLUTION
+#if HIGH_RESOLUTION_HALF_Y
+#define VSYNC_FPS 30
+#define FRAME_SKIP 2
+#else
+
+#define VSYNC_FPS 30
+#define FRAME_SKIP 2
+// #define VSYNC_FPS 15
+// #define FRAME_SKIP 4
+#endif
+#else  // low resolution
+#define VSYNC_FPS 60
+#define FRAME_SKIP 1
+#endif
+
 // dumb
 #ifdef __N64__
 #ifdef __cplusplus  // only for clang linter
@@ -31,6 +49,10 @@
 #endif
 #else
 #include <stdio.h>
+#endif
+
+#ifndef __N64__
+#include <assert.h>
 #endif
 
 #ifdef __N64__

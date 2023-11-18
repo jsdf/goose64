@@ -2,7 +2,6 @@
 #include "renderer.h"
 #include <math.h>
 #ifndef __N64__
-#include <float.h>
 #include <stdio.h>
 #endif
 #ifdef __N64__
@@ -14,9 +13,10 @@
 #ifdef __N64__
 #include <malloc.h>
 #endif
-#include <string.h>
 
+#ifdef ED64
 #include "ed64io_usb.h"
+#endif
 #include "frustum.h"
 #include "game.h"
 #include "gameobject.h"
@@ -31,16 +31,14 @@ int Renderer_isDynamicObject(GameObject* obj) {
 int Renderer_isZBufferedGameObject(GameObject* obj) {
   if (Renderer_isDynamicObject(obj))
     return TRUE;
-
-  // animated game objects have concave shapes, need z buffering
   if (Renderer_isAnimatedGameObject(obj))
     return TRUE;
 
   switch (obj->modelType) {
-    // case BushModel:
-    // case WatergrassModel:
-    // case ReedModel:
-    // return TRUE;
+    case BushModel:
+      // case WatergrassModel:
+      // case ReedModel:
+      return TRUE;
     default:
       return FALSE;
   }
@@ -67,8 +65,8 @@ int Renderer_isBackgroundGameObject(GameObject* obj) {
 
 int Renderer_isLitGameObject(GameObject* obj) {
   switch (obj->modelType) {
-    // case GroundModel:
-    // case WaterModel:
+    case GroundModel:
+    case WaterModel:
     case WallModel:
     case PlanterModel:
       return TRUE;
@@ -329,7 +327,7 @@ int Renderer_cullVisibility(GameObject* worldObjects,
   for (i = 0; i < worldObjectsCount; i++) {
     obj = worldObjects + i;
     if (obj->modelType == NoneModel || !obj->visible
-#if RENDERER_FAKE_GROUND
+#if FAKE_GROUND
         || obj->modelType == GroundModel
 #endif
 
@@ -398,7 +396,7 @@ void Renderer_sortVisibleObjects(GameObject* worldObjects,
   // used for painters algo
   sortWorldComparatorFn_viewPos = *viewPos;
 #if RENDERER_PAINTERS_ALGORITHM
-#if 0
+#if 1
   sortIterations = 0;
   qsort(result, visibleObjectsCount, sizeof(RendererSortDistance),
         Renderer_sortWorldComparatorFnPaintersSeparatingPlane);
@@ -410,104 +408,4 @@ void Renderer_sortVisibleObjects(GameObject* worldObjects,
   qsort(result, visibleObjectsCount, sizeof(RendererSortDistance),
         Renderer_sortWorldComparatorFnZBuffer);
 #endif
-}
-
-void RendererZSortList_insertMeshTri(RendererZSortList* list,
-                                     GameObject* obj,
-                                     MeshTri* meshtri,
-                                     Vec3d* viewPos,
-                                     Renderer_meshTriDistCallback cb) {
-  // - calculate centroid
-  // - transform centroid to world (using transform matrix? directly applying
-  // components?)
-  // - determine bucket for tri
-  // - resize bucket if necessary
-  // - insert tri
-
-  RendererZSortBucket* bucket;
-  float dist = cb(obj, meshtri, viewPos);
-  float clampedDist = CLAMP(dist, list->near, (list->far - 0.001));
-  int bucketIdx = (clampedDist - list->near) / list->bucketSize;
-  invariant(bucketIdx >= 0 && bucketIdx < list->count);
-
-  bucket = &list->buckets[bucketIdx];
-
-  if (bucket->count == bucket->capacity) {
-    RendererZSortBucket_expand(bucket);
-  }
-  invariant(bucket->count < bucket->capacity);
-
-  RendererZSortItem_init(&bucket->items[bucket->count], obj, meshtri);
-  bucket->count++;
-}
-
-void RendererZSortItem_init(RendererZSortItem* self,
-                            GameObject* obj,
-                            MeshTri* meshtri) {
-  self->obj = obj;
-  self->meshtri = meshtri;
-}
-
-void RendererZSortBucket_init(RendererZSortBucket* self) {
-  self->capacity = 0;
-  self->count = 0;
-  self->items = NULL;
-}
-
-void RendererZSortList_init(RendererZSortList* self, float near, float far) {
-  int i;
-  // invariant(self->initialized == FALSE);
-  self->count = RENDERER_ZSORT_BUCKET_COUNT;
-
-  self->near = near;
-  self->far = far;
-  self->bucketSize = ((self->far - self->near) / self->count);
-  for (i = 0; i < self->count; ++i) {
-    RendererZSortBucket_init(&self->buckets[i]);
-  }
-  self->initialized = TRUE;
-}
-
-void RendererZSortList_destroy(RendererZSortList* self) {
-  int i;
-  invariant(self->initialized == TRUE);
-
-  for (i = 0; i < self->count; ++i) {
-    RendererZSortBucket_destroy(&self->buckets[i]);
-  }
-
-  self->initialized = FALSE;
-}
-
-void RendererZSortBucket_expand(RendererZSortBucket* self) {
-  if (self->capacity == 0) {
-    invariant(self->items == NULL);
-    self->capacity = RENDERER_ZSORT_BUCKET_INIT_CAPACITY;
-    self->items = (RendererZSortItem*)malloc((self->capacity) *
-                                             sizeof(RendererZSortItem));
-    invariant(self->items);
-  } else {
-    int newCapacity = self->capacity * 2;
-    RendererZSortItem* newItems =
-        (RendererZSortItem*)malloc((newCapacity) * sizeof(RendererZSortItem));
-    memcpy(newItems, self->items, self->count * sizeof(RendererZSortItem));
-    free(self->items);
-    self->capacity = newCapacity;
-    self->items = newItems;
-    // self->count is still correct
-  }
-}
-
-void RendererZSortBucket_destroy(RendererZSortBucket* self) {
-  if (self->capacity == 0) {
-    invariant(self->items == NULL);
-    // nothing to do here
-  } else {
-    // clean up items
-    invariant(self->items);
-    free(self->items);
-    self->items = NULL;
-    self->capacity = 0;
-    self->count = 0;
-  }
 }

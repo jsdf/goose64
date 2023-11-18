@@ -10,29 +10,6 @@
 #include <malloc.h>
 #endif
 
-
-
-#ifdef __N64__
-#define FASTINVSQRT 1
-#endif
-
-#ifdef FASTINVSQRT
-static float fastInvSqrt(float number) {
-  long i;
-  float x2, y;
-  const float threehalfs = 1.5F;
-
-  x2 = number * 0.5F;
-  y = number;
-  i = *(long*)&y;
-  i = 0x5f3759df - (i >> 1);
-  y = *(float*)&i;
-  y = y * (threehalfs - (x2 * y * y));
-
-  return y;
-}
-#endif
-
 Vec3d* Vec3d_alloc(float x, float y, float z) {
   Vec3d* created = (Vec3d*)malloc(sizeof(Vec3d));
   created->x = x;
@@ -80,24 +57,15 @@ float Vec3d_distanceToSq(Vec3d* self, Vec3d* other) {
 }
 
 Vec3d* Vec3d_normalise(Vec3d* self) {
+  float magnitude;
   if (self->x == 0.0F && self->y == 0.0F && self->z == 0.0F) {
     return self;
   }
 
-  {    
-#ifdef FASTINVSQRT
-  float invsqrt = fastInvSqrt(self->x * self->x + self->y * self->y + self->z * self->z);
-  self->x *= invsqrt;
-  self->y *= invsqrt;
-  self->z *= invsqrt;
-#else
-  float magnitude = sqrtf(self->x * self->x + self->y * self->y + self->z * self->z);
+  magnitude = sqrtf(self->x * self->x + self->y * self->y + self->z * self->z);
   self->x /= magnitude;
   self->y /= magnitude;
   self->z /= magnitude;
-#endif
-  }
-
   return self;
 }
 

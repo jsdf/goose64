@@ -8,7 +8,9 @@
 #include <nusys.h>
 // #include <stdlib.h>
 
-#include <nualstl_n.h>
+#ifdef SOUND
+#include <nual_n.h>
+#endif
 
 #include <malloc.h>
 #include <math.h>
@@ -41,15 +43,17 @@
 #include "garden_map_collision.h"
 #include "garden_map_graph.h"
 
+#ifdef ED64
 #include "ed64io.h"
+#endif
 
 #define LOG_TRACES 0
 #define LOG_PROFILING 1
 
 #define CONTROLLER_DEAD_ZONE 0.1
-#define SOUND_TEST 0
 
-typedef enum ConsoleMode {
+typedef enum ConsoleMode
+{
   CONSOLE_HIDDEN,
   CONSOLE_SHOW_CAMERA,
   CONSOLE_SHOW_CPU_PROFILING,
@@ -98,7 +102,9 @@ float profilingAverages[MAX_TRACE_EVENT_TYPE];
 
 static int usbEnabled;
 static int usbResult;
+#ifdef ED64
 static UsbLoggerState usbLoggerState;
+#endif
 
 static int logTraceStartOffset = 0;
 static int loggingTrace = FALSE;
@@ -106,13 +112,11 @@ static int loggingTrace = FALSE;
 PhysWorldData physWorldData;
 
 void soundCheck(void);
-void Rom2Ram(void*, void*, s32);
+void Rom2Ram(void *, void *, s32);
 
 #define OBJ_START_VAL 1000
 
-static musHandle sndHandle = 0;
-static musHandle seqHandle = 0;
-static float sndPitch = 10.5;  // i don't fucking know :((
+static float sndPitch = 10.5; // i don't fucking know :((
 static int sndNumber = 0;
 static int honkSoundRange = Honk5Sound - Honk1Sound;
 static int seqPlaying = FALSE;
@@ -123,8 +127,9 @@ static RenderMode debugRenderModes[] = {
     ToonFlatShadingRenderMode, WireframeRenderMode, NormalColorRenderMode};
 
 /* The initialization of stage 0 */
-void initStage00() {
-  Game* game;
+void initStage00()
+{
+  Game *game;
   int i;
 
   // load in the models segment into higher memory
@@ -136,19 +141,20 @@ void initStage00() {
   // load in the collision segment into higher memory
   Rom2Ram(_collisionSegmentRomStart, _collisionSegmentStart,
           _collisionSegmentRomEnd - _collisionSegmentRomStart);
-
+#ifdef SOUND
   /* Read and register the sample bank. */
-  nuAuStlPtrBankInit(PBANK_END - PBANK_START);
-  nuAuStlPtrBankSet((u8*)PBANK_START, PBANK_END - PBANK_START,
-                    (u8*)WBANK_START);
+  nuAuPtrBankInit(PBANK_END - PBANK_START);
+  nuAuPtrBankSet((u8 *)PBANK_START, PBANK_END - PBANK_START,
+                 (u8 *)WBANK_START);
 
   /* Read and register the sound effects. */
-  nuAuStlSndPlayerDataSet((u8*)SFX_START, SFX_END - SFX_START);
+  nuAuSndPlayerDataSet((u8 *)SFX_START, SFX_END - SFX_START);
 
-  nuAuStlSeqPlayerDataSet(0, (u8*)SONG_START, SONG_END - SONG_START);
+  nuAuSeqPlayerDataSet(0, (u8 *)SONG_START, SONG_END - SONG_START);
 
-  debugPrintfSync("audio heap used=%d, free=%d\n", nuAuStlHeapGetUsed(),
-                  nuAuStlHeapGetFree());
+  debugPrintfSync("audio heap used=%d, free=%d\n", nuAuHeapGetUsed(),
+                  nuAuHeapGetFree());
+#endif
 
   physWorldData = (PhysWorldData){garden_map_collision_collision_mesh,
                                   GARDEN_MAP_COLLISION_LENGTH,
@@ -189,7 +195,8 @@ void initStage00() {
 
   lastFrameTime = CUR_TIME_MS();
 
-  for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
+  for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i)
+  {
     profilingAverages[i] = 0;
     profilingAccumulated[i] = 0;
     profilingCounts[i] = 0;
@@ -206,14 +213,16 @@ void initStage00() {
   debugPrintf("good morning\n");
 }
 
-void debugPrintVec3d(int x, int y, char* label, Vec3d* vec) {
+void debugPrintVec3d(int x, int y, char *label, Vec3d *vec)
+{
   char conbuf[100];
   nuDebConTextPos(0, x, y);
   sprintf(conbuf, "%s {%5.0f,%5.0f,%5.0f}", label, vec->x, vec->y, vec->z);
   nuDebConCPuts(0, conbuf);
 }
 
-void debugPrintFloat(int x, int y, char* format, float value) {
+void debugPrintFloat(int x, int y, char *format, float value)
+{
   char conbuf[100];
   nuDebConTextPos(0, x, y);
   sprintf(conbuf, format, value);
@@ -221,7 +230,8 @@ void debugPrintFloat(int x, int y, char* format, float value) {
 }
 
 #ifdef NU_DEBUG
-void traceRCP() {
+void traceRCP()
+{
   int i;
   float longestRDPTaskTime = 0;
   float longestRSPTaskTime = 0;
@@ -229,7 +239,8 @@ void traceRCP() {
 
   // retraceTime = nuDebTaskPerfPtr->retraceTime;
   // debugPrintf("rt=%f ", retraceTime / (1000000.0));
-  for (i = 0; i < nuDebTaskPerfPtr->gfxTaskCnt; i++) {
+  for (i = 0; i < nuDebTaskPerfPtr->gfxTaskCnt; i++)
+  {
     // debugPrintf(
     //     "[t%d: st=%f rsp=%f,rdp=%f] ", i,
     //     (nuDebTaskPerfPtr->gfxTaskTime[i].rspStart ) / 1000.0,
@@ -270,9 +281,10 @@ void traceRCP() {
 #endif
 
 /* Make the display list and activate the task */
-void makeDL00() {
-  Game* game;
-  Dynamic* dynamicp;
+void makeDL00()
+{
+  Game *game;
+  Dynamic *dynamicp;
   int consoleOffset;
   float curTime;
   int i;
@@ -291,7 +303,8 @@ void makeDL00() {
 
   Trace_addEvent(FrameTraceEvent, curTime, curTime + 16);
 
-  if (curTime - frameCounterLastTime >= 1000.0) {
+  if (curTime - frameCounterLastTime >= 1000.0)
+  {
     frameCounterLastFrames = frameCounterCurFrames;
     frameCounterCurFrames = 0;
     frameCounterLastTime += 1000.0;
@@ -324,14 +337,17 @@ void makeDL00() {
   Frustum_setCamDef(&N64Renderer_frustum, &game->viewPos, &game->viewTarget,
                     &upVector);
 
-  if (game->freeView) {
+  if (game->freeView)
+  {
     guPosition(&dynamicp->camera,
-               viewRot.x,  // roll
-               viewRot.y,  // pitch
-               viewRot.z,  // yaw
-               1.0F,       // scale
+               viewRot.x, // roll
+               viewRot.y, // pitch
+               viewRot.z, // yaw
+               1.0F,      // scale
                viewPos.x, viewPos.y, viewPos.z);
-  } else {
+  }
+  else
+  {
     guLookAt(&dynamicp->camera, game->viewPos.x, game->viewPos.y,
              game->viewPos.z, game->viewTarget.x, game->viewTarget.y,
              game->viewTarget.z, upVector.x, upVector.y, upVector.z);
@@ -368,100 +384,108 @@ void makeDL00() {
 
 // debug text overlay
 #if DEBUG
-  if (consoleShown()) {
+  if (consoleShown())
+  {
     invariant(!(consoleShown() && nuPerfBarShown));
     nuDebConClear(0);
     consoleOffset = 21;
 
-    if (!(contPattern & 0x1)) {
+    if (!(contPattern & 0x1))
+    {
       nuDebConTextPos(0, 9, 24);
       nuDebConCPuts(0, "Controller1 not connected");
-    } else if (game->freeView) {
+    }
+    else if (game->freeView)
+    {
       debugPrintVec3d(4, consoleOffset++, "viewPos", &viewPos);
-    } else {
-      switch (consoleMode) {
-        case CONSOLE_SHOW_CPU_PROFILING:
-          debugPrintFloat(4, consoleOffset++, "char=%3.2fms",
-                          profAvgCharacters);
-          debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profAvgPhysics);
-          debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profAvgDraw);
-          debugPrintFloat(0, consoleOffset++, "path=%3.2fms", profAvgPath);
-          break;
-        case CONSOLE_SHOW_PROFILING:
-          nuDebConTextPos(0, 4, consoleOffset++);
-          sprintf(conbuf, "cpu=%3.2f rsp=%3.2f rdp=%3.2f",
-                  profilingAverages[MainCPUTraceEvent],
-                  profilingAverages[RSPTaskTraceEvent],
-                  profilingAverages[RDPTaskTraceEvent]);
-          nuDebConCPuts(0, conbuf);
-          nuDebConTextPos(0, 4, consoleOffset++);
-          sprintf(conbuf, "OptMeshSubdiv=%d", options[OptMeshSubdiv]);
-          nuDebConCPuts(0, conbuf);
-          break;
-        case CONSOLE_SHOW_TRACING:
-          nuDebConTextPos(0, 4, consoleOffset++);
-          sprintf(conbuf, "trace rec=%d,log=%d,evs=%d,lgd=%d",
-                  Trace_isTracing(), loggingTrace, Trace_getEventsCount(),
-                  logTraceStartOffset);
-          nuDebConCPuts(0, conbuf);
-          break;
-        case CONSOLE_SHOW_RCP_TASKS:
+    }
+    else
+    {
+      switch (consoleMode)
+      {
+      case CONSOLE_SHOW_CPU_PROFILING:
+        debugPrintFloat(4, consoleOffset++, "char=%3.2fms",
+                        profAvgCharacters);
+        debugPrintFloat(4, consoleOffset++, "phys=%3.2fms", profAvgPhysics);
+        debugPrintFloat(4, consoleOffset++, "draw=%3.2fms", profAvgDraw);
+        debugPrintFloat(0, consoleOffset++, "path=%3.2fms", profAvgPath);
+        break;
+      case CONSOLE_SHOW_PROFILING:
+        nuDebConTextPos(0, 4, consoleOffset++);
+        sprintf(conbuf, "cpu=%3.2f rsp=%3.2f rdp=%3.2f",
+                profilingAverages[MainCPUTraceEvent],
+                profilingAverages[RSPTaskTraceEvent],
+                profilingAverages[RDPTaskTraceEvent]);
+        nuDebConCPuts(0, conbuf);
+        nuDebConTextPos(0, 4, consoleOffset++);
+        sprintf(conbuf, "OptMeshSubdiv=%d", options[OptMeshSubdiv]);
+        nuDebConCPuts(0, conbuf);
+        break;
+      case CONSOLE_SHOW_TRACING:
+        nuDebConTextPos(0, 4, consoleOffset++);
+        sprintf(conbuf, "trace rec=%d,log=%d,evs=%d,lgd=%d",
+                Trace_isTracing(), loggingTrace, Trace_getEventsCount(),
+                logTraceStartOffset);
+        nuDebConCPuts(0, conbuf);
+        break;
+      case CONSOLE_SHOW_RCP_TASKS:
 #ifdef NU_DEBUG
+      {
+        int tskIdx;
+        for (tskIdx = 0; tskIdx < nuDebTaskPerfPtr->gfxTaskCnt; tskIdx++)
         {
-          int tskIdx;
-          for (tskIdx = 0; tskIdx < nuDebTaskPerfPtr->gfxTaskCnt; tskIdx++) {
-            nuDebConTextPos(0, 4, consoleOffset++);
-            sprintf(conbuf, "[t%d:  rsp=%.2f,rdp=%.2f] ", tskIdx,
-                    (nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspEnd -
-                     nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspStart) /
-                        1000.0,
-                    (nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rdpEnd -
-                     nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspStart) /
-                        1000.0);
-            nuDebConCPuts(0, conbuf);
-          }
+          nuDebConTextPos(0, 4, consoleOffset++);
+          sprintf(conbuf, "[t%d:  rsp=%.2f,rdp=%.2f] ", tskIdx,
+                  (nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspEnd -
+                   nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspStart) /
+                      1000.0,
+                  (nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rdpEnd -
+                   nuDebTaskPerfPtr->gfxTaskTime[tskIdx].rspStart) /
+                      1000.0);
+          nuDebConCPuts(0, conbuf);
         }
+      }
+#endif
+      break;
+      case CONSOLE_SHOW_CULLING:
+        nuDebConTextPos(0, 4, consoleOffset++);
+        sprintf(conbuf, "culled=%d", N64Renderer_objectsCulled);
+        nuDebConCPuts(0, conbuf);
+        break;
+      case CONSOLE_SHOW_CAMERA:
+        consoleOffset = 16; // needs extra space
+        debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
+        debugPrintVec3d(4, consoleOffset++, "viewTarget", &game->viewTarget);
+        debugPrintFloat(4, consoleOffset++, "viewZoom=%1.1f", game->viewZoom);
+        debugPrintFloat(4, consoleOffset++, "fovy=%3.1f", fovy);
+        debugPrintFloat(4, consoleOffset++, "nearPlane=%.2f", nearPlane);
+        debugPrintFloat(4, consoleOffset++, "farPlane=%.2f", farPlane);
+        break;
+
+      case CONSOLE_SHOW_ED64LOG_INTERNALS:
+#ifdef ED64
+        usbLoggerGetState(&usbLoggerState);
+        nuDebConTextPos(0, 4, consoleOffset++);
+        sprintf(conbuf, "usb=%d,res=%d,st=%d,id=%d,mqsz=%d", usbEnabled,
+                usbResult, usbLoggerState.fifoWriteState,
+                usbLoggerState.msgID, usbLoggerState.msgQSize);
+        nuDebConCPuts(0, conbuf);
+        nuDebConTextPos(0, 4, consoleOffset++);
+        sprintf(conbuf, "off=%4d,flu=%d,ovf=%d,don=%d,err=%d",
+                usbLoggerState.usbLoggerOffset,
+                usbLoggerState.usbLoggerFlushing,
+                usbLoggerState.usbLoggerOverflow, usbLoggerState.countDone,
+                usbLoggerState.writeError);
+        nuDebConCPuts(0, conbuf);
 #endif
         break;
-        case CONSOLE_SHOW_CULLING:
-          nuDebConTextPos(0, 4, consoleOffset++);
-          sprintf(conbuf, "culled=%d", N64Renderer_objectsCulled);
-          nuDebConCPuts(0, conbuf);
-          break;
-        case CONSOLE_SHOW_CAMERA:
-          consoleOffset = 16;  // needs extra space
-          debugPrintVec3d(4, consoleOffset++, "viewPos", &game->viewPos);
-          debugPrintVec3d(4, consoleOffset++, "viewTarget", &game->viewTarget);
-          debugPrintFloat(4, consoleOffset++, "viewZoom=%1.1f", game->viewZoom);
-          debugPrintFloat(4, consoleOffset++, "fovy=%3.1f", fovy);
-          debugPrintFloat(4, consoleOffset++, "nearPlane=%.2f", nearPlane);
-          debugPrintFloat(4, consoleOffset++, "farPlane=%.2f", farPlane);
-          break;
 
-        case CONSOLE_SHOW_ED64LOG_INTERNALS:
-#ifdef ED64
-          usbLoggerGetState(&usbLoggerState);
-          nuDebConTextPos(0, 4, consoleOffset++);
-          sprintf(conbuf, "usb=%d,res=%d,st=%d,id=%d,mqsz=%d", usbEnabled,
-                  usbResult, usbLoggerState.fifoWriteState,
-                  usbLoggerState.msgID, usbLoggerState.msgQSize);
-          nuDebConCPuts(0, conbuf);
-          nuDebConTextPos(0, 4, consoleOffset++);
-          sprintf(conbuf, "off=%4d,flu=%d,ovf=%d,don=%d,err=%d",
-                  usbLoggerState.usbLoggerOffset,
-                  usbLoggerState.usbLoggerFlushing,
-                  usbLoggerState.usbLoggerOverflow, usbLoggerState.countDone,
-                  usbLoggerState.writeError);
-          nuDebConCPuts(0, conbuf);
-#endif
-          break;
-
-        case CONSOLE_SHOW_SOUND:
-          debugPrintFloat(4, consoleOffset++, "snd=%.0f", sndNumber);
-          debugPrintFloat(4, consoleOffset++, "pitch=%f", sndPitch);
-          break;
-      }  // end switch
-    }    // end if (freeView)
+      case CONSOLE_SHOW_SOUND:
+        debugPrintFloat(4, consoleOffset++, "snd=%.0f", sndNumber);
+        debugPrintFloat(4, consoleOffset++, "pitch=%f", sndPitch);
+        break;
+      } // end switch
+    }   // end if (freeView)
     debugPrintFloat(4, consoleOffset++, "frame=%3.2fms",
                     1000.0 / frameCounterLastFrames);
 
@@ -473,15 +497,16 @@ void makeDL00() {
     nuDebConDisp(NU_SC_SWAPBUFFER);
   }
 
-#endif  // end of #if DEBUG
+#endif // end of #if DEBUG
 
   Trace_addEvent(DebugDrawTraceEvent, profStartDebugDraw, CUR_TIME_MS());
 }
 
-void checkDebugControls(Game* game) {
+void checkDebugControls(Game *game)
+{
   /* Change the display position by stick data */
-  viewRot.x = contdata->stick_y;  // rot around x
-  viewRot.y = contdata->stick_x;  // rot around y
+  viewRot.x = contdata->stick_y; // rot around x
+  viewRot.y = contdata->stick_x; // rot around y
 
   /* Change the moving speed with up/down buttons of controller */
   if (contdata[0].button & U_JPAD)
@@ -489,10 +514,13 @@ void checkDebugControls(Game* game) {
   if (contdata[0].button & D_JPAD)
     viewPos.z -= 10.0;
 
-  if (viewPos.z < (600.0 - farPlane)) {
+  if (viewPos.z < (600.0 - farPlane))
+  {
     /* It comes back near if it goes too far */
     viewPos.z = 600.0 - nearPlane;
-  } else if (viewPos.z > (600.0 - nearPlane)) {
+  }
+  else if (viewPos.z > (600.0 - nearPlane))
+  {
     /* It goes back far if it comes too near */
     viewPos.z = 600.0 - farPlane;
   }
@@ -513,19 +541,23 @@ void checkDebugControls(Game* game) {
     viewPos.x += 30.0;
 }
 
-void logTraceChunk() {
+void logTraceChunk()
+{
   int i;
   int printedFirstItem;
 #if ED64
 
   printedFirstItem = FALSE;
-  if (usbLoggerBufferRemaining() < 120) {
+  if (usbLoggerBufferRemaining() < 120)
+  {
     return;
   }
   debugPrintf("TRACE=[");
-  for (i = logTraceStartOffset; i < Trace_getEventsCount(); i++) {
+  for (i = logTraceStartOffset; i < Trace_getEventsCount(); i++)
+  {
     // check we have room for more data
-    if (usbLoggerBufferRemaining() < 40) {
+    if (usbLoggerBufferRemaining() < 40)
+    {
       break;
     }
     debugPrintf("%s[%.2f,%.2f,%d]", printedFirstItem ? "," : "",
@@ -535,7 +567,8 @@ void logTraceChunk() {
   }
   debugPrintf("]\n");
 
-  if (logTraceStartOffset == Trace_getEventsCount() - 1) {
+  if (logTraceStartOffset == Trace_getEventsCount() - 1)
+  {
     // finished
     loggingTrace = FALSE;
     logTraceStartOffset = 0;
@@ -544,24 +577,27 @@ void logTraceChunk() {
 #endif
 }
 
-void startRecordingTrace() {
+void startRecordingTrace()
+{
   Trace_clear();
   Trace_start();
 }
 
-void finishRecordingTrace() {
+void finishRecordingTrace()
+{
   Trace_stop();
   loggingTrace = TRUE;
 }
 
 /* The game progressing process for stage 0 */
-void updateGame00(void) {
+void updateGame00(void)
+{
   int i;
-  Game* game;
+  Game *game;
 
   totalUpdates++;
 #ifdef NU_DEBUG
-  traceRCP();  // record rcp perf from prev frame
+  traceRCP(); // record rcp perf from prev frame
 #endif
 
   game = Game_get();
@@ -570,9 +606,11 @@ void updateGame00(void) {
 
   /* Data reading of controller 1 */
   nuContDataGetEx(contdata, 0);
-  if (contdata[0].trigger & START_BUTTON) {
+  if (contdata[0].trigger & START_BUTTON)
+  {
     debugRenderMode++;
-    if (debugRenderMode >= NUM_DEBUG_RENDER_MODES) {
+    if (debugRenderMode >= NUM_DEBUG_RENDER_MODES)
+    {
       debugRenderMode = 0;
     }
     N64Renderer_renderMode = debugRenderModes[debugRenderMode];
@@ -581,71 +619,94 @@ void updateGame00(void) {
 #if SOUND_TEST
   soundCheck();
 #endif
-  if (contdata[0].trigger & L_TRIG) {
+  if (contdata[0].trigger & L_TRIG)
+  {
     game->freeView = !game->freeView;
   }
-  if (game->freeView) {
+  if (game->freeView)
+  {
     checkDebugControls(game);
-  } else {
+  }
+  else
+  {
     // normal controls
-    if (contdata[0].button & A_BUTTON) {
+    if (contdata[0].button & A_BUTTON)
+    {
       input.run = TRUE;
     }
-    if (contdata[0].button & B_BUTTON) {
+    if (contdata[0].button & B_BUTTON)
+    {
       input.pickup = TRUE;
     }
-    if (contdata[0].button & Z_TRIG) {
+    if (contdata[0].button & Z_TRIG)
+    {
       input.zoomIn = TRUE;
     }
-    if (contdata[0].button & R_TRIG) {
+    if (contdata[0].button & R_TRIG)
+    {
       input.zoomOut = TRUE;
     }
 
-    if (contdata[0].trigger & L_JPAD) {
+    if (contdata[0].trigger & L_JPAD)
+    {
       // letting an enum go negative is undefined behavior, so wrap it now
-      if (consoleMode == 0) {
+      if (consoleMode == 0)
+      {
         consoleMode = MAX_CONSOLE_MODE - 1;
-      } else {
+      }
+      else
+      {
         consoleMode -= 1;
       }
     }
-    if (contdata[0].trigger & R_JPAD) {
-      if (consoleMode == MAX_CONSOLE_MODE - 1) {
+    if (contdata[0].trigger & R_JPAD)
+    {
+      if (consoleMode == MAX_CONSOLE_MODE - 1)
+      {
         consoleMode = 0;
-      } else {
+      }
+      else
+      {
         consoleMode += 1;
       }
     }
 
-    if (contdata[0].trigger & D_CBUTTONS) {
+    if (contdata[0].trigger & D_CBUTTONS)
+    {
       options[OptMeshSubdiv] = !options[OptMeshSubdiv];
     }
 
 #if SOUND_TEST
-    if (contdata[0].trigger & L_CBUTTONS) {
+    if (contdata[0].trigger & L_CBUTTONS)
+    {
       // TODO: trigger this sound from inside the player state machine
       sndNumber = RAND(honkSoundRange) + Honk1Sound;
       // this cuts out any previous honk
       // TODO: prevent overlapping honks?
-      if (sndHandle != 0) {
-        nuAuStlSndPlayerSndStop(sndHandle, 0);
+      if (sndHandle != 0)
+      {
+        nuAuSndPlayerSndStop(sndHandle, 0);
       }
       // sndPitch = 10.5;  // hand tuned... the sample tuning is fucked
       sndPitch = 0;
-      sndHandle = nuAuStlSndPlayerPlay(sndNumber);
-      nuAuStlSndPlayerSetSndPitch(sndHandle, sndPitch);
+      sndHandle = nuAuSndPlayerPlay(sndNumber);
+      nuAuSndPlayerSetSndPitch(sndHandle, sndPitch);
     }
 
-    if (contdata[0].trigger & R_CBUTTONS) {
-      if (seqPlaying) {
+    if (contdata[0].trigger & R_CBUTTONS)
+    {
+      if (seqPlaying)
+      {
         debugPrintf("stop playing seq\n");
-        nuAuStlSeqPlayerStop(/*frames until stop*/ 0);
+        nuAuSeqPlayerStop(/*frames until stop*/ 0);
         seqPlaying = FALSE;
         seqHandle = 0;
-      } else {
+      }
+      else
+      {
         debugPrintf("start playing seq\n");
-        seqHandle = nuAuStlSeqPlayerPlay(/*seq player num*/ NU_AU_SEQ_PLAYER0);
-        nuAuStlSeqPlayerSetMasterVol(/*max*/ 0x7fff);
+        seqHandle = nuAuSeqPlayerPlay(/*seq player num*/ NU_AU_SEQ_PLAYER0);
+        nuAuSeqPlayerSetMasterVol(/*max*/ 0x7fff);
         MusHandleSetVolume(seqHandle, /* 200% */ 0x100);
         seqPlaying = TRUE;
       }
@@ -658,7 +719,8 @@ void updateGame00(void) {
       input.direction.x = 0;
     if (fabsf(input.direction.y) < CONTROLLER_DEAD_ZONE)
       input.direction.y = 0;
-    if (Vec2d_length(&input.direction) > 1.0F) {
+    if (Vec2d_length(&input.direction) > 1.0F)
+    {
       Vec2d_normalise(&input.direction);
     }
   }
@@ -666,7 +728,8 @@ void updateGame00(void) {
   Game_update(&input);
 
 #if LOG_PROFILING
-  if (nuScRetraceCounter % 60 == 0) {
+  if (nuScRetraceCounter % 60 == 0)
+  {
     debugPrintf(
         "frm=%3.2f cpu=%3.2f rsp=%3.2f rdp=%3.2f tsks=%d drpd=%d\n",
         1000.0 / frameCounterLastFrames, profilingAverages[MainCPUTraceEvent],
@@ -677,22 +740,30 @@ void updateGame00(void) {
 #endif
 
 #if LOG_TRACES
-  if (contdata[0].trigger & U_CBUTTONS) {
-    if (!loggingTrace) {
-      if (!Trace_isTracing()) {
+  if (contdata[0].trigger & U_CBUTTONS)
+  {
+    if (!loggingTrace)
+    {
+      if (!Trace_isTracing())
+      {
         startRecordingTrace();
-      } else {
+      }
+      else
+      {
         finishRecordingTrace();
       }
     }
   }
-  if (Trace_getEventsCount() == TRACE_EVENT_BUFFER_SIZE) {
+  if (Trace_getEventsCount() == TRACE_EVENT_BUFFER_SIZE)
+  {
     finishRecordingTrace();
   }
 #endif
-  if (usbEnabled) {
+  if (usbEnabled)
+  {
 #if LOG_TRACES
-    if (loggingTrace) {
+    if (loggingTrace)
+    {
       logTraceChunk();
     }
 #endif
@@ -702,9 +773,11 @@ void updateGame00(void) {
   //   debugPrintfSync("retrace=%d\n", nuScRetraceCounter);
   // }
 
-  if (usbEnabled) {
+  if (usbEnabled)
+  {
 #if LOG_TRACES
-    if (loggingTrace) {
+    if (loggingTrace)
+    {
       logTraceChunk();
     }
 #endif
@@ -713,7 +786,8 @@ void updateGame00(void) {
 #endif
   }
 
-  if (totalUpdates % 60 == 0) {
+  if (totalUpdates % 60 == 0)
+  {
     // calc averages for last 60 updates
     profAvgCharacters = game->profTimeCharacters / 60;
     game->profTimeCharacters = 0.0f;
@@ -724,7 +798,8 @@ void updateGame00(void) {
     profAvgPath = game->profTimePath / 60;
     game->profTimePath = 0.0f;
 
-    for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i) {
+    for (i = 0; i < MAX_TRACE_EVENT_TYPE; ++i)
+    {
       profilingAverages[i] =
           profilingCounts[i] == 0
               ? 0
@@ -742,19 +817,24 @@ void updateGame00(void) {
   function is the total of RCP tasks that are currently processing and
   waiting for the process.
 -----------------------------------------------------------------------------*/
-void stage00(int pendingGfx) {
+void stage00(int pendingGfx)
+{
   float skippedGfxTime, profStartUpdate, profStartFrame, profEndFrame;
   // an extra task is used to draw debug stuff
   int gfxTasksPerMakeDL = consoleShown() || nuPerfBarShown ? 2 : 1;
   profStartFrame = CUR_TIME_MS();
   /* Provide the display process if n or less RCP tasks are processing or
         waiting for the process.  */
-  if (nuScRetraceCounter % FRAME_SKIP == 0) {
-    if (pendingGfx < gfxTasksPerMakeDL * 2) {
+  if (nuScRetraceCounter % FRAME_SKIP == 0)
+  {
+    if (pendingGfx < gfxTasksPerMakeDL * 2)
+    {
       makeDL00();
       Trace_addEvent(MainMakeDisplayListTraceEvent, profStartFrame,
                      CUR_TIME_MS());
-    } else {
+    }
+    else
+    {
       skippedGfxTime = CUR_TIME_MS();
       Trace_addEvent(SkippedGfxTaskTraceEvent, skippedGfxTime,
                      skippedGfxTime + 16.0f);
@@ -773,38 +853,48 @@ void stage00(int pendingGfx) {
   profilingCounts[MainCPUTraceEvent]++;
 }
 
+#ifdef SOUND
 /* Provide playback and control of audio by the button of the controller */
-void soundCheck(void) {
+void soundCheck(void)
+{
   /* The order in which audio is played can be determined using the right and
    * left sides of the cross key. */
   if ((contdata[0].trigger & L_JPAD) || (contdata[0].trigger & R_JPAD) ||
-      contdata[0].trigger & U_JPAD || contdata[0].trigger & D_JPAD) {
+      contdata[0].trigger & U_JPAD || contdata[0].trigger & D_JPAD)
+  {
     if (sndNumber)
-      nuAuStlSndPlayerSndStop(sndHandle, 0);
+      nuAuSndPlayerSndStop(sndHandle, 0);
 
-    if (contdata[0].trigger & L_JPAD) {
+    if (contdata[0].trigger & L_JPAD)
+    {
       sndNumber--;
       if (sndNumber < 1)
         sndNumber = MAX_SOUND_TYPE - 1;
-    } else if (contdata[0].trigger & R_JPAD) {
+    }
+    else if (contdata[0].trigger & R_JPAD)
+    {
       sndNumber++;
       if (sndNumber > MAX_SOUND_TYPE - 1)
         sndNumber = 1;
-    } else if (contdata[0].trigger & U_JPAD) {
+    }
+    else if (contdata[0].trigger & U_JPAD)
+    {
       sndPitch += 0.5;
       if (sndPitch > 12.0)
         sndPitch = -12.0;
-    } else if (contdata[0].trigger & D_JPAD) {
+    }
+    else if (contdata[0].trigger & D_JPAD)
+    {
       sndPitch -= 0.5;
       if (sndPitch < -12.0)
         sndPitch = 12.0;
     }
 
-    sndHandle = nuAuStlSndPlayerPlay(sndNumber - 1);
-    nuAuStlSndPlayerSetSndPitch(sndHandle, sndPitch);
+    sndHandle = nuAuSndPlayerPlay(sndNumber - 1);
+    nuAuSndPlayerSetSndPitch(sndHandle, sndPitch);
   }
 }
-
+#endif // SOUND
 /*----------------------------------------------------------------------*/
 /*  Rom2Ram - Reads data from ROM into RAM      */
 /*  IN: from_addr The source address of the data in ROM   */
@@ -812,7 +902,8 @@ void soundCheck(void) {
 /*    seq_size          Size of the data to read      */
 /*  RET:  Nothing             */
 /*----------------------------------------------------------------------*/
-void Rom2Ram(void* from_addr, void* to_addr, s32 seq_size) {
+void Rom2Ram(void *from_addr, void *to_addr, s32 seq_size)
+{
   /* Cannot transfer if size is an odd number, so make it an even number. */
   if (seq_size & 0x00000001)
     seq_size++;

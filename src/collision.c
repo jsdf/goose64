@@ -5,7 +5,6 @@
 #include "constants.h"
 
 #include "collision.h"
-#include "trace.h"
 #include "vec3d.h"
 
 #ifndef __N64__
@@ -13,14 +12,16 @@
 // otherwise this stuff is in constants.h
 #endif
 
-void Triangle_getCentroid(Triangle* triangle, Vec3d* result) {
+void Triangle_getCentroid(Triangle *triangle, Vec3d *result)
+{
   *result = triangle->a;
   Vec3d_add(result, &triangle->b);
   Vec3d_add(result, &triangle->c);
   Vec3d_divScalar(result, 3.0);
 }
 
-void Triangle_getNormal(Triangle* triangle, Vec3d* result) {
+void Triangle_getNormal(Triangle *triangle, Vec3d *result)
+{
   Vec3d edgeAB, edgeAC;
   edgeAB = triangle->b;
   Vec3d_sub(&edgeAB, &triangle->a);
@@ -34,7 +35,8 @@ void Triangle_getNormal(Triangle* triangle, Vec3d* result) {
 // if result > 0: point is in front of triangle
 // if result = 0: point is coplanar with triangle
 // if result < 0: point is behind triangle
-float Triangle_comparePoint(Triangle* triangle, Vec3d* point) {
+float Triangle_comparePoint(Triangle *triangle, Vec3d *point)
+{
   Vec3d normal, toPoint;
 
   // normal . (point - triangleVert)
@@ -44,7 +46,8 @@ float Triangle_comparePoint(Triangle* triangle, Vec3d* point) {
   return Vec3d_dot(&normal, &toPoint);
 }
 
-void AABB_fromSphere(Vec3d* sphereCenter, float sphereRadius, AABB* result) {
+void AABB_fromSphere(Vec3d *sphereCenter, float sphereRadius, AABB *result)
+{
   result->min = *sphereCenter;
   result->min.x -= sphereRadius;
   result->min.y -= sphereRadius;
@@ -56,7 +59,8 @@ void AABB_fromSphere(Vec3d* sphereCenter, float sphereRadius, AABB* result) {
   result->max.z += sphereRadius;
 }
 
-void AABB_fromTriangle(Triangle* triangle, AABB* result) {
+void AABB_fromTriangle(Triangle *triangle, AABB *result)
+{
   result->min = triangle->a;
   result->min.x = MIN(result->min.x, triangle->b.x);
   result->min.x = MIN(result->min.x, triangle->c.x);
@@ -74,7 +78,8 @@ void AABB_fromTriangle(Triangle* triangle, AABB* result) {
   result->max.z = MAX(result->max.z, triangle->c.z);
 }
 
-void AABB_expandByPoint(AABB* self, Vec3d* point) {
+void AABB_expandByPoint(AABB *self, Vec3d *point)
+{
   self->min.x = MIN(self->min.x, point->x);
   self->min.y = MIN(self->min.y, point->y);
   self->min.z = MIN(self->min.z, point->z);
@@ -84,22 +89,24 @@ void AABB_expandByPoint(AABB* self, Vec3d* point) {
   self->max.z = MAX(self->max.z, point->z);
 }
 
-int Collision_intersectAABBAABB(AABB* a, AABB* b) {
+int Collision_intersectAABBAABB(AABB *a, AABB *b)
+{
   // Exit with no intersection if separated along an axis
   if (a->max.x < b->min.x || a->min.x > b->max.x)
     return FALSE;
   if (a->max.y < b->min.y || a->min.y > b->max.y)
     return FALSE;
   if (a->max.z < b->min.z || a->min.z > b->max.z)
-    return FALSE;  // Overlapping on all axes means AABBs are intersecting
+    return FALSE; // Overlapping on all axes means AABBs are intersecting
   return TRUE;
 }
 
 // not tested
-int Collision_intersectRayTriangle(Vec3d* pt,
-                                   Vec3d* dir,
-                                   Triangle* tri,
-                                   Vec3d* out) {
+int Collision_intersectRayTriangle(Vec3d *pt,
+                                   Vec3d *dir,
+                                   Triangle *tri,
+                                   Vec3d *out)
+{
   Vec3d edge1, edge2, tvec, pvec, qvec;
   float det, u, v, t;
 
@@ -134,9 +141,10 @@ int Collision_intersectRayTriangle(Vec3d* pt,
 }
 
 // http://realtimecollisiondetection.net/blog/?p=103
-int Collision_sphereTriangleIsSeparated(Triangle* triangle,
-                                        Vec3d* P,
-                                        double r) {
+int Collision_sphereTriangleIsSeparated(Triangle *triangle,
+                                        Vec3d *P,
+                                        double r)
+{
   double rr, d, e, aa, ab, ac, bb, bc, cc, d1, e1, d2, e2, d3, e3;
   int sep1, sep2, sep3, sep4, sep5, sep6, sep7;
   Vec3d A, B, C;
@@ -296,9 +304,10 @@ int Collision_sphereTriangleIsSeparated(Triangle* triangle,
   return FALSE;
 }
 
-void Collision_distancePointTriangleExact(Vec3d* point,
-                                          Triangle* triangle,
-                                          Vec3d* closest) {
+void Collision_distancePointTriangleExact(Vec3d *point,
+                                          Triangle *triangle,
+                                          Vec3d *closest)
+{
   Vec3d diff, edge0, edge1, t0edge0, t1edge1;
   double a00, a01, a11, b0, b1, zero, one, det, t0, t1;
   double invDet;
@@ -325,138 +334,172 @@ void Collision_distancePointTriangleExact(Vec3d* point,
   t0 = a01 * b1 - a11 * b0;
   t1 = a01 * b0 - a00 * b1;
 
-  if (t0 + t1 <= det) {
-    if (t0 < zero) {
-      if (t1 < zero)  // region 4
+  if (t0 + t1 <= det)
+  {
+    if (t0 < zero)
+    {
+      if (t1 < zero) // region 4
       {
-        if (b0 < zero) {
+        if (b0 < zero)
+        {
           t1 = zero;
-          if (-b0 >= a00)  // V1
+          if (-b0 >= a00) // V1
           {
             t0 = one;
-          } else  // E01
+          }
+          else // E01
           {
             t0 = -b0 / a00;
           }
-        } else {
+        }
+        else
+        {
           t0 = zero;
-          if (b1 >= zero)  // V0
+          if (b1 >= zero) // V0
           {
             t1 = zero;
-          } else if (-b1 >= a11)  // V2
+          }
+          else if (-b1 >= a11) // V2
           {
             t1 = one;
-          } else  // E20
+          }
+          else // E20
           {
             t1 = -b1 / a11;
           }
         }
-      } else  // region 3
+      }
+      else // region 3
       {
         t0 = zero;
-        if (b1 >= zero)  // V0
+        if (b1 >= zero) // V0
         {
           t1 = zero;
-        } else if (-b1 >= a11)  // V2
+        }
+        else if (-b1 >= a11) // V2
         {
           t1 = one;
-        } else  // E20
+        }
+        else // E20
         {
           t1 = -b1 / a11;
         }
       }
-    } else if (t1 < zero)  // region 5
+    }
+    else if (t1 < zero) // region 5
     {
       t1 = zero;
-      if (b0 >= zero)  // V0
+      if (b0 >= zero) // V0
       {
         t0 = zero;
-      } else if (-b0 >= a00)  // V1
+      }
+      else if (-b0 >= a00) // V1
       {
         t0 = one;
-      } else  // E01
+      }
+      else // E01
       {
         t0 = -b0 / a00;
       }
-    } else  // region 0, interior
+    }
+    else // region 0, interior
     {
       invDet = det == 0 ? 0 : one / det;
       t0 *= invDet;
       t1 *= invDet;
     }
-  } else {
-    if (t0 < zero)  // region 2
+  }
+  else
+  {
+    if (t0 < zero) // region 2
     {
       tmp0 = a01 + b0;
       tmp1 = a11 + b1;
-      if (tmp1 > tmp0) {
+      if (tmp1 > tmp0)
+      {
         numer = tmp1 - tmp0;
         denom = a00 - ((double)2) * a01 + a11;
-        if (numer >= denom)  // V1
+        if (numer >= denom) // V1
         {
           t0 = one;
           t1 = zero;
-        } else  // E12
+        }
+        else // E12
         {
           t0 = numer / denom;
           t1 = one - t0;
         }
-      } else {
+      }
+      else
+      {
         t0 = zero;
-        if (tmp1 <= zero)  // V2
+        if (tmp1 <= zero) // V2
         {
           t1 = one;
-        } else if (b1 >= zero)  // V0
+        }
+        else if (b1 >= zero) // V0
         {
           t1 = zero;
-        } else  // E20
+        }
+        else // E20
         {
           t1 = -b1 / a11;
         }
       }
-    } else if (t1 < zero)  // region 6
+    }
+    else if (t1 < zero) // region 6
     {
       tmp0 = a01 + b1;
       tmp1 = a00 + b0;
-      if (tmp1 > tmp0) {
+      if (tmp1 > tmp0)
+      {
         numer = tmp1 - tmp0;
         denom = a00 - ((double)2) * a01 + a11;
-        if (numer >= denom)  // V2
+        if (numer >= denom) // V2
         {
           t1 = one;
           t0 = zero;
-        } else  // E12
+        }
+        else // E12
         {
           t1 = numer / denom;
           t0 = one - t1;
         }
-      } else {
+      }
+      else
+      {
         t1 = zero;
-        if (tmp1 <= zero)  // V1
+        if (tmp1 <= zero) // V1
         {
           t0 = one;
-        } else if (b0 >= zero)  // V0
+        }
+        else if (b0 >= zero) // V0
         {
           t0 = zero;
-        } else  // E01
+        }
+        else // E01
         {
           t0 = -b0 / a00;
         }
       }
-    } else  // region 1
+    }
+    else // region 1
     {
       numer = a11 + b1 - a01 - b0;
-      if (numer <= zero)  // V2
+      if (numer <= zero) // V2
       {
         t0 = zero;
         t1 = one;
-      } else {
+      }
+      else
+      {
         denom = a00 - ((double)2) * a01 + a11;
-        if (numer >= denom)  // V1
+        if (numer >= denom) // V1
         {
           t0 = one;
           t1 = zero;
-        } else  // 12
+        }
+        else // 12
         {
           t0 = numer / denom;
           t1 = one - t0;
@@ -474,7 +517,8 @@ void Collision_distancePointTriangleExact(Vec3d* point,
   Vec3d_add(closest, &t0edge0);
   Vec3d_add(closest, &t1edge1);
 
-  if (closest->x != closest->x) {
+  if (closest->x != closest->x)
+  {
 #ifndef __N64__
     debugPrintf("got NAN\n");
     // Collision_distancePointTriangleExact(point, triangle, closest);
@@ -495,7 +539,7 @@ void Collision_distancePointTriangleExact(Vec3d* point,
 
 #include <map>
 int testCollisionResult;
-int testCollisionTrace = FALSE;  // set to true to capture trace
+int testCollisionTrace = FALSE; // set to true to capture trace
 
 std::map<int, SphereTriangleCollision> testCollisionResults;
 #endif
@@ -504,36 +548,43 @@ std::map<int, SphereTriangleCollision> testCollisionResults;
 #define COLLISION_SPATIAL_HASH_MAX_RESULTS 100
 #define COLLISION_SPATIAL_HASH_PRUNING_ENABLED 1
 
-float Collision_sqDistancePointAABB(Vec3d* p, AABB* b) {
+float Collision_sqDistancePointAABB(Vec3d *p, AABB *b)
+{
   float v, dist;
   float sqDist = 0.0f;
   // For each axis count any excess distance outside box extents
   v = p->x;
-  if (v < b->min.x) {
+  if (v < b->min.x)
+  {
     dist = (b->min.x - v);
     sqDist += dist * dist;
   }
-  if (v > b->max.x) {
+  if (v > b->max.x)
+  {
     dist = (v - b->max.x);
     sqDist += dist * dist;
   }
 
   v = p->y;
-  if (v < b->min.y) {
+  if (v < b->min.y)
+  {
     dist = (b->min.y - v);
     sqDist += dist * dist;
   }
-  if (v > b->max.y) {
+  if (v > b->max.y)
+  {
     dist = (v - b->max.y);
     sqDist += dist * dist;
   }
 
   v = p->z;
-  if (v < b->min.z) {
+  if (v < b->min.z)
+  {
     dist = (b->min.z - v);
     sqDist += dist * dist;
   }
-  if (v > b->max.z) {
+  if (v > b->max.z)
+  {
     dist = (v - b->max.z);
     sqDist += dist * dist;
   }
@@ -541,9 +592,10 @@ float Collision_sqDistancePointAABB(Vec3d* p, AABB* b) {
 }
 
 // Returns true if sphere intersects AABB, false otherwise
-int Collision_testSphereAABBCollision(Vec3d* sphereCenter,
+int Collision_testSphereAABBCollision(Vec3d *sphereCenter,
                                       float sphereRadius,
-                                      AABB* aabb) {
+                                      AABB *aabb)
+{
   // Compute squared distance between sphere center and AABB
   float sqDist = Collision_sqDistancePointAABB(sphereCenter, aabb);
   // Sphere and AABB intersect if the (squared) distance
@@ -552,14 +604,15 @@ int Collision_testSphereAABBCollision(Vec3d* sphereCenter,
   return sqDist <= sphereRadius * sphereRadius;
 }
 
-int Collision_testMeshSphereCollision(Triangle* triangles,
+int Collision_testMeshSphereCollision(Triangle *triangles,
                                       int trianglesLength,
-                                      Vec3d* objCenter,
+                                      Vec3d *objCenter,
                                       float objRadius,
-                                      SpatialHash* spatialHash,
-                                      SphereTriangleCollision* result) {
+                                      SpatialHash *spatialHash,
+                                      SphereTriangleCollision *result)
+{
   int i, k;
-  Triangle* tri;
+  Triangle *tri;
   Vec3d closestPointOnTriangle;
 
   float closestHitDistSq;
@@ -578,7 +631,8 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 
 #ifndef __N64__
 #ifdef __cplusplus
-  if (testCollisionTrace) {
+  if (testCollisionTrace)
+  {
     testCollisionResults.clear();
   }
 #endif
@@ -589,16 +643,19 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
       COLLISION_SPATIAL_HASH_MAX_RESULTS);
 
 #if COLLISION_SPATIAL_HASH_PRUNING_ENABLED
-  for (k = 0; k < spatialHashResultsCount; k++) {
+  for (k = 0; k < spatialHashResultsCount; k++)
+  {
     i = spatialHashResults[k];
     tri = triangles + i;
 #else
-  for (i = 0, tri = triangles; i < trianglesLength; i++, tri++) {
+  for (i = 0, tri = triangles; i < trianglesLength; i++, tri++)
+  {
 #endif
     // as an optimization, first test AABB overlap
     AABB_fromTriangle(tri, &triangleAABB);
     if (!Collision_testSphereAABBCollision(objCenter, objRadius,
-                                           &triangleAABB)) {
+                                           &triangleAABB))
+    {
       continue;
     }
     // if (!Collision_intersectAABBAABB(&sphereAABB, &triangleAABB)) {
@@ -609,19 +666,22 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
     // hit = !Collision_sphereTriangleIsSeparated(tri, objCenter, objRadius);
     hit = TRUE;
 
-    if (hit) {
+    if (hit)
+    {
       Collision_distancePointTriangleExact(objCenter, tri,
                                            &closestPointOnTriangle);
 
       hitDistSq = Vec3d_distanceToSq(objCenter, &closestPointOnTriangle);
-      if (hitDistSq > objRadiusSq) {
+      if (hitDistSq > objRadiusSq)
+      {
         // not really a collision, separating axis test fucked up
         continue;
       }
 
 #ifndef __N64__
 #ifdef __cplusplus
-      if (testCollisionTrace) {
+      if (testCollisionTrace)
+      {
         SphereTriangleCollision debugResult = {
             i, hitDistSq, closestPointOnTriangle, tri, triangleAABB};
         testCollisionResults.insert(
@@ -630,7 +690,8 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 #endif
 #endif
 
-      if (hitDistSq < closestHitDistSq) {
+      if (hitDistSq < closestHitDistSq)
+      {
         closestHitDistSq = hitDistSq;
         closestHitTriangleIndex = i;
 
@@ -645,7 +706,8 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 
 #ifndef __N64__
 #ifdef __cplusplus
-  if (testCollisionTrace) {
+  if (testCollisionTrace)
+  {
     testCollisionResult = closestHitTriangleIndex;
   }
 #endif
@@ -658,7 +720,8 @@ int Collision_testMeshSphereCollision(Triangle* triangles,
 
 // Test if segment specified by points p0 and p1 intersects AABB b
 // from Real Time Collision Detection ch5.3
-int Collision_testSegmentAABBCollision(Vec3d* p0, Vec3d* p1, AABB* b) {
+int Collision_testSegmentAABBCollision(Vec3d *p0, Vec3d *p1, AABB *b)
+{
   Vec3d c;
   Vec3d e;
   Vec3d m;
@@ -714,11 +777,12 @@ int Collision_testSegmentAABBCollision(Vec3d* p0, Vec3d* p1, AABB* b) {
   if (fabsf(m.z * d.x - m.x * d.z) > e.x * adz + e.z * adx)
     return FALSE;
   if (fabsf(m.x * d.y - m.y * d.x) > e.x * ady + e.y * adx)
-    return FALSE;  // No separating axis found; segment must be overlapping AABB
+    return FALSE; // No separating axis found; segment must be overlapping AABB
   return TRUE;
 }
 
-int SpatialHash_getBucketIndex(int cellX, int cellY, int cellsInDimension) {
+int SpatialHash_getBucketIndex(int cellX, int cellY, int cellsInDimension)
+{
   // layout is rows then columns (row-major)
   // (x, y) is a cell pos, not unit pos
   return cellY * cellsInDimension + cellX;
@@ -726,21 +790,24 @@ int SpatialHash_getBucketIndex(int cellX, int cellY, int cellsInDimension) {
 
 // quantize world pos to containing grid cell
 int SpatialHash_unitsToGridForDimension(float unitsPos,
-                                        SpatialHash* spatialHash) {
+                                        SpatialHash *spatialHash)
+{
   return floorf(unitsPos / spatialHash->gridCellSize) +
          spatialHash->cellOffsetInDimension;
 }
 
 // convert world pos to integral pos in grid cell
 float SpatialHash_unitsToGridFloatForDimension(float unitsPos,
-                                               SpatialHash* spatialHash) {
+                                               SpatialHash *spatialHash)
+{
   return unitsPos / spatialHash->gridCellSize +
          spatialHash->cellOffsetInDimension;
 }
 
 // localize grid cell to world pos of bottom of cell
 float SpatialHash_gridToUnitsForDimension(float gridCell,
-                                          SpatialHash* spatialHash) {
+                                          SpatialHash *spatialHash)
+{
   return (gridCell - spatialHash->cellOffsetInDimension) *
          spatialHash->gridCellSize;
 }
@@ -750,7 +817,8 @@ void SpatialHash_raycast(float x0,
                          float x1,
                          float y1,
                          SpatialHashRaycastCallback traversalVisitor,
-                         void* traversalState) {
+                         void *traversalState)
+{
   float dx;
   float dy;
   int x;
@@ -767,49 +835,64 @@ void SpatialHash_raycast(float x0,
 
   n = 1;
 
-  if (dx == 0) {
+  if (dx == 0)
+  {
     x_inc = 0;
     error = FLT_MAX;
-  } else if (x1 > x0) {
+  }
+  else if (x1 > x0)
+  {
     x_inc = 1;
     n += (int)(floor(x1)) - x;
     error = (floor(x0) + 1 - x0) * dy;
-  } else {
+  }
+  else
+  {
     x_inc = -1;
     n += x - (int)(floor(x1));
     error = (x0 - floor(x0)) * dy;
   }
 
-  if (dy == 0) {
+  if (dy == 0)
+  {
     y_inc = 0;
     error -= FLT_MAX;
-  } else if (y1 > y0) {
+  }
+  else if (y1 > y0)
+  {
     y_inc = 1;
     n += (int)(floor(y1)) - y;
     error -= (floor(y0) + 1 - y0) * dx;
-  } else {
+  }
+  else
+  {
     y_inc = -1;
     n += y - (int)(floor(y1));
     error -= (y0 - floor(y0)) * dx;
   }
 
-  for (; n > 0; --n) {
+  for (; n > 0; --n)
+  {
     // visit(x, y);
     traversalVisitor(x, y, traversalState);
 
-    if (error > 0) {
+    if (error > 0)
+    {
       y += y_inc;
       error -= dx;
-    } else {
+    }
+    else
+    {
       x += x_inc;
       error += dy;
     }
   }
 }
 
-SpatialHashBucket* SpatialHash_getBucket(float x,
+SpatialHashBucket *SpatialHash_getBucket(float x,
                                          float y,
-                                         SpatialHash* spatialHash) {
+                                         SpatialHash *spatialHash)
+{
   int bucketIndex, cellX, cellY;
 
   cellX = SpatialHash_unitsToGridForDimension(x, spatialHash);
@@ -822,18 +905,20 @@ SpatialHashBucket* SpatialHash_getBucket(float x,
   return *(spatialHash->data + bucketIndex);
 }
 
-typedef struct GetTrianglesVisitBucketState {
-  SpatialHash* spatialHash;
-  int* results;
+typedef struct GetTrianglesVisitBucketState
+{
+  SpatialHash *spatialHash;
+  int *results;
   int maxResults;
   int resultsFound;
 } GetTrianglesVisitBucketState;
 
 void SpatialHash_getTrianglesVisitBucket(int cellX,
                                          int cellY,
-                                         GetTrianglesVisitBucketState* state) {
+                                         GetTrianglesVisitBucketState *state)
+{
   int bucketIndex, bucketItemIndex, resultIndex;
-  SpatialHashBucket* bucket;
+  SpatialHashBucket *bucket;
   int *bucketItem, *currentResult;
 
   bucketIndex = SpatialHash_getBucketIndex(
@@ -842,42 +927,52 @@ void SpatialHash_getTrianglesVisitBucket(int cellX,
   invariant(bucketIndex < state->spatialHash->numBuckets);
 
   bucket = *(state->spatialHash->data + bucketIndex);
-  if (!bucket) {
+  if (!bucket)
+  {
     // nothing in this bucket
     return;
   }
   // collect results from this bucket
-  for (bucketItemIndex = 0; bucketItemIndex < bucket->size; ++bucketItemIndex) {
+  for (bucketItemIndex = 0; bucketItemIndex < bucket->size; ++bucketItemIndex)
+  {
     bucketItem = bucket->data + bucketItemIndex;
 
     // look through results and add if not duplicate
     // TODO: optimize this, as it's currently O(n^2)
     // could qsort then remove duplicates to get to O(n log n)
-    for (resultIndex = 0; resultIndex < state->maxResults; ++resultIndex) {
+    for (resultIndex = 0; resultIndex < state->maxResults; ++resultIndex)
+    {
       currentResult = state->results + resultIndex;
-      if (resultIndex < state->resultsFound) {
-        if (*currentResult == *bucketItem) {
+      if (resultIndex < state->resultsFound)
+      {
+        if (*currentResult == *bucketItem)
+        {
           // already have this triangle in the results
           break;
-        } else {
+        }
+        else
+        {
           continue;
         }
-      } else {
+      }
+      else
+      {
         // at end of found results and this result is not already in the
         // list
         *currentResult = *bucketItem;
         state->resultsFound++;
-        break;  // continue to next item in bucket
+        break; // continue to next item in bucket
       }
     }
   }
 }
 
-int SpatialHash_getTrianglesForRaycast(Vec3d* rayStart,
-                                       Vec3d* rayEnd,
-                                       SpatialHash* spatialHash,
-                                       int* results,
-                                       int maxResults) {
+int SpatialHash_getTrianglesForRaycast(Vec3d *rayStart,
+                                       Vec3d *rayEnd,
+                                       SpatialHash *spatialHash,
+                                       int *results,
+                                       int maxResults)
+{
   GetTrianglesVisitBucketState traversalState;
   traversalState.spatialHash = spatialHash;
   traversalState.results = results;
@@ -889,10 +984,11 @@ int SpatialHash_getTrianglesForRaycast(Vec3d* rayStart,
       SpatialHash_unitsToGridFloatForDimension(rayEnd->x, spatialHash),
       SpatialHash_unitsToGridFloatForDimension(-rayEnd->z, spatialHash),
       (SpatialHashRaycastCallback)&SpatialHash_getTrianglesVisitBucket,
-      (void*)&traversalState);
+      (void *)&traversalState);
 
 #ifndef __N64__
-  if (traversalState.resultsFound == maxResults) {
+  if (traversalState.resultsFound == maxResults)
+  {
     debugPrintf("possibly ran out of space in results array\n");
   }
 #endif
@@ -900,11 +996,12 @@ int SpatialHash_getTrianglesForRaycast(Vec3d* rayStart,
   return traversalState.resultsFound;
 }
 
-int SpatialHash_getTriangles(Vec3d* position,
+int SpatialHash_getTriangles(Vec3d *position,
                              float radius,
-                             SpatialHash* spatialHash,
-                             int* results,
-                             int maxResults) {
+                             SpatialHash *spatialHash,
+                             int *results,
+                             int maxResults)
+{
   int minCellX, minCellY, maxCellX, maxCellY, cellX, cellY;
   GetTrianglesVisitBucketState traversalState;
   // float profStartCollisionGetTriangles = CUR_TIME_MS();
@@ -926,14 +1023,17 @@ int SpatialHash_getTriangles(Vec3d* position,
       1;
 
   // walk range of overlapping buckets and collect (unique) set of triangles
-  for (cellX = minCellX; cellX < maxCellX; ++cellX) {
-    for (cellY = minCellY; cellY < maxCellY; ++cellY) {
+  for (cellX = minCellX; cellX < maxCellX; ++cellX)
+  {
+    for (cellY = minCellY; cellY < maxCellY; ++cellY)
+    {
       SpatialHash_getTrianglesVisitBucket(cellX, cellY, &traversalState);
     }
   }
 
 #ifndef __N64__
-  if (traversalState.resultsFound == maxResults) {
+  if (traversalState.resultsFound == maxResults)
+  {
     debugPrintf("possibly ran out of space in results array\n");
   }
 #endif

@@ -34,6 +34,8 @@
 *.i*86
 *.x86_64
 *.hex
+*.js
+*.wasm
 
 # Debug files
 *.dSYM/
@@ -49,7 +51,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-
 
 # Xcode
 #
@@ -78,8 +79,6 @@ DerivedData/
 ## Gcc Patch
 /*.gcno
 
-
-
 ./*.n64
 *.blend1
 
@@ -87,7 +86,6 @@ imgui.ini
 
 *.pyc
 *_collision.json
-
 
 trace.log
 trace.json
@@ -97,7 +95,17 @@ trace_*.html
 buildcache.json
 
 disassembly.txt
+*.dasm
 
 # makefile variable overrides
 localdefs.makefile
-*.dasm
+
+# VS Code
+c_cpp_properties.json
+
+# local scripts
+cen64-debug.sh
+run_mupen.sh
+run.sh
+.gdbinit
+gdb_cen64.sh

@@ -4,7 +4,7 @@
 #include "main.h"
 #include "malloc.h"
 
-#include <nualstl_n.h>
+// #include <nualsgi_n.h>
 
 #include <PR/os_convert.h>
 #ifdef ED64
@@ -31,7 +31,8 @@ extern char mem_heap[MEM_HEAP_SIZE];
 EXTERN_SEGMENT_WITH_BSS(memheap);
 EXTERN_SEGMENT_WITH_BSS(trace);
 
-int systemHeapMemoryInit(void) {
+int systemHeapMemoryInit(void)
+{
   int initHeapResult;
   nuPiReadRom((u32)_memheapSegmentRomStart, _memheapSegmentStart,
               (u32)_memheapSegmentRomEnd - (u32)_memheapSegmentRomStart);
@@ -42,30 +43,37 @@ int systemHeapMemoryInit(void) {
   /* Reserve system heap memory */
   initHeapResult = InitHeap(mem_heap, MEM_HEAP_SIZE);
 
-  if (initHeapResult == -1) {
+  if (initHeapResult == -1)
+  {
     die("failed to init heap\n");
-  } else {
+  }
+  else
+  {
     debugPrintfSync("init heap success, allocated=%d\n", MEM_HEAP_SIZE);
   }
 
-  if (osGetMemSize() == 0x00800000) {
+  if (osGetMemSize() == 0x00800000)
+  {
     debugPrintfSync("have expansion pack\n");
     nuPiReadRom((u32)_traceSegmentRomStart, _traceSegmentStart,
                 (u32)_traceSegmentRomEnd - (u32)_traceSegmentRomStart);
     bzero(_traceSegmentBssStart, _traceSegmentBssEnd - _traceSegmentBssStart);
 
     debugPrintfSync("init trace buffer at %p\n", _traceSegmentStart);
-  } else {
+  }
+  else
+  {
     die("expansion pack missing\n");
   }
   return 0;
 }
 
-extern void* __printfunc;
+extern void *__printfunc;
 /*------------------------
         Main
 --------------------------*/
-void mainproc(void) {
+void mainproc(void)
+{
 #ifdef ED64
   // start everdrive communication
   evd_init();
@@ -77,7 +85,7 @@ void mainproc(void) {
   ed64StartFaultHandlerThread(NU_GFX_TASKMGR_THREAD_PRI);
 
   // overwrite osSyncPrintf impl
-  __printfunc = (void*)ed64PrintFuncImpl;
+  __printfunc = (void *)ed64PrintFuncImpl;
 #endif
 
   DBGPRINT("hello\n");
@@ -87,15 +95,6 @@ void mainproc(void) {
 
   /* The initialization of the controller manager  */
   contPattern = nuContInit();
-
-  /* The initialization of audio */
-  DBGPRINT("nuAuStlInit\n");
-  nuAuStlInit();
-  // nuAuStlInit() also does:
-  // nuAuStlSeqPlayerInit(
-  //   NU_AU_SEQ_PLAYER0,
-  //   NU_AU_SONG_SIZE /*16kb*/
-  // );
 
   /* The initialization of graphic  */
   // nuGfxInit();

@@ -18,10 +18,10 @@ ED64 =
 OPTIMIZE = y 
 endif
 
-ifdef RELEASE
-NUAUDIOLIB = -lnualstl_n -ln_gmus -ln_gaudio_sc
+ifdef OPTIMIZE
+NUAUDIOLIB = -lnualsgi_n 
 else
-NUAUDIOLIB = -lnualstl_n_d -ln_gmus_d -ln_gaudio_sc
+NUAUDIOLIB = -lnualsgi_n_d 
 endif
 
 LCDEFS = -DN_AUDIO -DF3DEX_GBI_2 -D__N64__
@@ -58,7 +58,9 @@ HFILES =	main.h graphic.h testingCube.h vec3d.h vec2d.h gameobject.h game.h mode
 
 ED64CODEFILES = ed64io_usb.c ed64io_sys.c ed64io_everdrive.c ed64io_fault.c ed64io_os_error.c ed64io_watchdog.c
 
-CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c  pathfinding.c frustum.c  garden_map_graph.c sprite.c option.c
+CROSSPLAT_CODEFILES = vec3d.c vec2d.c gameobject.c game.c modeltype.c renderer.c input.c character.c characterstate.c player.c gameutils.c item.c animation.c physics.c rotation.c collision.c  pathfinding.c frustum.c  garden_map_graph.c sprite.c option.c
+
+CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c $(CROSSPLAT_CODEFILES)
 
 ifdef ED64
 CODEFILES  += $(ED64CODEFILES)
@@ -66,7 +68,9 @@ endif
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
 
-DATAFILES   = mem_heap.c trace.c garden_map_collision.c models.c sprite_data.c
+CROSSPLAT_DATAFILES = garden_map_collision.c trace.c 
+
+DATAFILES   = mem_heap.c models.c sprite_data.c $(CROSSPLAT_DATAFILES)
 DATAOBJECTS =	$(DATAFILES:.c=.o)
 
 CODESEGMENT =	codesegment.o

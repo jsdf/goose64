@@ -1,10 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+ 
+ #define GL_GLEXT_PROTOTYPES
 
+
+#ifdef __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
 #include <OpenGL/glu.h>
+#include <OpenGL/glew.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#include <GL/glew.h>
+#include <GL/glu.h>
+#endif
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 GLuint loadBMP_custom(const char* imagepath) {
   printf("Reading image %s\n", imagepath);
@@ -102,7 +117,11 @@ GLuint loadBMP_custom(const char* imagepath) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                   GL_LINEAR_MIPMAP_LINEAR);
   // ... which requires mipmaps. Generate them automatically.
-  glGenerateMipmap(GL_TEXTURE_2D);
+
+  if (glewIsSupported("GL_ARB_framebuffer_object"))
+  {
+    glGenerateMipmap(GL_TEXTURE_2D);
+  }
 
   // Return the ID of the texture we just created
   return textureID;

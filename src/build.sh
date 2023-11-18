@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eu
-rm -f *.o
-rm -f *.out
-rm -f *.n64
-wine cmd /c compile.bat
+
+export SDK_BASE_DIR="/workspace"
+export ROOT="${SDK_BASE_DIR}/ultra"
+export N64KITDIR="${SDK_BASE_DIR}/nintendo/n64kit"
+
+make
