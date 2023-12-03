@@ -42,11 +42,12 @@ set(IMGUI_SOURCE_FILES
     imgui/imgui_widgets.cpp
     imgui/imgui_draw.cpp
     imgui/imgui.cpp)
+
+file(GLOB GL_CPP_SOURCE_FILES_GLOBBED "gl/*.cpp") 
+
 # GL CPP source files, including the IMGUI sources
 set(GL_CPP_SOURCE_FILES 
-    glgoose.cpp 
-    gl/objloader.cpp 
-    gl/texture.cpp 
+    ${GL_CPP_SOURCE_FILES_GLOBBED}
     ${IMGUI_SOURCE_FILES})
 # GL C source files
 set(GL_C_SOURCE_FILES compat.c)
@@ -54,7 +55,7 @@ set(GL_C_SOURCE_FILES compat.c)
 set(ALL_SOURCE_FILES ${ALL_SOURCE_FILES} ${GL_CPP_SOURCE_FILES} ${GL_C_SOURCE_FILES})
 
 # Add files to the executable
-add_executable(goose64 glgoose.cpp ${ALL_SOURCE_FILES})
+add_executable(goose64 ${ALL_SOURCE_FILES})
 # Set each source file to be treated as C++
 set_source_files_properties(${ALL_SOURCE_FILES} PROPERTIES LANGUAGE CXX)
 
