@@ -101,7 +101,7 @@ disassembly.txt
 localdefs.makefile
 
 # VS Code
-c_cpp_properties.json
+.vscode/
 
 # local scripts
 cen64-debug.sh
