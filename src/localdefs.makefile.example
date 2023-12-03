@@ -1,0 +1,7 @@
+# local makefile defs which aren't checked into git
+
+ED64 = y
+OPTIMIZE = y
+
+ROOT = /workspace/ultra
+N64KITDIR = /workspace/nintendo/n64kit

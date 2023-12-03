@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "(lldb) Launch",
+      "type": "cppdbg",
+      "request": "launch",
+      // Resolved by CMake Tools:
+      "program": "${command:cmake.launchTargetPath}",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/src",
+      "environment": [
+        {
+          // add the directory where our target was built to the PATHs
+          // it gets resolved by CMake Tools:
+          "name": "PATH",
+          "value": "${env:PATH}:${command:cmake.getLaunchTargetDirectory}"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "lldb"
+    }
+  ]
+}

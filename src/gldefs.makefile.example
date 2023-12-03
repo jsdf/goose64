@@ -1,0 +1,2 @@
+# where glm headers are installed, eg `$(brew --prefix glm)/include`
+GLM_INC_PATH = /usr/local/opt/glm/include

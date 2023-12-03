@@ -12,54 +12,62 @@ run it with your favorite emulator or flashcart
 
 ## build for emulator/console
 
-### install the n64 sdk
+### install the n64 sdk & compiler
 
-windows instructions: https://n64squid.com/homebrew/n64-sdk/
+e.g. https://crashoveride95.github.io/modernsdk/index.html
 
-macOS/linux instructions: https://www.retroreversing.com/n64-sdk-setup
+for example i install the sdk in a docker container on macOS via [colima](https://github.com/abiosoft/colima) + docker, using [this dockerfile](https://gist.github.com/jsdf/21bf1d2c0fd95693c592e998da9e2be9)
 
-on linux you'll need to use wine to run the n64 compiler, on macOS you'll need to use crossover (a commercial version of wine)
+### building the game for N64
 
-install the n64 sdk into the root of the C: drive (or wine C: drive) so you have eg.
-```
-C:\ultra
-C:\nintendo
-```
-etc.
-
-
-### building the game
-
-all commands should be run in the `src` directory of this repo
-
-to build the rom, in the wine/crossover command prompt (e.g. cmd.exe) run:
+define machine-specific paths:
 
 ```
-compile.bat
+cp src/localdefs.makefile.example src/localdefs.makefile
 ```
 
-this produces the rom file `goose64.n64` which you can then run with your favorite emulator or flashcart
+then edit src/localdefs.makefile to define paths to the N64 SDK:
 
-to subsequently rebuild after making any changes to the code you'll first need to delete any .o object files (we're using an ancient version of make which doesn't do that for you). on linux you can use `./build.sh` to do this. an example for macOS/crossover can be found in `crossover_build.sh`. 
+- `ROOT` (the 'ultra' directory)
+- `N64KITDIR` (the 'n64kit' directory)
+
+then run `make`
+
+this produces the rom file `goose64.n64` which you can then run with your favorite emulator or flashcart.
 
 environment variables which affect the build:
 
 - `OPTIMIZE=1`: enable gcc optimization and use non-debug versions of sdk libraries
 - `ED64=1`: build with everdrive64 logging support (see [ed64log](https://github.com/jsdf/ed64log)). don't use unless running on an everdrive64
 
-you can also create a file called `localdefs.makefile` containing any variables to override in the build, and it will be automatically included by the makefile.
+you can also define these in `localdefs.makefile`
 
-## build for macOS native executable
+## build the desktop opengl version
 
-this repo also includes an opengl based version of the game, which runs on macOS
+this repo also includes an opengl based version of the game, which runs on macOS (haven't tested other OSes)
 
 install dependencies:
+
 ```
 # eg. using homebrew on macOS
-brew install glm
+brew install glm glew
 ```
 
-then open the goose64glut project with xcode, build and run
+define machine-specific paths
+
+```
+cp src/gldefs.makefile.example src/gldefs.makefile
+# edit src/gldefs.makefile
+```
+
+configure cmake & build
+
+```
+cmake -S src/ -B build
+cd build
+make
+./goose64
+```
 
 ## development
 
@@ -76,6 +84,7 @@ with everdrive64 v3 inserted and usb cable connected, reset console and run:
 if you get a 'device not found' error, check that 'FT245R USB FIFO' is visible in your system's list of connected usb devices
 
 ### regenerate n64 header files from the OBJ models
+
 if you update .obj model files:
 
 first make sure you have lua installed
@@ -92,6 +101,7 @@ then, to rebuild model header files
 ```
 
 ### regenerate n64 header files for sprites
+
 if you update any texture files:
 
 make sure you have python and pillow installed
@@ -103,7 +113,7 @@ pip install pillow
 then, to rebuild sprites
 
 ```bash
-./sprites.sh 
+./sprites.sh
 ```
 
 ### export map object data
@@ -111,4 +121,3 @@ then, to rebuild sprites
 - open blender (or use `./blender.sh` to see console output)
 - in the blender text editor editor, open and run export_positions.py then open and run export_collision_mesh.py
 - see header files are created
-

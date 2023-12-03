@@ -14,9 +14,6 @@ CODEFILES  +=  arith64.c
 
 DEPS = $(CODEFILES:.c=.d)
  
-
-CPP_SOURCE_FILES = glgoose.cpp gl/objloader.cpp gl/texture.cpp imgui/imgui.cpp imgui/imgui_widgets.cpp 
-
 default: $(TARGETS)
 
 .c.o:

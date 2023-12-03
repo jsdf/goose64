@@ -1,5 +1,7 @@
 {
   "files.associations": {
+    "Makefile.*": "makefile",
+    "*.makefile": "makefile",
     "constants.h": "c",
     "renderer.h": "c",
     "sound.h": "c",
@@ -100,6 +102,8 @@
     "thread": "cpp",
     "cfenv": "cpp",
     "cinttypes": "cpp",
-    "*.ipp": "c"
-  }
+    "*.ipp": "c",
+    "stdlib.h": "c"
+  },
+  "cmake.sourceDirectory": "/Users/jfriend/code/mac-n64/n64sdkmod-docker/goose64/src"
 }

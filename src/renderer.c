@@ -14,6 +14,8 @@
 #include <malloc.h>
 #endif
 
+#include <string.h>
+
 #ifdef ED64
 #include "ed64io_usb.h"
 #endif
@@ -24,111 +26,129 @@
 
 #define RENDERER_FRUSTUM_CULLING 1
 
-int Renderer_isDynamicObject(GameObject* obj) {
+int Renderer_isDynamicObject(GameObject *obj)
+{
   return obj->physBody != NULL;
 }
 
-int Renderer_isZBufferedGameObject(GameObject* obj) {
+int Renderer_isZBufferedGameObject(GameObject *obj)
+{
   if (Renderer_isDynamicObject(obj))
     return TRUE;
   if (Renderer_isAnimatedGameObject(obj))
     return TRUE;
 
-  switch (obj->modelType) {
-    case BushModel:
-      // case WatergrassModel:
-      // case ReedModel:
-      return TRUE;
-    default:
-      return FALSE;
+  switch (obj->modelType)
+  {
+  case BushModel:
+    // case WatergrassModel:
+    // case ReedModel:
+    return TRUE;
+  default:
+    return FALSE;
   }
 }
-int Renderer_isZWriteGameObject(GameObject* obj) {
-  switch (obj->modelType) {
-    // case GroundModel:
-    case WaterModel:
-      return TRUE;
-    default:
-      return FALSE;
-  }
-}
-
-int Renderer_isBackgroundGameObject(GameObject* obj) {
-  switch (obj->modelType) {
-    case GroundModel:
-    case WaterModel:
-      return TRUE;
-    default:
-      return FALSE;
+int Renderer_isZWriteGameObject(GameObject *obj)
+{
+  switch (obj->modelType)
+  {
+  // case GroundModel:
+  case WaterModel:
+    return TRUE;
+  default:
+    return FALSE;
   }
 }
 
-int Renderer_isLitGameObject(GameObject* obj) {
-  switch (obj->modelType) {
-    case GroundModel:
-    case WaterModel:
-    case WallModel:
-    case PlanterModel:
-      return TRUE;
-    default:
-      return FALSE;
+int Renderer_isBackgroundGameObject(GameObject *obj)
+{
+  switch (obj->modelType)
+  {
+  case GroundModel:
+  case WaterModel:
+    return TRUE;
+  default:
+    return FALSE;
   }
 }
 
-int Renderer_isAnimatedGameObject(GameObject* obj) {
-  switch (obj->modelType) {
-    case GooseModel:
-    case GardenerCharacterModel:
-      return TRUE;
-    default:
-      return FALSE;
+int Renderer_isLitGameObject(GameObject *obj)
+{
+  switch (obj->modelType)
+  {
+  case GroundModel:
+  case WaterModel:
+  case WallModel:
+  case PlanterModel:
+    return TRUE;
+  default:
+    return FALSE;
   }
 }
 
-float Renderer_gameobjectSortDist(GameObject* obj, Vec3d* viewPos) {
-  if (Renderer_isBackgroundGameObject(obj)) {
+int Renderer_isAnimatedGameObject(GameObject *obj)
+{
+  switch (obj->modelType)
+  {
+  case GooseModel:
+  case GardenerCharacterModel:
+    return TRUE;
+  default:
+    return FALSE;
+  }
+}
+
+float Renderer_gameobjectSortDist(GameObject *obj, Vec3d *viewPos)
+{
+  if (Renderer_isBackgroundGameObject(obj))
+  {
     // always consider this far away
-    return 10000.0F - obj->id;  // add object id to achieve stable sorting
+    return 10000.0F - obj->id; // add object id to achieve stable sorting
   }
 
   return Vec3d_distanceTo(&obj->position, viewPos);
 }
 
-void Renderer_closestPointOnAABB(AABB* b,
-                                 /* sourcePoint*/ Vec3d* p,
-                                 /* result */ Vec3d* q) {
+void Renderer_closestPointOnAABB(AABB *b,
+                                 /* sourcePoint*/ Vec3d *p,
+                                 /* result */ Vec3d *q)
+{
   float v;
   v = p->x;
   if (v < b->min.x)
-    v = b->min.x;  // v = max(v, b->min.x)
+    v = b->min.x; // v = max(v, b->min.x)
   if (v > b->max.x)
-    v = b->max.x;  // v = min(v, b->max.x)
+    v = b->max.x; // v = min(v, b->max.x)
   q->x = v;
   v = p->y;
   if (v < b->min.y)
-    v = b->min.y;  // v = max(v, b->min.y)
+    v = b->min.y; // v = max(v, b->min.y)
   if (v > b->max.y)
-    v = b->max.y;  // v = min(v, b->max.y)
+    v = b->max.y; // v = min(v, b->max.y)
   q->y = v;
   v = p->z;
   if (v < b->min.z)
-    v = b->min.z;  // v = max(v, b->min.z)
+    v = b->min.z; // v = max(v, b->min.z)
   if (v > b->max.z)
-    v = b->max.z;  // v = min(v, b->max.z)
+    v = b->max.z; // v = min(v, b->max.z)
   q->z = v;
 }
 
-void Renderer_getSeparatingPlane(Vec3d* a, Vec3d* b, Plane* separatingPlane) {
+void Renderer_getSeparatingPlane(Vec3d *a, Vec3d *b, Plane *separatingPlane)
+{
   Vec3d halfwayPoint, aToBDirection;
   halfwayPoint = *a;
   Vec3d_add(&halfwayPoint, b);
   Vec3d_divScalar(&halfwayPoint, 2);
 
   Vec3d_directionTo(a, b, &aToBDirection);
-  aToBDirection.y = 0;  // only separate on x,z
-  if (fabsf(aToBDirection.x) > fabsf(aToBDirection.z)) {
+  aToBDirection.y = 0; // only separate on x,z
+  if (fabsf(aToBDirection.x) > fabsf(aToBDirection.z))
+  {
     aToBDirection.z = 0;
-  } else {
+  }
+  else
+  {
     aToBDirection.x = 0;
   }
 
@@ -136,9 +156,10 @@ void Renderer_getSeparatingPlane(Vec3d* a, Vec3d* b, Plane* separatingPlane) {
 }
 
 // currently this somehow causes the game to crash when touching a BushModel ??
-int Renderer_isCloserBySeparatingPlane(RendererSortDistance* a,
-                                       RendererSortDistance* b,
-                                       Vec3d* viewPos) {
+int Renderer_isCloserBySeparatingPlane(RendererSortDistance *a,
+                                       RendererSortDistance *b,
+                                       Vec3d *viewPos)
+{
   Plane separatingPlane;
   Vec3d aCenter, bCenter, aClosestPoint, bClosestPoint, aReallyClosestPoint,
       bReallyClosestPoint;
@@ -150,26 +171,38 @@ int Renderer_isCloserBySeparatingPlane(RendererSortDistance* a,
   Game_getObjCenter(b->obj, &bCenter);
 
   // dumb heuristic
-  if (Renderer_isDynamicObject(a->obj)) {
+  if (Renderer_isDynamicObject(a->obj))
+  {
     aClosestPoint = aCenter;
-  } else {
+  }
+  else
+  {
     Renderer_closestPointOnAABB(&a->worldAABB, &bCenter, &aClosestPoint);
   }
-  if (Renderer_isDynamicObject(b->obj)) {
+  if (Renderer_isDynamicObject(b->obj))
+  {
     bClosestPoint = bCenter;
-  } else {
+  }
+  else
+  {
     Renderer_closestPointOnAABB(&b->worldAABB, &aCenter, &bClosestPoint);
   }
 
-  if (Renderer_isDynamicObject(a->obj)) {
+  if (Renderer_isDynamicObject(a->obj))
+  {
     aReallyClosestPoint = aCenter;
-  } else {
+  }
+  else
+  {
     Renderer_closestPointOnAABB(&a->worldAABB, &bClosestPoint,
                                 &aReallyClosestPoint);
   }
-  if (Renderer_isDynamicObject(b->obj)) {
+  if (Renderer_isDynamicObject(b->obj))
+  {
     bReallyClosestPoint = bCenter;
-  } else {
+  }
+  else
+  {
     Renderer_closestPointOnAABB(&b->worldAABB, &aClosestPoint,
                                 &bReallyClosestPoint);
   }
@@ -181,14 +214,20 @@ int Renderer_isCloserBySeparatingPlane(RendererSortDistance* a,
   planeToBDist = Plane_distance(&separatingPlane, &bCenter);
   planeToViewDist = Plane_distance(&separatingPlane, viewPos);
 
-  if ((planeToADist < 0.0) == (planeToBDist < 0.0)) {
+  if ((planeToADist < 0.0) == (planeToBDist < 0.0))
+  {
     // if A is on the same side of plane as B, probably intersecting
     return 0;
-  } else {
-    if ((planeToADist < 0.0) == (planeToViewDist < 0.0)) {
+  }
+  else
+  {
+    if ((planeToADist < 0.0) == (planeToViewDist < 0.0))
+    {
       // if A is on the same side of plane as the view, A closer than B
       return -1;
-    } else {
+    }
+    else
+    {
       // B closer than A
       return 1;
     }
@@ -198,17 +237,19 @@ int Renderer_isCloserBySeparatingPlane(RendererSortDistance* a,
 // global variable because qsort's API sucks lol
 Vec3d sortWorldComparatorFn_viewPos;
 int sortIterations = 0;
-int Renderer_sortWorldComparatorFnPaintersSeparatingPlane(const void* a,
-                                                          const void* b) {
-  RendererSortDistance* sortA = (RendererSortDistance*)a;
-  RendererSortDistance* sortB = (RendererSortDistance*)b;
+int Renderer_sortWorldComparatorFnPaintersSeparatingPlane(const void *a,
+                                                          const void *b)
+{
+  RendererSortDistance *sortA = (RendererSortDistance *)a;
+  RendererSortDistance *sortB = (RendererSortDistance *)b;
 #ifdef DEBUG
   sortIterations++;
   invariant(sortIterations < 1000);
 #endif
   // sort far to near for painters algorithm
   if (Renderer_isBackgroundGameObject(sortA->obj) ||
-      Renderer_isBackgroundGameObject(sortB->obj)) {
+      Renderer_isBackgroundGameObject(sortB->obj))
+  {
     return sortB->distance - sortA->distance;
   }
 
@@ -216,23 +257,26 @@ int Renderer_sortWorldComparatorFnPaintersSeparatingPlane(const void* a,
                                              &sortWorldComparatorFn_viewPos);
 }
 
-int Renderer_sortWorldComparatorFnPaintersSimple(const void* a, const void* b) {
-  RendererSortDistance* sortA = (RendererSortDistance*)a;
-  RendererSortDistance* sortB = (RendererSortDistance*)b;
+int Renderer_sortWorldComparatorFnPaintersSimple(const void *a, const void *b)
+{
+  RendererSortDistance *sortA = (RendererSortDistance *)a;
+  RendererSortDistance *sortB = (RendererSortDistance *)b;
 
   // sort far to near for painters algorithm
   return sortB->distance - sortA->distance;
 }
 
-int Renderer_sortWorldComparatorFnZBuffer(const void* a, const void* b) {
-  RendererSortDistance* sortA = (RendererSortDistance*)a;
-  RendererSortDistance* sortB = (RendererSortDistance*)b;
+int Renderer_sortWorldComparatorFnZBuffer(const void *a, const void *b)
+{
+  RendererSortDistance *sortA = (RendererSortDistance *)a;
+  RendererSortDistance *sortB = (RendererSortDistance *)b;
   // sort near to far, so we benefit from zbuffer fast bailout
   return sortA->distance - sortB->distance;
 }
 
-AABB Renderer_getWorldAABB(AABB* localAABBs, GameObject* obj) {
-  AABB* localAABB = localAABBs + obj->id;
+AABB Renderer_getWorldAABB(AABB *localAABBs, GameObject *obj)
+{
+  AABB *localAABB = localAABBs + obj->id;
   AABB worldAABB = *localAABB;
 
   Vec3d_add(&worldAABB.min, &obj->position);
@@ -240,65 +284,76 @@ AABB Renderer_getWorldAABB(AABB* localAABBs, GameObject* obj) {
   return worldAABB;
 }
 
-typedef struct GameObjectAABB {
+typedef struct GameObjectAABB
+{
   int index;
   AABB aabb;
 } GameObjectAABB;
 
 void Renderer_calcIntersecting(
-    int* objectsIntersecting,  // the result, keyed by index in sorted objects
+    int *objectsIntersecting, // the result, keyed by index in sorted objects
     int objectsCount,
-    RendererSortDistance* sortedObjects,
-    AABB* localAABBs) {
+    RendererSortDistance *sortedObjects,
+    AABB *localAABBs)
+{
 #if RENDERER_PAINTERS_ALGORITHM
   int i, k;
   int zWriteObjectsCount, zBufferedObjectsCount;
-  GameObjectAABB* zWriteObjects;
-  GameObjectAABB* zBufferedObjects;
-  GameObject* obj;
-  GameObjectAABB* zWriteAABB;
-  GameObjectAABB* zBufferedAABB;
-  GameObjectAABB* otherZBufferedAABB;
+  GameObjectAABB *zWriteObjects;
+  GameObjectAABB *zBufferedObjects;
+  GameObject *obj;
+  GameObjectAABB *zWriteAABB;
+  GameObjectAABB *zBufferedAABB;
+  GameObjectAABB *otherZBufferedAABB;
 
   zWriteObjectsCount = 0;
   zBufferedObjectsCount = 0;
   zWriteObjects =
-      (GameObjectAABB*)malloc((objectsCount) * sizeof(GameObjectAABB));
+      (GameObjectAABB *)malloc((objectsCount) * sizeof(GameObjectAABB));
   zBufferedObjects =
-      (GameObjectAABB*)malloc((objectsCount) * sizeof(GameObjectAABB));
+      (GameObjectAABB *)malloc((objectsCount) * sizeof(GameObjectAABB));
   invariant(zWriteObjects);
   invariant(zBufferedObjects);
 
-  for (i = 0; i < objectsCount; ++i) {
+  for (i = 0; i < objectsCount; ++i)
+  {
     obj = (sortedObjects + i)->obj;
     objectsIntersecting[i] = FALSE;
-    if (Renderer_isZWriteGameObject(obj)) {
+    if (Renderer_isZWriteGameObject(obj))
+    {
       zWriteObjects[zWriteObjectsCount] =
           (GameObjectAABB){i, Renderer_getWorldAABB(localAABBs, obj)};
       zWriteObjectsCount++;
-    } else if (Renderer_isZBufferedGameObject(obj)) {
+    }
+    else if (Renderer_isZBufferedGameObject(obj))
+    {
       zBufferedObjects[zBufferedObjectsCount] =
           (GameObjectAABB){i, Renderer_getWorldAABB(localAABBs, obj)};
       zBufferedObjectsCount++;
     }
   }
-  for (i = 0; i < zBufferedObjectsCount; ++i) {
+  for (i = 0; i < zBufferedObjectsCount; ++i)
+  {
     zBufferedAABB = &zBufferedObjects[i];
 
-    for (k = 0; k < zWriteObjectsCount; ++k) {
+    for (k = 0; k < zWriteObjectsCount; ++k)
+    {
       zWriteAABB = &zWriteObjects[k];
       if (Collision_intersectAABBAABB(&zBufferedAABB->aabb,
-                                      &zWriteAABB->aabb)) {
+                                      &zWriteAABB->aabb))
+      {
         objectsIntersecting[zBufferedAABB->index] = TRUE;
         objectsIntersecting[zWriteAABB->index] = TRUE;
       }
     }
-    for (k = 0; k < zBufferedObjectsCount; ++k) {
+    for (k = 0; k < zBufferedObjectsCount; ++k)
+    {
       if (i == k)
         continue;
       otherZBufferedAABB = &zBufferedObjects[k];
       if (Collision_intersectAABBAABB(&zBufferedAABB->aabb,
-                                      &otherZBufferedAABB->aabb)) {
+                                      &otherZBufferedAABB->aabb))
+      {
         objectsIntersecting[zBufferedAABB->index] = TRUE;
         objectsIntersecting[otherZBufferedAABB->index] = TRUE;
       }
@@ -310,28 +365,32 @@ void Renderer_calcIntersecting(
 #else
   int i;
   // no-op impl which just marks all objects as potentially intersecting
-  for (i = 0; i < objectsCount; ++i) {
+  for (i = 0; i < objectsCount; ++i)
+  {
     objectsIntersecting[i] = TRUE;
   }
 #endif
 }
 
-int Renderer_cullVisibility(GameObject* worldObjects,
+int Renderer_cullVisibility(GameObject *worldObjects,
                             int worldObjectsCount,
-                            int* worldObjectsVisibility,
-                            Frustum* frustum,
-                            AABB* localAABBs) {
-  GameObject* obj;
+                            int *worldObjectsVisibility,
+                            Frustum *frustum,
+                            AABB *localAABBs)
+{
+  GameObject *obj;
   int i;
   int visibilityCulled = 0;
-  for (i = 0; i < worldObjectsCount; i++) {
+  for (i = 0; i < worldObjectsCount; i++)
+  {
     obj = worldObjects + i;
     if (obj->modelType == NoneModel || !obj->visible
 #if FAKE_GROUND
         || obj->modelType == GroundModel
 #endif
 
-    ) {
+    )
+    {
       worldObjectsVisibility[i] = FALSE;
       visibilityCulled++;
       continue;
@@ -340,7 +399,7 @@ int Renderer_cullVisibility(GameObject* worldObjects,
 #if RENDERER_FRUSTUM_CULLING
     {
       FrustumTestResult frustumTestResult;
-      AABB* localAABB = localAABBs + i;
+      AABB *localAABB = localAABBs + i;
       AABB worldAABB = *localAABB;
 
       Vec3d_add(&worldAABB.min, &obj->position);
@@ -348,7 +407,8 @@ int Renderer_cullVisibility(GameObject* worldObjects,
 
       frustumTestResult = Frustum_boxInFrustum(frustum, &worldAABB);
       // printf("%d: %s", i, FrustumTestResultStrings[frustumTestResult]);
-      if (frustumTestResult == OutsideFrustum) {
+      if (frustumTestResult == OutsideFrustum)
+      {
         // cull this object
         visibilityCulled++;
         worldObjectsVisibility[i] = FALSE;
@@ -363,20 +423,23 @@ int Renderer_cullVisibility(GameObject* worldObjects,
   return visibilityCulled;
 }
 
-void Renderer_sortVisibleObjects(GameObject* worldObjects,
+void Renderer_sortVisibleObjects(GameObject *worldObjects,
                                  int worldObjectsCount,
-                                 int* worldObjectsVisibility,
+                                 int *worldObjectsVisibility,
                                  int visibleObjectsCount,
-                                 RendererSortDistance* result,
-                                 Vec3d* viewPos,
-                                 AABB* localAABBs) {
+                                 RendererSortDistance *result,
+                                 Vec3d *viewPos,
+                                 AABB *localAABBs)
+{
   int i;
-  RendererSortDistance* sortDist;
+  RendererSortDistance *sortDist;
 
   int visibleObjectIndex = 0;
-  for (i = 0; i < worldObjectsCount; ++i) {
+  for (i = 0; i < worldObjectsCount; ++i)
+  {
     // only add visible objects, compacting results array
-    if (worldObjectsVisibility[i]) {
+    if (worldObjectsVisibility[i])
+    {
       // results array is only as long as num visible objects
       invariant(visibleObjectIndex < visibleObjectsCount);
       sortDist = result + visibleObjectIndex;
@@ -410,11 +473,12 @@ void Renderer_sortVisibleObjects(GameObject* worldObjects,
 #endif
 }
 
-void RendererZSortList_insertMeshTri(RendererZSortList* list,
-                                     GameObject* obj,
-                                     MeshTri* meshtri,
-                                     Vec3d* viewPos,
-                                     Renderer_meshTriDistCallback cb) {
+void RendererZSortList_insertMeshTri(RendererZSortList *list,
+                                     GameObject *obj,
+                                     MeshTri *meshtri,
+                                     Vec3d *viewPos,
+                                     Renderer_meshTriDistCallback cb)
+{
   // - calculate centroid
   // - transform centroid to world (using transform matrix? directly applying
   // components?)
@@ -422,7 +486,7 @@ void RendererZSortList_insertMeshTri(RendererZSortList* list,
   // - resize bucket if necessary
   // - insert tri
 
-  RendererZSortBucket* bucket;
+  RendererZSortBucket *bucket;
   float dist = cb(obj, meshtri, viewPos);
   float clampedDist = CLAMP(dist, list->near, (list->far - 0.001));
   int bucketIdx = (clampedDist - list->near) / list->bucketSize;
@@ -430,7 +494,8 @@ void RendererZSortList_insertMeshTri(RendererZSortList* list,
 
   bucket = &list->buckets[bucketIdx];
 
-  if (bucket->count == bucket->capacity) {
+  if (bucket->count == bucket->capacity)
+  {
     RendererZSortBucket_expand(bucket);
   }
   invariant(bucket->count < bucket->capacity);
@@ -439,20 +504,23 @@ void RendererZSortList_insertMeshTri(RendererZSortList* list,
   bucket->count++;
 }
 
-void RendererZSortItem_init(RendererZSortItem* self,
-                            GameObject* obj,
-                            MeshTri* meshtri) {
+void RendererZSortItem_init(RendererZSortItem *self,
+                            GameObject *obj,
+                            MeshTri *meshtri)
+{
   self->obj = obj;
   self->meshtri = meshtri;
 }
 
-void RendererZSortBucket_init(RendererZSortBucket* self) {
+void RendererZSortBucket_init(RendererZSortBucket *self)
+{
   self->capacity = 0;
   self->count = 0;
   self->items = NULL;
 }
 
-void RendererZSortList_init(RendererZSortList* self, float near, float far) {
+void RendererZSortList_init(RendererZSortList *self, float near, float far)
+{
   int i;
   // invariant(self->initialized == FALSE);
   self->count = RENDERER_ZSORT_BUCKET_COUNT;
@@ -460,34 +528,41 @@ void RendererZSortList_init(RendererZSortList* self, float near, float far) {
   self->near = near;
   self->far = far;
   self->bucketSize = ((self->far - self->near) / self->count);
-  for (i = 0; i < self->count; ++i) {
+  for (i = 0; i < self->count; ++i)
+  {
     RendererZSortBucket_init(&self->buckets[i]);
   }
   self->initialized = TRUE;
 }
 
-void RendererZSortList_destroy(RendererZSortList* self) {
+void RendererZSortList_destroy(RendererZSortList *self)
+{
   int i;
   invariant(self->initialized == TRUE);
 
-  for (i = 0; i < self->count; ++i) {
+  for (i = 0; i < self->count; ++i)
+  {
     RendererZSortBucket_destroy(&self->buckets[i]);
   }
 
   self->initialized = FALSE;
 }
 
-void RendererZSortBucket_expand(RendererZSortBucket* self) {
-  if (self->capacity == 0) {
+void RendererZSortBucket_expand(RendererZSortBucket *self)
+{
+  if (self->capacity == 0)
+  {
     invariant(self->items == NULL);
     self->capacity = RENDERER_ZSORT_BUCKET_INIT_CAPACITY;
-    self->items = (RendererZSortItem*)malloc((self->capacity) *
-                                             sizeof(RendererZSortItem));
+    self->items = (RendererZSortItem *)malloc((self->capacity) *
+                                              sizeof(RendererZSortItem));
     invariant(self->items);
-  } else {
+  }
+  else
+  {
     int newCapacity = self->capacity * 2;
-    RendererZSortItem* newItems =
-        (RendererZSortItem*)malloc((newCapacity) * sizeof(RendererZSortItem));
+    RendererZSortItem *newItems =
+        (RendererZSortItem *)malloc((newCapacity) * sizeof(RendererZSortItem));
     memcpy(newItems, self->items, self->count * sizeof(RendererZSortItem));
     free(self->items);
     self->capacity = newCapacity;
@@ -496,11 +571,15 @@ void RendererZSortBucket_expand(RendererZSortBucket* self) {
   }
 }
 
-void RendererZSortBucket_destroy(RendererZSortBucket* self) {
-  if (self->capacity == 0) {
+void RendererZSortBucket_destroy(RendererZSortBucket *self)
+{
+  if (self->capacity == 0)
+  {
     invariant(self->items == NULL);
     // nothing to do here
-  } else {
+  }
+  else
+  {
     // clean up items
     invariant(self->items);
     free(self->items);
